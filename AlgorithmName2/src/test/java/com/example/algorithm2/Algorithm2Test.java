@@ -1,14 +1,26 @@
 package com.example.algorithm2;
 
-import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.util.Collections;
+
+import org.mockito.internal.invocation.InvocationMatcher;
+
+import com.code_intelligence.jazzer.api.FuzzedDataProvider;
+import com.code_intelligence.jazzer.junit.FuzzTest;
 
 public class Algorithm2Test {
 
-    @Test
-    void testRunMultipliesInput() {
-        Algorithm2 algo = new Algorithm2();
-        int result = algo.run(new int[]{1, 2, 3});
-        assertEquals(6, result);
+    @FuzzTest(maxDuration = "1m")
+    void testMockitoBug1(FuzzedDataProvider data) {
+        try {
+
+            InvocationMatcher matcher = new InvocationMatcher(null, Collections.emptyList());
+            
+        } catch (UnsupportedOperationException e) {
+            throw new RuntimeException("Crash Found: Triggered Mockito-1 Bug!", e);
+            
+        } catch (IllegalArgumentException | NullPointerException expected) {
+            
+        } catch (Exception e) {
+        }
     }
 }

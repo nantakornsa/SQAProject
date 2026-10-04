@@ -1,5 +1,13 @@
 # Group 13
 
+## Member
+
+| No. | Student ID | Name |
+|:---:|:---:|---|
+| 1 | 673380085-0 | ชื่อ นายนันทกร แสวงจิตร |
+| 2 | 673380414-7 | ชื่อ นายพชรพงศ์ สาหล่อน |
+| 3 | 673380604-2 | ชื่อ นายศุภวัทน์ แสนเรียน |
+
 # ProjectName
 
 โปรเจครายวิชา SQA: เปรียบเทียบผลลัพธ์ของ 2 อัลกอริทึม (AlgorithmName1, AlgorithmName2)
@@ -24,12 +32,29 @@ ProjectName/
 │   ├── src/main/resources/
 │   ├── Result_Round1/
 │   └── Result_Round2/
-└── Claude-sonnet_4_6/
-    ├── pom.xml
-    ├── src/main/java/...      <- ClaudeClient.java เรียก Anthropic API
-    ├── Prompt/                <- prompt template ที่ใช้สั่ง Claude
-    ├── Result/                <- ผลลัพธ์ดิบจาก Claude API
-    └── TestCode/              <- test code ที่ Claude generate ให้ (เอาไปวางใน src/test ภายหลังได้)
+├── Claude-sonnet_4_6/
+│   ├── pom.xml
+│   ├── src/main/java/...      <- ClaudeClient.java เรียก Anthropic API
+│   ├── Prompt/                <- prompt template ที่ใช้สั่ง Claude
+│   ├── Result/                <- ผลลัพธ์ดิบจาก Claude API
+│   └── TestCode/              <- test code ที่ Claude generate ให้ (เอาไปวางใน src/test ภายหลังได้)
+├── pom.xml
+└── lib
+    ├── chart-buggy/             ← 26 bugs
+    ├── cli-buggy/               ← 40 bugs
+    ├── codec-buggy/             ← 18 bugs
+    ├── collections-buggy/       ← 28 bugs
+    ├── compress-buggy/          ← 47 bugs
+    ├── csv-buggy/               ← 16 bugs
+    ├── gson-buggy/              ← 18 bugs
+    ├── jacksoncore-buggy/       ← 26 bugs
+    ├── jacksondatabind-buggy/   ← 112 bugs
+    ├── jacksonxml-buggy/        ← 6 bugs
+    ├── jsoup-buggy/             ← 93 bugs
+    ├── jxpath-buggy/            ← 22 bugs
+    ├── math-buggy/              ← 106 bugs
+    └── mockito-buggy/           ← 38 bugs
+    
 ```
 
 ## วิธีใช้งาน

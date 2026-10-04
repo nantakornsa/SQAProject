@@ -39,7 +39,7 @@ ProjectName/
 │   ├── Result/                <- ผลลัพธ์ดิบจาก Claude API
 │   └── TestCode/              <- test code ที่ Claude generate ให้ (เอาไปวางใน src/test ภายหลังได้)
 ├── pom.xml
-├── lib
+└── lib
     ├── chart-buggy/             ← 26 bugs
     ├── cli-buggy/               ← 40 bugs
     ├── codec-buggy/             ← 18 bugs

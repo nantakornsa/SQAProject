@@ -13,6 +13,8 @@
 โปรเจครายวิชา SQA: เปรียบเทียบผลลัพธ์ของ 2 อัลกอริทึม (AlgorithmName1, AlgorithmName2)
 พร้อมโมดูล Claude-sonnet_4_6 สำหรับใช้ Claude ช่วยสร้าง/รัน regression test อัตโนมัติ
 
+# Work Link : https://drive.google.com/drive/folders/1hH-1uyycZQl-OybqA7BYUuFvypR5XCIq?usp=sharing
+
 ## โครงสร้างโปรเจค
 
 ```
@@ -54,7 +56,6 @@ ProjectName/
     ├── jxpath-buggy/            ← 22 bugs
     ├── math-buggy/              ← 106 bugs
     └── mockito-buggy/           ← 38 bugs
-    
 ```
 
 ## วิธีใช้งาน

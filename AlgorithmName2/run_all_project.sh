@@ -1,0 +1,152 @@
+#!/bin/bash
+# Usage:
+#   ./run_all_project.sh                       # everything
+#   ONLY_PROJECT=mockito ONLY_BUG=1 ./run_all_project.sh   # single smoke test
+#   JOBS=6 TIMEOUT=10m ./run_all_project.sh
+#
+# Each job runs in its own throw-away copy of pom.xml + src/ (tiny), so parallel
+# jobs never share target/ and no state leaks between bugs.
+set -u
+
+SRC="$(cd "$(dirname "$0")" && pwd)"
+OUT="${OUT:-$SRC/Result_Round1}"
+WORK_ROOT="${WORK_ROOT:-/tmp/bugrun}"          # use a Linux filesystem (NOT /mnt/c, NOT OneDrive)
+M2_REPO="${M2_REPO:-$HOME/.m2/repository}"
+NPROC="$(nproc)"
+JOBS="${JOBS:-$(( NPROC > 1 ? NPROC / 2 : 1 ))}"
+TIMEOUT="${TIMEOUT:-5m}"
+ONLY_PROJECT="${ONLY_PROJECT:-}"
+ONLY_BUG="${ONLY_BUG:-}"
+
+# name : number of bugs : target class : Maven artifactId under groupId "defects4j"
+# CHECK the artifact names with:  ls "$M2_REPO/defects4j"
+PROJECTS=(
+    "mockito:38:org.mockito.internal.invocation.InvocationMatcher:mockito-buggy"
+    "cli:39:org.apache.commons.cli.CommandLine:cli-buggy"
+    "codec:18:org.apache.commons.codec.binary.Base64:codec-buggy"
+    "collections:28:org.apache.commons.collections4.ListUtils:collections-buggy"
+    "csv:16:org.apache.commons.csv.CSVFormat:csv-buggy"
+    "gson:18:com.google.gson.Gson:gson-buggy"
+    "jsoup:93:org.jsoup.nodes.Document:jsoup-buggy"
+    "lang:65:org.apache.commons.lang3.StringUtils:lang-buggy"
+    "math:106:org.apache.commons.math3.util.Precision:math-buggy"
+    "closure:133:com.google.javascript.jscomp.Compiler:closure-buggy"
+    "lang_f:65:org.apache.commons.lang3.StringUtils:lang-fixed"
+    "time:27:org.joda.time.DateTime:time-buggy"
+    "compress:47:org.apache.commons.compress.archivers.ArchiveStreamFactory:compress-buggy"
+    "jacksoncore:26:com.fasterxml.jackson.core.JsonFactory:jacksoncore-buggy"
+    "jacksondatabind:112:com.fasterxml.jackson.databind.ObjectMapper:jacksondatabind-buggy"
+    "jacksonxml:6:com.fasterxml.jackson.dataformat.xml.XmlMapper:jacksonxml-buggy"
+    "jxpath:22:org.apache.commons.jxpath.JXPathContext:jxpath-buggy"
+)
+
+mkdir -p "$OUT" "$WORK_ROOT"
+
+# instructions covered,total for the target class (and its inner classes) from jacoco.csv
+cov_of() {
+    local csv=$1 fqcn=$2
+    local pkg="${fqcn%.*}" cls="${fqcn##*.}"
+    awk -F, -v p="$pkg" -v c="$cls" \
+        'NR>1 && $2==p && ($3==c || index($3, c "$")==1) {m+=$4; v+=$5} END {printf "%d,%d", v, m+v}' "$csv"
+}
+
+finish() {  # tmp dest proj i status covered total seconds
+    local tmp=$1 dest=$2 proj=$3 i=$4 status=$5 cov=$6 tot=$7 secs=$8
+    echo "$status" > "$tmp/status"
+    echo "$proj,$i,$status,$cov,$tot,$secs" > "$tmp/summary.line"
+    rm -rf "$dest"
+    mv "$tmp" "$dest"
+    touch "$dest/.done"
+    printf '[%s] %-15s bug_%-4s %-12s cov=%s/%s (%ss)\n' "$(date +%T)" "$proj" "$i" "$status" "$cov" "$tot" "$secs"
+}
+
+run_one() {
+    local proj=$1 i=$2 target=$3 art=$4
+    local ver="${i}.0"
+    local dest="$OUT/$proj/bug_$i"
+    local tmp="$OUT/$proj/.bug_${i}.tmp"
+
+    [ -f "$dest/.done" ] && return 0
+    mkdir -p "$OUT/$proj"
+    rm -rf "$tmp"; mkdir -p "$tmp"
+
+    if [ ! -d "$M2_REPO/defects4j/$art/$ver" ]; then
+        echo "artifact missing: defects4j:$art:$ver in $M2_REPO" > "$tmp/run.log"
+        finish "$tmp" "$dest" "$proj" "$i" "NO_ARTIFACT" 0 0 0
+        return 0
+    fi
+
+    local work
+    work="$(mktemp -d "$WORK_ROOT/${proj}_${i}.XXXXXX")"
+    cp "$SRC/pom.xml" "$work/"
+    cp -r "$SRC/src" "$work/"
+
+    local start=$SECONDS
+    ( cd "$work" && timeout "$TIMEOUT" mvn -B --no-transfer-progress -o \
+        -Dmaven.test.failure.ignore=true \
+        -Dd4j.artifact="$art" -Dd4j.version="$ver" \
+        -DtargetClass="$target" \
+        -Dtest='Algorithm2Test#testParameterizedFuzzer' \
+        test-compile surefire:test jacoco:report ) > "$tmp/run.log" 2>&1
+    local rc=$?
+    local secs=$(( SECONDS - start ))
+
+    [ -d "$work/target/site/jacoco" ]      && cp -r "$work/target/site/jacoco"      "$tmp/coverage_report"
+    [ -d "$work/target/surefire-reports" ] && cp -r "$work/target/surefire-reports" "$tmp/test_logs"
+    ls "$work"/crash-* >/dev/null 2>&1 && { mkdir -p "$tmp/crashes"; cp "$work"/crash-* "$tmp/crashes/"; }
+
+    # classify the outcome
+    local status
+    if [ "$rc" -eq 124 ]; then
+        status="TIMEOUT"
+    elif [ "$rc" -ne 0 ]; then
+        status="BUILD_ERROR"
+    elif grep -q "no fuzzable methods" "$tmp/run.log" 2>/dev/null \
+         || grep -q "no fuzzable methods" "$tmp"/test_logs/* 2>/dev/null; then
+        status="NO_METHODS"
+    elif ! ls "$tmp"/test_logs/TEST-*.xml >/dev/null 2>&1; then
+        status="NO_TESTS"
+    elif grep -qE '<(failure|error)' "$tmp"/test_logs/TEST-*.xml; then
+        status="CRASH"
+    else
+        status="PASS"
+    fi
+
+    local cov=0 tot=0
+    if [ -f "$tmp/coverage_report/jacoco.csv" ]; then
+        IFS=, read -r cov tot <<< "$(cov_of "$tmp/coverage_report/jacoco.csv" "$target")"
+    fi
+
+    finish "$tmp" "$dest" "$proj" "$i" "$status" "$cov" "$tot" "$secs"
+    rm -rf "$work"
+}
+
+export -f run_one cov_of finish
+export SRC OUT WORK_ROOT M2_REPO TIMEOUT
+
+START=$SECONDS
+echo "JOBS=$JOBS  TIMEOUT=$TIMEOUT  WORK_ROOT=$WORK_ROOT  M2_REPO=$M2_REPO"
+
+{
+    for ENTRY in "${PROJECTS[@]}"; do
+        IFS=':' read -r PROJ BUGS TARGET ART <<< "$ENTRY"
+        [ -n "$ONLY_PROJECT" ] && [ "$PROJ" != "$ONLY_PROJECT" ] && continue
+        for (( i=1; i<=BUGS; i++ )); do
+            [ -n "$ONLY_BUG" ] && [ "$i" != "$ONLY_BUG" ] && continue
+            echo "$PROJ $i $TARGET $ART"
+        done
+    done
+} | xargs -P "$JOBS" -L1 bash -c 'run_one "$@"' _
+
+# summary
+{
+    echo "project,bug,status,target_instr_covered,target_instr_total,seconds"
+    cat "$OUT"/*/bug_*/summary.line 2>/dev/null | sort -t, -k1,1 -k2,2n
+} > "$OUT/summary.csv"
+
+echo "=================================================="
+echo " เสร็จสิ้น ใช้เวลา $(( (SECONDS - START) / 60 )) นาที"
+echo " สรุปสถานะ:"
+cut -d, -f3 "$OUT/summary.csv" | tail -n +2 | sort | uniq -c
+echo " รายละเอียด: $OUT/summary.csv"
+echo "=================================================="

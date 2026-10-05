@@ -1,0 +1,59 @@
+* EvoSuite 1.1.0
+* Going to generate test cases for class: com.google.gson.internal.UnsafeAllocator
+* Starting Client-0
+* Connecting to master process on port 9922
+* Analyzing classpath: 
+  - /home/user/sqa_project/algorithm1_wts/workdir/Gson_8b/target/classes
+[MASTER] 11:29:19.090 [logback-1] WARN  InheritanceTree - Class not in inheritance graph: java.io.ObjectInputFilter
+[MASTER] 11:29:19.163 [logback-1] WARN  InheritanceTree - Class not in inheritance graph: java.util.Locale$IsoCountryCode
+* Finished analyzing classpath
+* Generating tests for class com.google.gson.internal.UnsafeAllocator
+* Test criteria:
+  - Branch Coverage
+  - Line Coverage
+  - Exception
+  - Mutation testing (weak)
+* Total number of test goals for DYNAMOSA: 80
+* Using seed 1
+* Starting evolution
+* Initial Number of Goals in DynaMOSA = 80 / 80
+[MASTER] 11:29:19.992 [main] ERROR ExternalProcessGroupHandler - The JVM of the client process crashed:
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x000076c8c4f832d4, pid=752469, tid=752533
+#
+# JRE version: OpenJDK Runtime Environment (11.0.32.1+1) (build 11.0.32.1+1-post-1ubuntu1-26.04-Ubuntu)
+# Java VM: OpenJDK 64-Bit Server VM (11.0.32.1+1-post-1ubuntu1-26.04-Ubuntu, mixed mode, sharing, tiered, compressed oops, g1 gc, linux-amd64)
+# Problematic frame:
+# V  [libjvm.so+0x5832d4]  AccessInternal::PostRuntimeDispatch<G1BarrierSet::AccessBarrier<1097844ul, G1BarrierSet>, (AccessInternal::BarrierType)2, 1097844ul>::oop_access_barrier(void*)+0x4
+#
+# No core dump will be written. Core dumps have been disabled. To enable core dumping, try "ulimit -c unlimited" before starting Java again
+#
+# If you would like to submit a bug report, please visit:
+#   https://bugs.launchpad.net/ubuntu/+source/openjdk-lts
+#
+
+[MASTER] 11:29:19.999 [main] ERROR ExternalProcessGroupHandler - Class com.google.gson.internal.UnsafeAllocator. Lost connection with clients.
+Client-0: SEARCH
+
+java.rmi.UnmarshalException: Error unmarshaling return header; nested exception is: 
+	java.io.EOFException
+	at java.rmi/sun.rmi.transport.StreamRemoteCall.executeCall(StreamRemoteCall.java:254)
+	at java.rmi/sun.rmi.server.UnicastRef.invoke(UnicastRef.java:164)
+	at java.rmi/java.rmi.server.RemoteObjectInvocationHandler.invokeRemoteMethod(RemoteObjectInvocationHandler.java:217)
+	at java.rmi/java.rmi.server.RemoteObjectInvocationHandler.invoke(RemoteObjectInvocationHandler.java:162)
+	at com.sun.proxy.$Proxy7.waitUntilFinished(Unknown Source)
+	at org.evosuite.utils.ExternalProcessGroupHandler.waitForResult(ExternalProcessGroupHandler.java:694)
+	at org.evosuite.executionmode.TestGeneration.generateTests(TestGeneration.java:515)
+	at org.evosuite.executionmode.TestGeneration.executeTestGeneration(TestGeneration.java:80)
+	at org.evosuite.EvoSuite.parseCommandLine(EvoSuite.java:349)
+	at org.evosuite.EvoSuite.main(EvoSuite.java:115)
+Caused by: java.io.EOFException: null
+	at java.base/java.io.DataInputStream.readByte(DataInputStream.java:272)
+	at java.rmi/sun.rmi.transport.StreamRemoteCall.executeCall(StreamRemoteCall.java:240)
+	... 9 common frames omitted
+* Computation finished
+[MASTER] 11:29:20.103 [main] ERROR SearchStatistics - No obtained value for output variable: Total_Goals
+[MASTER] 11:29:21.108 [main] ERROR SearchStatistics - Not going to write down statistics data, as some are missing
+[MASTER] 11:29:21.215 [main] ERROR TestGeneration - failed to write statistics data

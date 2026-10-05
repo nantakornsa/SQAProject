@@ -1,0 +1,34 @@
+* EvoSuite 1.1.0
+* Going to generate test cases for class: org.apache.commons.codec.language.bm.Rule
+* Starting Client-0
+* Connecting to master process on port 9922
+* Analyzing classpath: 
+  - /home/user/sqa_project/algorithm1_wts/workdir/Codec_14b/target/classes
+* Writing JUnit test case 'Rule_ESTest' to /home/user/sqa_project/algorithm1_wts/Result_Round2/Codec_14b/org_apache_commons_codec_language_bm_Rule
+* Error while initializing target class: java.lang.ExceptionInInitializerError
+[MASTER] 09:11:42.119 [logback-2] ERROR TestSuiteGenerator - Problem for org.apache.commons.codec.language.bm.Rule. Full stack:
+java.lang.ExceptionInInitializerError: null
+	at org.apache.commons.codec.language.bm.Rule.<clinit>(Rule.java)
+	at java.base/java.lang.Class.forName0(Native Method)
+	at java.base/java.lang.Class.forName(Class.java:398)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at org.evosuite.testcase.statements.MethodStatement$1.execute(MethodStatement.java:261)
+	at org.evosuite.testcase.statements.AbstractStatement.exceptionHandler(AbstractStatement.java:172)
+	at org.evosuite.testcase.statements.MethodStatement.execute(MethodStatement.java:224)
+	at org.evosuite.testcase.execution.TestRunnable.executeStatements(TestRunnable.java:295)
+	at org.evosuite.testcase.execution.TestRunnable.call(TestRunnable.java:201)
+	at org.evosuite.testcase.execution.TestRunnable.call(TestRunnable.java:54)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+Caused by: org.evosuite.runtime.mock.java.lang.MockIllegalArgumentException: Unable to resolve required resource: org/apache/commons/codec/language/bm/ash_languages.txt
+	at org.apache.commons.codec.language.bm.Languages.getInstance(Languages.java:175)
+	at <evosuite>.<evosuite>(<evosuite>)
+	at <evosuite>.<evosuite>(<evosuite>)
+* Computation finished
+[MASTER] 09:11:42.276 [main] ERROR SearchStatistics - No statistics has been saved because EvoSuite failed to generate any test case
+[MASTER] 09:11:42.386 [main] ERROR TestGeneration - failed to write statistics data

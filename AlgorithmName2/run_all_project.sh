@@ -19,7 +19,6 @@ ONLY_PROJECT="${ONLY_PROJECT:-}"
 ONLY_BUG="${ONLY_BUG:-}"
 
 # name : number of bugs : target class : Maven artifactId under groupId "defects4j"
-# CHECK the artifact names with:  ls "$M2_REPO/defects4j"
 PROJECTS=(
     "mockito:38:org.mockito.internal.invocation.InvocationMatcher:mockito-buggy"
     "cli:39:org.apache.commons.cli.CommandLine:cli-buggy"
@@ -42,7 +41,6 @@ PROJECTS=(
 
 mkdir -p "$OUT" "$WORK_ROOT"
 
-# instructions covered,total for the target class (and its inner classes) from jacoco.csv
 cov_of() {
     local csv=$1 fqcn=$2
     local pkg="${fqcn%.*}" cls="${fqcn##*.}"
@@ -50,14 +48,14 @@ cov_of() {
         'NR>1 && $2==p && ($3==c || index($3, c "$")==1) {m+=$4; v+=$5} END {printf "%d,%d", v, m+v}' "$csv"
 }
 
-finish() {  # tmp dest proj i status covered total seconds
-    local tmp=$1 dest=$2 proj=$3 i=$4 status=$5 cov=$6 tot=$7 secs=$8
+finish() {
+    local tmp=$1 dest=$2 proj=$3 i=$4 status=$5 cov=$6 tot=$7 cov_text=$8 secs=$9
     echo "$status" > "$tmp/status"
-    echo "$proj,$i,$status,$cov,$tot,$secs" > "$tmp/summary.line"
+    echo "$proj,$i,$status,$cov,$tot,$cov_text,$secs" > "$tmp/summary.line"
     rm -rf "$dest"
     mv "$tmp" "$dest"
     touch "$dest/.done"
-    printf '[%s] %-15s bug_%-4s %-12s cov=%s/%s (%ss)\n' "$(date +%T)" "$proj" "$i" "$status" "$cov" "$tot" "$secs"
+    printf '[%s] %-15s bug_%-4s %-12s %s (%ss)\n' "$(date +%T)" "$proj" "$i" "$status" "$cov_text" "$secs"
 }
 
 run_one() {
@@ -66,13 +64,17 @@ run_one() {
     local dest="$OUT/$proj/bug_$i"
     local tmp="$OUT/$proj/.bug_${i}.tmp"
 
-    [ -f "$dest/.done" ] && return 0
+    # ข้ามทันทีถ้าเคยรัน PASS ไปแล้วในรอบก่อนหน้า
+    if [ -f "$dest/.done" ] && [ "$(cat "$dest/status" 2>/dev/null)" = "PASS" ]; then
+        return 0
+    fi
+
     mkdir -p "$OUT/$proj"
     rm -rf "$tmp"; mkdir -p "$tmp"
 
     if [ ! -d "$M2_REPO/defects4j/$art/$ver" ]; then
         echo "artifact missing: defects4j:$art:$ver in $M2_REPO" > "$tmp/run.log"
-        finish "$tmp" "$dest" "$proj" "$i" "NO_ARTIFACT" 0 0 0
+        finish "$tmp" "$dest" "$proj" "$i" "NO_ARTIFACT" 0 0 "N/A (0/0)" 0
         return 0
     fi
 
@@ -95,7 +97,6 @@ run_one() {
     [ -d "$work/target/surefire-reports" ] && cp -r "$work/target/surefire-reports" "$tmp/test_logs"
     ls "$work"/crash-* >/dev/null 2>&1 && { mkdir -p "$tmp/crashes"; cp "$work"/crash-* "$tmp/crashes/"; }
 
-    # classify the outcome
     local status
     if [ "$rc" -eq 124 ]; then
         status="TIMEOUT"
@@ -106,6 +107,8 @@ run_one() {
         status="NO_METHODS"
     elif ! ls "$tmp"/test_logs/TEST-*.xml >/dev/null 2>&1; then
         status="NO_TESTS"
+    elif grep -q "Cannot load" "$tmp"/test_logs/TEST-*.xml 2>/dev/null; then
+        status="LOAD_FAIL"
     elif grep -qE '<(failure|error)' "$tmp"/test_logs/TEST-*.xml; then
         status="CRASH"
     else
@@ -117,7 +120,12 @@ run_one() {
         IFS=, read -r cov tot <<< "$(cov_of "$tmp/coverage_report/jacoco.csv" "$target")"
     fi
 
-    finish "$tmp" "$dest" "$proj" "$i" "$status" "$cov" "$tot" "$secs"
+    local cov_text="N/A ($cov/$tot)"
+    if [ "$tot" -gt 0 ]; then
+        cov_text="$(awk -v c="$cov" -v t="$tot" 'BEGIN { printf "%.2f%% (%d/%d instructions)", 100*c/t, c, t }')"
+    fi
+
+    finish "$tmp" "$dest" "$proj" "$i" "$status" "$cov" "$tot" "$cov_text" "$secs"
     rm -rf "$work"
 }
 
@@ -140,8 +148,8 @@ echo "JOBS=$JOBS  TIMEOUT=$TIMEOUT  WORK_ROOT=$WORK_ROOT  M2_REPO=$M2_REPO"
 
 # summary
 {
-    echo "project,bug,status,target_instr_covered,target_instr_total,seconds"
-    cat "$OUT"/*/bug_*/summary.line 2>/dev/null | sort -t, -k1,1 -k2,2n
+    echo "project,bug,status,target_instr_covered,target_instr_total,target_instr_coverage_text,seconds"
+    cat "$OUT"/*/bug_*/summary.line 2>/dev/null | awk -F, 'BEGIN { OFS="," } NF==6 { if ($5 > 0) display=sprintf("%.2f%% (%d/%d instructions)", 100*$4/$5, $4, $5); else display=sprintf("N/A (%d/%d)", $4, $5); print $1,$2,$3,$4,$5,display,$6; next } { print }' | sort -t, -k1,1 -k2,2n
 } > "$OUT/summary.csv"
 
 echo "=================================================="

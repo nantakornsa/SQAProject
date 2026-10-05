@@ -1,0 +1,113 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Chart
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Chart
+       Program: jfreechart
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Chart/Chart.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Svn
+    Repository: file:///Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jfreechart/trunk
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Chart/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Chart-8
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+1085
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-06-10 02:19:11 -0700 
+--------------------------------------------------------------------------------
+Bug report id:
+UNKNOWN
+--------------------------------------------------------------------------------
+Bug report url:
+UNKNOWN
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jfree.data.time.junit.WeekTests::testConstructor
+   --> junit.framework.AssertionFailedError: expected:<35> but was:<34>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jfree.data.time.Week
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jfree.data.time.Week ===
+diff --git a/source/org/jfree/data/time/Week.java b/source/org/jfree/data/time/Week.java
+index 3cc4138..8228589 100644
+--- a/source/org/jfree/data/time/Week.java
++++ b/source/org/jfree/data/time/Week.java
+@@ -172,7 +172,7 @@ public class Week extends RegularTimePeriod implements Serializable {
+      */
+     public Week(Date time, TimeZone zone) {
+         // defer argument checking...
+-        this(time, RegularTimePeriod.DEFAULT_TIME_ZONE, Locale.getDefault());
++        this(time, zone, Locale.getDefault());
+     }
+ 
+     /**
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testConstructor() {
+        Locale savedLocale = Locale.getDefault();
+        TimeZone savedZone = TimeZone.getDefault();
+        Locale.setDefault(new Locale("da", "DK"));
+        TimeZone.setDefault(TimeZone.getTimeZone("Europe/Copenhagen"));
+        GregorianCalendar cal = (GregorianCalendar) Calendar.getInstance(
+                TimeZone.getDefault(), Locale.getDefault());
+
+        // first day of week is monday
+        assertEquals(Calendar.MONDAY, cal.getFirstDayOfWeek());
+        cal.set(2007, Calendar.AUGUST, 26, 1, 0, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        Date t = cal.getTime();
+        Week w = new Week(t, TimeZone.getTimeZone("Europe/Copenhagen"));
+        assertEquals(34, w.getWeek());
+
+        Locale.setDefault(Locale.US);
+        TimeZone.setDefault(TimeZone.getTimeZone("US/Detroit"));
+        cal = (GregorianCalendar) Calendar.getInstance(TimeZone.getDefault());
+        // first day of week is Sunday
+        assertEquals(Calendar.SUNDAY, cal.getFirstDayOfWeek());
+        cal.set(2007, Calendar.AUGUST, 26, 1, 0, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+
+        t = cal.getTime();
+        w = new Week(t, TimeZone.getTimeZone("Europe/Copenhagen"));
+        assertEquals(35, w.getWeek());
+        w = new Week(t, TimeZone.getTimeZone("Europe/Copenhagen"),
+                new Locale("da", "DK"));
+        assertEquals(34, w.getWeek());
+
+        Locale.setDefault(savedLocale);
+        TimeZone.setDefault(savedZone);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

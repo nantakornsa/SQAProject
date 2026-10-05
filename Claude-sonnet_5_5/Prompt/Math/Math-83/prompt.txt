@@ -1,0 +1,98 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-83
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+dbdff0758b40601238e88b2cffbf7ceb58ed8977
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-08-21 23:07:42 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-286
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-286
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.optimization.linear.SimplexSolverTest::testMath286
+   --> junit.framework.AssertionFailedError: expected:<6.9> but was:<4.6000000000000005>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.optimization.linear.SimplexTableau
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.optimization.linear.SimplexTableau ===
+diff --git a/src/main/java/org/apache/commons/math/optimization/linear/SimplexTableau.java b/src/main/java/org/apache/commons/math/optimization/linear/SimplexTableau.java
+index 0cf01af09..b38776718 100644
+--- a/src/main/java/org/apache/commons/math/optimization/linear/SimplexTableau.java
++++ b/src/main/java/org/apache/commons/math/optimization/linear/SimplexTableau.java
+@@ -289,7 +289,7 @@ class SimplexTableau implements Serializable {
+      */
+     private Integer getBasicRow(final int col, boolean ignoreObjectiveRows) {
+         Integer row = null;
+-        int start = getNumObjectiveFunctions();
++        int start = ignoreObjectiveRows ? getNumObjectiveFunctions() : 0;
+         for (int i = start; i < getHeight(); i++) {
+             if (MathUtils.equals(getEntry(i, col), 1.0, epsilon) && (row == null)) {
+                 row = i;
+@@ -338,11 +338,11 @@ class SimplexTableau implements Serializable {
+      */
+     protected RealPointValuePair getSolution() {
+       double[] coefficients = new double[getOriginalNumDecisionVariables()];
+-      Integer negativeVarBasicRow = getBasicRow(getNegativeDecisionVariableOffset());
++      Integer negativeVarBasicRow = getBasicRowForSolution(getNegativeDecisionVariableOffset());
+       double mostNegative = negativeVarBasicRow == null ? 0 : getEntry(negativeVarBasicRow, getRhsOffset());
+       Set<Integer> basicRows = new HashSet<Integer>();
+       for (int i = 0; i < coefficients.length; i++) {
+-          Integer basicRow = getBasicRow(getNumObjectiveFunctions() + i);
++          Integer basicRow = getBasicRowForSolution(getNumObjectiveFunctions() + i);
+           if (basicRows.contains(basicRow)) {
+               // if multiple variables can take a given value 
+               // then we choose the first and set the rest equal to 0
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testMath286() throws OptimizationException {
+      LinearObjectiveFunction f = new LinearObjectiveFunction(new double[] { 0.2, 0.3 }, 0 );
+      Collection<LinearConstraint> constraints = new ArrayList<LinearConstraint>();
+      constraints.add(new LinearConstraint(new double[] { 1, 1 }, Relationship.EQ, 23.0));
+
+      RealPointValuePair solution = new SimplexSolver().optimize(f, constraints, GoalType.MAXIMIZE, true);
+      assertEquals(6.9, solution.getValue(), .0000001);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

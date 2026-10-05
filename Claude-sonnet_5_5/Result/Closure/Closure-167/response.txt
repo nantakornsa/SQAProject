@@ -1,0 +1,22 @@
+```java
+package com.google.javascript.rhino.jstype;
+
+public class RestrictedUnknownToBooleanTest extends BaseJSTypeTestCase {
+
+  public void testRestrictedUnknownTypeGivenToBooleanTrue() throws Exception {
+    JSType restricted = UNKNOWN_TYPE.getRestrictedTypeGivenToBooleanOutcome(true);
+    assertSame(CHECKED_UNKNOWN_TYPE, restricted);
+  }
+
+  public void testRestrictedUnknownTypeGivenToBooleanFalse() throws Exception {
+    JSType restricted = UNKNOWN_TYPE.getRestrictedTypeGivenToBooleanOutcome(false);
+    assertSame(UNKNOWN_TYPE, restricted);
+  }
+}
+```
+
+I haven't compiled or run this. It relies on `BaseJSTypeTestCase` exposing `UNKNOWN_TYPE` and `CHECKED_UNKNOWN_TYPE` as fields, which I recalled from memory rather than checked.
+
+On the buggy version, `UNKNOWN_TYPE.getRestrictedTypeGivenToBooleanOutcome(true)` returns the unknown type itself, so the first test fails. The fixed `JSType` returns `CHECKED_UNKNOWN_TYPE` for that case, so it passes. The second test checks that the `false` outcome still returns `UNKNOWN_TYPE`, and I expect it to pass on both versions.
+
+This covers only the `JSType` half of the fix. It does not reproduce `testIssue783` or `testMissingProperty20`, which exercise the `SemanticReverseAbstractInterpreter` change through `TypeCheckTest`'s type-checking helper.

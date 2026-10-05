@@ -1,0 +1,41 @@
+```java
+package com.google.javascript.jscomp;
+
+/**
+ * Regression test for aliases of loop-scoped variables being inlined
+ * incorrectly (Closure issue 174).
+ */
+public class InlineVariablesTest extends CompilerTestCase {
+
+  public InlineVariablesTest() {
+    super("function externs() {}");
+  }
+
+  @Override
+  protected CompilerPass getProcessor(final Compiler compiler) {
+    return new InlineVariables(
+        compiler, InlineVariables.Mode.ALL, true);
+  }
+
+  @Override
+  protected int getNumRepetitions() {
+    return 1;
+  }
+
+  public void testNoInlineAliasesInLoop() {
+    testSame(
+        "function f() { " +
+        "  for (var i = 0; i < 5; i++) {" +
+        "    var x = extern();" +
+        "    (function() {" +
+        "       var y = x; window.setTimeout(function() { extern(y); }, 0);" +
+        "     })();" +
+        "  }" +
+        "}");
+  }
+}
+```
+
+I could not check this against the repository. The `InlineVariables(compiler, Mode.ALL, true)` constructor and the `CompilerTestCase` helpers (`getNumRepetitions`, the externs-string constructor) are written from memory of the 2010 code, so they may need adjusting to compile.
+
+I expect the test to fail on the buggy version because `y` is inlined as `x` inside the loop, so `testSame` sees changed output. On the fixed version, the new loop check in `ReferenceCollectingCallback` should stop that inlining, so the output matches the input.

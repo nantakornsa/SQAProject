@@ -1,0 +1,34 @@
+This test compiles the triggering code through the full compiler with dead assignment elimination enabled, instead of calling `LiveVariablesAnalysis` directly. I did this because I couldn't reliably recall the internal helper APIs, such as the `ControlFlowAnalysis` constructor signature, at this revision. I haven't compiled or run it against either version.
+
+On the buggy version, `LiveVariablesAnalysis` should throw `IllegalStateException` for `for (a[1] in foo)`. The compile should then fail with an exception, which fails the test. On the fixed version, the compile should succeed.
+
+```java
+package com.google.javascript.jscomp;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for an expression (non-name) on the left-hand side of a
+ * for-in loop in {@link LiveVariablesAnalysis}.
+ */
+public class LiveVariableAnalysisTest extends TestCase {
+
+  public void testExpressionInForIn() {
+    CompilerOptions options = new CompilerOptions();
+    // Dead assignment elimination runs LiveVariablesAnalysis.
+    options.deadAssignmentElimination = true;
+
+    Compiler compiler = new Compiler();
+    String code =
+        "function f(foo) { var a = [0]; X: for (a[1] in foo) { } return a; }";
+
+    Result result = compiler.compile(
+        JSSourceFile.fromCode("externs", ""),
+        JSSourceFile.fromCode("input", code),
+        options);
+
+    assertTrue(result.success);
+    assertEquals(0, compiler.getErrorCount());
+  }
+}
+```

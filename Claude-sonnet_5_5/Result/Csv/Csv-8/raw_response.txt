@@ -1,0 +1,69 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791053754-BEOjCb9Mu7dE4Pw8F5g3","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1631,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" fix moves duplicate"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"-"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"header detection into"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" the `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"CSVFormat` const"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ructor, so it"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" throws `IllegalAr"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"gumentException` as"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" soon as `withHeader"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"` buil"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ds the format. The buggy version only threw `IllegalStateException`, and only when `validate()` ran. A test that calls `withHeader(\"A\", \"A\")` without `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"validate()` therefore fails on the buggy version, because no exception is thrown at all. A test that also calls `validate()` fails on the buggy version because of the wrong exception type. Both pass on the fixed version."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\nThe project uses JUnit 4 (`org.junit.Test`, `Assert`), so I wrote the test in that style.\n\n```java\npackage org.apache.commons.csv;\n\nimport static org.junit.Assert.assertEquals;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\nimport static org.junit.Assert.fail;\n\nimport org.junit.Test;\n\npublic class CSVFormatDuplicateHeaderTest {\n\n    @Test(expected = IllegalArgumentException.class)\n    public void testDuplicateHeaderElementsThrowIllegalArgumentException"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"() {\n        CSVFormat.DEFAULT.withHeader(\"A\", \"A\").validate();\n    }\n\n    @Test\n    public void testDuplicateHeaderRejectedOnCreation() {\n        try {\n            CSVFormat.DEFAULT.withHeader(\"A\", \"B"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\", \"A\");\n            fail(\"Expected IllegalArgumentException\");\n        } catch (final IllegalArgumentException e) {\n            // expected: duplicate detected when the format is constructed\n        }\n    }\n\n    @Test\n    public void testD"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"istinctHeaderElementsAccepted() {\n        final CSVFormat format = CSVFormat.DEFAULT.withHeader(\"A\", \"B\");\n        format.validate();\n        assertEquals(2, format.getHeader().length);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1631,"output_tokens":598,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.009242,"is_byok":false,"cost_details":{"upstream_inference_cost":0.009242,"upstream_inference_prompt_cost":0.003262,"upstream_inference_completions_cost":0.00598}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

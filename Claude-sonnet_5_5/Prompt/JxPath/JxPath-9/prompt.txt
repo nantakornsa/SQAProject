@@ -1,0 +1,200 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JxPath
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JxPath
+       Program: commons-jxpath
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JxPath/JxPath.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-jxpath.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JxPath/active-bugs.csv
+Number of bugs: 22
+--------------------------------------------------------------------------------
+
+Summary for Bug: JxPath-9
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+40689aa2f3e6e601b51f6c590dbaf079325da772
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2007-07-11 19:29:57 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+JXPATH-95
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/JXPATH-95
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.jxpath.ri.compiler.CoreOperationTest::testNan
+   --> junit.framework.AssertionFailedError: Evaluating <$nan = $nan> expected:<false> but was:<true>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.jxpath.ri.compiler.CoreOperationCompare
+ - org.apache.commons.jxpath.ri.compiler.CoreOperationEqual
+ - org.apache.commons.jxpath.ri.compiler.CoreOperationNotEqual
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.jxpath.ri.compiler.CoreOperationCompare ===
+diff --git a/src/java/org/apache/commons/jxpath/ri/compiler/CoreOperationCompare.java b/src/java/org/apache/commons/jxpath/ri/compiler/CoreOperationCompare.java
+index 26875b8..e083ab3 100644
+--- a/src/java/org/apache/commons/jxpath/ri/compiler/CoreOperationCompare.java
++++ b/src/java/org/apache/commons/jxpath/ri/compiler/CoreOperationCompare.java
+@@ -34,12 +34,20 @@ import org.apache.commons.jxpath.ri.axes.SelfContext;
+  * @version $Revision$ $Date$
+  */
+ public abstract class CoreOperationCompare extends CoreOperation {
++    private boolean invert;
+ 
+     public CoreOperationCompare(Expression arg1, Expression arg2) {
++        this(arg1, arg2, false);
++    }
+ 
++    protected CoreOperationCompare(Expression arg1, Expression arg2, boolean invert) {
+         super(new Expression[] { arg1, arg2 });
++        this.invert = invert;
+     }
+ 
++    public Object computeValue(EvalContext context) {
++        return equal(context, args[0], args[1]) ? Boolean.TRUE : Boolean.FALSE;
++    }
+ 
+     protected int getPrecedence() {
+         return 2;
+@@ -120,11 +128,6 @@ public abstract class CoreOperationCompare extends CoreOperation {
+     }
+ 
+     protected boolean equal(Object l, Object r) {
+-        if (l instanceof Pointer && r instanceof Pointer) {
+-            if (l.equals(r)) {
+-                return true;
+-            }
+-        }
+         if (l instanceof Pointer) {
+             l = ((Pointer) l).getValue();
+         }
+@@ -133,21 +136,28 @@ public abstract class CoreOperationCompare extends CoreOperation {
+             r = ((Pointer) r).getValue();
+         }
+ 
+-        if (l == r) {
+-            return true;
+-        }
++        boolean result;
+         if (l instanceof Boolean || r instanceof Boolean) {
+-            return (InfoSetUtil.booleanValue(l) == InfoSetUtil.booleanValue(r));
+-            }
++            result = l == r || InfoSetUtil.booleanValue(l) == InfoSetUtil.booleanValue(r);
++        } else if (l instanceof Number || r instanceof Number) {
+             //if either side is NaN, no comparison returns true:
+-        if (l instanceof Number || r instanceof Number) {
+-            return (InfoSetUtil.doubleValue(l) == InfoSetUtil.doubleValue(r));
++            double ld = InfoSetUtil.doubleValue(l);
++            if (Double.isNaN(ld)) {
++                return false;
+             }
++            double rd = InfoSetUtil.doubleValue(r);
++            if (Double.isNaN(rd)) {
++                return false;
++            }
++            result = ld == rd;
++        } else {
+             if (l instanceof String || r instanceof String) {
+-            return (
+-                InfoSetUtil.stringValue(l).equals(InfoSetUtil.stringValue(r)));
++                l = InfoSetUtil.stringValue(l);
++                r = InfoSetUtil.stringValue(r);
++            }
++            result = l == r || l != null && l.equals(r);
+         }
+-        return l != null && l.equals(r);
++        return result ^ invert;
+     }
+ 
+ }
+
+=== MODIFIED SOURCE: org.apache.commons.jxpath.ri.compiler.CoreOperationEqual ===
+diff --git a/src/java/org/apache/commons/jxpath/ri/compiler/CoreOperationEqual.java b/src/java/org/apache/commons/jxpath/ri/compiler/CoreOperationEqual.java
+index baca531..801e7fb 100644
+--- a/src/java/org/apache/commons/jxpath/ri/compiler/CoreOperationEqual.java
++++ b/src/java/org/apache/commons/jxpath/ri/compiler/CoreOperationEqual.java
+@@ -28,9 +28,6 @@ public class CoreOperationEqual extends CoreOperationCompare {
+         super(arg1, arg2);
+     }
+ 
+-    public Object computeValue(org.apache.commons.jxpath.ri.EvalContext context) {
+-        return equal(context, args[0], args[1]) ? Boolean.TRUE : Boolean.FALSE;
+-    }
+     public String getSymbol() {
+         return "=";
+     }
+
+=== MODIFIED SOURCE: org.apache.commons.jxpath.ri.compiler.CoreOperationNotEqual ===
+diff --git a/src/java/org/apache/commons/jxpath/ri/compiler/CoreOperationNotEqual.java b/src/java/org/apache/commons/jxpath/ri/compiler/CoreOperationNotEqual.java
+index 6754f46..aad3f5f 100644
+--- a/src/java/org/apache/commons/jxpath/ri/compiler/CoreOperationNotEqual.java
++++ b/src/java/org/apache/commons/jxpath/ri/compiler/CoreOperationNotEqual.java
+@@ -25,12 +25,9 @@ package org.apache.commons.jxpath.ri.compiler;
+ public class CoreOperationNotEqual extends CoreOperationCompare {
+ 
+     public CoreOperationNotEqual(Expression arg1, Expression arg2) {
+-        super(arg1, arg2);
++        super(arg1, arg2, true);
+     }
+ 
+-    public Object computeValue(org.apache.commons.jxpath.ri.EvalContext context) {
+-        return equal(context, args[0], args[1]) ? Boolean.FALSE : Boolean.TRUE;
+-    }
+     public String getSymbol() {
+         return "!=";
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testNan() {
+        assertXPathValue(context, "$nan > $nan", Boolean.FALSE, Boolean.class);
+        assertXPathValue(context, "$nan < $nan", Boolean.FALSE, Boolean.class);
+        assertXPathValue(context, "$nan >= $nan", Boolean.FALSE, Boolean.class);
+        assertXPathValue(context, "$nan <= $nan", Boolean.FALSE, Boolean.class);
+        assertXPathValue(context, "$nan >= $nan and $nan <= $nan", Boolean.FALSE, Boolean.class);
+        assertXPathValue(context, "$nan = $nan", Boolean.FALSE, Boolean.class);
+        assertXPathValue(context, "$nan != $nan", Boolean.FALSE, Boolean.class);
+        assertXPathValue(context, "$nan > 0", Boolean.FALSE, Boolean.class);
+        assertXPathValue(context, "$nan < 0", Boolean.FALSE, Boolean.class);
+        assertXPathValue(context, "$nan >= 0", Boolean.FALSE, Boolean.class);
+        assertXPathValue(context, "$nan <= 0", Boolean.FALSE, Boolean.class);
+        assertXPathValue(context, "$nan >= 0 and $nan <= 0", Boolean.FALSE, Boolean.class);
+        assertXPathValue(context, "$nan = 0", Boolean.FALSE, Boolean.class);
+        assertXPathValue(context, "$nan != 0", Boolean.FALSE, Boolean.class);
+        assertXPathValue(context, "$nan > 1", Boolean.FALSE, Boolean.class);
+        assertXPathValue(context, "$nan < 1", Boolean.FALSE, Boolean.class);
+        assertXPathValue(context, "$nan >= 1", Boolean.FALSE, Boolean.class);
+        assertXPathValue(context, "$nan <= 1", Boolean.FALSE, Boolean.class);
+        assertXPathValue(context, "$nan >= 1 and $nan <= 1", Boolean.FALSE, Boolean.class);
+        assertXPathValue(context, "$nan = 1", Boolean.FALSE, Boolean.class);
+        assertXPathValue(context, "$nan != 1", Boolean.FALSE, Boolean.class);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

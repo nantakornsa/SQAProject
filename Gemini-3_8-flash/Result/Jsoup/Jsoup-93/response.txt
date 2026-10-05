@@ -1,0 +1,28 @@
+```java
+package org.jsoup.nodes;
+
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
+import org.junit.Test;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+
+public class FormElementButtonRegressionTest {
+
+    @Test
+    public void testButtonInputTypeIgnoredInFormData() {
+        String html = "<form>" +
+                "<input name='text' value='val'>" +
+                "<input name='btn' type='button' value='Click'>" +
+                "</form>";
+        Document doc = Jsoup.parse(html);
+        FormElement form = (FormElement) doc.select("form").first();
+        List<Connection.KeyVal> data = form.formData();
+
+        assertEquals(1, data.size());
+        assertEquals("text=val", data.get(0).toString());
+    }
+}
+```

@@ -1,0 +1,66 @@
+```java
+package org.apache.commons.cli2.bug;
+
+import java.util.Arrays;
+import java.util.List;
+
+import junit.framework.TestCase;
+
+import org.apache.commons.cli2.CommandLine;
+import org.apache.commons.cli2.Group;
+import org.apache.commons.cli2.Option;
+import org.apache.commons.cli2.builder.ArgumentBuilder;
+import org.apache.commons.cli2.builder.DefaultOptionBuilder;
+import org.apache.commons.cli2.builder.GroupBuilder;
+import org.apache.commons.cli2.commandline.Parser;
+import org.apache.commons.cli2.util.HelpFormatter;
+
+public class BugCLI158Test extends TestCase {
+
+    private Parser createDefaultValueParser(String[] defaultArgs) {
+        final DefaultOptionBuilder optionBuilder = new DefaultOptionBuilder();
+        final ArgumentBuilder argumentBuilder = new ArgumentBuilder();
+        final GroupBuilder groupBuilder = new GroupBuilder();
+
+        Option argumentOption =
+            optionBuilder
+                .withShortName("b")
+                .withLongName("b")
+                .withArgument(
+                    argumentBuilder
+                        .withName("b")
+                        .withMinimum(1)
+                        .withMaximum(3)
+                        .withDefaults(Arrays.asList(defaultArgs))
+                        .create())
+                .create();
+
+        Group options = groupBuilder.withOption(argumentOption).create();
+
+        Parser parser = new Parser();
+        parser.setHelpFormatter(new HelpFormatter());
+        parser.setGroup(options);
+        return parser;
+    }
+
+    public void testSingleOptionSingleArgument() throws Exception {
+        Parser parser = createDefaultValueParser(new String[]{"100", "1000"});
+        String enteredValue1 = "1";
+        String[] args = new String[]{"-b", enteredValue1};
+        CommandLine cl = parser.parse(args);
+        CommandLine cmd = cl;
+        assertNotNull(cmd);
+        List b = cmd.getValues("-b");
+        assertEquals("[" + enteredValue1 + ", 1000]", b + "");
+    }
+
+    public void testSingleOptionMaximumNumberOfArgument() throws Exception {
+        Parser parser = createDefaultValueParser(new String[]{"100", "1000", "10000"});
+        String[] args = new String[]{"-b", "1", "2"};
+        CommandLine cmd = parser.parse(args);
+        assertNotNull(cmd);
+        List b = cmd.getValues("-b");
+        assertEquals("[1, 2, 10000]", b + "");
+    }
+}
+```

@@ -1,0 +1,104 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-48
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+fe32b967f6b029a10ec1d40f7e12c8b37ba32ee8
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-05-24 22:15:03 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1223
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1223
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.ser.TestFeatures::testVisibilityFeatures
+   --> junit.framework.AssertionFailedError: Should find 1 property, not 2; properties = [[Property 'name'; ctors: null, field(s): null, getter(s): null, setter(s): [method com.fasterxml.jackson.databind.ser.TestFeatures$TCls#setName(1 params)][visible=true,ignore=false,explicitName=false]], [Property 'groupname'; ctors: null, field(s): [field com.fasterxml.jackson.databind.ser.TestFeatures$TCls#groupname][visible=true,ignore=false,explicitName=true], getter(s): null, setter(s): null]]
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.DeserializationConfig
+ - com.fasterxml.jackson.databind.SerializationConfig
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.DeserializationConfig ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/DeserializationConfig.java b/src/main/java/com/fasterxml/jackson/databind/DeserializationConfig.java
+index e01b7dda7..58487eb03 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/DeserializationConfig.java
++++ b/src/main/java/com/fasterxml/jackson/databind/DeserializationConfig.java
+@@ -777,6 +777,12 @@ public final class DeserializationConfig
+         if (!isEnabled(MapperFeature.AUTO_DETECT_CREATORS)) {
+             vchecker = vchecker.withCreatorVisibility(Visibility.NONE);
+         }
++        if (!isEnabled(MapperFeature.AUTO_DETECT_GETTERS)) {
++            vchecker = vchecker.withGetterVisibility(Visibility.NONE);
++        }
++        if (!isEnabled(MapperFeature.AUTO_DETECT_IS_GETTERS)) {
++            vchecker = vchecker.withIsGetterVisibility(Visibility.NONE);
++        }
+         if (!isEnabled(MapperFeature.AUTO_DETECT_FIELDS)) {
+             vchecker = vchecker.withFieldVisibility(Visibility.NONE);
+         }
+
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.SerializationConfig ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/SerializationConfig.java b/src/main/java/com/fasterxml/jackson/databind/SerializationConfig.java
+index da192ee35..bf0c3f08b 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/SerializationConfig.java
++++ b/src/main/java/com/fasterxml/jackson/databind/SerializationConfig.java
+@@ -862,6 +862,12 @@ public final class SerializationConfig
+     {
+         VisibilityChecker<?> vchecker = super.getDefaultVisibilityChecker();
+         // then global overrides (disabling)
++        if (!isEnabled(MapperFeature.AUTO_DETECT_SETTERS)) {
++            vchecker = vchecker.withSetterVisibility(Visibility.NONE);
++        }
++        if (!isEnabled(MapperFeature.AUTO_DETECT_CREATORS)) {
++            vchecker = vchecker.withCreatorVisibility(Visibility.NONE);
++        }
+         if (!isEnabled(MapperFeature.AUTO_DETECT_GETTERS)) {
+             vchecker = vchecker.withGetterVisibility(Visibility.NONE);
+         }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testVisibilityFeatures() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

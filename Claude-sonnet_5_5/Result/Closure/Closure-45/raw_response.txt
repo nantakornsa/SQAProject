@@ -1,0 +1,99 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791201186-DMI08KV0zCEDlkCZ7ibz","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1823,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" test below"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" bel"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ongs in"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"RemoveUnused"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"VarsTest`, which"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" extends `CompilerT"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"estCase`. I ha"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ven't comp"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"iled or"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" run it. It is the project's own triggering test plus one extra case.\n\nIn the buggy version, `a.push(b = [])` is an assignment whose parent is a C"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ALL, so `maybeAliased` is true. The fix then also considers `maybeEscaped` when deciding whether to keep a variable that has property assigns. Without the fix, the assignment `b ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" []` is judged to be of a known value, and `b[0] = 1` is removed as unused.\n\nThe second case, `testIssue618_2`, covers the same pattern with a reference that escapes through an array"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" literal. It is my own addition and not taken from the bug report, so I haven't confirmed that it fails on the buggy version.\n\n```java\npackage"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" com.google.javascript.jscomp;\n\npublic class RemoveUnusedVarsTest extends CompilerTestCase {\n  private boolean removeGlobal = true;\n  private boolean preserveFunctionExpression"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Names = false;\n\n  public RemoveUnusedVarsTest() {\n    super(\"function alert() {}\");\n  }\n\n  @Override\n  protected void setUp() throws Exception {\n    super.setUp();\n    removeGlobal = true;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n    preserveFunctionExpressionNames = false;\n  }\n\n  @Override\n  protected CompilerPass getProcessor(final Compiler compiler) {\n    return new CompilerPass() {\n      @Override\n      public void process(Node externs, Node root) {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n        new RemoveUnusedVars(compiler, removeGlobal,\n            preserveFunctionExpressionNames).process(externs, root);\n      }\n    };\n  }\n\n  public void testIssue618_1() {\n    this.removeGlobal = false;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n    testSame(\n        \"function f() {\\n\" +\n        \"  var a = [], b;\\n\" +\n        \"  a.push(b = []);\\n\" +\n        \"  b[0] = 1;\\n\" +\n        \"  return a;\\n\" +\n        \"}\");\n  }\n\n  public void testIssue618_2() {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n    this.removeGlobal = false;\n    testSame(\n        \"function f() {\\n\" +\n        \"  var a = [], b;\\n\" +\n        \"  a.push(b = {});\\n\" +\n        \"  b.x = 1;\\n\" +\n        \"  return a;\\n\" +"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n        \"}\");\n  }\n}\n```\n\nThe class needs `import com.google.javascript.rhino.Node;` for the `Node` references in `getProcessor`."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Here is the complete file with that import added:\n\n```java\npackage com.google.javascript.jscomp;\n\nimport com.google.javascript.rhino.Node;\n\npublic class RemoveUnusedVarsTest extends CompilerTestCase {\n  private boolean removeG"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"lobal = true;\n  private boolean preserveFunctionExpressionNames = false;\n\n  public RemoveUnusedVarsTest() {\n    super(\"function alert() {}\");\n  }\n\n  @Override\n  protected void setUp() throws Exception {\n    super.setUp();\n    removeGlobal"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" = true;\n    preserveFunctionExpressionNames = false;\n  }\n\n  @Override\n  protected CompilerPass getProcessor(final Compiler compiler) {\n    return new CompilerPass() {\n      @Override\n      public void process(Node externs, Node root) {\n        new RemoveU"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"nusedVars(compiler, removeGlobal,\n            preserveFunctionExpressionNames).process(externs, root);\n      }\n    };\n  }\n\n  public void testIssue618_1() {\n    this.removeGlobal = false;\n    testSame(\n        \"function f() {\\n\" +\n        \"  "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"var a = [], b;\\n\" +\n        \"  a.push(b = []);\\n\" +\n        \"  b[0] = 1;\\n\" +\n        \"  return a;\\n\" +\n        \"}\");\n  }\n\n  public void testIssue618_2() {\n    this.removeGlobal = false;\n    testSame(\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\"function f() {\\n\" +\n        \"  var a = [], b;\\n\" +\n        \"  a.push(b = {});\\n\" +\n        \"  b.x = 1;\\n\" +\n        \"  return a;\\n\" +\n        \"}\");\n  }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1823,"output_tokens":1361,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.017256,"is_byok":false,"cost_details":{"upstream_inference_cost":0.017256,"upstream_inference_prompt_cost":0.003646,"upstream_inference_completions_cost":0.01361}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

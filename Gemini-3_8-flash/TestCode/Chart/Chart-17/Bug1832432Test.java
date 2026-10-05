@@ -1,0 +1,49 @@
+package org.jfree.data.time.junit;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.jfree.data.time.TimeSeries;
+
+/**
+ * Tests for the {@link TimeSeries} class to reproduce bug 1832432 / Chart-17.
+ */
+public class Bug1832432Test extends TestCase {
+
+    /**
+     * Returns the tests as a test suite.
+     *
+     * @return The test suite.
+     */
+    public static Test suite() {
+        return new TestSuite(Bug1832432Test.class);
+    }
+
+    /**
+     * Constructs a new test case.
+     *
+     * @param name  the test name.
+     */
+    public Bug1832432Test(String name) {
+        super(name);
+    }
+
+    /**
+     * Test cloning an empty time series. In the buggy version, clone() calls
+     * createCopy(0, getItemCount() - 1), which throws IllegalArgumentException
+     * when the series contains no items.
+     */
+    public void testCloneEmptySeries() {
+        TimeSeries s1 = new TimeSeries("Empty Series");
+        TimeSeries s2 = null;
+        try {
+            s2 = (TimeSeries) s1.clone();
+        }
+        catch (CloneNotSupportedException e) {
+            fail("CloneNotSupportedException should not be thrown.");
+        }
+        assertNotNull(s2);
+        assertEquals(s1, s2);
+        assertEquals(0, s2.getItemCount());
+    }
+}

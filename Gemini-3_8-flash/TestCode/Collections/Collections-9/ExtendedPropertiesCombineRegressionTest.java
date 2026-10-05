@@ -1,0 +1,24 @@
+package org.apache.commons.collections;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for COLLECTIONS-271: ExtendedProperties.combine() should not
+ * re-escape/process properties.
+ */
+public class ExtendedPropertiesCombineRegressionTest extends TestCase {
+
+    public ExtendedPropertiesCombineRegressionTest(String name) {
+        super(name);
+    }
+
+    public void testCollections271() {
+        ExtendedProperties props = new ExtendedProperties();
+        props.setProperty("test", "\\\\\\\\192.168.1.91\\\\test");
+        assertEquals("\\\\192.168.1.91\\test", props.getProperty("test"));
+
+        ExtendedProperties props2 = new ExtendedProperties();
+        props2.combine(props);
+        assertEquals("\\\\192.168.1.91\\test", props2.getProperty("test"));
+    }
+}

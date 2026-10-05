@@ -1,0 +1,84 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-33
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+2518e92a052d922d81d11e28b8e5205639fed9a7
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-10-06 13:46:11 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+305
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/305
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.parser.HtmlParserTest::handlesKnownEmptyBlocks
+   --> junit.framework.AssertionFailedError: expected:<...src="/foo"></script>[<div id="2"><img /><img /></div><a id="3"></a><i></i><foo /><foo>One</foo> <hr /> hr text <hr />] hr text two> but was:<...src="/foo"></script>[&lt;div id=2&gt;&lt;img /&gt;&lt;img&gt;&lt;/div&gt;&lt;a id=3 /&gt;&lt;i /&gt;&lt;foo /&gt;&lt;foo&gt;One&lt;/foo&gt; &lt;hr /&gt; hr text &lt;hr&gt;] hr text two>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.parser.HtmlTreeBuilder
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.parser.HtmlTreeBuilder ===
+diff --git a/src/main/java/org/jsoup/parser/HtmlTreeBuilder.java b/src/main/java/org/jsoup/parser/HtmlTreeBuilder.java
+index 975411ba..e134a581 100644
+--- a/src/main/java/org/jsoup/parser/HtmlTreeBuilder.java
++++ b/src/main/java/org/jsoup/parser/HtmlTreeBuilder.java
+@@ -159,6 +159,7 @@ class HtmlTreeBuilder extends TreeBuilder {
+         if (startTag.isSelfClosing()) {
+             Element el = insertEmpty(startTag);
+             stack.add(el);
++            tokeniser.transition(TokeniserState.Data); // handles <script />, otherwise needs breakout steps from script data
+             tokeniser.emit(new Token.EndTag(el.tagName()));  // ensure we get out of whatever state we are in. emitted for yielded processing
+             return el;
+         }
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void handlesKnownEmptyBlocks() {
+        // if a known tag, allow self closing outside of spec, but force an end tag. unknown tags can be self closing.
+        String h = "<div id='1' /><script src='/foo' /><div id=2><img /><img></div><a id=3 /><i /><foo /><foo>One</foo> <hr /> hr text <hr> hr text two";
+        Document doc = Jsoup.parse(h);
+        assertEquals("<div id=\"1\"></div><script src=\"/foo\"></script><div id=\"2\"><img /><img /></div><a id=\"3\"></a><i></i><foo /><foo>One</foo> <hr /> hr text <hr /> hr text two", TextUtil.stripNewlines(doc.body().html()));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

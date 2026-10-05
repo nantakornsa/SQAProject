@@ -1,0 +1,33 @@
+package org.apache.commons.compress.archivers.cpio;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import junit.framework.TestCase;
+
+public class CpioArchiveOutputStreamTest extends TestCase {
+
+    public void testCloseWithoutFinishWritesTrailer() throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        CpioArchiveOutputStream out = new CpioArchiveOutputStream(baos);
+
+        CpioArchiveEntry entry = new CpioArchiveEntry("test.txt", 4);
+        out.putArchiveEntry(entry);
+        out.write(new byte[] { 't', 'e', 's', 't' });
+        out.closeArchiveEntry();
+
+        // Calling close() without explicitly calling finish()
+        out.close();
+
+        // If the trailer was written by close(), CpioArchiveInputStream should be able
+        // to read all entries and terminate cleanly without throwing EOFException.
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        CpioArchiveInputStream in = new CpioArchiveInputStream(bais);
+
+        CpioArchiveEntry readEntry = in.getNextCPIOEntry();
+        assertNotNull("Expected entry 'test.txt'", readEntry);
+        assertEquals("test.txt", readEntry.getName());
+
+        assertNull("Expected EOF/null after reading all entries", in.getNextCPIOEntry());
+        in.close();
+    }
+}

@@ -1,0 +1,39 @@
+This test compiles the triggering snippet through a real `Compiler` with only `collapseProperties` enabled and compares the output to the same code compiled with no passes. I have not compiled or run it against either version.
+
+On the buggy version, the aliased function `a` still has its properties collapsed, so the output differs from the baseline. On the fixed version, `GlobalNamespace` stops collapsing properties of an aliased function, so the output matches the baseline.
+
+I used the `Compiler` API directly instead of extending `CompilerTestCase`. I couldn't confirm the `CollapseProperties` constructor signature for this revision, and going through `CompilerOptions` avoids guessing it. The `Compiler.compile` and `JSSourceFile.fromCode` calls assume the single-file overloads of that era.
+
+```java
+package com.google.javascript.jscomp;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test: properties of an aliased function must not be collapsed,
+ * even when they are modified from a local scope.
+ */
+public class CollapsePropertiesAliasedFunctionRegressionTest extends TestCase {
+
+  private static final String EXTERNS = "var window;";
+
+  private String compile(String js, boolean collapse) {
+    Compiler compiler = new Compiler();
+    CompilerOptions options = new CompilerOptions();
+    options.collapseProperties = collapse;
+    compiler.compile(
+        JSSourceFile.fromCode("externs", EXTERNS),
+        JSSourceFile.fromCode("input", js),
+        options);
+    return compiler.toSource();
+  }
+
+  public void testAddPropertyToChildOfUncollapsibleFunctionInLocalScope() {
+    String js = "function a() {} a.b = {x: 0}; var c = a;" +
+        "(function() {a.b.y = 0;})(); a.b.y;";
+    String expected = compile(js, false);
+    String actual = compile(js, true);
+    assertEquals(expected, actual);
+  }
+}
+```

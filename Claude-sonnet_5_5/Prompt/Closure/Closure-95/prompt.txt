@@ -1,0 +1,96 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-95
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+f6607996d6d3bd6820ce3848d147991b27600a12
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-09-15 14:50:36 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+66
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-66.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.TypeCheckTest::testQualifiedNameInference5
+   --> junit.framework.AssertionFailedError: expected a warning
+ - com.google.javascript.jscomp.TypedScopeCreatorTest::testGlobalQualifiedNameInLocalScope
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.TypedScopeCreator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.TypedScopeCreator ===
+diff --git a/src/com/google/javascript/jscomp/TypedScopeCreator.java b/src/com/google/javascript/jscomp/TypedScopeCreator.java
+index 4bd6bfb43..c7005b2b3 100644
+--- a/src/com/google/javascript/jscomp/TypedScopeCreator.java
++++ b/src/com/google/javascript/jscomp/TypedScopeCreator.java
+@@ -896,9 +896,16 @@ final class TypedScopeCreator implements ScopeCreator {
+       // scope where the root object appears. This helps out people
+       // who declare "global" names in an anonymous namespace.
+       Scope scopeToDeclareIn = scope;
++      if (n.getType() == Token.GETPROP && !scope.isGlobal() &&
++          isQnameRootedInGlobalScope(n)) {
++        Scope globalScope = scope.getGlobalScope();
+ 
+         // don't try to declare in the global scope if there's
+         // already a symbol there with this name.
++        if (!globalScope.isDeclared(variableName, false)) {
++          scopeToDeclareIn = scope.getGlobalScope();
++        }
++      }
+ 
+       // declared in closest scope?
+       if (scopeToDeclareIn.isDeclared(variableName, false)) {
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testQualifiedNameInference5() throws Exception {
+    testTypes(
+        "var ns = {}; " +
+        "(function() { " +
+        "    /** @param {number} x */ ns.foo = function(x) {}; })();" +
+        "(function() { ns.foo(true); })();",
+        "actual parameter 1 of ns.foo does not match formal parameter\n" +
+        "found   : boolean\n" +
+        "required: number");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,103 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Compress
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Compress
+       Program: commons-compress
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/Compress.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-compress.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/active-bugs.csv
+Number of bugs: 47
+--------------------------------------------------------------------------------
+
+Summary for Bug: Compress-32
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+3c4a09bf28e7cd600b919b8c799fbbfd19a94c0b
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-05-08 19:11:27 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COMPRESS-314
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COMPRESS-314
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.compress.archivers.tar.TarArchiveInputStreamTest::shouldReadBigGid
+   --> java.lang.NumberFormatException: For input string: "4294967294"
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.compress.archivers.tar.TarArchiveInputStream
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.compress.archivers.tar.TarArchiveInputStream ===
+diff --git a/src/main/java/org/apache/commons/compress/archivers/tar/TarArchiveInputStream.java b/src/main/java/org/apache/commons/compress/archivers/tar/TarArchiveInputStream.java
+index c5570071..41acf2af 100644
+--- a/src/main/java/org/apache/commons/compress/archivers/tar/TarArchiveInputStream.java
++++ b/src/main/java/org/apache/commons/compress/archivers/tar/TarArchiveInputStream.java
+@@ -498,11 +498,11 @@ public class TarArchiveInputStream extends ArchiveInputStream {
+             } else if ("linkpath".equals(key)){
+                 currEntry.setLinkName(val);
+             } else if ("gid".equals(key)){
+-                currEntry.setGroupId(Integer.parseInt(val));
++                currEntry.setGroupId(Long.parseLong(val));
+             } else if ("gname".equals(key)){
+                 currEntry.setGroupName(val);
+             } else if ("uid".equals(key)){
+-                currEntry.setUserId(Integer.parseInt(val));
++                currEntry.setUserId(Long.parseLong(val));
+             } else if ("uname".equals(key)){
+                 currEntry.setUserName(val);
+             } else if ("size".equals(key)){
+
+
+=== TRIGGERING TEST METHOD ===
+    public void shouldReadBigGid() throws Exception {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        TarArchiveOutputStream tos = new TarArchiveOutputStream(bos);
+        tos.setBigNumberMode(TarArchiveOutputStream.BIGNUMBER_POSIX);
+        TarArchiveEntry t = new TarArchiveEntry("name");
+        t.setGroupId(4294967294l);
+        t.setSize(1);
+        tos.putArchiveEntry(t);
+        tos.write(30);
+        tos.closeArchiveEntry();
+        tos.close();
+        byte[] data = bos.toByteArray();
+        ByteArrayInputStream bis = new ByteArrayInputStream(data);
+        TarArchiveInputStream tis =
+            new TarArchiveInputStream(bis);
+        t = tis.getNextTarEntry();
+        assertEquals(4294967294l, t.getLongGroupId());
+        tis.close();
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

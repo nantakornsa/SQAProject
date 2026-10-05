@@ -1,0 +1,101 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-4
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+efefb736fccc2039b5fb079710b3f2ac82b8c6e4
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-12-14 20:20:30 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+873
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-873.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.TypeCheckTest::testImplementsExtendsLoop
+   --> junit.framework.AssertionFailedError: unexpected warning(s) : JSC_IMPLEMENTS_NON_INTERFACE. can only implement interfaces at [testcode] line 2 : 29, JSC_IMPLEMENTS_NON_INTERFACE. can only implement interfaces at [testcode] line 3 : 26 expected:<1> but was:<2>
+ - com.google.javascript.jscomp.TypeCheckTest::testImplementsLoop
+   --> junit.framework.AssertionFailedError: expected:<[Parse error. Cycle detected in inheritance chain of type T]> but was:<[can only implement interfaces]>
+ - com.google.javascript.jscomp.TypeCheckTest::testConversionFromInterfaceToRecursiveConstructor
+   --> java.lang.StackOverflowError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.rhino.jstype.NamedType
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.rhino.jstype.NamedType ===
+diff --git a/src/com/google/javascript/rhino/jstype/NamedType.java b/src/com/google/javascript/rhino/jstype/NamedType.java
+index 70142c455..06988abe6 100644
+--- a/src/com/google/javascript/rhino/jstype/NamedType.java
++++ b/src/com/google/javascript/rhino/jstype/NamedType.java
+@@ -187,7 +187,7 @@ class NamedType extends ProxyObjectType {
+     // makes more sense. Now, resolution via registry is first in order to
+     // avoid triggering the warnings built into the resolution via properties.
+     boolean resolved = resolveViaRegistry(t, enclosing);
+-    if (detectImplicitPrototypeCycle()) {
++    if (detectInheritanceCycle()) {
+       handleTypeCycle(t);
+     }
+ 
+@@ -199,7 +199,7 @@ class NamedType extends ProxyObjectType {
+     }
+ 
+     resolveViaProperties(t, enclosing);
+-    if (detectImplicitPrototypeCycle()) {
++    if (detectInheritanceCycle()) {
+       handleTypeCycle(t);
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testImplementsExtendsLoop() throws Exception {
+    testClosureTypesMultipleWarnings(
+        suppressMissingProperty("foo") +
+            "/** @constructor \n * @implements {F} */var G = function() {};" +
+            "/** @constructor \n * @extends {G} */var F = function() {};" +
+        "alert((new F).foo);",
+        Lists.newArrayList(
+            "Parse error. Cycle detected in inheritance chain of type F"));
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

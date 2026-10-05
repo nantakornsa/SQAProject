@@ -1,0 +1,99 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Mockito
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Mockito
+       Program: mockito
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/Mockito.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/mockito.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/active-bugs.csv
+Number of bugs: 38
+--------------------------------------------------------------------------------
+
+Summary for Bug: Mockito-37
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+c0222c2dbfbd2b053961a46e4c2a3973aec55a75
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-11-08 19:32:25 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+140
+--------------------------------------------------------------------------------
+Bug report url:
+https://code.google.com/archive/p/mockito/issues/140
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.mockito.internal.stubbing.answers.AnswersValidatorTest::shouldFailWhenCallingRealMethodOnIterface
+   --> junit.framework.AssertionFailedError
+ - org.mockitousage.spies.SpyingOnInterfacesTest::shouldFailFastWhenCallingRealMethodOnInterface
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.mockito.internal.stubbing.answers.AnswersValidator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.mockito.internal.stubbing.answers.AnswersValidator ===
+diff --git a/src/org/mockito/internal/stubbing/answers/AnswersValidator.java b/src/org/mockito/internal/stubbing/answers/AnswersValidator.java
+index 5d8057846..afaf14a1b 100644
+--- a/src/org/mockito/internal/stubbing/answers/AnswersValidator.java
++++ b/src/org/mockito/internal/stubbing/answers/AnswersValidator.java
+@@ -25,8 +25,16 @@ public class AnswersValidator {
+             validateDoNothing((DoesNothing) answer, invocation);
+         }
+         
++        if (answer instanceof CallsRealMethods) {
++            validateMockingConcreteClass((CallsRealMethods) answer, invocation);
++        }
+     }
+ 
++    private void validateMockingConcreteClass(CallsRealMethods answer, Invocation invocation) {
++        if (invocation.getMethod().getDeclaringClass().isInterface()) {
++            reporter.cannotCallRealMethodOnInterface();
++        }
++    }
+ 
+     private void validateDoNothing(DoesNothing answer, Invocation invocation) {
+         if (!invocation.isVoid()) {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void shouldFailWhenCallingRealMethodOnIterface() throws Throwable {
+        //given
+        Invocation inovcationOnIterface = new InvocationBuilder().method("simpleMethod").toInvocation();
+        try {
+            //when
+            validator.validate(new CallsRealMethods(), inovcationOnIterface);
+            //then
+            fail();
+        } catch (MockitoException e) {}
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

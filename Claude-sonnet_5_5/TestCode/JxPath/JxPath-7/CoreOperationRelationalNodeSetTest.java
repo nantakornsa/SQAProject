@@ -1,0 +1,51 @@
+package org.apache.commons.jxpath.ri.compiler;
+
+import junit.framework.TestCase;
+
+import org.apache.commons.jxpath.JXPathContext;
+
+/**
+ * Regression test for JXPATH-93: relational operators (&gt;, &gt;=, &lt;, &lt;=)
+ * must handle node-sets/collections/arrays by comparing each element,
+ * not just the first one converted to a number.
+ */
+public class CoreOperationRelationalNodeSetTest extends TestCase {
+
+    private JXPathContext context;
+
+    protected void setUp() throws Exception {
+        super.setUp();
+        context = JXPathContext.newContext(null);
+        context.getVariables().declareVariable("array",
+                new double[] { 0.25, 0.5, 0.75 });
+    }
+
+    private void assertBoolean(String xpath, boolean expected) {
+        Object value = context.getValue(xpath, Boolean.class);
+        assertEquals("Evaluating <" + xpath + ">",
+                expected ? Boolean.TRUE : Boolean.FALSE, value);
+    }
+
+    public void testNodeSetRelationalOperations() {
+        assertBoolean("$array > 0", true);
+        assertBoolean("$array >= 0", true);
+        assertBoolean("$array = 0", false);
+        assertBoolean("$array = 0.25", true);
+        assertBoolean("$array = 0.5", true);
+        assertBoolean("$array = 0.75", true);
+        assertBoolean("$array < 1", true);
+        assertBoolean("$array <= 1", true);
+        assertBoolean("$array = 1", false);
+        assertBoolean("$array > 1", false);
+        assertBoolean("$array < 0", false);
+    }
+
+    public void testNodeSetGreaterThanMatchesAnyElement() {
+        // Only the last element (0.75) is greater than 0.6
+        assertBoolean("$array > 0.6", true);
+        assertBoolean("$array >= 0.75", true);
+        // Only the first element (0.25) is less than 0.3
+        assertBoolean("$array < 0.3", true);
+        assertBoolean("$array <= 0.25", true);
+    }
+}

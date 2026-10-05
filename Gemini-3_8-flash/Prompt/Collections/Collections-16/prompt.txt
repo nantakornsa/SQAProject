@@ -1,0 +1,137 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Collections
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Collections
+       Program: commons-collections
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/Collections.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-collections.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/active-bugs.csv
+Number of bugs: 28
+--------------------------------------------------------------------------------
+
+Summary for Bug: Collections-16
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+3290bbc85420176f53bad1968611bf53798b2770
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-01-05 09:09:55 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COLLECTIONS-307
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COLLECTIONS-307
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.collections.list.TestSetUniqueList::testCollections307
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.collections.list.SetUniqueList
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.collections.list.SetUniqueList ===
+diff --git a/src/java/org/apache/commons/collections/list/SetUniqueList.java b/src/java/org/apache/commons/collections/list/SetUniqueList.java
+index 8ad35538..160693d4 100644
+--- a/src/java/org/apache/commons/collections/list/SetUniqueList.java
++++ b/src/java/org/apache/commons/collections/list/SetUniqueList.java
+@@ -283,7 +283,26 @@ public class SetUniqueList extends AbstractSerializableListDecorator {
+     }
+ 
+     public List subList(int fromIndex, int toIndex) {
+-        return new SetUniqueList(super.subList(fromIndex, toIndex), set);
++        List superSubList = super.subList(fromIndex, toIndex);
++        Set subSet = createSetBasedOnList(set, superSubList);
++        return new SetUniqueList(superSubList, subSet);
++    }
++
++    protected Set createSetBasedOnList(Set set, List list) {
++        Set subSet = null;
++        if(set.getClass().equals(HashSet.class)) {
++            subSet = new HashSet();
++        } else {
++            try {
++                subSet = (Set) set.getClass().newInstance();
++            } catch(InstantiationException ie) {
++                subSet = new HashSet();
++            } catch(IllegalAccessException iae) {
++                subSet = new HashSet();
++            }
++        }
++        subSet.addAll(list);
++        return subSet;
+     }
+ 
+     //-----------------------------------------------------------------------
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testCollections307() {
+        List list = new ArrayList();
+        List uniqueList = SetUniqueList.decorate(list);
+
+        String hello = "Hello";
+        String world = "World";
+        uniqueList.add(hello);
+        uniqueList.add(world);
+
+        List subList = list.subList(0, 0);
+        List subUniqueList = uniqueList.subList(0, 0);
+
+        assertFalse(subList.contains(world)); // passes
+        assertFalse(subUniqueList.contains(world)); // fails
+
+        List worldList = new ArrayList();
+        worldList.add(world);
+        assertFalse(subList.contains("World")); // passes
+        assertFalse(subUniqueList.contains("World")); // fails
+
+        // repeat the test with a different class than HashSet; 
+        // which means subclassing SetUniqueList below
+        list = new ArrayList();
+        uniqueList = new SetUniqueList307(list, new java.util.TreeSet());
+
+        uniqueList.add(hello);
+        uniqueList.add(world);
+
+        subList = list.subList(0, 0);
+        subUniqueList = uniqueList.subList(0, 0);
+
+        assertFalse(subList.contains(world)); // passes
+        assertFalse(subUniqueList.contains(world)); // fails
+
+        worldList = new ArrayList();
+        worldList.add(world);
+        assertFalse(subList.contains("World")); // passes
+        assertFalse(subUniqueList.contains("World")); // fails
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

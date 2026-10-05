@@ -1,0 +1,63 @@
+```java
+package org.apache.commons.math.util;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for MATH-243: MathUtils.gcd and MathUtils.lcm must throw an
+ * ArithmeticException when the result would be 2^31, because that value does
+ * not fit in an int.
+ */
+public class MathUtilsGcdLcmOverflowTest extends TestCase {
+
+    public void testGcdOverflowWithZero() {
+        try {
+            // gcd(Integer.MIN_VALUE, 0) = 2^31 > Integer.MAX_VALUE
+            MathUtils.gcd(Integer.MIN_VALUE, 0);
+            fail("expecting ArithmeticException");
+        } catch (ArithmeticException expected) {
+            // expected
+        }
+        try {
+            // gcd(0, Integer.MIN_VALUE) = 2^31 > Integer.MAX_VALUE
+            MathUtils.gcd(0, Integer.MIN_VALUE);
+            fail("expecting ArithmeticException");
+        } catch (ArithmeticException expected) {
+            // expected
+        }
+    }
+
+    public void testGcdOverflowBothMinValue() {
+        try {
+            // gcd(Integer.MIN_VALUE, Integer.MIN_VALUE) = 2^31
+            MathUtils.gcd(Integer.MIN_VALUE, Integer.MIN_VALUE);
+            fail("expecting ArithmeticException");
+        } catch (ArithmeticException expected) {
+            // expected
+        }
+    }
+
+    public void testGcdValidEdgeCases() {
+        assertEquals(Integer.MAX_VALUE, MathUtils.gcd(Integer.MAX_VALUE, 0));
+        assertEquals(Integer.MAX_VALUE, MathUtils.gcd(-Integer.MAX_VALUE, 0));
+        assertEquals(1 << 30, MathUtils.gcd(1 << 30, -Integer.MIN_VALUE));
+    }
+
+    public void testLcmOverflowMinValue() {
+        try {
+            // lcm(Integer.MIN_VALUE, 1) = 2^31 > Integer.MAX_VALUE
+            MathUtils.lcm(Integer.MIN_VALUE, 1);
+            fail("Expecting ArithmeticException");
+        } catch (ArithmeticException expected) {
+            // expected
+        }
+        try {
+            // lcm(1, Integer.MIN_VALUE) = 2^31 > Integer.MAX_VALUE
+            MathUtils.lcm(1, Integer.MIN_VALUE);
+            fail("Expecting ArithmeticException");
+        } catch (ArithmeticException expected) {
+            // expected
+        }
+    }
+}
+```

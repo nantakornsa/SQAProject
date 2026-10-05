@@ -1,0 +1,85 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-77
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+df272b77c2cf89e9cbe2512bbddf8a3bc28a704b
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-12-22 10:25:08 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+998
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/998
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.parser.XmlTreeBuilderTest::normalizesDiscordantTags
+   --> junit.framework.AssertionFailedError: expected:<<div>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.parser.XmlTreeBuilder
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.parser.XmlTreeBuilder ===
+diff --git a/src/main/java/org/jsoup/parser/XmlTreeBuilder.java b/src/main/java/org/jsoup/parser/XmlTreeBuilder.java
+index 65d30453..08518333 100644
+--- a/src/main/java/org/jsoup/parser/XmlTreeBuilder.java
++++ b/src/main/java/org/jsoup/parser/XmlTreeBuilder.java
+@@ -114,7 +114,7 @@ public class XmlTreeBuilder extends TreeBuilder {
+      * @param endTag tag to close
+      */
+     private void popStackToClose(Token.EndTag endTag) {
+-        String elName = endTag.name();
++        String elName = endTag.normalName();
+         Element firstFound = null;
+ 
+         for (int pos = stack.size() -1; pos >= 0; pos--) {
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void normalizesDiscordantTags() {
+        Parser parser = Parser.xmlParser().settings(ParseSettings.htmlDefault);
+        Document document = Jsoup.parse("<div>test</DIV><p></p>", "", parser);
+        assertEquals("<div>\n test\n</div>\n<p></p>", document.html());
+        // was failing -> toString() = "<div>\n test\n <p></p>\n</div>"
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

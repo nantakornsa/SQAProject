@@ -1,0 +1,66 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791189423-pK1GEj16Asnt9SrfcRL6","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating JacksonDatabind Bug**\n\nI'm currently digging into JacksonDatabind-101, focusing on the `testIssue2088UnwrappedFieldsAfterLastCreatorProp` method within `TestUnwrapped`. My current focus is within `BeanDeserializer`, specifically at the `while (t == JsonToken.FIELD_NAME)` loop, to pinpoint the root cause of this issue.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing JacksonDatabind Token Flow**\n\nI'm analyzing the token handling in `BeanDeserializer`, specifically the `while (t == JsonToken.FIELD_NAME)` loop. It seems a premature `p.nextToken()` was causing tokens to be skipped, leading to lost data after `@JsonUnwrapped` properties. I'm reviewing `testIssue2088UnwrappedFieldsAfterLastCreatorProp` and the related `Issue2088CreatorWrapped` and `Issue2088Bean` classes to confirm this hypothesis.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" com.fasterxml.jackson.databind.struct;\n\nimport com.fasterxml.jackson.annotation.JsonCreator;\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"import com.fasterxml.jackson.annotation.JsonProperty;\nimport com.fasterxml.jackson.annotation.JsonUnwrapped"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\nimport com.fasterxml.jackson.databind.BaseMapTest;\nimport com.fasterxml.jackson.databind"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".ObjectMapper;\n\npublic class Issue2088UnwrappedTest extends BaseMapTest\n{\n    static class Un"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"wrappedObj {\n        public String last;\n    }\n\n    static class OuterObj {\n        public String first;\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        @JsonUnwrapped\n        public UnwrappedObj unwrapped;\n\n        @JsonCreator\n        public OuterObj(@JsonProperty(\"first"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\") String first) {\n            this.first = first;\n        }\n    }\n\n    public void test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Issue2088UnwrappedFieldsAfterLastCreatorProp() throws Exception\n    {\n        ObjectMapper mapper = newJson"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Mapper();\n        String json = aposToQuotes(\"{'first':'1','last':'2'}\");\n        OuterObj"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" result = mapper.readValue(json, OuterObj.class);\n        assertEquals(\"1\", result.first);\n        assert"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"NotNull(result.unwrapped);\n        assertEquals(\"2\", result.unwrapped.last);\n    }\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1129,"output_tokens":944,"output_tokens_details":{"thinking_tokens":662},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00438675,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00438675,"upstream_inference_prompt_cost":0.00084675,"upstream_inference_completions_cost":0.00354}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

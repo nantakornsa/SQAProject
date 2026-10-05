@@ -1,0 +1,15 @@
+package org.apache.commons.jxpath.ri.compiler;
+
+import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.jxpath.JXPathTestCase;
+
+public class ClaudeJXPath149Test extends JXPathTestCase {
+
+    public void testComplexOperationWithVariables() {
+        JXPathContext context = JXPathContext.newContext(null);
+        context.getVariables().declareVariable("a", Integer.valueOf(0));
+        context.getVariables().declareVariable("b", Integer.valueOf(0));
+        context.getVariables().declareVariable("c", Integer.valueOf(1));
+        assertXPathValue(context, "$a + $b <= $c", Boolean.TRUE);
+    }
+}

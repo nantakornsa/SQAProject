@@ -1,0 +1,100 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Time
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Time
+       Program: joda-time
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/Time.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/joda-time.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Time-14
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+2ea856328ed5710537778d755a5ff52a6831a2ee
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-05-23 12:45:41 +0100
+--------------------------------------------------------------------------------
+Bug report id:
+151
+--------------------------------------------------------------------------------
+Bug report url:
+https://sourceforge.net/p/joda-time/bugs/151
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.joda.time.TestMonthDay_Basics::testPlusMonths_int_negativeFromLeap
+   --> org.joda.time.IllegalFieldValueException: Value 29 for dayOfMonth must be in the range [1,28]
+ - org.joda.time.TestMonthDay_Basics::testMinusDays_int_negativeFromLeap
+   --> org.joda.time.IllegalFieldValueException: Value 29 for dayOfMonth must be in the range [1,28]
+ - org.joda.time.TestMonthDay_Basics::testPlusMonths_int_fromLeap
+   --> org.joda.time.IllegalFieldValueException: Value 29 for dayOfMonth must be in the range [1,28]
+ - org.joda.time.TestMonthDay_Basics::testPlusMonths_int_negativeEndOfMonthAdjust
+   --> junit.framework.AssertionFailedError: expected:<--02-29> but was:<--02-28>
+ - org.joda.time.TestMonthDay_Basics::testMinusMonths_int_endOfMonthAdjust
+   --> junit.framework.AssertionFailedError: expected:<--02-29> but was:<--02-28>
+ - org.joda.time.TestMonthDay_Basics::testMinusMonths_int_negativeFromLeap
+   --> org.joda.time.IllegalFieldValueException: Value 29 for dayOfMonth must be in the range [1,28]
+ - org.joda.time.TestMonthDay_Basics::testMinusMonths_int_fromLeap
+   --> org.joda.time.IllegalFieldValueException: Value 29 for dayOfMonth must be in the range [1,28]
+ - org.joda.time.TestMonthDay_Basics::testPlusDays_int_fromLeap
+   --> org.joda.time.IllegalFieldValueException: Value 29 for dayOfMonth must be in the range [1,28]
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.joda.time.chrono.BasicMonthOfYearDateTimeField
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.joda.time.chrono.BasicMonthOfYearDateTimeField ===
+diff --git a/src/main/java/org/joda/time/chrono/BasicMonthOfYearDateTimeField.java b/src/main/java/org/joda/time/chrono/BasicMonthOfYearDateTimeField.java
+index afca44e6..2892a2d7 100644
+--- a/src/main/java/org/joda/time/chrono/BasicMonthOfYearDateTimeField.java
++++ b/src/main/java/org/joda/time/chrono/BasicMonthOfYearDateTimeField.java
+@@ -206,7 +206,12 @@ class BasicMonthOfYearDateTimeField extends ImpreciseDateTimeField {
+         if (valueToAdd == 0) {
+             return values;
+         }
++        if (partial.size() > 0 && partial.getFieldType(0).equals(DateTimeFieldType.monthOfYear()) && fieldIndex == 0) {
+             // month is largest field and being added to, such as month-day
++            int curMonth0 = partial.getValue(0) - 1;
++            int newMonth = ((curMonth0 + (valueToAdd % 12) + 12) % 12) + 1;
++            return set(partial, 0, values, newMonth);
++        }
+         if (DateTimeUtils.isContiguous(partial)) {
+             long instant = 0L;
+             for (int i = 0, isize = partial.size(); i < isize; i++) {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testPlusMonths_int_negativeFromLeap() {
+        MonthDay test = new MonthDay(2, 29, ISOChronology.getInstanceUTC());
+        MonthDay result = test.plusMonths(-1);
+        MonthDay expected = new MonthDay(1, 29, ISOChronology.getInstance());
+        assertEquals(expected, result);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

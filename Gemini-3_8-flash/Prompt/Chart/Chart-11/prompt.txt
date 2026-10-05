@@ -1,0 +1,135 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Chart
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Chart
+       Program: jfreechart
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Chart/Chart.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Svn
+    Repository: file:///Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jfreechart/trunk
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Chart/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Chart-11
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+1025
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-06-02 00:27:30 -0700 
+--------------------------------------------------------------------------------
+Bug report id:
+868
+--------------------------------------------------------------------------------
+Bug report url:
+https://sourceforge.net/p/jfreechart/bugs/868
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jfree.chart.util.junit.ShapeUtilitiesTests::testEqualGeneralPaths
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jfree.chart.util.ShapeUtilities
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jfree.chart.util.ShapeUtilities ===
+diff --git a/source/org/jfree/chart/util/ShapeUtilities.java b/source/org/jfree/chart/util/ShapeUtilities.java
+index 31aa6c6..f49ecb5 100644
+--- a/source/org/jfree/chart/util/ShapeUtilities.java
++++ b/source/org/jfree/chart/util/ShapeUtilities.java
+@@ -272,7 +272,7 @@ public class ShapeUtilities {
+             return false;
+         }
+         PathIterator iterator1 = p1.getPathIterator(null);
+-        PathIterator iterator2 = p1.getPathIterator(null);
++        PathIterator iterator2 = p2.getPathIterator(null);
+         double[] d1 = new double[6];
+         double[] d2 = new double[6];
+         boolean done = iterator1.isDone() && iterator2.isDone();
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testEqualGeneralPaths() {
+        GeneralPath g1 = new GeneralPath();
+        g1.moveTo(1.0f, 2.0f);
+        g1.lineTo(3.0f, 4.0f);
+        g1.curveTo(5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f);
+        g1.quadTo(1.0f, 2.0f, 3.0f, 4.0f);
+        g1.closePath();
+        GeneralPath g2 = new GeneralPath();
+        g2.moveTo(1.0f, 2.0f);
+        g2.lineTo(3.0f, 4.0f);
+        g2.curveTo(5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f);
+        g2.quadTo(1.0f, 2.0f, 3.0f, 4.0f);
+        g2.closePath();
+        assertTrue(ShapeUtilities.equal(g1, g2));
+
+        g2 = new GeneralPath();
+        g2.moveTo(11.0f, 22.0f);
+        g2.lineTo(3.0f, 4.0f);
+        g2.curveTo(5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f);
+        g2.quadTo(1.0f, 2.0f, 3.0f, 4.0f);
+        g2.closePath();
+        assertFalse(ShapeUtilities.equal(g1, g2));
+
+        g2 = new GeneralPath();
+        g2.moveTo(1.0f, 2.0f);
+        g2.lineTo(33.0f, 44.0f);
+        g2.curveTo(5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f);
+        g2.quadTo(1.0f, 2.0f, 3.0f, 4.0f);
+        g2.closePath();
+        assertFalse(ShapeUtilities.equal(g1, g2));
+
+        g2 = new GeneralPath();
+        g2.moveTo(1.0f, 2.0f);
+        g2.lineTo(3.0f, 4.0f);
+        g2.curveTo(55.0f, 66.0f, 77.0f, 88.0f, 99.0f, 100.0f);
+        g2.quadTo(1.0f, 2.0f, 3.0f, 4.0f);
+        g2.closePath();
+        assertFalse(ShapeUtilities.equal(g1, g2));
+
+        g2 = new GeneralPath();
+        g2.moveTo(1.0f, 2.0f);
+        g2.lineTo(3.0f, 4.0f);
+        g2.curveTo(5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f);
+        g2.quadTo(11.0f, 22.0f, 33.0f, 44.0f);
+        g2.closePath();
+        assertFalse(ShapeUtilities.equal(g1, g2));
+
+        g2 = new GeneralPath();
+        g2.moveTo(1.0f, 2.0f);
+        g2.lineTo(3.0f, 4.0f);
+        g2.curveTo(5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f);
+        g2.quadTo(1.0f, 2.0f, 3.0f, 4.0f);
+        g2.lineTo(3.0f, 4.0f);
+        g2.closePath();
+        assertFalse(ShapeUtilities.equal(g1, g2));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

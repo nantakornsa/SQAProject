@@ -1,0 +1,81 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791141562-Zz7Hca8GKiaDhRqIOfv1","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Jsoup Bug**\n\nI'm currently pinpointing the exact `TreeBuilderState` responsible for the Jsoup-15 bug, focusing on line 283 of `TreeBuilderState.java`. My initial assessment points to states like `BeforeHead`, `AfterHead`, `InBody`, or `BeforeHtml`.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing Script Tag Handling**\n\nI'm focusing on how the `AfterHead` state incorrectly handles `<script>` tags. It seems this state isn't properly delegating to `InHead` processing, leading to parsing issues, as seen in the failing test case.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Refining AfterHead Logic**\n\nI'm drilling down into the \"after head\" insertion mode logic, specifically how it should delegate to \"in head\" for certain tags like `<script>`. The discrepancy seems to stem from the incomplete handling of these tag types within the `AfterHead` state, which is causing unexpected parsing outcomes.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Script Parsing**\n\nI'm exploring how `<script>` tags are handled, particularly when they appear after the `<head>` section. The issue seems to be how the `AfterHead` state interacts with script content, potentially leading to incorrect parsing if it's not properly delegated to the `InHead` state.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Tracing Script Insertion**\n\nI'm tracing the initial tokens for a script tag. It appears the flow should be `Initial` -> `BeforeHtml` -> `BeforeHead`. My current focus is on how the `BeforeHead` state handles non-head start tags by creating a head element and reprocessing, potentially leading to issues when a script appears after a completed head section, moving the state to `AfterHead`.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Confirming InBody Script Handling**\n\nI've confirmed the `InBody` state does indeed handle `<script>` tags by delegating to the `InHead` state, as indicated by the diff. This clarifies a previous assumption.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Identifying AfterHead Bug**\n\nI've identified that the `AfterHead` state is indeed the culprit. The `handlesDataOnlyTags` test triggers this state unexpectedly when parsing a string like `<p>Hello</p><script>obj.insert('<a rel=\"none\" />'); i++;</script><p>There</p>`. The issue arises because the `<a>` tag within the script's content is being incorrectly parsed as an HTML tag, rather than being treated as script data.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating State Transition**\n\nI'm now focusing on the state transition that occurs after the `BeforeHead` state. Specifically, I'm examining how the parsing engine handles encountering a non-head start tag in `BeforeHead`, which should trigger the creation of a `<head>` element and then reprocess the token. This seems to be where the faulty path to `AfterHead` is initiated, especially when a script tag is involved.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Clarifying InBody Handling**\n\nI'm realizing my previous understanding was incomplete. The HTML5 spec, within the \"in body\" insertion mode, clearly lists \"script\" alongside other head-related tags that should be processed by the \"in head\" rules. It appears the current `InBody` implementation is missing this delegation for script tags, causing the parsing error.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"An"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" issue in `TreeBuilderState` caused `<script>` tags encountered inside the `<body>` (or `InBody` state) to"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" not be delegated to `InHead` processing. As a result, the tokenizer was not switched to the script data state, leading HTML"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" tags inside the script (like `<a ... />`) to be parsed as actual elements and script code to be treated as visible"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" text.\n\nHere is the regression test reproducing this issue:\n\n```java\npackage org.jsoup.parser;\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"import org.jsoup.Jsoup;\nimport org.jsoup.nodes.Document;\nimport org.junit.Test;\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"import static org.junit.Assert.assertEquals;\n\npublic class ParserScriptTest {\n\n    @Test\n    public void handlesScript"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"InBody() {\n        String html = \"<p>Hello</p><script>obj.insert('<a rel=\\\"none"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\\\" />');\\ni++;</script><p>There</p>\";\n        Document doc = Jsoup.parse"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(html);\n        assertEquals(\"Hello There\", doc.text());\n        assertEquals(\"obj.insert('<a rel"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"=\\\"none\\\" />');\\ni++;\", doc.data());\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1146,"output_tokens":3111,"output_tokens_details":{"thinking_tokens":2859},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.01252575,"is_byok":false,"cost_details":{"upstream_inference_cost":0.01252575,"upstream_inference_prompt_cost":0.0008595,"upstream_inference_completions_cost":0.01166625}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

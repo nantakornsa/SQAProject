@@ -1,0 +1,164 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-167
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+d58006a939b740ea78dc61128065a6fdb8f303ca
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-08-02 22:05:42 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+783
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-783.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.TypeCheckTest::testIssue783
+   --> junit.framework.AssertionFailedError: expected a warning
+ - com.google.javascript.jscomp.TypeCheckTest::testMissingProperty20
+   --> junit.framework.AssertionFailedError: expected a warning
+ - com.google.javascript.rhino.jstype.JSTypeTest::testRestrictedTypeGivenToBoolean
+   --> junit.framework.AssertionFailedError: Expected: ??
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.type.SemanticReverseAbstractInterpreter
+ - com.google.javascript.rhino.jstype.JSType
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.type.SemanticReverseAbstractInterpreter ===
+diff --git a/src/com/google/javascript/jscomp/type/SemanticReverseAbstractInterpreter.java b/src/com/google/javascript/jscomp/type/SemanticReverseAbstractInterpreter.java
+index 9e702797b..8165840a4 100644
+--- a/src/com/google/javascript/jscomp/type/SemanticReverseAbstractInterpreter.java
++++ b/src/com/google/javascript/jscomp/type/SemanticReverseAbstractInterpreter.java
+@@ -298,8 +298,8 @@ public class SemanticReverseAbstractInterpreter
+     if (merged != null) {
+       return maybeRestrictTwoNames(
+           blindScope,
+-          left, leftIsRefineable, merged.typeA,
+-          right, rightIsRefineable, merged.typeB);
++          left, leftType, leftIsRefineable ? merged.typeA : null,
++          right, rightType, rightIsRefineable ? merged.typeB : null);
+     }
+     return blindScope;
+   }
+@@ -345,8 +345,8 @@ public class SemanticReverseAbstractInterpreter
+       // creating new scope
+       return maybeRestrictTwoNames(
+           blindScope,
+-          left, leftIsRefineable, restrictedLeftType,
+-          right, rightIsRefineable, restrictedRightType);
++          left, leftType, leftIsRefineable ? restrictedLeftType : null,
++          right, rightType, rightIsRefineable ? restrictedRightType : null);
+     }
+     return blindScope;
+   }
+@@ -391,7 +391,7 @@ public class SemanticReverseAbstractInterpreter
+    */
+   private FlowScope maybeRestrictName(
+       FlowScope blindScope, Node node, JSType originalType, JSType restrictedType) {
+-    if (restrictedType != null && !restrictedType.equals(originalType)) {
++    if (restrictedType != null && restrictedType != originalType) {
+       FlowScope informed = blindScope.createChildFlowScope();
+       declareNameInScope(informed, node, restrictedType);
+       return informed;
+@@ -404,12 +404,12 @@ public class SemanticReverseAbstractInterpreter
+    */
+   private FlowScope maybeRestrictTwoNames(
+       FlowScope blindScope,
+-      Node left, boolean leftIsRefineable, JSType restrictedLeftType,
+-      Node right, boolean rightIsRefineable, JSType restrictedRightType) {
++      Node left, JSType originalLeftType, JSType restrictedLeftType,
++      Node right, JSType originalRightType, JSType restrictedRightType) {
+     boolean shouldRefineLeft =
+-        leftIsRefineable && restrictedLeftType != null;
++        restrictedLeftType != null && restrictedLeftType != originalLeftType;
+     boolean shouldRefineRight =
+-        rightIsRefineable && restrictedRightType != null;
++        restrictedRightType != null && restrictedRightType != originalRightType;
+     if (shouldRefineLeft || shouldRefineRight) {
+       FlowScope informed = blindScope.createChildFlowScope();
+       if (shouldRefineLeft) {
+@@ -427,11 +427,9 @@ public class SemanticReverseAbstractInterpreter
+       boolean outcome) {
+     JSType type = getTypeIfRefinable(name, blindScope);
+     if (type != null) {
+-      JSType restrictedType =
+-          type.getRestrictedTypeGivenToBooleanOutcome(outcome);
+-      FlowScope informed = blindScope.createChildFlowScope();
+-      declareNameInScope(informed, name, restrictedType);
+-      return informed;
++      return maybeRestrictName(
++          blindScope, name, type,
++          type.getRestrictedTypeGivenToBooleanOutcome(outcome));
+     }
+     return blindScope;
+   }
+
+=== MODIFIED SOURCE: com.google.javascript.rhino.jstype.JSType ===
+diff --git a/src/com/google/javascript/rhino/jstype/JSType.java b/src/com/google/javascript/rhino/jstype/JSType.java
+index 8f0a1f69a..44d1e93b6 100644
+--- a/src/com/google/javascript/rhino/jstype/JSType.java
++++ b/src/com/google/javascript/rhino/jstype/JSType.java
+@@ -880,6 +880,9 @@ public abstract class JSType implements Serializable {
+    * method of types to get the restricted type.
+    */
+   public JSType getRestrictedTypeGivenToBooleanOutcome(boolean outcome) {
++    if (outcome && this == getNativeType(JSTypeNative.UNKNOWN_TYPE)) {
++      return getNativeType(JSTypeNative.CHECKED_UNKNOWN_TYPE);
++    }
+ 
+     BooleanLiteralSet literals = getPossibleToBooleanOutcomes();
+     if (literals.contains(outcome)) {
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue783() throws Exception {
+    testTypes(
+        "/** @constructor */" +
+        "var Type = function () {" +
+        "  /** @type {Type} */" +
+        "  this.me_ = this;" +
+        "};" +
+        "Type.prototype.doIt = function() {" +
+        "  var me = this.me_;" +
+        "  for (var i = 0; i < me.unknownProp; i++) {}" +
+        "};",
+        "Property unknownProp never defined on Type");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

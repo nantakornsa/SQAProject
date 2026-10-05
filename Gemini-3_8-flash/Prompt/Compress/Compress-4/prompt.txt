@@ -1,0 +1,179 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Compress
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Compress
+       Program: commons-compress
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/Compress.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-compress.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/active-bugs.csv
+Number of bugs: 47
+--------------------------------------------------------------------------------
+
+Summary for Bug: Compress-4
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+6273f3a6b804aa845747c8859d659373b14199e1
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-04-22 06:26:09 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COMPRESS-64
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COMPRESS-64
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.compress.archivers.jar.JarArchiveOutputStreamTest::testJarMarker
+   --> java.io.IOException: central directory is empty, can't expand corrupt archive.
+ - org.apache.commons.compress.archivers.zip.UTF8ZipFilesTest::testCP437FileRoundtripImplicitUnicodeExtra
+   --> java.io.IOException: central directory is empty, can't expand corrupt archive.
+ - org.apache.commons.compress.archivers.zip.UTF8ZipFilesTest::testUtf8FileRoundtripImplicitUnicodeExtra
+   --> java.io.IOException: central directory is empty, can't expand corrupt archive.
+ - org.apache.commons.compress.archivers.zip.UTF8ZipFilesTest::testCP437FileRoundtripExplicitUnicodeExtra
+   --> java.io.IOException: central directory is empty, can't expand corrupt archive.
+ - org.apache.commons.compress.archivers.zip.UTF8ZipFilesTest::testUtf8FileRoundtripExplicitUnicodeExtra
+   --> java.io.IOException: central directory is empty, can't expand corrupt archive.
+ - org.apache.commons.compress.archivers.zip.UTF8ZipFilesTest::testASCIIFileRoundtripImplicitUnicodeExtra
+   --> java.io.IOException: central directory is empty, can't expand corrupt archive.
+ - org.apache.commons.compress.archivers.zip.UTF8ZipFilesTest::testUtf8FileRoundtripNoEFSImplicitUnicodeExtra
+   --> java.io.IOException: central directory is empty, can't expand corrupt archive.
+ - org.apache.commons.compress.archivers.zip.UTF8ZipFilesTest::testZipArchiveInputStreamReadsUnicodeFields
+   --> java.io.IOException: central directory is empty, can't expand corrupt archive.
+ - org.apache.commons.compress.archivers.zip.UTF8ZipFilesTest::testASCIIFileRoundtripExplicitUnicodeExtra
+   --> java.io.IOException: central directory is empty, can't expand corrupt archive.
+ - org.apache.commons.compress.archivers.zip.UTF8ZipFilesTest::testUtf8FileRoundtripNoEFSExplicitUnicodeExtra
+   --> java.io.IOException: central directory is empty, can't expand corrupt archive.
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStream
+ - org.apache.commons.compress.archivers.tar.TarArchiveOutputStream
+ - org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream
+ - org.apache.commons.compress.changes.ChangeSetPerformer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStream ===
+diff --git a/src/main/java/org/apache/commons/compress/archivers/cpio/CpioArchiveOutputStream.java b/src/main/java/org/apache/commons/compress/archivers/cpio/CpioArchiveOutputStream.java
+index 3641ab69..959df8de 100644
+--- a/src/main/java/org/apache/commons/compress/archivers/cpio/CpioArchiveOutputStream.java
++++ b/src/main/java/org/apache/commons/compress/archivers/cpio/CpioArchiveOutputStream.java
+@@ -333,7 +333,6 @@ public class CpioArchiveOutputStream extends ArchiveOutputStream implements
+      */
+     public void close() throws IOException {
+         if (!this.closed) {
+-            this.finish();
+             out.close();
+             this.closed = true;
+         }
+
+=== MODIFIED SOURCE: org.apache.commons.compress.archivers.tar.TarArchiveOutputStream ===
+diff --git a/src/main/java/org/apache/commons/compress/archivers/tar/TarArchiveOutputStream.java b/src/main/java/org/apache/commons/compress/archivers/tar/TarArchiveOutputStream.java
+index abe87596..d3afc3da 100644
+--- a/src/main/java/org/apache/commons/compress/archivers/tar/TarArchiveOutputStream.java
++++ b/src/main/java/org/apache/commons/compress/archivers/tar/TarArchiveOutputStream.java
+@@ -123,7 +123,6 @@ public class TarArchiveOutputStream extends ArchiveOutputStream {
+      */
+     public void close() throws IOException {
+         if (!closed) {
+-            finish();
+             buffer.close();
+             out.close();
+             closed = true;
+
+=== MODIFIED SOURCE: org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream ===
+diff --git a/src/main/java/org/apache/commons/compress/archivers/zip/ZipArchiveOutputStream.java b/src/main/java/org/apache/commons/compress/archivers/zip/ZipArchiveOutputStream.java
+index 5aa7c87c..11808a96 100644
+--- a/src/main/java/org/apache/commons/compress/archivers/zip/ZipArchiveOutputStream.java
++++ b/src/main/java/org/apache/commons/compress/archivers/zip/ZipArchiveOutputStream.java
+@@ -527,7 +527,6 @@ public class ZipArchiveOutputStream extends ArchiveOutputStream {
+      * @exception  IOException  if an I/O error occurs.
+      */
+     public void close() throws IOException {
+-        finish();
+         if (raf != null) {
+             raf.close();
+         }
+
+=== MODIFIED SOURCE: org.apache.commons.compress.changes.ChangeSetPerformer ===
+diff --git a/src/main/java/org/apache/commons/compress/changes/ChangeSetPerformer.java b/src/main/java/org/apache/commons/compress/changes/ChangeSetPerformer.java
+index ec8e2cf4..778c2aa5 100644
+--- a/src/main/java/org/apache/commons/compress/changes/ChangeSetPerformer.java
++++ b/src/main/java/org/apache/commons/compress/changes/ChangeSetPerformer.java
+@@ -125,6 +125,7 @@ public class ChangeSetPerformer {
+                 results.addedFromChangeSet(change.getEntry().getName());
+             }
+         }
++        out.finish();
+         return results;
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testJarMarker() throws IOException {
+        File testArchive = File.createTempFile("jar-aostest", ".jar");
+        JarArchiveOutputStream out = null;
+        ZipFile zf = null;
+        try {
+
+            out = new JarArchiveOutputStream(new FileOutputStream(testArchive));
+            out.putArchiveEntry(new ZipArchiveEntry("foo/"));
+            out.closeArchiveEntry();
+            out.putArchiveEntry(new ZipArchiveEntry("bar/"));
+            out.closeArchiveEntry();
+            out.finish();
+            out.close();
+            out = null;
+
+            zf = new ZipFile(testArchive);
+            ZipArchiveEntry ze = zf.getEntry("foo/");
+            assertNotNull(ze);
+            ZipExtraField[] fes = ze.getExtraFields();
+            assertEquals(1, fes.length);
+            assertTrue(fes[0] instanceof JarMarker);
+
+            ze = zf.getEntry("bar/");
+            assertNotNull(ze);
+            fes = ze.getExtraFields();
+            assertEquals(0, fes.length);
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) { /* swallow */ }
+            }
+            ZipFile.closeQuietly(zf);
+            if (testArchive.exists()) {
+                testArchive.delete();
+            }
+        }
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

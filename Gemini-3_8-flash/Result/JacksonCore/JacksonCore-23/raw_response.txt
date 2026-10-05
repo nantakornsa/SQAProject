@@ -1,0 +1,45 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791106817-fdnvJbMYmD1XVCb3RAac","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Refining Exception Handling**\n\nI'm currently evaluating a potential bug fix in `DefaultPrettyPrinter`. The proposed change aims to prevent subclass instantiation by adding a class check within `createInstance()`. This should enhance robustness, especially when dealing with test cases.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.core."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"util;\n\nimport com.fasterxml.jackson.core.BaseTest;\n\npublic class TestDefaultPrettyPrinterSubclass extends BaseTest {\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    @SuppressWarnings(\"serial\")\n    static class MyPrettyPrinter extends DefaultPrettyPrinter {\n        public MyPrettyPrinter() {\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"            super();\n        }\n    }\n\n    public void testInvalidSubClass() throws Exception {\n        My"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"PrettyPrinter p = new MyPrettyPrinter();\n        try {\n            p.createInstance();\n            fail(\""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Should not pass\");\n        } catch (IllegalStateException e) {\n            verifyException(e, \"does not"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" override\");\n        }\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":951,"output_tokens":413,"output_tokens_details":{"thinking_tokens":261},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.002262,"is_byok":false,"cost_details":{"upstream_inference_cost":0.002262,"upstream_inference_prompt_cost":0.00071325,"upstream_inference_completions_cost":0.00154875}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

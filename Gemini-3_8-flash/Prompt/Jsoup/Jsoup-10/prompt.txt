@@ -1,0 +1,88 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-10
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+adce18ec3d06b849886d203fe932205f312cc37f
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-07-02 21:12:02 +1000
+--------------------------------------------------------------------------------
+Bug report id:
+49
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/49
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.nodes.NodeTest::absHandlesRelativeQuery
+   --> junit.framework.AssertionFailedError: expected:<...tp://jsoup.org/path/[file]?foo> but was:<...tp://jsoup.org/path/[]?foo>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.nodes.Node
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.nodes.Node ===
+diff --git a/src/main/java/org/jsoup/nodes/Node.java b/src/main/java/org/jsoup/nodes/Node.java
+index 5e6eb8ff..513c0ee8 100644
+--- a/src/main/java/org/jsoup/nodes/Node.java
++++ b/src/main/java/org/jsoup/nodes/Node.java
+@@ -170,6 +170,8 @@ public abstract class Node implements Cloneable {
+                     return abs.toExternalForm();
+                 }
+                 // workaround: java resolves '//path/file + ?foo' to '//path/?foo', not '//path/file?foo' as desired
++                if (relUrl.startsWith("?"))
++                    relUrl = base.getPath() + relUrl;
+                 URL abs = new URL(base, relUrl);
+                 return abs.toExternalForm();
+             } catch (MalformedURLException e) {
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void absHandlesRelativeQuery() {
+        Document doc = Jsoup.parse("<a href='?foo'>One</a> <a href='bar.html?foo'>Two</a>", "http://jsoup.org/path/file?bar");
+
+        Element a1 = doc.select("a").first();
+        assertEquals("http://jsoup.org/path/file?foo", a1.absUrl("href"));
+
+        Element a2 = doc.select("a").get(1);
+        assertEquals("http://jsoup.org/path/bar.html?foo", a2.absUrl("href"));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

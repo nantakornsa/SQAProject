@@ -1,0 +1,66 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791054477-I9rZyB9S8niY204VP42U","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":2192,"output_tokens":8,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"```java\npackage com.google."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"gson.internal;\n\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" junit.framework.Test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Case;\n\n/"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"**\n * Regression test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":":"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" U"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"nsafeAllocator"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" must thro"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"w UnsupportedO"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"perationException\n * when as"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ked to instantiate an interface or an abstract class.\n */\npublic final class UnsafeAllocatorInstantiationTest extends TestCase {\n\n  public interface Interface {\n  }\n\n  public static abstract class AbstractClass {\n  }\n\n  public static class ConcreteClass {\n  }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n  public void testInterfaceInstantiation() throws Exception {\n    UnsafeAllocator unsafeAllocator = UnsafeAllocator.create();\n    try {\n      unsafeAllocator.newInstance(Interface.class);\n      fail(\"Expected UnsupportedOperation"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Exception\");\n    } catch (Exception e) {\n      assertEquals(UnsupportedOperationException.class, e.getClass());\n    }\n  }\n\n  public void testAbstractClassInstantiation() throws Exception {\n    UnsafeAllocator unsafeAllocator = UnsafeA"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"llocator.create();\n    try {\n      unsafeAllocator.newInstance(AbstractClass.class);\n      fail(\"Expected UnsupportedOperationException\");\n    } catch (Exception e) {\n      assertEquals(UnsupportedOperationException.class, e.getClass());\n    }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n  }\n\n  public void testConcreteClassInstantiation() throws Exception {\n    UnsafeAllocator unsafeAllocator = UnsafeAllocator.create();\n    ConcreteClass instance = unsafeAllocator.newInstance(ConcreteClass.class"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":");\n    assertNotNull(instance);\n  }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2192,"output_tokens":562,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.010004,"is_byok":false,"cost_details":{"upstream_inference_cost":0.010004,"upstream_inference_prompt_cost":0.004384,"upstream_inference_completions_cost":0.00562}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,84 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-3
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+91d280b7300b0f601cd76a880c26784a822f96b8
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-07-12 11:29:12 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-1005
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-1005
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math3.util.MathArraysTest::testLinearCombinationWithSingleElementArray
+   --> java.lang.ArrayIndexOutOfBoundsException: 1
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math3.util.MathArrays
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math3.util.MathArrays ===
+diff --git a/src/main/java/org/apache/commons/math3/util/MathArrays.java b/src/main/java/org/apache/commons/math3/util/MathArrays.java
+index 325fd9430..8f83d96a5 100644
+--- a/src/main/java/org/apache/commons/math3/util/MathArrays.java
++++ b/src/main/java/org/apache/commons/math3/util/MathArrays.java
+@@ -818,7 +818,10 @@ public class MathArrays {
+             throw new DimensionMismatchException(len, b.length);
+         }
+ 
++        if (len == 1) {
+             // Revert to scalar multiplication.
++            return a[0] * b[0];
++        }
+ 
+         final double[] prodHigh = new double[len];
+         double prodLowSum = 0;
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testLinearCombinationWithSingleElementArray() {
+        final double[] a = { 1.23456789 };
+        final double[] b = { 98765432.1 };
+
+        Assert.assertEquals(a[0] * b[0], MathArrays.linearCombination(a, b), 0d);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

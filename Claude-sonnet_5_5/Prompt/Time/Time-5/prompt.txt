@@ -1,0 +1,103 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Time
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Time
+       Program: joda-time
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/Time.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/joda-time.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Time-5
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+a6cb59ed2280ab0a32995fa8b5f1a7b0d47cb815
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-11-01 14:06:59 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+79
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/JodaOrg/joda-time/issues/79
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.joda.time.TestPeriod_Basics::testNormalizedStandard_periodType_months1
+   --> java.lang.UnsupportedOperationException: Field is not supported
+ - org.joda.time.TestPeriod_Basics::testNormalizedStandard_periodType_months2
+   --> java.lang.UnsupportedOperationException: Field is not supported
+ - org.joda.time.TestPeriod_Basics::testNormalizedStandard_periodType_monthsWeeks
+   --> java.lang.UnsupportedOperationException: Field is not supported
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.joda.time.Period
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.joda.time.Period ===
+diff --git a/src/main/java/org/joda/time/Period.java b/src/main/java/org/joda/time/Period.java
+index f4047933..5ea67a7c 100644
+--- a/src/main/java/org/joda/time/Period.java
++++ b/src/main/java/org/joda/time/Period.java
+@@ -1625,13 +1625,19 @@ public final class Period
+         int years = getYears();
+         int months = getMonths();
+         if (years != 0 || months != 0) {
+-            years = FieldUtils.safeAdd(years, months / 12);
+-            months = months % 12;
+-            if (years != 0) {
+-                result = result.withYears(years);
++            long totalMonths = years * 12L + months;
++            if (type.isSupported(DurationFieldType.YEARS_TYPE)) {
++                int normalizedYears = FieldUtils.safeToInt(totalMonths / 12);
++                result = result.withYears(normalizedYears);
++                totalMonths = totalMonths - (normalizedYears * 12);
+             }
+-            if (months != 0) {
+-                result = result.withMonths(months);
++            if (type.isSupported(DurationFieldType.MONTHS_TYPE)) {
++                int normalizedMonths = FieldUtils.safeToInt(totalMonths);
++                result = result.withMonths(normalizedMonths);
++                totalMonths = totalMonths - normalizedMonths;
++            }
++            if (totalMonths != 0) {
++                throw new UnsupportedOperationException("Unable to normalize as PeriodType is missing either years or months but period has a month/year amount: " + toString());
+             }
+         }
+         return result;
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testNormalizedStandard_periodType_months1() {
+        Period test = new Period(1, 15, 0, 0, 0, 0, 0, 0);
+        Period result = test.normalizedStandard(PeriodType.months());
+        assertEquals(new Period(1, 15, 0, 0, 0, 0, 0, 0), test);
+        assertEquals(new Period(0, 27, 0, 0, 0, 0, 0, 0, PeriodType.months()), result);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

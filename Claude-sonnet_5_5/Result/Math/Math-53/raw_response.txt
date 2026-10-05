@@ -1,0 +1,69 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791146089-kfEzvvaEOCw0XEjHGkN5","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1446,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" buggy `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"add` comput"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"es `real + rhs."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"real"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"` and `imaginary +"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" rhs.imaginary"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" without"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" checking for NaN. When"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" `rhs` is `new"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Complex(1, NaN)`, the result is `(4, NaN)`, so its real part is not NaN. The fix returns `Complex.NaN` whenever either operand is NaN, so both"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" parts become NaN. The test therefore checks that both parts are NaN, and also that NaN on the left-hand side propagates. This uses J"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Unit 4 `Assert`, matching the project's existing tests.\n\n```java\npackage org.apache.commons.math.complex;\n\nimport org.junit.Assert;\nimport org.junit.Test;\n\npublic class ComplexA"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ddNaNRegressionTest {\n\n    private final double nan = Double.NaN;\n\n    @Test\n    public void testAddNaN() {\n        Complex x = new Complex(3.0, 4.0);\n        Complex z = x.add(Complex.NaN);\n        Assert.assertTrue("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"z.isNaN());\n        z = new Complex(1, nan);\n        Complex w = x.add(z);\n        Assert.assertTrue(Double.isNaN(w.getReal()));\n        Assert.assertTrue(Double.isNaN(w.getImaginary()));\n    }\n\n    @"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Test\n    public void testAddToNaNComplex() {\n        Complex x = new Complex(1, nan);\n        Complex y = new Complex(3.0, 4.0);\n        Complex w = x.add(y);\n        Assert.assertTrue("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Double.isNaN(w.getReal()));\n        Assert.assertTrue(Double.isNaN(w.getImaginary()));\n        Assert.assertTrue(w.isNaN());\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1446,"output_tokens":570,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.008592,"is_byok":false,"cost_details":{"upstream_inference_cost":0.008592,"upstream_inference_prompt_cost":0.002892,"upstream_inference_completions_cost":0.0057}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,35 @@
+=== ANALYSIS ===
+The defect (CODEC-77) is in `Base64`'s streaming encoder. When a `Base64InputStream` encodes an empty source, `in.read(buf)` returns -1 and `encode(buf, 0, -1)` is called. In buggy version 2b this path appends a line separator even though there was no data (`lineLength > 0` is the only check). The stream therefore yields CRLF, so the first `read()` returns 13 instead of -1. This matches the reported failure "EOF expected:<-1> but was:<13>". The fix emits the trailing line separator only when data was actually written.
+
+The test wraps an empty `ByteArrayInputStream` in `new Base64InputStream(in, true, 76, crlf)`. It asserts that the first `read()` returns -1 and that a second `read()` also returns -1. On 2b the first read returns 13, so the test fails. On 2f both reads return -1, so it passes. It also checks that a bulk `read(byte[])` returns -1 and not a positive count.
+
+The test exercises `org.apache.commons.codec.binary.Base64InputStream` and its use of `Base64`. It is written in JUnit 3 style, extending `TestCase`.
+
+=== TEST CODE ===
+```java
+package org.apache.commons.codec.binary;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
+import junit.framework.TestCase;
+
+public class Base64InputStreamTest extends TestCase {
+
+    public void testBase64EmptyInputStreamEncodeReturnsEofImmediately() throws Exception {
+        byte[] crlf = new byte[] { 13, 10 };
+        byte[] decoded = new byte[0];
+
+        InputStream in = new Base64InputStream(new ByteArrayInputStream(decoded), true, 76, crlf);
+
+        assertEquals("EOF", -1, in.read());
+        assertEquals("Still EOF", -1, in.read());
+
+        byte[] chunk = new byte[10];
+        assertEquals("Still EOF on bulk read", -1, in.read(chunk, 0, chunk.length));
+    }
+}
+```
+
+=== TARGET TEST ===
+org.apache.commons.codec.binary.Base64InputStreamTest::testBase64EmptyInputStreamEncodeReturnsEofImmediately

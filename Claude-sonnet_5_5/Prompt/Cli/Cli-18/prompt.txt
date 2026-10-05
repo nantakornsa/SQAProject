@@ -1,0 +1,96 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Cli
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Cli
+       Program: commons-cli
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/Cli.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-cli.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/active-bugs.csv
+Number of bugs: 39
+--------------------------------------------------------------------------------
+
+Summary for Bug: Cli-18
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+c8606251c904dfaf5303f71b788e12f7fff15fab
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-07-28 08:27:46 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CLI-164
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CLI-164
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.cli.PosixParserTest::testStop2
+   --> junit.framework.AssertionFailedError: Confirm -a is not set
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.cli.PosixParser
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.cli.PosixParser ===
+diff --git a/src/java/org/apache/commons/cli/PosixParser.java b/src/java/org/apache/commons/cli/PosixParser.java
+index 8f03474..08a9280 100644
+--- a/src/java/org/apache/commons/cli/PosixParser.java
++++ b/src/java/org/apache/commons/cli/PosixParser.java
+@@ -125,7 +125,7 @@ public class PosixParser extends Parser {
+             // single hyphen
+             else if ("-".equals(token))
+             {
+-                processSingleHyphen(token);
++                tokens.add(token);
+             }
+             else if (token.startsWith("-"))
+             {
+@@ -210,10 +210,6 @@ public class PosixParser extends Parser {
+             tokens.add(value);
+         }
+     }
+-    private void processSingleHyphen(String hyphen)
+-    {
+-        tokens.add(hyphen);
+-    }
+ 
+     /**
+      * <p>If an {@link Option} exists for <code>token</code> then
+@@ -238,6 +234,7 @@ public class PosixParser extends Parser {
+         else if (stopAtNonOption)
+         {
+             eatTheRest = true;
++            tokens.add(token);
+         }
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testStop2() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

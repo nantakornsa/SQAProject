@@ -1,0 +1,122 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Mockito
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Mockito
+       Program: mockito
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/Mockito.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/mockito.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/active-bugs.csv
+Number of bugs: 38
+--------------------------------------------------------------------------------
+
+Summary for Bug: Mockito-10
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+1beeae39ac9f79d6a0db285dec311b78025ac062
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2014-10-10 02:44:43 +0200
+--------------------------------------------------------------------------------
+Bug report id:
+99
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/mockito/mockito/issues/99
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.mockitousage.bugs.DeepStubsWronglyReportsSerializationProblemsTest::should_not_raise_a_mockito_exception_about_serialization_when_accessing_deep_stub
+   --> org.mockito.exceptions.base.MockitoException: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.mockito.internal.stubbing.defaultanswers.ReturnsDeepStubs
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.mockito.internal.stubbing.defaultanswers.ReturnsDeepStubs ===
+diff --git a/src/org/mockito/internal/stubbing/defaultanswers/ReturnsDeepStubs.java b/src/org/mockito/internal/stubbing/defaultanswers/ReturnsDeepStubs.java
+index e2ded558e..3bb763640 100644
+--- a/src/org/mockito/internal/stubbing/defaultanswers/ReturnsDeepStubs.java
++++ b/src/org/mockito/internal/stubbing/defaultanswers/ReturnsDeepStubs.java
+@@ -14,6 +14,7 @@ import org.mockito.internal.stubbing.StubbedInvocationMatcher;
+ import org.mockito.internal.util.MockUtil;
+ import org.mockito.internal.util.reflection.GenericMetadataSupport;
+ import org.mockito.invocation.InvocationOnMock;
++import org.mockito.mock.MockCreationSettings;
+ import org.mockito.stubbing.Answer;
+ 
+ import java.io.IOException;
+@@ -68,7 +69,7 @@ public class ReturnsDeepStubs implements Answer<Object>, Serializable {
+ 
+         // record deep stub answer
+         return recordDeepStubAnswer(
+-                newDeepStubMock(returnTypeGenericMetadata),
++                newDeepStubMock(returnTypeGenericMetadata, invocation.getMock()),
+                 container
+         );
+     }
+@@ -84,22 +85,26 @@ public class ReturnsDeepStubs implements Answer<Object>, Serializable {
+      * @param parentMock The parent of the current deep stub mock.
+      * @return The mock
+      */
+-    private Object newDeepStubMock(GenericMetadataSupport returnTypeGenericMetadata) {
++    private Object newDeepStubMock(GenericMetadataSupport returnTypeGenericMetadata, Object parentMock) {
++        MockCreationSettings parentMockSettings = new MockUtil().getMockSettings(parentMock);
+         return mockitoCore().mock(
+                 returnTypeGenericMetadata.rawType(),
+-                withSettingsUsing(returnTypeGenericMetadata)
++                withSettingsUsing(returnTypeGenericMetadata, parentMockSettings)
+         );
+     }
+ 
+-    private MockSettings withSettingsUsing(GenericMetadataSupport returnTypeGenericMetadata) {
++    private MockSettings withSettingsUsing(GenericMetadataSupport returnTypeGenericMetadata, MockCreationSettings parentMockSettings) {
+         MockSettings mockSettings = returnTypeGenericMetadata.hasRawExtraInterfaces() ?
+                 withSettings().extraInterfaces(returnTypeGenericMetadata.rawExtraInterfaces())
+                 : withSettings();
+ 
+-        return mockSettings.serializable()
++        return propagateSerializationSettings(mockSettings, parentMockSettings)
+                 .defaultAnswer(returnsDeepStubsAnswerUsing(returnTypeGenericMetadata));
+     }
+ 
++    private MockSettings propagateSerializationSettings(MockSettings mockSettings, MockCreationSettings parentMockSettings) {
++        return mockSettings.serializable(parentMockSettings.getSerializableMode());
++    }
+ 
+     private ReturnsDeepStubs returnsDeepStubsAnswerUsing(final GenericMetadataSupport returnTypeGenericMetadata) {
+         return new ReturnsDeepStubsSerializationFallback(returnTypeGenericMetadata);
+
+
+=== TRIGGERING TEST METHOD ===
+    public void should_not_raise_a_mockito_exception_about_serialization_when_accessing_deep_stub() {
+        NotSerializableShouldBeMocked the_deep_stub = mock(ToBeDeepStubbed.class, RETURNS_DEEP_STUBS).getSomething();
+        assertThat(the_deep_stub).isNotNull();
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

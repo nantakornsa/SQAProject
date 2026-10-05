@@ -1,0 +1,50 @@
+```java
+package org.apache.commons.jxpath.ri.model.dom;
+
+import java.io.StringReader;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import junit.framework.TestCase;
+
+import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.jxpath.Pointer;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+
+public class DOMDocumentNodeTypeTest extends TestCase {
+
+    private JXPathContext context;
+
+    protected void setUp() throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(new InputSource(
+                new StringReader("<vendor><location name=\"x\"/></vendor>")));
+        context = JXPathContext.newContext(doc);
+    }
+
+    public void testRootIsDocument() {
+        Pointer pointer = context.getPointer("/");
+        assertNotNull(pointer);
+        assertNotNull(pointer.getNode());
+        assertTrue(pointer.getNode() instanceof Document);
+    }
+
+    public void testDocumentMatchesNodeTypeTest() {
+        Pointer pointer = context.getPointer("/self::node()");
+        assertNotNull(pointer);
+        Object node = pointer.getNode();
+        assertNotNull("Document node should match node()", node);
+        assertTrue(node instanceof Document);
+    }
+
+    public void testElementStillMatchesNodeTypeTest() {
+        Pointer pointer = context.getPointer("/vendor/self::node()");
+        assertNotNull(pointer);
+        assertTrue(pointer.getNode() instanceof Element);
+    }
+}
+```

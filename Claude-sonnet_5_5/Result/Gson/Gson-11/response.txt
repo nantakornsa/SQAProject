@@ -1,0 +1,26 @@
+```java
+package com.google.gson.functional;
+
+import com.google.gson.Gson;
+import junit.framework.TestCase;
+
+public class NumberAsStringDeserializationRegressionTest extends TestCase {
+  private Gson gson;
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    gson = new Gson();
+  }
+
+  public void testNumberAsStringDeserialization() {
+    Number value = gson.fromJson("\"18\"", Number.class);
+    assertEquals(18, value.intValue());
+  }
+
+  public void testNumberAsStringDeserializationDecimal() {
+    Number value = gson.fromJson("\"3.5\"", Number.class);
+    assertEquals(3.5, value.doubleValue(), 0.0001);
+  }
+}
+```

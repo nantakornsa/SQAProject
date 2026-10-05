@@ -1,0 +1,24 @@
+```java
+package com.fasterxml.jackson.databind.type;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Type;
+
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.JavaType;
+
+public class Issue609Test extends BaseMapTest {
+
+    static class LocalType728 {
+        public <T extends CharSequence> void method(T arg) { }
+    }
+
+    public void testTypeVariableBoundsWithoutContext() throws Exception {
+        Method method = LocalType728.class.getDeclaredMethod("method", CharSequence.class);
+        Type genericParamType = method.getGenericParameterTypes()[0];
+
+        JavaType javaType = TypeFactory.defaultInstance().constructType(genericParamType);
+        assertEquals(CharSequence.class, javaType.getRawClass());
+    }
+}
+```

@@ -1,0 +1,60 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791141484-FC5Hzcezujm74sZqM25v","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Developing Regression Test**\n\nI'm currently focused on creating a regression test for Jsoup bug J-3. My approach involves adapting the `testAppendRowToTable` test case provided, ensuring it effectively captures the intended behavior and verifies the fix.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Crafting Jsoup Fix Verification**\n\nI'm refining the test for Jsoup bug J-3, aiming for a standalone JUnit test. My current focus is on accurately capturing the incorrect parsing output in the buggy version by examining the generated HTML, and I'm exploring different methods for whitespace stripping to ensure robust comparison.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.jsoup.nodes;\n\nimport org.jsoup.Jsoup"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\nimport org.junit.Test;\n\nimport static org.junit.Assert.assertEquals;\n\npublic class Element"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"AppendTableTest {\n\n    @Test\n    public void testAppendRowToTable() {\n        Document doc = Jsoup"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".parse(\"<table><tr><td>1</td></tr></table>\");\n        Element table = doc.select(\"table\").first();"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        table.append(\"<tr><td>2</td></tr>\");\n\n        String cleanHtml = doc.body().html().replaceAll"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(\"\\\\r?\\\\n\", \"\");\n        assertEquals(\"<table><tr><td>1</td></tr><tr><td>2</td></tr></table>\", clean"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Html);\n    }\n\n    @Test\n    public void testPrependRowToTable() {\n        Document"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" doc = Jsoup.parse(\"<table><tr><td>1</td></tr></table>\");\n        Element table = doc.select(\""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"table\").first();\n        table.prepend(\"<tr><td>2</td></tr>\");\n\n        String cleanHtml = doc."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"body().html().replaceAll(\"\\\\r?\\\\n\", \"\");\n        assertEquals(\"<table><tr><td>2</td></tr><tr><td>1"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"</td></tr></table>\", cleanHtml);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":3457,"output_tokens":754,"output_tokens_details":{"thinking_tokens":503},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.00542025,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00542025,"upstream_inference_prompt_cost":0.00259275,"upstream_inference_completions_cost":0.0028275}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

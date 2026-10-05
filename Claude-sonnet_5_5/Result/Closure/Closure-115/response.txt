@@ -1,0 +1,53 @@
+```java
+package com.google.javascript.jscomp;
+
+/**
+ * Regression test for Closure-115 (issue 1101): FunctionInjector wrongly
+ * refused to inline a function when its return expression had side effects
+ * and an argument could be side-effected.
+ *
+ * It extends InlineFunctionsTest to reuse that class's setUp and processor
+ * configuration. The inherited tests will also run.
+ */
+public class InlineFunctionsRegressionTest extends InlineFunctionsTest {
+
+  public void testBug4944818Regression() {
+    test(
+        "var getDomServices_ = function(self) {\n" +
+        "  if (!self.domServices_) {\n" +
+        "    self.domServices_ = goog$component$DomServices.get(" +
+        "        self.appContext_);\n" +
+        "  }\n" +
+        "\n" +
+        "  return self.domServices_;\n" +
+        "};\n" +
+        "\n" +
+        "var getOwnerWin_ = function(self) {\n" +
+        "  return getDomServices_(self).getDomHelper().getWindow();\n" +
+        "};\n" +
+        "\n" +
+        "HangoutStarter.prototype.launchHangout = function() {\n" +
+        "  var self = a.b;\n" +
+        "  var myUrl = new goog.Uri(getOwnerWin_(self).location.href);\n" +
+        "};",
+        "HangoutStarter.prototype.launchHangout = function() { " +
+        "  var self$$2 = a.b;" +
+        "  var JSCompiler_temp_const$$0 = goog.Uri;" +
+        "  var JSCompiler_inline_result$$1;" +
+        "  {" +
+        "  var self$$inline_2 = self$$2;" +
+        "  if (!self$$inline_2.domServices_) {" +
+        "    self$$inline_2.domServices_ = goog$component$DomServices.get(" +
+        "        self$$inline_2.appContext_);" +
+        "  }" +
+        "  JSCompiler_inline_result$$1=self$$inline_2.domServices_;" +
+        "  }" +
+        "  var myUrl = new JSCompiler_temp_const$$0(" +
+        "      JSCompiler_inline_result$$1.getDomHelper()." +
+        "          getWindow().location.href)" +
+        "}");
+  }
+}
+```
+
+I haven't compiled or run this. It assumes `InlineFunctionsTest` is public, non-final, in package `com.google.javascript.jscomp`, and that its inherited `setUp` configures the inliner the same way the original `testBug4944818` expects. The new method copies that triggering test, so it should fail on the buggy version and pass on the fixed one.

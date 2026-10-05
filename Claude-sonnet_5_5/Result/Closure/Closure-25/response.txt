@@ -1,0 +1,73 @@
+This test is not compiled or run, so it may not behave exactly as intended. It avoids the private helpers in `TypeInferenceTest` and extends `CompilerTestCase` with type checking enabled. A custom pass then reads the inferred type of the last reference to `y`, which comes after `new F(y)`. With the fix, backwards inference from the constructor call site refines `y` to `{foo: (number|undefined)}`. On the buggy version the type stays `{}`, so the assertion fails.
+
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.Node;
+import com.google.javascript.rhino.jstype.JSType;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Regression test: backwards type inference must be performed for
+ * arguments of a {@code new} expression.
+ */
+public class TypeInferenceNewBackwardsInferenceTest extends CompilerTestCase {
+
+  public TypeInferenceNewBackwardsInferenceTest() {
+    super("", false);
+  }
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    enableTypeCheck(CheckLevel.OFF);
+  }
+
+  @Override
+  protected int getNumRepetitions() {
+    return 1;
+  }
+
+  @Override
+  public CompilerPass getProcessor(final Compiler compiler) {
+    return new CompilerPass() {
+      @Override
+      public void process(Node externs, Node root) {
+        List<Node> names = new ArrayList<Node>();
+        collectNames(root, "y", names);
+        assertFalse(names.isEmpty());
+        Node last = names.get(names.size() - 1);
+        JSType type = last.getJSType();
+        assertNotNull(type);
+        assertEquals("{foo: (number|undefined)}", type.toString());
+      }
+    };
+  }
+
+  private static void collectNames(Node n, String name, List<Node> out) {
+    if (n.isName() && name.equals(n.getString())) {
+      out.add(n);
+    }
+    for (Node c = n.getFirstChild(); c != null; c = c.getNext()) {
+      collectNames(c, name, out);
+    }
+  }
+
+  public void testBackwardsInferenceNew() {
+    String js =
+        "/**\n" +
+        " * @constructor\n" +
+        " * @param {{foo: (number|undefined)}} x\n" +
+        " */\n" +
+        "function F(x) {}\n" +
+        "function g() {\n" +
+        "  var y = {};\n" +
+        "  new F(y);\n" +
+        "  y;\n" +
+        "}";
+    testSame(js);
+  }
+}
+```

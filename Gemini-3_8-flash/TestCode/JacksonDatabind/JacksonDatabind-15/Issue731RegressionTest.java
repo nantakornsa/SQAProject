@@ -1,0 +1,36 @@
+package com.fasterxml.jackson.databind.convert;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.util.StdConverter;
+
+public class Issue731RegressionTest extends BaseMapTest
+{
+    @JsonSerialize(converter = ToSpecialConverter.class)
+    static class DummyBean {
+    }
+
+    static class ToSpecialConverter extends StdConverter<DummyBean, Object> {
+        @Override
+        public Object convert(DummyBean value) {
+            Map<String, Object> map = new HashMap<String, Object>();
+            map.put("first", "firstValue");
+            map.put("second", "secondValue");
+            return map;
+        }
+    }
+
+    public void testConverterWithObjectTarget() throws Exception
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        String json = mapper.writeValueAsString(new DummyBean());
+        Map<?, ?> map = mapper.readValue(json, Map.class);
+        assertEquals(2, map.size());
+        assertEquals("firstValue", map.get("first"));
+        assertEquals("secondValue", map.get("second"));
+    }
+}

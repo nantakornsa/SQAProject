@@ -1,0 +1,111 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-2
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+9c5fec2302237ede0e797c13c0663a6bb52c798c
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2014-05-28 21:53:45 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+467
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/467
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.node.TestConversions::testConversionOfPojos
+   --> junit.framework.AssertionFailedError: Expected Object, got POJO
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.util.TokenBuffer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.util.TokenBuffer ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/util/TokenBuffer.java b/src/main/java/com/fasterxml/jackson/databind/util/TokenBuffer.java
+index ff8b1c4cf..caea32836 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/util/TokenBuffer.java
++++ b/src/main/java/com/fasterxml/jackson/databind/util/TokenBuffer.java
+@@ -780,19 +780,39 @@ sb.append("NativeObjectIds=").append(_hasNativeObjectIds).append(",");
+     @Override
+     public void writeObject(Object value) throws IOException
+     {
++        if (value == null) {
++            writeNull();
++            return;
++        }
++        Class<?> raw = value.getClass();
++        if (raw == byte[].class) {
+             _append(JsonToken.VALUE_EMBEDDED_OBJECT, value);
++            return;
++        } else if (_objectCodec == null) {
+             /* 28-May-2014, tatu: Tricky choice here; if no codec, should we
+              *   err out, or just embed? For now, do latter.
+              */
+ //          throw new JsonMappingException("No ObjectCodec configured for TokenBuffer, writeObject() called");
++            _append(JsonToken.VALUE_EMBEDDED_OBJECT, value);
++        } else {
++            _objectCodec.writeValue(this, value);
++        }
+     }
+ 
+     @Override
+     public void writeTree(TreeNode node) throws IOException
+     {
++        if (node == null) {
++            writeNull();
++            return;
++        }
+ 
++        if (_objectCodec == null) {
+             // as with 'writeObject()', is codec optional?
+             _append(JsonToken.VALUE_EMBEDDED_OBJECT, node);
++        } else {
++            _objectCodec.writeTree(this, node);
++        }
+     }
+ 
+     /*
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testConversionOfPojos() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

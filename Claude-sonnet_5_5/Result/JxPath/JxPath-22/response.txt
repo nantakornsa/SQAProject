@@ -1,0 +1,41 @@
+```java
+package org.apache.commons.jxpath.ri.model;
+
+import java.io.StringReader;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import junit.framework.TestCase;
+
+import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.jxpath.Pointer;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+
+/**
+ * Regression test for JXPATH-154: an inner empty default namespace
+ * declaration (xmlns="") must be treated as "no namespace".
+ */
+public class JXPath154Test extends TestCase {
+
+    public void testInnerEmptyNamespaceDOM() throws Exception {
+        String xml = "<b:foo xmlns:b=\"ns:b\" xmlns=\"\"><test/></b:foo>";
+
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(new InputSource(new StringReader(xml)));
+
+        JXPathContext context = JXPathContext.newContext(doc);
+        context.registerNamespace("b", "ns:b");
+
+        Pointer pointer = context.getPointer("b:foo/test");
+        assertEquals("/b:foo[1]/test[1]", pointer.asPath());
+    }
+}
+```
+
+I did not compile or run this test against the buggy and fixed versions. It builds the DOM in code instead of loading a resource file, because I could not confirm that the project's original `JXPath154.xml` exists. I also register the `b` prefix on the context so it resolves when the context node is the document itself. This registration is the part most likely to differ from the original triggering test.
+
+The XML is `<b:foo xmlns:b="ns:b" xmlns=""><test/></b:foo>`. On the buggy version, the `xmlns=""` lookup returns an empty string instead of null, so `test` is not matched as a no-namespace element. The pointer path then comes out as `/b:foo[1]/node()[2]` rather than `/b:foo[1]/test[1]`, which matches the failure in the bug report.

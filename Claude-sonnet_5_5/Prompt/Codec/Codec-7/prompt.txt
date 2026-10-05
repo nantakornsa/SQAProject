@@ -1,0 +1,93 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Codec
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Codec
+       Program: commons-codec
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Codec/Codec.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-codec.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Codec/active-bugs.csv
+Number of bugs: 18
+--------------------------------------------------------------------------------
+
+Summary for Bug: Codec-7
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+954d995c5603b616c3c4a9ffb1823f36dd7ebcb0
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-01-23 05:52:42 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CODEC-99
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CODEC-99
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.codec.binary.Base64Test::testByteToStringVariations
+   --> junit.framework.ComparisonFailure: byteToString static Hello World expected:<SGVsbG8gV29ybGQ=[]> but was:<SGVsbG8gV29ybGQ=[
+ - org.apache.commons.codec.binary.Base64Test::testRfc4648Section10Encode
+   --> junit.framework.ComparisonFailure: expected:<Zg==[]> but was:<Zg==[
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.codec.binary.Base64
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+diff --git a/src/java/org/apache/commons/codec/binary/Base64.java b/src/java/org/apache/commons/codec/binary/Base64.java
+index 19a69594..a5c44ab3 100644
+--- a/src/java/org/apache/commons/codec/binary/Base64.java
++++ b/src/java/org/apache/commons/codec/binary/Base64.java
+@@ -667,7 +667,7 @@ public class Base64 implements BinaryEncoder, BinaryDecoder {
+      * @since 1.4
+      */    
+     public static String encodeBase64String(byte[] binaryData) {
+-        return StringUtils.newStringUtf8(encodeBase64(binaryData, true));
++        return StringUtils.newStringUtf8(encodeBase64(binaryData, false));
+     }
+     
+     /**
+
+=== TRIGGERING TEST METHOD ===
+    public void testByteToStringVariations() throws DecoderException {
+        Base64 base64 = new Base64(0);
+        byte[] b1 = StringUtils.getBytesUtf8("Hello World");
+        byte[] b2 = new byte[0];
+        byte[] b3 = null;
+        byte[] b4 = Hex.decodeHex("2bf7cc2701fe4397b49ebeed5acc7090".toCharArray());  // for url-safe tests
+
+        assertEquals("byteToString Hello World", "SGVsbG8gV29ybGQ=", base64.encodeToString(b1));
+        assertEquals("byteToString static Hello World", "SGVsbG8gV29ybGQ=", Base64.encodeBase64String(b1));
+        assertEquals("byteToString \"\"", "", base64.encodeToString(b2));
+        assertEquals("byteToString static \"\"", "", Base64.encodeBase64String(b2));
+        assertEquals("byteToString null", null, base64.encodeToString(b3));
+        assertEquals("byteToString static null", null, Base64.encodeBase64String(b3));
+        assertEquals("byteToString UUID", "K/fMJwH+Q5e0nr7tWsxwkA==", base64.encodeToString(b4));
+        assertEquals("byteToString static UUID", "K/fMJwH+Q5e0nr7tWsxwkA==", Base64.encodeBase64String(b4));
+        assertEquals("byteToString static-url-safe UUID", "K_fMJwH-Q5e0nr7tWsxwkA", Base64.encodeBase64URLSafeString(b4));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

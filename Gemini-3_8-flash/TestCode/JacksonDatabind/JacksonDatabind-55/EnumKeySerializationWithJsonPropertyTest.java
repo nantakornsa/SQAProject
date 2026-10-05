@@ -1,0 +1,27 @@
+package com.fasterxml.jackson.databind.ser;
+
+import java.util.Collections;
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class EnumKeySerializationWithJsonPropertyTest extends BaseMapTest
+{
+    protected enum EnumWithJsonProperty {
+        @JsonProperty("aleph")
+        A,
+        @JsonProperty("beth")
+        B;
+    }
+
+    private final ObjectMapper MAPPER = new ObjectMapper();
+
+    public void testEnumKeyWithJsonProperty() throws Exception
+    {
+        Map<EnumWithJsonProperty, String> map = Collections.singletonMap(EnumWithJsonProperty.A, "b");
+        String json = MAPPER.writeValueAsString(map);
+        assertEquals("{\"aleph\":\"b\"}", json);
+    }
+}

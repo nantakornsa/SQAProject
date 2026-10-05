@@ -1,0 +1,26 @@
+package org.mockito.internal.creation;
+
+import org.junit.Test;
+import java.lang.reflect.Method;
+
+import static org.junit.Assert.assertTrue;
+
+public class GeminiDelegatingMethodTest {
+
+    @Test
+    public void equals_should_return_true_when_equal() throws Exception {
+        Method someMethod = Object.class.getMethod("toString");
+        DelegatingMethod delegatingMethod = new DelegatingMethod(someMethod);
+        DelegatingMethod equal = new DelegatingMethod(someMethod);
+
+        assertTrue(delegatingMethod.equals(equal));
+    }
+
+    @Test
+    public void equals_should_return_true_when_self() throws Exception {
+        Method someMethod = Object.class.getMethod("toString");
+        DelegatingMethod delegatingMethod = new DelegatingMethod(someMethod);
+
+        assertTrue(delegatingMethod.equals(delegatingMethod));
+    }
+}

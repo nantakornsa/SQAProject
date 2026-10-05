@@ -1,0 +1,25 @@
+package org.apache.commons.lang3.time;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
+
+import java.text.ParseException;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+
+import org.junit.Test;
+
+public class FastDateParserLang10Test {
+
+    @Test
+    public void testLANG_831() {
+        DateParser parser = new FastDateParser("M E", TimeZone.getDefault(), Locale.US);
+        try {
+            Date date = parser.parse("3  Tue");
+            fail("Expected ParseException when input has multiple spaces for single space pattern, but parsed: " + date);
+        } catch (ParseException e) {
+            // Expected exception: pattern has one space, input has two spaces
+        }
+    }
+}

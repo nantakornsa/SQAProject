@@ -1,0 +1,42 @@
+The bug is in `getLInfNorm()`. `ArrayRealVector` accumulated with `max += Math.max(...)` instead of assigning. `OpenMapRealVector` summed raw values instead of taking the maximum absolute value. The test uses a vector with negative entries so that both defects give wrong results, and it checks `getLInfNorm()` on both classes.
+
+For `[-4, 0, 3, 1, -6, 3]`, the expected norm is 6.
+
+- **Buggy `ArrayRealVector`:** the running value goes 0, 4, 4+4=8, 8+4=12, and so on, so it ends at 128 as in the report.
+- **Buggy `OpenMapRealVector`:** it sums the values to -3, which is wrong.
+- **Fixed versions:** both return 6.
+
+The `OpenMapRealVector(double[])` constructor exists in this version. After the fix, `OpenMapRealVector` inherits `getLInfNorm()` from `AbstractRealVector`, which computes the max of `Math.abs(getEntry(i))` over the entries, or similar. That also gives 6.
+
+The test uses JUnit 3 style (`TestCase`), matching the project.
+
+```java
+package org.apache.commons.math.linear;
+
+import junit.framework.TestCase;
+
+public class LInfNormRegressionTest extends TestCase {
+
+    private final double[] vec = { -4d, 0d, 3d, 1d, -6d, 3d };
+
+    public void testArrayRealVectorLInfNorm() {
+        ArrayRealVector v = new ArrayRealVector(vec);
+        assertEquals("compare values  ", 6.0, v.getLInfNorm(), 1.0e-12);
+    }
+
+    public void testArrayRealVectorLInfNormAllNegative() {
+        ArrayRealVector v = new ArrayRealVector(new double[] { -1d, -2d, -3d });
+        assertEquals("compare values  ", 3.0, v.getLInfNorm(), 1.0e-12);
+    }
+
+    public void testOpenMapRealVectorLInfNorm() {
+        OpenMapRealVector v = new OpenMapRealVector(vec);
+        assertEquals("compare values  ", 6.0, v.getLInfNorm(), 1.0e-12);
+    }
+
+    public void testOpenMapRealVectorLInfNormAllNegative() {
+        OpenMapRealVector v = new OpenMapRealVector(new double[] { -1d, -2d, -3d });
+        assertEquals("compare values  ", 3.0, v.getLInfNorm(), 1.0e-12);
+    }
+}
+```

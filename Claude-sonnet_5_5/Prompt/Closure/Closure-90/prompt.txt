@@ -1,0 +1,104 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-90
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+c5e143f7df0c3d73f6634488cac8ad8e7054fe05
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-11-01 16:00:27 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+274
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-274.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.TypeCheckTest::testBackwardsTypedefUse8
+   --> junit.framework.AssertionFailedError: unexpected warnings(s):
+ - com.google.javascript.jscomp.TypeCheckTest::testBackwardsTypedefUse9
+   --> junit.framework.ComparisonFailure: expected:<[actual parameter 1 of g does not match formal parameter
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.FunctionTypeBuilder
+ - com.google.javascript.rhino.jstype.FunctionType
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.FunctionTypeBuilder ===
+diff --git a/src/com/google/javascript/jscomp/FunctionTypeBuilder.java b/src/com/google/javascript/jscomp/FunctionTypeBuilder.java
+index 99c9fce70..3394fa626 100644
+--- a/src/com/google/javascript/jscomp/FunctionTypeBuilder.java
++++ b/src/com/google/javascript/jscomp/FunctionTypeBuilder.java
+@@ -181,7 +181,7 @@ final class FunctionTypeBuilder {
+       // create interfaces JSType, ObjectType, FunctionType etc and have
+       // separate implementation instead of the class hierarchy, so that
+       // union types can also be object types, etc.
+-      if (!type.isSubtype(
++      if (!type.restrictByNotNullOrUndefined().isSubtype(
+               typeRegistry.getNativeType(OBJECT_TYPE))) {
+         reportWarning(THIS_TYPE_NON_OBJECT, type.toString());
+         return false;
+
+=== MODIFIED SOURCE: com.google.javascript.rhino.jstype.FunctionType ===
+diff --git a/src/com/google/javascript/rhino/jstype/FunctionType.java b/src/com/google/javascript/rhino/jstype/FunctionType.java
+index 3f0d24502..de1d1c232 100644
+--- a/src/com/google/javascript/rhino/jstype/FunctionType.java
++++ b/src/com/google/javascript/rhino/jstype/FunctionType.java
+@@ -877,6 +877,9 @@ public class FunctionType extends PrototypeObjectType {
+     // mean "nullable Foo". For certain tags (like @extends) we de-nullify
+     // the name for them.
+     JSType maybeTypeOfThis = safeResolve(typeOfThis, t, scope);
++    if (maybeTypeOfThis != null) {
++      maybeTypeOfThis = maybeTypeOfThis.restrictByNotNullOrUndefined();
++    }
+     if (maybeTypeOfThis instanceof ObjectType) {
+       typeOfThis = (ObjectType) maybeTypeOfThis;
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testBackwardsTypedefUse8() throws Exception {
+    // Tehnically, this isn't quite right, because the JS runtime
+    // will coerce null -> the global object. But we'll punt on that for now.
+    testTypes(
+        "/** @param {!Array} x */ function g(x) {}" +
+        "/** @this {goog.MyTypedef} */ function f() { g(this); }" +
+        "var goog = {};" +
+        "/** @typedef {(Array|null|undefined)} */ goog.MyTypedef;");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

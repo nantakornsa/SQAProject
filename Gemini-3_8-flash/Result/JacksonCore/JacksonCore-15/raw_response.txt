@@ -1,0 +1,81 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791106749-dXNiKKOs9AMNw7ZlqfVv","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Jackson Bug**\n\nI'm currently digging into JacksonCore-15, focusing on a filtering issue in `FilteringParserDelegate`. It appears that when `allowMultipleMatches` is set to `false`, the filtering mechanism isn't halting after the initial match as expected. The `testNotAllowMultipleMatches()` test case seems to be the key to understanding this behavior.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing Jackson Filter Behavior**\n\nI'm examining the `testNotAllowMultipleMatches` case in `BasicParserFilteringTest`. The discrepancy `expected:<3[]> but was:<3[ 4]>` suggests an issue with how the parser handles non-scalar values when multiple matches are disallowed. I'm tracing the `_allowMultipleMatches` flag within `FilteringParserDelegate` to pinpoint the exact logic.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Tracing Jackson Filter Logic**\n\nI'm now scrutinizing the condition `led() && !_includePath && _itemFilter == TokenFilter.INCLUDE_ALL` within `FilteringParserDelegate`. I'm cross-referencing this with the setup in `BasicParserFilteringTest`, specifically how a simple JSON like `\"3 4\"` interacts with `allowMultipleMatches = false`. My current focus is on why the parser proceeds to the second token when it shouldn't.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Debugging Jackson Filter**\n\nI'm investigating why `TokenFilter.INCLUDE_ALL` is returning null. I'm also considering edge cases like array and object structures, and tracing the `readAndWrite` method to understand its interaction with `FilteringParserDelegate` in `BasicParserFilteringTest`.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"package com.fasterxml.jackson.core.filter;\n\nimport com.fasterxml.jackson.core.BaseTest;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\nimport com.fasterxml.jackson.core.JsonParser;\nimport com.fasterxml.jackson.core.Json"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Token;\n\npublic class FilteringParserDelegate15Test extends BaseTest {\n\n    public void testNotAllowMultipleMatchesScalar"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"() throws Exception {\n        String json = \"3 4\";\n        JsonParser p0 = JSON_F.create"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Parser(json);\n        FilteringParserDelegate p = new FilteringParserDelegate(\n                p0,\n                TokenFilter"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".INCLUDE_ALL,\n                false, // includePath\n                false // allowMultipleMatches\n        );\n\n        assertToken"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(JsonToken.VALUE_NUMBER_INT, p.nextToken());\n        assertEquals(3, p.getIntValue"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"());\n        assertNull(p.nextToken());\n        p.close();\n    }\n\n    public void test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"NotAllowMultipleMatchesStruct() throws Exception {\n        String json = \"[3] [4]\";\n        JsonParser p0 = JSON_"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"F.createParser(json);\n        FilteringParserDelegate p = new FilteringParserDelegate(\n                p0,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n                TokenFilter.INCLUDE_ALL,\n                false, // includePath\n                false // allowMultipleMatches\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        );\n\n        assertToken(JsonToken.START_ARRAY, p.nextToken());\n        assertToken(Json"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Token.VALUE_NUMBER_INT, p.nextToken());\n        assertEquals(3, p.getIntValue());\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        assertToken(JsonToken.END_ARRAY, p.nextToken());\n        assertNull(p.nextToken());"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        p.close();\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1129,"output_tokens":1648,"output_tokens_details":{"thinking_tokens":1285},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00702675,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00702675,"upstream_inference_prompt_cost":0.00084675,"upstream_inference_completions_cost":0.00618}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

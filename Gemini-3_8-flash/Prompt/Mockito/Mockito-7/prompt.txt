@@ -1,0 +1,82 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Mockito
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Mockito
+       Program: mockito
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/Mockito.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/mockito.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/active-bugs.csv
+Number of bugs: 38
+--------------------------------------------------------------------------------
+
+Summary for Bug: Mockito-7
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+0aaa36ce6924ca87f88e3723771413b42b80dc5a
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2014-12-31 17:39:04 +0100
+--------------------------------------------------------------------------------
+Bug report id:
+128
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/mockito/mockito/issues/128
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.mockitousage.bugs.deepstubs.DeepStubFailingWhenGenricNestedAsRawTypeTest::discoverDeepMockingOfGenerics
+   --> org.mockito.exceptions.base.MockitoException: Raw extraction not supported for : 'null'
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.mockito.internal.util.reflection.GenericMetadataSupport
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.mockito.internal.util.reflection.GenericMetadataSupport ===
+diff --git a/src/org/mockito/internal/util/reflection/GenericMetadataSupport.java b/src/org/mockito/internal/util/reflection/GenericMetadataSupport.java
+index 2d6c07b17..80bd908b5 100644
+--- a/src/org/mockito/internal/util/reflection/GenericMetadataSupport.java
++++ b/src/org/mockito/internal/util/reflection/GenericMetadataSupport.java
+@@ -376,6 +376,7 @@ public abstract class GenericMetadataSupport {
+             for (Type type : typeVariable.getBounds()) {
+                 registerTypeVariablesOn(type);
+             }
++            registerTypeParametersOn(new TypeVariable[] { typeVariable });
+             registerTypeVariablesOn(getActualTypeArgumentFor(typeVariable));
+         }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  public void discoverDeepMockingOfGenerics() {
+    MyClass1 myMock1 = mock(MyClass1.class, RETURNS_DEEP_STUBS);
+    when(myMock1.getNested().getNested().returnSomething()).thenReturn("Hello World.");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

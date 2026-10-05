@@ -1,0 +1,63 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791184676-I0o6Ibq1etqx0edy5hea","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Jackson Bug**\n\nI'm currently focused on the Jackson Databind bug, specifically the null check issue within `WritableObjectId.generateId`. My current thought process is centered on the `testIssue1255` scenario, examining how `alwaysAsId = true` interacts with the serialization process and the potential for null IDs.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind.objectid;\n\nimport com."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"fasterxml.jackson.annotation.JsonIdentityInfo;\nimport com.fasterxml.jackson.annotation.JsonIdentityReference;\nimport com"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".fasterxml.jackson.annotation.ObjectIdGenerators;\nimport com.fasterxml.jackson.databind.BaseMapTest"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\npublic class AlwaysAsReferenceFirstTest extends BaseMap"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Test {\n\n    static class Foo {\n        @JsonIdentityReference(alwaysAsId = true)\n        public Bar bar1"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\n        public Bar bar2;\n\n        public Foo() { }\n        public Foo(Bar bar) {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n            bar1 = bar;\n            bar2 = bar;\n        }\n    }\n\n    @Json"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"IdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = \"@id\")\n    static class"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" Bar {\n        public int value = 3;\n    }\n\n    public void testIssue1255"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"() throws Exception {\n        Foo foo = new Foo(new Bar());\n        ObjectMapper mapper = new ObjectMapper();\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        String json = mapper.writeValueAsString(foo);\n        Foo result = mapper.readValue(json, Foo.class);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        assertNotNull(result);\n        assertNotNull(result.bar1);\n        assertSame(result.bar1,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" result.bar2);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1058,"output_tokens":757,"output_tokens_details":{"thinking_tokens":452},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.00363225,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00363225,"upstream_inference_prompt_cost":0.0007935,"upstream_inference_completions_cost":0.00283875}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

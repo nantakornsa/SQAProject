@@ -1,0 +1,78 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791109272-0ZFEUpvOqXD7Oa1bYtIx","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing COLLECTIONS-580**\n\nI've identified the root cause of COLLECTIONS-580 in `MultiValueMap`'s `ReflectionFactory`. The deserialization process failed to validate the provided `clazz` parameter, allowing non-Collection types, which should have thrown an `UnsupportedOperationException` but did not in the buggy state.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"apache.commons.collections4.map;\n\nimport java.io.ByteArrayInputStream;\nimport java.io."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ByteArrayOutputStream;\nimport java.io.ObjectInputStream;\nimport java.io.ObjectOutputStream;\nimport java"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".util.ArrayList;\nimport java.util.HashMap;\nimport org.junit.Test;\n\nimport static org.junit."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Assert.assertEquals;\nimport static org.junit.Assert.fail;\n\npublic class MultiValueMapSerializationTest {\n\n    private"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" byte[] serialize(final Object obj) throws Exception {\n        final ByteArrayOutputStream baos = new ByteArrayOutputStream();\n        final"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" ObjectOutputStream oos = new ObjectOutputStream(baos);\n        oos.writeObject(obj);\n        oos."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"close();\n        return baos.toByteArray();\n    }\n\n    private Object deserialize(final byte[] bytes) throws Exception {\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"final ByteArrayInputStream bais = new ByteArrayInputStream(bytes);\n        final ObjectInputStream ois = new ObjectInputStream("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"bais);\n        final Object result = ois.readObject();\n        ois.close();\n        return"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" result;\n    }\n\n    @Test\n    @SuppressWarnings({ \"rawtypes\", \"unchecked\" })\n    public void testUn"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"safeDeSerialization() throws Exception {\n        final MultiValueMap map1 = MultiValueMap.multiValueMap(new HashMap(), ArrayList"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".class);\n        final byte[] bytes1 = serialize(map1);\n        final Object result1 = deserialize(bytes1);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        assertEquals(map1, result1);\n\n        final MultiValueMap map2 = MultiValueMap.multi"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ValueMap(new HashMap(), (Class) String.class);\n        final byte[] bytes2 = serialize(map"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"2);\n        try {\n            deserialize(bytes2);\n            fail(\"unsafe clazz accepted when de-serializing"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" MultiValueMap\");\n        } catch (final UnsupportedOperationException ex) {\n            // expected\n        }\n    }\n}"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1126,"output_tokens":612,"output_tokens_details":{"thinking_tokens":192},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.0031395,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0031395,"upstream_inference_prompt_cost":0.0008445,"upstream_inference_completions_cost":0.002295}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

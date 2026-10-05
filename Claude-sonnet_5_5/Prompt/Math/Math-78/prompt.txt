@@ -1,0 +1,94 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-78
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+f7c0b403d2585912e40b471cf83ac1d72cdd459b
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-12-06 23:04:55 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-322
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-322
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.ode.events.EventStateTest::closeEvents
+   --> org.apache.commons.math.MathRuntimeException$4: function values at endpoints do not have different signs.  Endpoints: [89.999, 153.1], Values: [-0.066, -1,142.11]
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.ode.events.EventState
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.ode.events.EventState ===
+diff --git a/src/main/java/org/apache/commons/math/ode/events/EventState.java b/src/main/java/org/apache/commons/math/ode/events/EventState.java
+index 50060650e..ff09646bf 100644
+--- a/src/main/java/org/apache/commons/math/ode/events/EventState.java
++++ b/src/main/java/org/apache/commons/math/ode/events/EventState.java
+@@ -188,6 +188,7 @@ public class EventState {
+                 if (g0Positive ^ (gb >= 0)) {
+                     // there is a sign change: an event is expected during this step
+ 
++                    if (ga * gb > 0) {
+                         // this is a corner case:
+                         // - there was an event near ta,
+                         // - there is another event between ta and tb
+@@ -195,7 +196,17 @@ public class EventState {
+                         // this implies that the real sign of ga is the same as gb, so we need to slightly
+                         // shift ta to make sure ga and gb get opposite signs and the solver won't complain
+                         // about bracketing
++                        final double epsilon = (forward ? 0.25 : -0.25) * convergence;
++                        for (int k = 0; (k < 4) && (ga * gb > 0); ++k) {
++                            ta += epsilon;
++                            interpolator.setInterpolatedTime(ta);
++                            ga = handler.g(ta, interpolator.getInterpolatedState());
++                        }
++                        if (ga * gb > 0) {
+                             // this should never happen
++                            throw MathRuntimeException.createInternalError(null);
++                        }
++                    }
+                          
+                     // variation direction, with respect to the integration direction
+                     increasing = gb >= ga;
+
+
+=== TRIGGERING TEST METHOD ===
+    public void closeEvents()
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

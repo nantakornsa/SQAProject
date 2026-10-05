@@ -1,0 +1,138 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-11
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+f462438f2ebfb354c823cd2c0b677b0674f0e80c
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-07-02 21:12:02 +1000
+--------------------------------------------------------------------------------
+Bug report id:
+36
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/36
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.select.SelectorTest::notAll
+   --> org.jsoup.select.Selector$SelectorParseException: Could not parse query ':not(p)': unexpected token at ':not(p)'
+ - org.jsoup.select.SelectorTest::testPseudoHas
+   --> junit.framework.AssertionFailedError: expected:<3> but was:<0>
+ - org.jsoup.select.SelectorTest::notClass
+   --> org.jsoup.select.Selector$SelectorParseException: Could not parse query 'div:not(.left)': unexpected token at ':not(.left)'
+ - org.jsoup.select.SelectorTest::notParas
+   --> org.jsoup.select.Selector$SelectorParseException: Could not parse query 'p:not([id=1])': unexpected token at ':not([id=1])'
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.select.Selector
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.select.Selector ===
+diff --git a/src/main/java/org/jsoup/select/Selector.java b/src/main/java/org/jsoup/select/Selector.java
+index 13341ce4..e370de8e 100644
+--- a/src/main/java/org/jsoup/select/Selector.java
++++ b/src/main/java/org/jsoup/select/Selector.java
+@@ -107,6 +107,8 @@ public class Selector {
+         if (tq.matchesAny(combinators)) { // if starts with a combinator, use root as elements
+             elements.add(root);
+             combinator(tq.consume().toString());
++        } else if (tq.matches(":has(")) {
++            elements.addAll(root.getAllElements());
+         } else {
+             addElements(findElements()); // chomp first element matcher off queue 
+         }            
+@@ -178,6 +180,8 @@ public class Selector {
+             return matches(false);
+         } else if (tq.matches(":matchesOwn(")) {
+             return matches(true);
++        } else if (tq.matches(":not(")) {
++            return not();
+         } else { // unhandled
+             throw new SelectorParseException("Could not parse query '%s': unexpected token at '%s'", query, tq.remainder());
+         }
+@@ -302,7 +306,13 @@ public class Selector {
+     }
+ 
+     // :not(selector)
++    private Elements not() {
++        tq.consume(":not");
++        String subQuery = tq.chompBalanced('(', ')');
++        Validate.notEmpty(subQuery, ":not(selector) subselect must not be empty");
+ 
++        return filterOut(root.getAllElements(), select(subQuery, root));
++    }
+ 
+     // direct child descendants
+     private static Elements filterForChildren(Collection<Element> parents, Collection<Element> candidates) {
+@@ -396,6 +406,21 @@ public class Selector {
+     }
+ 
+     // exclude set. package open so that Elements can implement .not() selector.
++    static Elements filterOut(Collection<Element> elements, Collection<Element> outs) {
++        Elements output = new Elements();
++        for (Element el: elements) {
++            boolean found = false;
++            for (Element out: outs) {
++                if (el.equals(out)) {
++                    found = true;
++                    break;
++                }
++            }
++            if (!found)
++                output.add(el);
++        }
++        return output;
++    }
+ 
+     public static class SelectorParseException extends IllegalStateException {
+         public SelectorParseException(String msg, Object... params) {
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void notAll() {
+        Document doc = Jsoup.parse("<p>Two</p> <p><span>Three</span></p>");
+
+        Elements el1 = doc.body().select(":not(p)"); // should just be the span
+        assertEquals(2, el1.size());
+        assertEquals("body", el1.first().tagName());
+        assertEquals("span", el1.last().tagName());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

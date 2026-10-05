@@ -1,0 +1,71 @@
+```java
+package org.apache.commons.math.optimization.general;
+
+import junit.framework.TestCase;
+
+import org.apache.commons.math.analysis.DifferentiableMultivariateVectorialFunction;
+import org.apache.commons.math.analysis.MultivariateMatrixFunction;
+import org.apache.commons.math.optimization.VectorialConvergenceChecker;
+import org.apache.commons.math.optimization.VectorialPointValuePair;
+
+/**
+ * Regression test for MATH-362: the Levenberg-Marquardt optimizer
+ * ignored a user-supplied convergence checker.
+ */
+public class LevenbergMarquardtCheckerTest extends TestCase {
+
+    private static class CountingChecker implements VectorialConvergenceChecker {
+        int calls = 0;
+
+        public boolean converged(int iteration,
+                                 VectorialPointValuePair previous,
+                                 VectorialPointValuePair current) {
+            ++calls;
+            // always request termination
+            return true;
+        }
+    }
+
+    public void testConvergenceCheckerIsUsed() throws Exception {
+        DifferentiableMultivariateVectorialFunction rosenbrock =
+            new DifferentiableMultivariateVectorialFunction() {
+                public double[] value(double[] x) {
+                    return new double[] {
+                        10.0 * (x[1] - x[0] * x[0]),
+                        1.0 - x[0]
+                    };
+                }
+
+                public MultivariateMatrixFunction jacobian() {
+                    return new MultivariateMatrixFunction() {
+                        public double[][] value(double[] x) {
+                            return new double[][] {
+                                { -20.0 * x[0], 10.0 },
+                                { -1.0, 0.0 }
+                            };
+                        }
+                    };
+                }
+            };
+
+        LevenbergMarquardtOptimizer optimizer = new LevenbergMarquardtOptimizer();
+        CountingChecker checker = new CountingChecker();
+        optimizer.setConvergenceChecker(checker);
+
+        optimizer.optimize(rosenbrock,
+                           new double[] { 0.0, 0.0 },
+                           new double[] { 1.0, 1.0 },
+                           new double[] { -1.2, 1.0 });
+
+        assertTrue("convergence checker was never called", checker.calls > 0);
+        assertEquals(1, checker.calls);
+        assertEquals(1, optimizer.getIterations());
+    }
+}
+```
+
+I haven't compiled or run this against either version. It assumes the Math 2.1-era API: `optimize(DifferentiableMultivariateVectorialFunction, double[] target, double[] weights, double[] startPoint)` and `VectorialConvergenceChecker.converged(int, VectorialPointValuePair, VectorialPointValuePair)`.
+
+The buggy optimizer only used its own built-in convergence tests and never consulted a user-supplied checker. The test installs a checker that counts its calls and always returns `true`. On the fixed version the optimizer calls it after the first iteration and stops, so the test sees exactly one call and one iteration. On the buggy version the checker is never called, so the `checker.calls > 0` assertion fails.
+
+I didn't reproduce the `MinpackTest` setup, since its exact helper code wasn't given. This test targets the same cause (the ignored checker) with a small Rosenbrock-style problem.

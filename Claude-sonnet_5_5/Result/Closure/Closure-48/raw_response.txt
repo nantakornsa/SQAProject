@@ -1,0 +1,90 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791201218-MY0S852Kffjb3iOSZVMH","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1665,"output_tokens":2,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I need to figure out how to"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" write a compilable test class, considering that TypeCheckTest's testTypes helper method might have restricted access that limits how I can extend or reuse it."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I'm"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" deciding it's safer to write a self-contained test using the Compiler API directly, setting up CompilerOptions with type checking enabled, compiling with empty externs, and inspecting the resulting warnings for verification."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I should"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" try extending CompilerT"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ypeTestCase instead, since it exposes DEFAULT_EXTERNS as a protected static field I can reuse for the externs setup."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"For assertions, I'll"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" check compiler.getWarnings() returns the expected JSError array and verify the description matches."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"CAQShB0KEAgSGAI4AUIIdGhpbmtpbmcSDCZrDXPPA7CW1PvQaBoMqozoQQMyVFbzH7/HIjA6IAsihkLUM003cVgnlRzS4tz8vAGlJh8cAaSpfXpjOQ+aqBwE7O3xYO3nFGzRHHoqoRx3IKHWFYuYSO9P0qqpeioz6Yq5Z1G49Uio7a8DBPpPIPub4203f5hk4SJ1zWs78KWTO9/TTceW/slO3KhMuIuFtEsNKTPBMYV5pvJINzIkOU1VxHWCWg0L/6EqqDSpi4pz/z0EhmjC5G0rzhXsvdy7FzX715wg0UH9E79JvN2hUZLtD0OSFBjkabbF4sfz/EJbaohHSsjwj5qbfXRp79p/EhBzcF5Fd1WwlajUI65Lv1/De6GfQxza+nQyNWPkrzxwi8EvpVETlxmH25H+9HbJRpv2WaPJ7c6fXtdDos6wzZgiVxgLAemQhWEPgKPtMXypTpmZ7n3a6PieOXio6uE7h2IlG9fAg1v7g1IR3zrH0MEtAMxyVskK+UYQITkDp/Er66vl16hPF/lvSuJSaF3a+QKls0GwbReHkM/M6Mh8lA0RqBWvcID4Nn/u2qDcZDUReXp9nZ8F3M7DyFjQOhTm1GrkYu8hYU4zH4Ilc/+ororMR4FkMTeAnGqVpA5HdPDq2pMHOQQMtkTBiCBEqJz+R+bzmOphkI6C7DmIYzRpcft9dPcxvBnDEYhnqNFwaAwg1oqbIMK0q5tJly0KR3Gb3ufXjGHYQpBMp9GOIM4PhoDjcj2dH18G2C3KiLH2m3VGz1rHXED/q2hY2pTMVeVXqrHJui8dWxnAXuc+ExWrgOmCkKPeQxTeXrou6QRb0Db+YaJqHIKR9uICEwbcRiX1Nceqx9+af2lrTm2lgWm9tbUFMBMUpRHWV1IYv86V4kAABKTZYLgEVFe042HvxW//dXKe1Or9THekkmWpX8zXrZAqMhWUpECW4JCWiS+plgfdQeoMDPJH9KZjCs8MKNc1J1TS8HuviBEOpZ4ZVdeYb3TAJ0Km3IkNzBul0YGG2zToPgpm12p7GADKvNqgOYqgAjHZwn17IFEB/0WaMGm+bon8t7ckS5ff0JrAKcAutH6BPZb5Uq7o1EIcAcEMK1pjykNaKD5hXQ3p+AmMbZDcmpYs1QcYxcZvgPdVfsT6xQJcxwmJsQ8sycejSxwQtIEPHsTN0Y/gf8888keMUS3PxrJ4i+RSCmAIo0Yyf/DBJjIbyhUNKtZDBHwgRzn/EwklogWENG2r8GUd1D8JIUpB3gWGzzTL1rGK3TWuCUmRvSCIS7jE/nxCVyoUsUAGCao/n2dDHOd1FT+1Cfxupr0dPEF0pdzafkODArft3KU7ZIa2Oa/dGqIxD2MPB6SnsUWtWOp+0CHbytcU0QdjO2V8/wRvbA8WkTuqaOuLeZDu/E5aiab+6MhnJFFpY5uWMI1Fv9VzO3RLbxocyJIEL4sQNms3Nuz1nIU5xQ5roLgZ6RJMxp5vNQqJ8YrVHrrRAwwWP+9oOf8MRPWTE2IPPXef6NfGUfpKrFcIHU5VVuCcbTcUkMuLribWMfGSvMFx3y3tKUkbAD+6c3QR7dzZ7mImqbDwSRoGSNp4rmaMfDJZ1V4QSOjBegScv4R23JAAwoW0vKfIzKhba0tpWtGnSbKiZrvDX7qAkEWzOBuiJjmFmocgviKNY6BPKlLpT2GzYSH8tuRgoYD9tmagcIL/8ii9h3wnKtp621yLF8sMeam5T5ZQAsl3BffC7Eb/Kx9HN3Jnf9pFy8rys/Ud+CF0ogcexmh97YAC3020c7cvaXmX/EwVfV+sI+r+7shE3FC8CJ1IaLIcGV0MtwYYv++3/iCgrhqCVfE0ds8+G6+s1foc8K8etx0Tt+nPI7LVFOv1n4VAK9Wx/Dmqrp4w2caTPltMwzRTNx8TZwBLz4yYjNR5dy0USQ8j9zsgEf+Kp4h41QI40RBcJgorOHRA6Y9rT6kK8BYHMYw1bBg2dx/pR/Y4hCi2aH4e8R7+NhM3kZ0DgEHAeXqcMR36x9xQiupqclHNCGfofujaVKtFI6D5BqEV3abgBTwP7qUIaFZBchkOgQvUVP22im75QwoFgDtW+1JdluLQ9xZ3e00B93Rz3resXcZ9gt6nmD/Se4JCHy651nEItQ7dUJIUNYei9R+gwGxk7xIGLrrFxVz5BKVsY5Xa/ntdDovpYEca87DWgmyZ+VC6+CfrdkICZrW/R3LKeIGRFVdMhyU4NrY4EZKqYx4hsuaYorS+xrwHqGuN9jTluK93UjfKilU9d/LeL3KgEZ2MdvuBklIxlVgIB02IXQcjRwnNHupHhfa/v2GSvMKJlte4jU6iT6SVAIKWphnH0wdUc+NpeOg4zgjbNQSzACICO3KDifvrnuQT+Qk9HgnVwMicIDGZ9BfSYDkbH14aadwBtQ1mTnXmGPtJJv/yaLAdmmpsd3N+ok3evE/3xrgikF+wT8UJMa8aRJSnq+dTY693CNlNFBjv0/5fhpU6sePBT5oPfyYtxojrrUaSTzUDPGh4EHNsH0iYLt9z7OTyhA0oHvw46LEDgxOq3dFdNc/QSjWo7XgZu0X3nb2cagetLbuJNQWskwL8prbb87b59YO1e8wU1zUtoQFsgI/FV8yr3Qhxt5pzQO7xRLyFRrvzjrU4EthjqV8GftYm2+g1zhoWoXSU1gry3D+xjG2E7yl1460jMQDjUBLQxbLYVgYfhqh52cuZjT4vOxk1S2kJPQeW66rrRLHuOlOPX3g9LZHn4ObEgIKvd/APMg75Z32htf5TCHCv0x2SZLmOczdgCLHuIAfA89CKNIb1Yr6Nobh7p7Pbe17h1K9eup9XpJgbTU+QOk0544uKjoq5srEaBJWM4n1ySuC5J/OLl7NToE8V3jC81WM1rz6NWMVLUYtgOeexEj5kNyDrOTOZ+eTTHYXmb+6Tmz/zEDHzhccaIscxzXkc6qqCOKXPo1RH6rqg4xveFFA3vQX583MblwfE2v6IW6gmmiN11K4gc5+9IPhd49nVQmtUWhPJjeUj5/nga/au/A8a2/5BGxhmCUwTp9C1XPM+ZLUaxgbww5wrBQG1nA3dnUbxjE9IRoChKaS0dewVhS7N7EsmcLrM2NNXe2m8UW0+5HfvNiQ7uC6XQl07CM16/8JDYiXkh2WQTJQMMpq/e0tloONdlr1mWP5EITYwoCQt4qfjeuLEsE+xmBkR2KPalfILsuuD5PO7sDB9GATLFLmgObXkxZRg0Eihk1lqnoRjo0uPrL1sEAm7+z+u9EhET8zTrMMfwIeyogCKHufu5qtrGOnfI+vckt73Vj02qpFvb7XzbGtUz8XtcWA6r/U3AdnEK+8F/oSZNft87bZZWx8zCu3CHIcVOKCpAjs/IuNSGrPyrOAbN9zFds211wUQrZdLW0iXZWvFU4PDV2OmvjHAwudb9yNp6pNg1yb/K/svKZ/RCWGxV+CedohvHDiz7Ev/vkgIGSwfNkqR12jJvtfKnpI7Bu1A2x/EfGkGDaSfEKNql3F0MmzlYMI6ndca7bW1bBLxaZegPx0dcDZXsWnYSV3QLL5IgfCqi5gmd5+uR39kjxLP9jvCRfJwQYo9/BunOA1sRtac2MRU8rTHvfKi7Mx+Z+6P+aOSyMXwtqn06zRAP8uLAEfYQrv9FoRnAuXH2HFqxPGZ3F4Ccutf/ZVJZ3yskTK4bkOVW3TuD19Kj8NZieHixCWZdSYv9kl6hCi+I0SZRNfKo4J1OFHI9o0P1sw4SGUyDwl6BQIobgQdsN5dDLjs8IIRtTgakedgMR5wF8xLPp63jcEmsB2F+stqb4piRvrXjmJr2xYSQXiuPU0a6A6RQ2lovrnxjMTbF3EYj6Po0Kbuq/kMJ+reLnfTtU+S4EcXgrikQdzYl2gqCaE+5ErrcyCiGEA7Oe/tFfz3HI1W4lm4VCY0W811h48bUDakJLntpk+bi760EFOe7iSNPjpgpklY3ly9mjpa+mPXBDqmMZlsnYyhzdqScpq52vfxxCwboLZ9ZvL4N3bp52lNksYNpv2v+KSm06Yeub9sMaln6CaBMveTvuXWOMEoQgqkT1UKvFCwATlp/gHXJCd4NaNXGBgzM4hiXNtmN2PCzG1md72936L35iuFiO3E0PsX+idS4vUuhsxHwy5mAI62049Sw2NyNTJZXB3vULffslIZgEwQ+YJ6kcnQExv5GTCBoGwv4z3F2leGaALe3FcYj0r5Phd4FNfWwmE9CtOTtKsRJOp+Uxjunoe1gh9pYr0h0PICiZvYh2coDU5+ZgQocBx3Z7Wc3+wpQ7bCmMD2PImXPVMDhIK8OBIbxCj8W00vdIMf0nClWSE5px/umwHiYS6TX2gNr+l59J7QUheWHottasfw96pWKNureFt+oWYgjenGQvTZeWP26RkHNkCRLpovWskHJYbNdxFf7i5kyr5Us8AGqrCm840YLHsuYMMEjHsTtqaNaNEBLekhQYXA0T9/PvvOXm81v0ect81SoTaT6PpJqXLDenPaDC0xpYRk8cTZtwoGBnmLOVM0M3mwDjs5gBE5WYm/XPIGCIXWKszw7Mop3ryEE0xTYmzeJ9rVlH+50oOjHza1qQd8CxQ2FLNDzNii35GWVsoNuefVf+akL/MY0GLktY0Zeku85e4Oc2hGxRy0T1NH1WhlmGJbdOGCtpYObZxP81KPVgAAGN8TujxtncuFOQpSY97v5FEuC2kSADVGVgBmiFbUMp8QWZ8R271Y3gJkuVnLXCaWXKRtGFKs5ZoowY5Ye5j4wpolWCzjfq45BzES71Mn1Bq9faBPcwzkid8ZhBdjsAgiw7h7CH6+X6bfT6j00i30BEzqxRauDgvZJJLKnOz/g8N4ZhVi9ca18xES34nVotVwN7zbdmrWggl3ek3n2OYEVaAWijoKVjb/21GbUUUaZxMzORrCFelufacy97lIuGl8TPvnciv2HQCtnOkdoBgB.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1zb25uZXQtNS41LTIwMjYwOTI4fGNsYXVkZS1vbi1hd3MifQ"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.google.javascript.jscomp;\n\nimport com.google.javascript.jscomp.CompilerOptions;\nimport com.google.javascript.jscomp."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Compiler;\nimport com.google.javascript.jscomp.WarningLevel;\n\n/**\n * Regression test for Closure issue 586: a function assigned to an\n * instance property (this"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".fn = function() {}) must not override the\n * declared type of the prototype property.\n */\npublic class TypedScopeCreatorIssue586Test extends CompilerTypeTestCase {\n\n  public void testIssue586() throws Exception {\n    String js ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        \"/** @constructor */\" +\n        \"var MyClass = function() {};\" +\n        \"/** @param {boolean} success */\" +\n        \"MyClass.prototype.fn = function(success) {};\" +\n        \"MyClass.prototype.test = function() {\" +\n        \"  this.fn();\""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" +\n        \"  this.fn = function() {};\" +\n        \"};\";\n\n    Compiler c = new Compiler();\n    CompilerOptions options = new CompilerOptions();\n    options.checkTypes = true;\n    WarningLevel.VERBOSE.setOptionsForWarning"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Level(options);\n\n    c.compile(\n        java.util.Collections.singletonList(\n            JSSourceFile.fromCode(\"externs\", DEFAULT_EXTERNS)),\n        java.util.Collections.singletonList(\n            JSSourceFile.fromCode(\""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"testcode\", js)),\n        options);\n\n    String expected =\n        \"Function MyClass.prototype.fn: called with 0 argument(s). \" +\n        \"Function requires at least 1 argument(s) \" +\n        \"and no more than 1 argument("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"s).\";\n\n    JSError[] warnings = c.getWarnings();\n    boolean found = false;\n    for (JSError w : warnings) {\n      if (w.description.equals(expected)) {\n        found = true;\n      }\n    }\n    assertTrue(\"expected a warning: \" + expected, found);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n  }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1665,"output_tokens":1895,"output_tokens_details":{"thinking_tokens":1237},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.02228,"is_byok":false,"cost_details":{"upstream_inference_cost":0.02228,"upstream_inference_prompt_cost":0.00333,"upstream_inference_completions_cost":0.01895}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

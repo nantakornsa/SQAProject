@@ -1,0 +1,47 @@
+The bug: when `nullString` is set to `""`, empty header values are converted to `null`. `CSVParser` then calls `header.trim()` on `null` and throws a `NullPointerException`. The fix adds a null check.
+
+The test below uses JUnit 4, matching the style of the existing `CSVParserTest`. It parses a header row with empty fields while `nullString` is `""` and `ignoreEmptyHeaders` is true. It also asserts that the null and empty headers are ignored and that the remaining headers map correctly.
+
+On the buggy version the `NullPointerException` is thrown and the test fails. On the fixed version the parse succeeds and the assertions hold.
+
+```java
+package org.apache.commons.csv;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.io.Reader;
+import java.io.StringReader;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.junit.Test;
+
+public class CSVParserHeaderMissingWithNullTest {
+
+    @Test
+    public void testHeaderMissingWithNullRegression() throws Exception {
+        final Reader in = new StringReader("a,,c,,d\n1,2,3,4\nx,y,z,zz");
+        final CSVParser parser = CSVFormat.DEFAULT.withHeader().withNullString("")
+                .withIgnoreEmptyHeaders(true).parse(in);
+        try {
+            final Map<String, Integer> headerMap = parser.getHeaderMap();
+            assertTrue(headerMap.containsKey("a"));
+            assertTrue(headerMap.containsKey("c"));
+            assertTrue(headerMap.containsKey("d"));
+            assertFalse(headerMap.containsKey(null));
+            assertFalse(headerMap.containsKey(""));
+            assertEquals(3, headerMap.size());
+
+            final Iterator<CSVRecord> iterator = parser.iterator();
+            assertTrue(iterator.hasNext());
+            final CSVRecord record = iterator.next();
+            assertEquals("1", record.get("a"));
+            assertEquals("3", record.get("c"));
+        } finally {
+            parser.close();
+        }
+    }
+}
+```

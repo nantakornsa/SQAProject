@@ -1,0 +1,117 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JxPath
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JxPath
+       Program: commons-jxpath
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JxPath/JxPath.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-jxpath.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JxPath/active-bugs.csv
+Number of bugs: 22
+--------------------------------------------------------------------------------
+
+Summary for Bug: JxPath-3
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+984778f3c264df5d608eb9697df2a268122ac66f
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2007-01-10 22:54:59 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+JXPATH-68
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/JXPATH-68
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.jxpath.ri.model.beans.BadlyImplementedFactoryTest::testBadFactoryImplementation
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.jxpath.ri.model.beans.NullPropertyPointer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.jxpath.ri.model.beans.NullPropertyPointer ===
+diff --git a/src/java/org/apache/commons/jxpath/ri/model/beans/NullPropertyPointer.java b/src/java/org/apache/commons/jxpath/ri/model/beans/NullPropertyPointer.java
+index 8cbd118..b9c02bf 100644
+--- a/src/java/org/apache/commons/jxpath/ri/model/beans/NullPropertyPointer.java
++++ b/src/java/org/apache/commons/jxpath/ri/model/beans/NullPropertyPointer.java
+@@ -16,6 +16,8 @@
+  */
+ package org.apache.commons.jxpath.ri.model.beans;
+ 
++import org.apache.commons.jxpath.AbstractFactory;
++import org.apache.commons.jxpath.JXPathAbstractFactoryException;
+ import org.apache.commons.jxpath.JXPathContext;
+ import org.apache.commons.jxpath.JXPathInvalidAccessException;
+ import org.apache.commons.jxpath.ri.QName;
+@@ -106,6 +108,9 @@ public class NullPropertyPointer extends PropertyPointer {
+             return newParent.createAttribute(context, getName());
+         }
+         else {
++            if (parent instanceof NullPointer && parent.equals(newParent)) {
++                throw createBadFactoryException(context.getFactory());
++            }
+             // Consider these two use cases:
+             // 1. The parent pointer of NullPropertyPointer is 
+             //    a PropertyOwnerPointer other than NullPointer. When we call 
+@@ -135,6 +140,9 @@ public class NullPropertyPointer extends PropertyPointer {
+             return pointer;
+         }
+         else {
++            if (parent instanceof NullPointer && parent.equals(newParent)) {
++                throw createBadFactoryException(context.getFactory());
++            }
+             if (newParent instanceof PropertyOwnerPointer) {
+                 PropertyOwnerPointer pop = (PropertyOwnerPointer) newParent;
+                 newParent = pop.getPropertyPointer();
+@@ -221,4 +229,10 @@ public class NullPropertyPointer extends PropertyPointer {
+         }
+         return string;
+     }
+-}
++
++    private JXPathAbstractFactoryException createBadFactoryException(AbstractFactory factory) {
++        return new JXPathAbstractFactoryException("Factory " + factory
++                + " reported success creating object for path: " + asPath()
++                + " but object was null.  Terminating to avoid stack recursion.");
++    }
++}
+\ No newline at end of file
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testBadFactoryImplementation() {
+        try {
+            context.createPath("foo/bar");
+            fail("should fail with JXPathException caused by JXPathAbstractFactoryException");
+        } catch (JXPathException e) {
+            assertTrue(e.getCause() instanceof JXPathAbstractFactoryException);
+        }
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

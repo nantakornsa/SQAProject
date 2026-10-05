@@ -1,0 +1,90 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-7
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+e736b1c92981fafdc87f3f41f66918305f173734
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-10-17 15:53:59 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+841
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-841.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.ClosureReverseAbstractInterpreterTest::testGoogIsFunction2
+   --> junit.framework.AssertionFailedError: Expected: (Object|boolean|number|string)
+ - com.google.javascript.jscomp.SemanticReverseAbstractInterpreterTest::testTypeof3
+   --> junit.framework.AssertionFailedError: Expected: (Object|boolean|number|string)
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.type.ChainableReverseAbstractInterpreter
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.type.ChainableReverseAbstractInterpreter ===
+diff --git a/src/com/google/javascript/jscomp/type/ChainableReverseAbstractInterpreter.java b/src/com/google/javascript/jscomp/type/ChainableReverseAbstractInterpreter.java
+index 0afabc8a2..fa7d47d2a 100644
+--- a/src/com/google/javascript/jscomp/type/ChainableReverseAbstractInterpreter.java
++++ b/src/com/google/javascript/jscomp/type/ChainableReverseAbstractInterpreter.java
+@@ -610,9 +610,13 @@ public abstract class ChainableReverseAbstractInterpreter
+     public JSType caseObjectType(ObjectType type) {
+       if (value.equals("function")) {
+         JSType ctorType = getNativeType(U2U_CONSTRUCTOR_TYPE);
+-        return resultEqualsValue && ctorType.isSubtype(type) ? ctorType : null;
++        if (resultEqualsValue) {
+           // Objects are restricted to "Function", subtypes are left
++          return ctorType.getGreatestSubtype(type);
++        } else {
+           // Only filter out subtypes of "function"
++          return type.isSubtype(ctorType) ? null : type;
++        }
+       }
+       return matchesExpectation("object") ? type : null;
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testGoogIsFunction2() throws Exception {
+    testClosureFunction("goog.isFunction",
+        OBJECT_NUMBER_STRING_BOOLEAN,
+        U2U_CONSTRUCTOR_TYPE,
+        OBJECT_NUMBER_STRING_BOOLEAN);
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

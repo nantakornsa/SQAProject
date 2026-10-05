@@ -1,0 +1,94 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-95
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+dbd8ffb54f72f45acc644f1f16709dd549d0cfc9
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-09-26 19:51:13 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-227
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-227
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.distribution.FDistributionTest::testSmallDegreesOfFreedom
+   --> java.lang.IllegalArgumentException: Invalid endpoint parameters:  lowerBound=0.0 initial=-1.0 upperBound=1.7976931348623157E308
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.distribution.FDistributionImpl
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.distribution.FDistributionImpl ===
+diff --git a/src/java/org/apache/commons/math/distribution/FDistributionImpl.java b/src/java/org/apache/commons/math/distribution/FDistributionImpl.java
+index e19e97aef..59aeb07b0 100644
+--- a/src/java/org/apache/commons/math/distribution/FDistributionImpl.java
++++ b/src/java/org/apache/commons/math/distribution/FDistributionImpl.java
+@@ -141,10 +141,12 @@ public class FDistributionImpl
+      * @return initial domain value
+      */
+     protected double getInitialDomain(double p) {
+-        double ret;
++        double ret = 1.0;
+         double d = getDenominatorDegreesOfFreedom();
++        if (d > 2.0) {
+             // use mean
+             ret = d / (d - 2.0);
++        }
+         return ret;
+     }
+     
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testSmallDegreesOfFreedom() throws Exception {
+        org.apache.commons.math.distribution.FDistributionImpl fd =
+            new org.apache.commons.math.distribution.FDistributionImpl(
+                1.0, 1.0);
+        double p = fd.cumulativeProbability(0.975);
+        double x = fd.inverseCumulativeProbability(p);
+        assertEquals(0.975, x, 1.0e-5);
+
+        fd.setDenominatorDegreesOfFreedom(2.0);
+        p = fd.cumulativeProbability(0.975);
+        x = fd.inverseCumulativeProbability(p);
+        assertEquals(0.975, x, 1.0e-5);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

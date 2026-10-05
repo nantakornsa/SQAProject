@@ -1,0 +1,60 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791112738-u9lT6oscgjMcUN6u76YI","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Mockito Bug**\n\nI'm currently focused on a bug within Mockito version 7, specifically in the `DeepStubFailingWhenGenricNestedAsRawTypeTest::discoverDeepMockingOfGenerics` test. The issue seems to arise when attempting deep stubbing with nested generics used as raw types.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing Generics Nesting**\n\nI'm examining how generics are nested, particularly in scenarios involving raw types. I'm dissecting the `DeepStubFailingWhenGenricNestedAsRawTypeTest` and investigating the potential impact of raw type usage within nested generic interfaces on Mockito's deep stubbing functionality.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.mockitousage.bugs.deepstubs;\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"import org.junit.Test;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.mockito."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Mockito.RETURNS_DEEP_STUBS;\nimport static org.mockito.Mockito.mock;\nimport static"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" org.mockito.Mockito.when;\n\npublic class DeepStubFailingWhenGenricNestedAsRawTypeTest {\n\n    interface My"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Class1<T> {\n        MyClass2<T> getNested();\n    }\n\n    interface My"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Class2<T> {\n        MyClass3 getNested();\n    }\n\n    interface MyClass3<"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"T> {\n        String returnSomething();\n    }\n\n    @Test\n    public void discoverDeepMocking"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"OfGenerics() {\n        MyClass1 myMock1 = mock(MyClass1.class, RETURNS_"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"DEEP_STUBS);\n        when(myMock1.getNested().getNested().returnSomething()).thenReturn"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(\"Hello World.\");\n\n        assertEquals(\"Hello World.\", myMock1.getNested().getNested().returnSomething());\n    }\n}"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":975,"output_tokens":889,"output_tokens_details":{"thinking_tokens":644},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.004065,"is_byok":false,"cost_details":{"upstream_inference_cost":0.004065,"upstream_inference_prompt_cost":0.00073125,"upstream_inference_completions_cost":0.00333375}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

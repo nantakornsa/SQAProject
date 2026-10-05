@@ -1,0 +1,120 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-13
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+e9429c05e1a4797383fb405928088d2f8563ff97
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-02-29 14:39:01 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-788
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-788
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang3.SerializationUtilsTest::testPrimitiveTypeClassSerialization
+   --> org.apache.commons.lang3.SerializationException: ClassNotFoundException while reading cloned object data
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang3.SerializationUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang3.SerializationUtils ===
+diff --git a/src/main/java/org/apache/commons/lang3/SerializationUtils.java b/src/main/java/org/apache/commons/lang3/SerializationUtils.java
+index 1ee636cba..7c89b61d7 100644
+--- a/src/main/java/org/apache/commons/lang3/SerializationUtils.java
++++ b/src/main/java/org/apache/commons/lang3/SerializationUtils.java
+@@ -236,6 +236,8 @@ public class SerializationUtils {
+      * class here is a workaround, see the JIRA issue LANG-626. </p>
+      */
+      static class ClassLoaderAwareObjectInputStream extends ObjectInputStream {
++        private static final Map<String, Class<?>> primitiveTypes = 
++                new HashMap<String, Class<?>>();
+         private ClassLoader classLoader;
+         
+         /**
+@@ -249,6 +251,15 @@ public class SerializationUtils {
+             super(in);
+             this.classLoader = classLoader;
+ 
++            primitiveTypes.put("byte", byte.class);
++            primitiveTypes.put("short", short.class);
++            primitiveTypes.put("int", int.class);
++            primitiveTypes.put("long", long.class);
++            primitiveTypes.put("float", float.class);
++            primitiveTypes.put("double", double.class);
++            primitiveTypes.put("boolean", boolean.class);
++            primitiveTypes.put("char", char.class);
++            primitiveTypes.put("void", void.class);
+         }
+ 
+         /**
+@@ -265,7 +276,15 @@ public class SerializationUtils {
+             try {
+                 return Class.forName(name, false, classLoader);
+             } catch (ClassNotFoundException ex) {
++                try {
+                     return Class.forName(name, false, Thread.currentThread().getContextClassLoader());
++                } catch (ClassNotFoundException cnfe) {
++                    Class<?> cls = primitiveTypes.get(name);
++                    if (cls != null)
++                        return cls;
++                    else
++                        throw cnfe;
++                }
+             }
+         }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testPrimitiveTypeClassSerialization() {
+        Class<?>[] primitiveTypes = { byte.class, short.class, int.class, long.class, float.class, double.class,
+                boolean.class, char.class, void.class };
+
+        for (Class<?> primitiveType : primitiveTypes) {
+            Class<?> clone = SerializationUtils.clone(primitiveType);
+            assertEquals(primitiveType, clone);
+        }
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

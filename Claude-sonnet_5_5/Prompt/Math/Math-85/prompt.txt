@@ -1,0 +1,81 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-85
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+b9d8c68e2f5f7f3a13773140a7ee4bf62972f17c
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-07-07 09:19:46 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-280
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-280
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.distribution.NormalDistributionTest::testMath280
+   --> org.apache.commons.math.MathException: org.apache.commons.math.ConvergenceException: number of iterations=1, maximum iterations=2,147,483,647, initial=1, lower bound=0, upper bound=179,769,313,486,231,570,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000,000, final a value=0, final b value=2, f(a)=-0.477, f(b)=0
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.analysis.solvers.UnivariateRealSolverUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.analysis.solvers.UnivariateRealSolverUtils ===
+diff --git a/src/java/org/apache/commons/math/analysis/solvers/UnivariateRealSolverUtils.java b/src/java/org/apache/commons/math/analysis/solvers/UnivariateRealSolverUtils.java
+index bf3e4bf53..e6398f6ab 100644
+--- a/src/java/org/apache/commons/math/analysis/solvers/UnivariateRealSolverUtils.java
++++ b/src/java/org/apache/commons/math/analysis/solvers/UnivariateRealSolverUtils.java
+@@ -195,7 +195,7 @@ public class UnivariateRealSolverUtils {
+         } while ((fa * fb > 0.0) && (numIterations < maximumIterations) && 
+                 ((a > lowerBound) || (b < upperBound)));
+    
+-        if (fa * fb >= 0.0 ) {
++        if (fa * fb > 0.0 ) {
+             throw new ConvergenceException(
+                       "number of iterations={0}, maximum iterations={1}, " +
+                       "initial={2}, lower bound={3}, upper bound={4}, final a value={5}, " +
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testMath280() throws MathException {
+        NormalDistribution normal = new NormalDistributionImpl(0,1);
+        double result = normal.inverseCumulativeProbability(0.9772498680518209);
+        assertEquals(2.0, result, 1.0e-12);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

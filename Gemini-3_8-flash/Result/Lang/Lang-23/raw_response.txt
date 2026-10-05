@@ -1,0 +1,126 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791140018-K8dvXnPzAskukQ01qyza","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"```java\npackage org.apache.commons.lang3.text;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertTrue;\n\nimport java."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"text.FieldPosition;\nimport java.text.Format;\nimport java.text.ParsePosition;\nimport java.util."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Collections;\nimport java.util.HashMap;\nimport java.util.Locale;\nimport java.util."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Map;\n\nimport org.junit.Test;\n\n/**\n * Regression test for LANG-636: Extended"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"MessageFormat equals and hashCode.\n */\npublic class ExtendedMessageFormatEqualsHashCodeTest {\n\n    private static class DummyFormat extends Format {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n        private static final long serialVersionUID = 1L;\n\n        @Override\n        public StringBuffer format(Object"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" obj, StringBuffer toAppendTo, FieldPosition pos) {\n            return toAppendTo;\n        }\n\n        @Override"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n        public Object parseObject(String source, ParsePosition pos) {\n            return null;\n        }\n    }\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"    private static class DummyFormatFactory implements FormatFactory {\n        private final String name;\n\n        DummyFormatFactory("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"String name) {\n            this.name = name;\n        }\n\n        @Override\n        public Format get"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Format(String name, String arguments, Locale locale) {\n            return new DummyFormat();\n        }\n\n        @"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Override\n        public boolean equals(Object obj) {\n            if (this == obj) {\n                return true;\n            "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"}\n            if (obj == null || getClass() != obj.getClass()) {\n                return false;\n            "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"}\n            return name.equals(((DummyFormatFactory) obj).name);\n        }\n\n        @Override\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"        public int hashCode() {\n            return name.hashCode();\n        }\n    }\n\n    @Test\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"    public void testEqualsAndHashCodeWithDifferentRegistries() {\n        Map<String, FormatFactory> registry1"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" = Collections.singletonMap(\"fmt\", new DummyFormatFactory(\"factory1\"));\n        Map<String, FormatFactory"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"> registry2 = Collections.singletonMap(\"fmt\", new DummyFormatFactory(\"factory2\"));\n\n        String pattern ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" \"Message: {0,fmt}\";\n        ExtendedMessageFormat emf1 = new ExtendedMessageFormat(pattern, Locale.US"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":", registry1);\n        ExtendedMessageFormat emf2 = new ExtendedMessageFormat(pattern, Locale.US, registry"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"2);\n\n        // In the buggy version, equals() and hashCode() are not overridden in ExtendedMessageFormat.\n        //"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Therefore, MessageFormat.equals(Object) considers them equal because the underlying pattern and formats match,\n        // ignoring"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" the registry difference.\n        assertFalse(\"ExtendedMessageFormat instances with different registries should not be equal\", emf1.equals"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"(emf2));\n        assertFalse(\"ExtendedMessageFormat instances with different registries should have different hashCodes\", emf1"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".hashCode() == emf2.hashCode());\n    }\n\n    @Test\n    public void testEqualsAndHashCode"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"WithSameRegistry() {\n        Map<String, FormatFactory> registry1 = new HashMap<String, FormatFactory>();\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"        registry1.put(\"fmt\", new DummyFormatFactory(\"factory1\"));\n\n        Map<String, FormatFactory> registry2"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" = new HashMap<String, FormatFactory>();\n        registry2.put(\"fmt\", new DummyFormatFactory(\"factory"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"1\"));\n\n        String pattern = \"Message: {0,fmt}\";\n        ExtendedMessageFormat emf1 = new"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" ExtendedMessageFormat(pattern, Locale.US, registry1);\n        ExtendedMessageFormat emf2 = new ExtendedMessage"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Format(pattern, Locale.US, registry2);\n\n        assertTrue(\"ExtendedMessageFormat instances with equivalent fields should be equal\", emf1"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".equals(emf2));\n        assertTrue(\"ExtendedMessageFormat instances with equivalent fields should have the same hashCode\", emf1."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"hashCode() == emf2.hashCode());\n    }\n}\n```"}}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"signature_delta","signature":"AY89a1/4k/XM1v1wke+cjRH7+o1yWnawtFhex0JtwMQpdbwZDCF/ijNT2TbYGKwSXFs7Fn2anWZTF99oMpNfD7NGwYp4R0y1ASCCWjJV3dUqjUBPnJee"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1771,"output_tokens":834,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00445575,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00445575,"upstream_inference_prompt_cost":0.00132825,"upstream_inference_completions_cost":0.0031275}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

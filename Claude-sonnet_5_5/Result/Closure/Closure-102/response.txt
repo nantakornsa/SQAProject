@@ -1,0 +1,49 @@
+This test runs the compiler directly instead of going through `CompilerRunnerTest`, because I can't see that class's private `test()` helper. I haven't compiled or run it. It also assumes the 2010-era API: `compiler.compile(JSSourceFile[], JSSourceFile[], CompilerOptions)` and `JSSourceFile.fromCode`.
+
+The test reproduces the `testIssue115` input with `SIMPLE_OPTIMIZATIONS` and `VERBOSE` warnings. It asserts that the output no longer contains a `var` declaration and still contains `arguments=`. I used `contains` checks rather than comparing against the full expected source, since I'm not sure of the exact printed form (for example a trailing semicolon).
+
+```java
+package com.google.javascript.jscomp;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for issue 115: a local variable named "arguments"
+ * must have its redundant declaration removed before local names are
+ * made unique.
+ */
+public class Issue115RegressionTest extends TestCase {
+
+  public void testIssue115() {
+    CompilerOptions options = new CompilerOptions();
+    CompilationLevel.SIMPLE_OPTIMIZATIONS.setOptionsForCompilationLevel(options);
+    WarningLevel.VERBOSE.setOptionsForWarningLevel(options);
+
+    Compiler compiler = new Compiler();
+
+    JSSourceFile[] externs = new JSSourceFile[] {
+        JSSourceFile.fromCode("externs",
+            "function Array() {}\n" +
+            "Array.prototype.slice = function(a, b) {};\n")
+    };
+    JSSourceFile[] inputs = new JSSourceFile[] {
+        JSSourceFile.fromCode("input",
+            "function f() { " +
+            "  var arguments = Array.prototype.slice.call(arguments, 0);" +
+            "  return arguments[0]; " +
+            "}")
+    };
+
+    compiler.compile(externs, inputs, options);
+
+    String output = compiler.toSource();
+    assertNotNull(output);
+    // The "var" declaration of "arguments" must be removed, leaving an
+    // assignment to the built-in arguments object.
+    assertFalse("Unexpected var declaration in output: " + output,
+        output.contains("var "));
+    assertTrue("Expected assignment to arguments in output: " + output,
+        output.contains("arguments="));
+  }
+}
+```

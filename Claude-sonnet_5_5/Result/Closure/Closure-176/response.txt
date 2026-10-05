@@ -1,0 +1,17 @@
+```java
+package com.google.javascript.jscomp;
+
+public class TypeCheckTest extends TypeCheckTestCase {
+
+  public void testIssue1056() throws Exception {
+    testTypes(
+        "/** @type {Array} */ var x = null;" +
+        "x.push('hi');",
+        "No properties on this expression\n" +
+        "found   : null\n" +
+        "required: Object");
+  }
+}
+```
+
+I haven't run this against the buggy and fixed versions. It assumes `TypeCheckTestCase` is the right base class, which I didn't confirm. In the Closure codebase `testTypes` is defined in `TypeCheckTest`, so this class may need to extend `CompilerTypeTestCase` instead. If the class has to match the existing file exactly, the method should be added to the real `TypeCheckTest`.

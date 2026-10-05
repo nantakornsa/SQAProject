@@ -1,0 +1,81 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791099603-MUUpzwKxw6Usxs3rrYSe","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":20967,"output_tokens":8,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I need a"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" test that fails on the buggy version but passes once fixed. The bug is in BasePeriod's long-duration constructor, which delegates using the standard period type but resolves it under"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" the wrong chronology context; the fix changes how iType gets assigned to properly use UTC-based ISO chronology for the conversion."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I can repro"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"duce this with testConstructor_long_fixedZone, setting the default zone to a fixed offset like +2 hours and constructing a Period from a duration spanning 4 days, 5 hours, 6 "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"minutes, 7 seconds, 8 ms. Since only time fields are precise for the standard period type, years, months, weeks, and days should all be zero, while hours should equal (450*24)+5 — the buggy version incorrectly reports 64 weeks instead of 0."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1zb25uZXQtNS41LTIwMjYwOTI4fGNsYXVkZS1vbi1hd3MifQ"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.joda.time;\n\nimport junit.framework.TestCase;\n\n/**\n * Regression test: constructing a Period from a mill"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"isecond duration must\n * only use the precise time fields, even when the default time zone is a\n * fixed-offset zone (where days and weeks would otherwise be treated as precise).\n */\npublic class"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" TestPeriodFixedZoneRegression extends TestCase {\n\n    public TestPeriodFixedZoneRegression(String name) {\n        super(name);\n    }\n\n    private long length() {\n        return (4L + (3L * 7L) + (2L *"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" 30L) + 365L) * DateTimeConstants.MILLIS_PER_DAY +\n            5L * DateTimeConstants.MILLIS_PER_HOUR +\n            6L * DateTimeConstants.MILLIS_PER_MINUTE +\n            7L * Date"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"TimeConstants.MILLIS_PER_SECOND + 8L;\n    }\n\n    public void testConstructor_long_fixedZone() throws Throwable {\n        DateTimeZone zone = DateTimeZone.getDefault();\n        try {\n            DateTimeZone.set"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Default(DateTimeZone.forOffsetHours(2));\n            Period test = new Period(length());\n            // only time fields are precise in the standard type\n            assertEquals(0, test.getYears());\n            assertEquals(0, test.getMonths());\n            assertEquals(0, test."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"getWeeks());\n            assertEquals(0, test.getDays());\n            assertEquals((450 * 24) + 5, test.getHours());\n            assertEquals(6, test.getMinutes());\n            assertEquals(7, test.getSeconds());\n            assertEquals(8, test.getM"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"illis());\n        } finally {\n            DateTimeZone.setDefault(zone);\n        }\n    }\n\n    public void testToPeriod_fixedZone() throws Throwable {\n        DateTimeZone zone = DateTimeZone.getDefault();\n        try {\n            DateTimeZone."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"setDefault(DateTimeZone.forOffsetHours(2));\n            Duration test = new Duration(length());\n            Period result = test.toPeriod();\n            assertEquals(0, result.getYears());\n            assertEquals(0, result.getMonths());\n            assertEquals(0, result."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"getWeeks());\n            assertEquals(0, result.getDays());\n            assertEquals((450 * 24) + 5, result.getHours());\n            assertEquals(6, result.getMinutes());\n            assertEquals(7, result.getSeconds());\n            assertEquals(8, result.getM"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"illis());\n        } finally {\n            DateTimeZone.setDefault(zone);\n        }\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":20967,"output_tokens":1695,"output_tokens_details":{"thinking_tokens":801},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.058884,"is_byok":false,"cost_details":{"upstream_inference_cost":0.058884,"upstream_inference_prompt_cost":0.041934,"upstream_inference_completions_cost":0.01695}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

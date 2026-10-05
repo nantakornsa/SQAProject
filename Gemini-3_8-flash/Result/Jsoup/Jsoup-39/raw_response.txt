@@ -1,0 +1,54 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791142429-ai6YogroTgUtnrBtroCI","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Developing Regression Test**\n\nI'm currently focusing on crafting a regression test for Jsoup-39. My efforts are centered on replicating the bug where a null `charsetName` caused `DataUtil.parseByteData` to incorrectly parse documents using `defaultCharset`, especially when the document began with a `\\uFEFF` byte order mark.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".jsoup.helper;\n\nimport org.jsoup.nodes.Document;\nimport org.jsoup.parser.Parser"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\nimport org.junit.Test;\n\nimport java.nio.ByteBuffer;\nimport java.nio.charset"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".Charset;\n\nimport static org.junit.Assert.assertEquals;\n\npublic class DataUtilTest {\n\n    @"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Test\n    public void discardsSpuriousByteOrderMarkWhenNoCharsetSet() {\n        String html = \"\\"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"uFEFF<html><head><title>One</title></head><body>Two</body></html>\";\n        ByteBuffer buffer"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" = Charset.forName(\"UTF-8\").encode(html);\n        Document doc = DataUtil.parseByte"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Data(buffer, null, \"http://foo.com/\", Parser.htmlParser());\n        assertEquals(\"One\","}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" doc.head().text());\n        assertEquals(\"UTF-8\", doc.outputSettings().charset().displayName());\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1017,"output_tokens":610,"output_tokens_details":{"thinking_tokens":407},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00305025,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00305025,"upstream_inference_prompt_cost":0.00076275,"upstream_inference_completions_cost":0.0022875}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,77 @@
+The test below should go in `FlowSensitiveInlineVariablesTest`. I haven't run it against either version. It reuses the triggering scenario and adds a second case.
+
+I'm assuming that class has a `noInline(String)` helper and extends `CompilerTestCase`, as it does in the Closure compiler at this revision. The test is a standalone class so it compiles on its own, and it mirrors the existing setup of that test class.
+
+The existing test class sets up the pass roughly like this:
+
+```java
+public class FlowSensitiveInlineVariablesTest extends CompilerTestCase {
+  public static final String EXTERNS = "var window; function someFunction() {}";
+
+  @Override
+  protected CompilerPass getProcessor(final Compiler compiler) {
+    return new CompilerPass() {
+      @Override
+      public void process(Node externs, Node js) {
+        (new MarkNoSideEffectCalls(compiler)).process(externs, js);
+        (new FlowSensitiveInlineVariables(compiler)).process(externs, js);
+      }
+    };
+  }
+  ...
+}
+```
+
+I reproduce that here:
+
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.Node;
+
+public class FlowSensitiveInlineVariablesTest extends CompilerTestCase {
+
+  public static final String EXTERNS =
+      "var window; function someFunction() {}";
+
+  public FlowSensitiveInlineVariablesTest() {
+    super(EXTERNS);
+  }
+
+  @Override
+  protected CompilerPass getProcessor(final Compiler compiler) {
+    return new CompilerPass() {
+      @Override
+      public void process(Node externs, Node js) {
+        (new MarkNoSideEffectCalls(compiler)).process(externs, js);
+        (new FlowSensitiveInlineVariables(compiler)).process(externs, js);
+      }
+    };
+  }
+
+  private void noInline(String input) {
+    inline(input, input);
+  }
+
+  private void inline(String input, String expected) {
+    test("function _func() {" + input + "}",
+         "function _func() {" + expected + "}");
+  }
+
+  public void testIssue794b() {
+    noInline(
+        "var x = 1; " +
+        "try { x = x + someFunction(); } catch (e) {}" +
+        "x = x + 1;" +
+        "try { x = x + someFunction(); } catch (e) {}" +
+        "return x;");
+  }
+
+  public void testIssue794bVariant() {
+    noInline(
+        "var x = 1; " +
+        "try { x = x + someFunction(); } catch (e) {}" +
+        "return x;");
+  }
+}
+```

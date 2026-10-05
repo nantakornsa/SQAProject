@@ -1,0 +1,90 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791148030-paZ2fXE3dRCRYgqL9oYW","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1810,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" f"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ix changes `fa * f"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"b >= 0.0`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" to `fa * fb >"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 0.0`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" in `UnivariateR"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ealSolverUtils."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"bracket"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"`. On"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" the buggy version, a"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" bracket whose endpo"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"int is exactly a root (`f(b) = 0`) is wrongly rejected with a `ConvergenceException`.\n\nThe simplest regression test is the triggering one, `N"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ormalDistributionTest.testMath280`. I also add a direct test of `UnivariateRealSolverUtils.bracket`, which fails on the buggy version for the same reason.\n\nFor the direct test, take f(x) = x -"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 2 with initial = 1, lower = 0 and upper = 10.\n- The bracket loop starts with a = 1 and b = 1, so fa = fb = -1.\n-"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Each iteration does a = max(a - 1, lower) and b = min(b + 1, upper). The first iteration gives a = 0 and b = 2, so fa = -2 and fb = 0.\n- The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" loop stops because fa * fb = 0, which is not > 0.\n- Buggy: `fa * fb >= 0` is true, so it throws.\n- Fixed: `fa * fb > 0` is false, so it returns the bracket.\n\nI am ass"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"uming the `bracket(UnivariateRealFunction, double initial, double lower, double upper)` signature, which exists in this version. I use an anonymous class implementing `UnivariateRealFunction`, wh"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ose `value` method throws `MathException`.\n\nI put both tests in the one test class, `NormalDistributionTest`, so the file below is a complete replacement for it"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":". It extends `TestCase` (JUnit 3), as in the project's style.\n\n```java\npackage org.apache.commons.math.distribution;\n\nimport org.apache.commons.math.MathException;\nimport org"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".apache.commons.math.analysis.UnivariateRealFunction;\nimport org.apache.commons.math.analysis.solvers.UnivariateRealSolverUtils;\n\nimport junit.framework.TestCase;\n\n/**\n * Regression test for MATH-280."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n */\npublic class NormalDistributionTest extends TestCase {\n\n    public void testMath280() throws MathException {\n        NormalDistribution normal = new NormalDistributionImpl(0, 1);\n        double result = normal.inverseCumulativeProbability(0"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".9772498680518209);\n        assertEquals(2.0, result, 1.0e-12);\n    }\n\n    public void testBracketEndpointIsRoot() throws MathException {\n        UnivariateRealFunction f = new UnivariateRealFunction() {\n            public double value(double x) thro"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ws MathException {\n                return x - 2.0;\n            }\n        };\n        double[] bracket = UnivariateRealSolverUtils.bracket(f, 1.0, 0.0, 10.0);\n        assertNotNull(bracket);\n        assertEquals(2, bracket.length);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n        assertTrue(bracket[0] <= 2.0);\n        assertTrue(bracket[1] >= 2.0);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1810,"output_tokens":993,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.01355,"is_byok":false,"cost_details":{"upstream_inference_cost":0.01355,"upstream_inference_prompt_cost":0.00362,"upstream_inference_completions_cost":0.00993}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

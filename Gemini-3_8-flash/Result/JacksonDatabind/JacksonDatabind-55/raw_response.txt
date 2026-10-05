@@ -1,0 +1,51 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791184746-l6VwDis4J00TlDBHfyqz","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Enum Serialization**\n\nI'm currently diving into the Jackson Databind bug (55). My focus is on how enums are serialized as map keys when `@JsonProperty` is applied to enum constants. It seems the core issue lies within `StdKeySerializers`, where a default serialization using `name()` is being employed instead of respecting the custom property names.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind.ser;\n\nimport java.util.Collections;\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"import java.util.Map;\n\nimport com.fasterxml.jackson.annotation.JsonProperty;\nimport com.fasterxml"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".jackson.databind.BaseMapTest;\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\npublic class"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" EnumKeySerializationWithJsonPropertyTest extends BaseMapTest\n{\n    protected enum EnumWithJsonProperty {\n        @JsonProperty(\"aleph"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\")\n        A,\n        @JsonProperty(\"beth\")\n        B;\n    }\n\n    private final ObjectMapper MAP"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"PER = new ObjectMapper();\n\n    public void testEnumKeyWithJsonProperty() throws Exception\n    {\n        Map<EnumWithJsonProperty, String"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"> map = Collections.singletonMap(EnumWithJsonProperty.A, \"b\");\n        String json = MAPPER"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".writeValueAsString(map);\n        assertEquals(\"{\\\"aleph\\\":\\\"b\\\"}\", json);\n    }\n}\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1361,"output_tokens":439,"output_tokens_details":{"thinking_tokens":239},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.002667,"is_byok":false,"cost_details":{"upstream_inference_cost":0.002667,"upstream_inference_prompt_cost":0.00102075,"upstream_inference_completions_cost":0.00164625}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

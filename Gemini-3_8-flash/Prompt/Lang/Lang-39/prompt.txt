@@ -1,0 +1,112 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-39
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+56550bf2779990da78d2bac1d8287c8a693c6e4b
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-12-14 07:51:05 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-552
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-552
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang3.StringUtilsTest::testReplace_StringStringArrayStringArray
+   --> java.lang.NullPointerException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang3.StringUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang3.StringUtils ===
+diff --git a/src/java/org/apache/commons/lang3/StringUtils.java b/src/java/org/apache/commons/lang3/StringUtils.java
+index 14563aa66..f6cabeed8 100644
+--- a/src/java/org/apache/commons/lang3/StringUtils.java
++++ b/src/java/org/apache/commons/lang3/StringUtils.java
+@@ -3673,6 +3673,9 @@ public class StringUtils {
+ 
+         // count the replacement text elements that are larger than their corresponding text being replaced
+         for (int i = 0; i < searchList.length; i++) {
++            if (searchList[i] == null || replacementList[i] == null) {
++                continue;
++            }
+             int greater = replacementList[i].length() - searchList[i].length();
+             if (greater > 0) {
+                 increase += 3 * greater; // assume 3 matches
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testReplace_StringStringArrayStringArray() {
+
+        
+        //JAVADOC TESTS START
+        assertNull(StringUtils.replaceEach(null, new String[]{"a"}, new String[]{"b"}));
+        assertEquals(StringUtils.replaceEach("", new String[]{"a"}, new String[]{"b"}),"");
+        assertEquals(StringUtils.replaceEach("aba", null, null),"aba");
+        assertEquals(StringUtils.replaceEach("aba", new String[0], null),"aba");
+        assertEquals(StringUtils.replaceEach("aba", null, new String[0]),"aba");
+        assertEquals(StringUtils.replaceEach("aba", new String[]{"a"}, null),"aba");
+
+        assertEquals(StringUtils.replaceEach("aba", new String[]{"a"}, new String[]{""}),"b");
+        assertEquals(StringUtils.replaceEach("aba", new String[]{null}, new String[]{"a"}),"aba");
+        assertEquals(StringUtils.replaceEach("abcde", new String[]{"ab", "d"}, new String[]{"w", "t"}),"wcte");
+        assertEquals(StringUtils.replaceEach("abcde", new String[]{"ab", "d"}, new String[]{"d", "t"}),"dcte");
+        //JAVADOC TESTS END
+
+        assertEquals("bcc", StringUtils.replaceEach("abc", new String[]{"a", "b"}, new String[]{"b", "c"}));
+        assertEquals("q651.506bera", StringUtils.replaceEach("d216.102oren",
+            new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", 
+                "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", 
+                "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", 
+                "U", "V", "W", "X", "Y", "Z", "1", "2", "3", "4", "5", "6", "7", "8", "9"},
+            new String[]{"n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", "a", 
+                "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "N", "O", "P", "Q", 
+                "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "A", "B", "C", "D", "E", "F", "G", 
+                "H", "I", "J", "K", "L", "M", "5", "6", "7", "8", "9", "1", "2", "3", "4"}));
+
+        // Test null safety inside arrays - LANG-552
+        assertEquals(StringUtils.replaceEach("aba", new String[]{"a"}, new String[]{null}),"aba");
+        assertEquals(StringUtils.replaceEach("aba", new String[]{"a", "b"}, new String[]{"c", null}),"cbc");
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

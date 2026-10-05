@@ -1,0 +1,38 @@
+The fix changes `TypeHandler.createValue(String, Object)` so that an unsupported class throws a `ParseException` instead of returning null. The test below passes `Integer.class`, which `createValue` doesn't handle (it handles `PatternOptionBuilder.NUMBER_VALUE` and similar constants, not `Integer.class`). That makes the buggy version return null and the fixed version throw.
+
+The project uses JUnit 3 style (`junit.framework`), so the test extends `TestCase`. The `createValue(String, Object)` method is public static and declares `throws ParseException`. It dispatches on `Object`: it compares against `PatternOptionBuilder.*_VALUE` constants and falls through to the else branch otherwise. With `Integer.class` none of the constants match, so the else branch runs.
+
+```java
+package org.apache.commons.cli;
+
+import junit.framework.TestCase;
+
+public class TypeHandlerUnsupportedClassTest extends TestCase
+{
+    public void testCreateValueUnsupportedClassThrowsParseException() throws Exception
+    {
+        try
+        {
+            TypeHandler.createValue("5", Integer.class);
+            fail("Expected exception: org.apache.commons.cli.ParseException");
+        }
+        catch (ParseException e)
+        {
+            // expected
+        }
+    }
+
+    public void testCreateValueUnsupportedClassMessage() throws Exception
+    {
+        try
+        {
+            TypeHandler.createValue("abc", Integer.class);
+            fail("Expected exception: org.apache.commons.cli.ParseException");
+        }
+        catch (ParseException e)
+        {
+            assertTrue(e.getMessage().startsWith("Unable to handle the class"));
+        }
+    }
+}
+```

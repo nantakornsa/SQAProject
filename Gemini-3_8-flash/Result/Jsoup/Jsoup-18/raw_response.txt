@@ -1,0 +1,48 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791141598-gN1rsEFerss9gpFmGBCg","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing CharacterReader Bug**\n\nI've identified a critical bug in `CharacterReader`. Specifically, `consumeToEnd()` incorrectly slices the input string, excluding the final character. Additionally, I'm addressing the improper handling of carriage return sequences, which are not being normalized to a single newline as expected.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.jsoup.parser;\n\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" org.junit.Test;\nimport static org.junit.Assert.*;\n\npublic class CharacterReaderRegressionTest {\n\n    @Test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n    public void testConsumeToEndDoesNotDropLastChar() {\n        String in = \"one two three\";\n        CharacterReader r"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" = new CharacterReader(in);\n        assertEquals(\"one two three\", r.consumeToEnd());\n    }\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    @Test\n    public void testHandleCarriageReturnAsLineFeed() {\n        String in = \"one"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" \\r two \\r\\n three\";\n        CharacterReader r = new CharacterReader(in);\n\n        String"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" first = r.consumeTo('\\n');\n        assertEquals(\"one \", first);\n        assertEquals(\"\\n two \\"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"n three\", r.consumeToEnd());\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1149,"output_tokens":447,"output_tokens_details":{"thinking_tokens":268},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.002538,"is_byok":false,"cost_details":{"upstream_inference_cost":0.002538,"upstream_inference_prompt_cost":0.00086175,"upstream_inference_completions_cost":0.00167625}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

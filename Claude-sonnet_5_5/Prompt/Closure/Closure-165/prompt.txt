@@ -1,0 +1,204 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-165
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+61336bdc14f94b57ba58042f958c2a3227a55a3f
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-05-21 15:58:30 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+725
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-725.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.TypeCheckTest::testIssue725
+   --> junit.framework.AssertionFailedError: expected a warning
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.rhino.jstype.JSTypeRegistry
+ - com.google.javascript.rhino.jstype.ObjectType
+ - com.google.javascript.rhino.jstype.RecordType
+ - com.google.javascript.rhino.jstype.RecordTypeBuilder
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.rhino.jstype.JSTypeRegistry ===
+diff --git a/src/com/google/javascript/rhino/jstype/JSTypeRegistry.java b/src/com/google/javascript/rhino/jstype/JSTypeRegistry.java
+index 6c6fcd45e..edce9bfd0 100644
+--- a/src/com/google/javascript/rhino/jstype/JSTypeRegistry.java
++++ b/src/com/google/javascript/rhino/jstype/JSTypeRegistry.java
+@@ -695,6 +695,10 @@ public class JSTypeRegistry implements Serializable {
+         if (!greatestSubtype.isEmptyType()) {
+           // We've found a type with this property. Now we just have to make
+           // sure it's not a type used for internal bookkeeping.
++          RecordType maybeRecordType = greatestSubtype.toMaybeRecordType();
++          if (maybeRecordType != null && maybeRecordType.isSynthetic()) {
++            continue;
++          }
+ 
+           return true;
+         }
+
+=== MODIFIED SOURCE: com.google.javascript.rhino.jstype.ObjectType ===
+diff --git a/src/com/google/javascript/rhino/jstype/ObjectType.java b/src/com/google/javascript/rhino/jstype/ObjectType.java
+index 82d229de5..37bd48701 100644
+--- a/src/com/google/javascript/rhino/jstype/ObjectType.java
++++ b/src/com/google/javascript/rhino/jstype/ObjectType.java
+@@ -287,6 +287,10 @@ public abstract class ObjectType extends JSType implements StaticScope<JSType> {
+    * don't actually exist in the user's program. They're just used for
+    * bookkeeping in the type system.
+    */
++  public final boolean defineSynthesizedProperty(String propertyName,
++      JSType type, Node propertyNode) {
++    return defineProperty(propertyName, type, false, propertyNode);
++  }
+ 
+   /**
+    * Defines a property whose type is inferred.
+
+=== MODIFIED SOURCE: com.google.javascript.rhino.jstype.RecordType ===
+diff --git a/src/com/google/javascript/rhino/jstype/RecordType.java b/src/com/google/javascript/rhino/jstype/RecordType.java
+index 7cc48901c..8ff279cbd 100755
+--- a/src/com/google/javascript/rhino/jstype/RecordType.java
++++ b/src/com/google/javascript/rhino/jstype/RecordType.java
+@@ -65,8 +65,12 @@ class RecordType extends PrototypeObjectType {
+   private static final long serialVersionUID = 1L;
+ 
+   private final SortedMap<String, JSType> properties = Maps.newTreeMap();
++  private final boolean declared;
+   private boolean isFrozen = false;
+ 
++  RecordType(JSTypeRegistry registry, Map<String, RecordProperty> properties) {
++    this(registry, properties, true);
++  }
+ 
+   /**
+    * Creates a record type.
+@@ -80,9 +84,11 @@ class RecordType extends PrototypeObjectType {
+    * @throws IllegalStateException if the {@code RecordProperty} associated
+    *         with a property is null.
+    */
+-  RecordType(JSTypeRegistry registry, Map<String, RecordProperty> properties) {
++  RecordType(JSTypeRegistry registry, Map<String, RecordProperty> properties,
++      boolean declared) {
+     super(registry, null, null);
+     setPrettyPrint(true);
++    this.declared = declared;
+ 
+     for (String property : properties.keySet()) {
+       RecordProperty prop = properties.get(property);
+@@ -90,8 +96,13 @@ class RecordType extends PrototypeObjectType {
+         throw new IllegalStateException(
+             "RecordProperty associated with a property should not be null!");
+       }
++      if (declared) {
+         defineDeclaredProperty(
+             property, prop.getType(), prop.getPropertyNode());
++      } else {
++        defineSynthesizedProperty(
++            property, prop.getType(), prop.getPropertyNode());
++      }
+     }
+ 
+     // Freeze the record type.
+@@ -99,6 +110,9 @@ class RecordType extends PrototypeObjectType {
+   }
+ 
+   /** @return Is this synthesized for internal bookkeeping? */
++  boolean isSynthetic() {
++    return !declared;
++  }
+ 
+   @Override
+   public boolean isEquivalentTo(JSType other) {
+@@ -149,6 +163,7 @@ class RecordType extends PrototypeObjectType {
+     if (that.isRecordType()) {
+       RecordType thatRecord = that.toMaybeRecordType();
+       RecordTypeBuilder builder = new RecordTypeBuilder(registry);
++      builder.setSynthesized(true);
+ 
+       // The greatest subtype consists of those *unique* properties of both
+       // record types. If any property conflicts, then the NO_TYPE type
+
+=== MODIFIED SOURCE: com.google.javascript.rhino.jstype.RecordTypeBuilder ===
+diff --git a/src/com/google/javascript/rhino/jstype/RecordTypeBuilder.java b/src/com/google/javascript/rhino/jstype/RecordTypeBuilder.java
+index 345795b55..60d1e103d 100755
+--- a/src/com/google/javascript/rhino/jstype/RecordTypeBuilder.java
++++ b/src/com/google/javascript/rhino/jstype/RecordTypeBuilder.java
+@@ -51,6 +51,7 @@ import java.util.HashMap;
+  */
+ public class RecordTypeBuilder {
+   private boolean isEmpty = true;
++  private boolean isDeclared = true;
+   private final JSTypeRegistry registry;
+   private final HashMap<String, RecordProperty> properties = Maps.newHashMap();
+ 
+@@ -59,6 +60,9 @@ public class RecordTypeBuilder {
+   }
+ 
+   /** See the comments on RecordType about synthetic types. */
++  void setSynthesized(boolean synthesized) {
++    isDeclared = !synthesized;
++  }
+ 
+   /**
+    * Adds a property with the given name and type to the record type.
+@@ -89,7 +93,7 @@ public class RecordTypeBuilder {
+     }
+ 
+     return new RecordType(
+-        registry, Collections.unmodifiableMap(properties));
++        registry, Collections.unmodifiableMap(properties), isDeclared);
+   }
+ 
+   static class RecordProperty {
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue725() throws Exception {
+    testTypes(
+        "/** @typedef {{name: string}} */ var RecordType1;" +
+        "/** @typedef {{name2: string}} */ var RecordType2;" +
+        "/** @param {RecordType1} rec */ function f(rec) {" +
+        "  alert(rec.name2);" +
+        "}",
+        "Property name2 never defined on rec");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

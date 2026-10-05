@@ -1,0 +1,59 @@
+package com.google.gson.stream;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import junit.framework.TestCase;
+
+public final class TopLevelValueRegressionTest extends TestCase {
+
+  public void testTopLevelValueTypeWithSkipValue() throws IOException {
+    JsonReader reader = new JsonReader(new StringReader("true"));
+    reader.skipValue();
+    assertEquals(JsonToken.END_DOCUMENT, reader.peek());
+  }
+
+  public void testReaderTopLevelValueTypes() throws IOException {
+    JsonReader reader1 = new JsonReader(new StringReader("true"));
+    assertTrue(reader1.nextBoolean());
+    assertEquals(JsonToken.END_DOCUMENT, reader1.peek());
+
+    JsonReader reader2 = new JsonReader(new StringReader("\"a string\""));
+    assertEquals("a string", reader2.nextString());
+    assertEquals(JsonToken.END_DOCUMENT, reader2.peek());
+
+    JsonReader reader3 = new JsonReader(new StringReader("123"));
+    assertEquals(123, reader3.nextInt());
+    assertEquals(JsonToken.END_DOCUMENT, reader3.peek());
+
+    JsonReader reader4 = new JsonReader(new StringReader("null"));
+    reader4.nextNull();
+    assertEquals(JsonToken.END_DOCUMENT, reader4.peek());
+  }
+
+  public void testWriterTopLevelValueTypes() throws IOException {
+    StringWriter string1 = new StringWriter();
+    JsonWriter writer1 = new JsonWriter(string1);
+    writer1.value(true);
+    writer1.close();
+    assertEquals("true", string1.toString());
+
+    StringWriter string2 = new StringWriter();
+    JsonWriter writer2 = new JsonWriter(string2);
+    writer2.nullValue();
+    writer2.close();
+    assertEquals("null", string2.toString());
+
+    StringWriter string3 = new StringWriter();
+    JsonWriter writer3 = new JsonWriter(string3);
+    writer3.value(123);
+    writer3.close();
+    assertEquals("123", string3.toString());
+
+    StringWriter string4 = new StringWriter();
+    JsonWriter writer4 = new JsonWriter(string4);
+    writer4.value("a");
+    writer4.close();
+    assertEquals("\"a\"", string4.toString());
+  }
+}

@@ -1,0 +1,83 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-43
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+a38e2e942d622c1a84ed35bedb9aba045db7ab79
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-01-09 22:05:14 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-477
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-477
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang.text.ExtendedMessageFormatTest::testEscapedQuote_LANG_477
+   --> java.lang.OutOfMemoryError: Java heap space
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang.text.ExtendedMessageFormat
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang.text.ExtendedMessageFormat ===
+diff --git a/src/java/org/apache/commons/lang/text/ExtendedMessageFormat.java b/src/java/org/apache/commons/lang/text/ExtendedMessageFormat.java
+index 404be490c..4af3955b5 100644
+--- a/src/java/org/apache/commons/lang/text/ExtendedMessageFormat.java
++++ b/src/java/org/apache/commons/lang/text/ExtendedMessageFormat.java
+@@ -419,6 +419,7 @@ public class ExtendedMessageFormat extends MessageFormat {
+         int start = pos.getIndex();
+         char[] c = pattern.toCharArray();
+         if (escapingOn && c[start] == QUOTE) {
++            next(pos);
+             return appendTo == null ? null : appendTo.append(QUOTE);
+         }
+         int lastHold = start;
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testEscapedQuote_LANG_477() {
+        String pattern = "it''s a {0,lower} 'test'!";
+        ExtendedMessageFormat emf = new ExtendedMessageFormat(pattern, registry);
+        assertEquals("it's a dummy test!", emf.format(new Object[] {"DUMMY"}));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

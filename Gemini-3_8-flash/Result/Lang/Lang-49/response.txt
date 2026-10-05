@@ -1,0 +1,20 @@
+```java
+package org.apache.commons.lang.math;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for LANG-380 / Lang-49.
+ * Tests Fraction.reduce() when the numerator is zero.
+ */
+public class FractionRegressionTest extends TestCase {
+
+    public void testReduceZeroNumerator() {
+        Fraction f = Fraction.getFraction(0, 100);
+        Fraction result = f.reduce();
+        assertEquals(0, result.getNumerator());
+        assertEquals(1, result.getDenominator());
+        assertSame(Fraction.ZERO, result);
+    }
+}
+```

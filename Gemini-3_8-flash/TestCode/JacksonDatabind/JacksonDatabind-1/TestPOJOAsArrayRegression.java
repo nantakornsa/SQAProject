@@ -1,0 +1,28 @@
+package com.fasterxml.jackson.databind.struct;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class TestPOJOAsArrayRegression extends BaseMapTest {
+
+    @JsonFormat(shape = JsonFormat.Shape.ARRAY)
+    @JsonPropertyOrder({ "str1", "str2" })
+    static class TwoStrings {
+        public String str1;
+        public String str2;
+
+        public TwoStrings(String s1, String s2) {
+            str1 = s1;
+            str2 = s2;
+        }
+    }
+
+    public void testNullColumn() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        TwoStrings input = new TwoStrings(null, "bar");
+        String json = mapper.writeValueAsString(input);
+        assertEquals("[null,\"bar\"]", json);
+    }
+}

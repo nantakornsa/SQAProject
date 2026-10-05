@@ -1,0 +1,126 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-78
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+60d459cedcf079c6106ae7da2ac562bc32dcabe1
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-04-13 16:03:24 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1599
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1599
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.interop.IllegalTypesCheckTest::testIssue1599
+   --> junit.framework.AssertionFailedError: Expected an exception with one of substrings ([Illegal type]): got one with message "N/A
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.deser.BeanDeserializerFactory
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.deser.BeanDeserializerFactory ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/deser/BeanDeserializerFactory.java b/src/main/java/com/fasterxml/jackson/databind/deser/BeanDeserializerFactory.java
+index 4a9d8631e..afe24aa1f 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/deser/BeanDeserializerFactory.java
++++ b/src/main/java/com/fasterxml/jackson/databind/deser/BeanDeserializerFactory.java
+@@ -45,14 +45,28 @@ public class BeanDeserializerFactory
+      *
+      * @since 2.8.9
+      */
++    protected final static Set<String> DEFAULT_NO_DESER_CLASS_NAMES;
++    static {
++        Set<String> s = new HashSet<>();
+         // Courtesy of [https://github.com/kantega/notsoserial]:
+         // (and wrt [databind#1599]
++        s.add("org.apache.commons.collections.functors.InvokerTransformer");
++        s.add("org.apache.commons.collections.functors.InstantiateTransformer");
++        s.add("org.apache.commons.collections4.functors.InvokerTransformer");
++        s.add("org.apache.commons.collections4.functors.InstantiateTransformer");
++        s.add("org.codehaus.groovy.runtime.ConvertedClosure");
++        s.add("org.codehaus.groovy.runtime.MethodClosure");
++        s.add("org.springframework.beans.factory.ObjectFactory");
++        s.add("com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl");
++        DEFAULT_NO_DESER_CLASS_NAMES = Collections.unmodifiableSet(s);
++    }
+ 
+     /**
+      * Set of class names of types that are never to be deserialized.
+      *
+      * @since 2.8.9
+      */
++    protected Set<String> _cfgIllegalClassNames = DEFAULT_NO_DESER_CLASS_NAMES;
+ 
+     /*
+     /**********************************************************
+@@ -153,6 +167,7 @@ public class BeanDeserializerFactory
+             return null;
+         }
+         // For checks like [databind#1599]
++        checkIllegalTypes(ctxt, type, beanDesc);
+         // Use generic bean introspection to build deserializer
+         return buildBeanDeserializer(ctxt, type, beanDesc);
+     }
+@@ -875,7 +890,17 @@ beanDesc.getBeanClass().getName(), name, ((AnnotatedParameter) m).getIndex());
+     /**
+      * @since 2.8.9
+      */
++    protected void checkIllegalTypes(DeserializationContext ctxt, JavaType type,
++            BeanDescription beanDesc)
++        throws JsonMappingException
++    {
+         // There are certain nasty classes that could cause problems, mostly
+         // via default typing -- catch them here.
++        String full = type.getRawClass().getName();
+ 
++        if (_cfgIllegalClassNames.contains(full)) {
++            ctxt.reportBadTypeDefinition(beanDesc,
++                    "Illegal type (%s) to deserialize: prevented for security reasons", full);
++        }
++    }
+ }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testIssue1599() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

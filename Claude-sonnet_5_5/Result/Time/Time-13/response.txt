@@ -1,0 +1,46 @@
+```java
+package org.joda.time.format;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.joda.time.Period;
+
+/**
+ * Regression test for negative sub-second periods formatted in ISO standard format.
+ */
+public class TestISOPeriodFormatNegativeMillis extends TestCase {
+
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
+
+    public static TestSuite suite() {
+        return new TestSuite(TestISOPeriodFormatNegativeMillis.class);
+    }
+
+    public TestISOPeriodFormatNegativeMillis(String name) {
+        super(name);
+    }
+
+    public void testFormatStandard_negativeMillisOnly() {
+        Period p = Period.millis(-8);
+        assertEquals("PT-0.008S", ISOPeriodFormat.standard().print(p));
+    }
+
+    public void testFormatStandard_negativeMillisLargerFraction() {
+        Period p = Period.millis(-999);
+        assertEquals("PT-0.999S", ISOPeriodFormat.standard().print(p));
+    }
+
+    public void testFormatStandard_negativeSecondsPositiveMillis() {
+        Period p = Period.seconds(-4).withMillis(8);
+        assertEquals("PT-3.992S", ISOPeriodFormat.standard().print(p));
+    }
+
+    public void testFormatStandard_negativeSecondsOnly() {
+        Period p = Period.seconds(-23);
+        assertEquals("PT-23S", ISOPeriodFormat.standard().print(p));
+    }
+}
+```

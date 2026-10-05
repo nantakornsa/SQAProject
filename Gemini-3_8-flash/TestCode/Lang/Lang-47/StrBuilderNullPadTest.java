@@ -1,0 +1,22 @@
+package org.apache.commons.lang.text;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for LANG-412: StrBuilder.appendFixedWidthPadLeft and
+ * appendFixedWidthPadRight throw NullPointerException when passed null object.
+ */
+public class StrBuilderNullPadTest extends TestCase {
+
+    public void testAppendFixedWidthPadLeftWithNull() {
+        StrBuilder sb = new StrBuilder();
+        sb.appendFixedWidthPadLeft(null, 10, '*');
+        assertEquals("Failed to invoke appendFixedWidthPadLeft correctly", "**********", sb.toString());
+    }
+
+    public void testAppendFixedWidthPadRightWithNull() {
+        StrBuilder sb = new StrBuilder();
+        sb.appendFixedWidthPadRight(null, 10, '*');
+        assertEquals("Failed to invoke appendFixedWidthPadRight correctly", "**********", sb.toString());
+    }
+}

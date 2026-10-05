@@ -1,0 +1,30 @@
+```java
+package org.jsoup.parser;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
+public class HtmlParserRegressionTest {
+
+    @Test
+    public void parsesQuiteRoughAttributesWithLessThan() {
+        String html = "<p =a>One<a <p>Something</p>Else";
+        Document doc = Jsoup.parse(html);
+
+        String cleanHtml = doc.body().html().replace("\r", "").replace("\n", "");
+        assertEquals("<p =a>One<a></a></p><p><a>Something</a></p><a>Else</a>", cleanHtml);
+    }
+
+    @Test
+    public void handlesLessThanInTagAsNewTag() {
+        String html = "<p\n<p<div id=one <span>Two";
+        Document doc = Jsoup.parse(html);
+
+        String cleanHtml = doc.body().html().replace("\r", "").replace("\n", "");
+        assertEquals("<p></p><p></p><div id=\"one\"><span>Two</span></div>", cleanHtml);
+    }
+}
+```

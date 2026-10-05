@@ -1,0 +1,114 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Cli
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Cli
+       Program: commons-cli
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/Cli.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-cli.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/active-bugs.csv
+Number of bugs: 39
+--------------------------------------------------------------------------------
+
+Summary for Bug: Cli-24
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+02dd7c20646bf67dcfb6f7da6beeb7cdffc6ac22
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-02-27 09:34:11 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CLI-162
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CLI-162
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.cli.bug.BugCLI162Test::testLongLineChunkingIndentIgnored
+   --> java.lang.IllegalStateException: Total width is less than the width of the argument and indent - no room for the description
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.cli.HelpFormatter
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.cli.HelpFormatter ===
+diff --git a/src/java/org/apache/commons/cli/HelpFormatter.java b/src/java/org/apache/commons/cli/HelpFormatter.java
+index 9993a07..028ff5c 100644
+--- a/src/java/org/apache/commons/cli/HelpFormatter.java
++++ b/src/java/org/apache/commons/cli/HelpFormatter.java
+@@ -822,8 +822,7 @@ public class HelpFormatter
+         if (nextLineTabStop >= width)
+         {
+             // stops infinite loop happening
+-            throw new IllegalStateException("Total width is less than the width of the argument and indent " + 
+-                                            "- no room for the description");
++            nextLineTabStop = width - 1;
+         }
+ 
+         // all following lines must be padded with nextLineTabStop space 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testLongLineChunkingIndentIgnored() throws ParseException, IOException {
+        Options options = new Options();
+        options.addOption("x", "extralongarg", false, "This description is Long." );
+        HelpFormatter formatter = new HelpFormatter();
+        StringWriter sw = new StringWriter();
+        formatter.printHelp(new PrintWriter(sw), 22, this.getClass().getName(), "Header", options, 0, 5, "Footer");
+        String expected = "usage:\n" +
+                          "       org.apache.comm\n" +
+                          "       ons.cli.bug.Bug\n" +
+                          "       CLI162Test\n" +
+                          "Header\n" +
+                          "-x,--extralongarg\n" +
+                          "                     T\n" +
+                          "                     h\n" +
+                          "                     i\n" +
+                          "                     s\n" +
+                          "                     d\n" +
+                          "                     e\n" +
+                          "                     s\n" +
+                          "                     c\n" +
+                          "                     r\n" +
+                          "                     i\n" +
+                          "                     p\n" +
+                          "                     t\n" +
+                          "                     i\n" +
+                          "                     o\n" +
+                          "                     n\n" +
+                          "                     i\n" +
+                          "                     s\n" +
+                          "                     L\n" +
+                          "                     o\n" +
+                          "                     n\n" +
+                          "                     g\n" +
+                          "                     .\n" +
+                          "Footer\n";
+        assertEquals( "Long arguments did not split as expected", expected, sw.toString() );
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,89 @@
+```java
+package com.fasterxml.jackson.databind.jsontype;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeIdResolver;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.DatabindContext;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
+
+public class PolymorphicCustomTypeId1270Test extends BaseMapTest {
+
+    static class Top1270 {
+        public Base1270<?> b;
+    }
+
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, include = JsonTypeInfo.As.PROPERTY, property = "type")
+    @JsonTypeIdResolver(CustomResolver1270.class)
+    static class Base1270<T> {
+        public String val;
+        public T options;
+    }
+
+    static class Poly1Base { }
+
+    static class Poly1 extends Poly1Base {
+        public String val;
+    }
+
+    static class CustomResolver1270 extends TypeIdResolverBase {
+        private JavaType baseType;
+
+        @Override
+        public void init(JavaType bt) {
+            baseType = bt;
+        }
+
+        @Override
+        public Id getMechanism() {
+            return Id.CUSTOM;
+        }
+
+        @Override
+        public String idFromValue(Object value) {
+            if (value instanceof Base1270) {
+                Object opt = ((Base1270<?>) value).options;
+                if (opt instanceof Poly1) {
+                    return "poly1";
+                }
+            }
+            return "unknown";
+        }
+
+        @Override
+        public String idFromValueAndType(Object value, Class<?> suggestedType) {
+            return idFromValue(value);
+        }
+
+        @Override
+        public JavaType typeFromId(DatabindContext context, String id) {
+            if ("poly1".equals(id)) {
+                return context.getTypeFactory().constructParametricType(Base1270.class, Poly1.class);
+            }
+            return null;
+        }
+    }
+
+    public void testPolymorphicTypeViaCustom() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+
+        Base1270<Poly1> req = new Base1270<Poly1>();
+        Poly1 o = new Poly1();
+        o.val = "optionValue";
+        req.options = o;
+        req.val = "some value";
+        Top1270 top = new Top1270();
+        top.b = req;
+
+        String json = mapper.writeValueAsString(top);
+
+        Top1270 itemRead = mapper.readValue(json, Top1270.class);
+        assertNotNull(itemRead);
+        assertNotNull(itemRead.b);
+        assertTrue(itemRead.b.options instanceof Poly1);
+        assertEquals("optionValue", ((Poly1) itemRead.b.options).val);
+    }
+}
+```

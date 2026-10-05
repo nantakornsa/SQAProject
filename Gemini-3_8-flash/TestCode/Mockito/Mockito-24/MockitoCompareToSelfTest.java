@@ -1,0 +1,16 @@
+package org.mockitousage.bugs;
+
+import org.junit.Test;
+import java.util.Date;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+
+public class MockitoCompareToSelfTest {
+
+    @Test
+    public void shouldReturnZeroWhenMockComparedToItself() {
+        Date mockDate = mock(Date.class);
+        assertEquals(0, mockDate.compareTo(mockDate));
+    }
+}

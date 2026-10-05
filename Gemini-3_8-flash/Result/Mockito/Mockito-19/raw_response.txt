@@ -1,0 +1,54 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791114493-WJwB0P8SnKvBU8ilaRrS","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Mockito Injection Flaw**\n\nI'm currently deep-diving into Mockito-19. It appears there's an issue with `@InjectMocks` when it encounters duplicate field types. The behavior is inconsistent, especially when only one mock is available and its name doesn't align with the initial field scanned.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.mockitousage.annotation;\n\nimport org.junit."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Test;\nimport org.mockito.InjectMocks;\nimport org.mockito.Mock;\nimport org."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"mockito.MockitoAnnotations;\n\nimport static org.junit.Assert.assertNotNull;\nimport static org.junit."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Assert.assertNull;\n\npublic class Issue205RegressionTest {\n\n    static class CandidateType {\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"}\n\n    static class TargetObject {\n        // candidate1 appears first in class fields declaration order\n        CandidateType candidate1;\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"CandidateType candidate2;\n    }\n\n    @InjectMocks\n    private TargetObject target = new TargetObject"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"();\n\n    // Mock name matches candidate2, not candidate1\n    @Mock\n    private CandidateType candidate2;\n\n    @"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Test\n    public void shouldInjectMockIntoFieldWithMatchingNameWhenMultipleFieldsOfSameTypeExist() {\n        MockitoAnnotations.initM"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ocks(this);\n\n        assertNull(\"candidate1 should not have been injected\", target.candidate1);\n        assertNotNull(\"candidate2"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" should have been injected\", target.candidate2);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2675,"output_tokens":637,"output_tokens_details":{"thinking_tokens":391},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.004395,"is_byok":false,"cost_details":{"upstream_inference_cost":0.004395,"upstream_inference_prompt_cost":0.00200625,"upstream_inference_completions_cost":0.00238875}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,97 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-47
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+1fe5439baf32af2114958e3cfc3512bd72c84773
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-02-13 05:44:46 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-412
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-412
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang.text.StrBuilderTest::testLang412Left
+   --> java.lang.NullPointerException
+ - org.apache.commons.lang.text.StrBuilderTest::testLang412Right
+   --> java.lang.NullPointerException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang.text.StrBuilder
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang.text.StrBuilder ===
+diff --git a/src/java/org/apache/commons/lang/text/StrBuilder.java b/src/java/org/apache/commons/lang/text/StrBuilder.java
+index 13281cefe..fd135fd11 100644
+--- a/src/java/org/apache/commons/lang/text/StrBuilder.java
++++ b/src/java/org/apache/commons/lang/text/StrBuilder.java
+@@ -1183,6 +1183,9 @@ public class StrBuilder implements Cloneable {
+         if (width > 0) {
+             ensureCapacity(size + width);
+             String str = (obj == null ? getNullText() : obj.toString());
++            if (str == null) {
++                str = "";
++            }
+             int strLen = str.length();
+             if (strLen >= width) {
+                 str.getChars(strLen - width, strLen, buffer, size);
+@@ -1227,6 +1230,9 @@ public class StrBuilder implements Cloneable {
+         if (width > 0) {
+             ensureCapacity(size + width);
+             String str = (obj == null ? getNullText() : obj.toString());
++            if (str == null) {
++                str = "";
++            }
+             int strLen = str.length();
+             if (strLen >= width) {
+                 str.getChars(0, width, buffer, size);
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testLang412Left() {
+        StrBuilder sb = new StrBuilder();
+        sb.appendFixedWidthPadLeft(null, 10, '*');
+        assertEquals( "Failed to invoke appendFixedWidthPadLeft correctly", "**********", sb.toString());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

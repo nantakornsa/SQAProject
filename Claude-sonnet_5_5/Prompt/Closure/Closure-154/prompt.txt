@@ -1,0 +1,175 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-154
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+09ed556367fbe81b3003881dfacad643939664c0
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-02-28 16:08:39 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+204
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-204.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.TypeCheckTest::testInterfaceInheritanceCheck12
+   --> junit.framework.AssertionFailedError: expected a warning
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.TypeCheck
+ - com.google.javascript.jscomp.TypeValidator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.TypeCheck ===
+diff --git a/src/com/google/javascript/jscomp/TypeCheck.java b/src/com/google/javascript/jscomp/TypeCheck.java
+index a752e76a9..41b94e0c2 100644
+--- a/src/com/google/javascript/jscomp/TypeCheck.java
++++ b/src/com/google/javascript/jscomp/TypeCheck.java
+@@ -182,13 +182,6 @@ public class TypeCheck implements NodeTraversal.Callback, CompilerPass {
+           "original: {2}\n" +
+           "override: {3}");
+ 
+-  static final DiagnosticType HIDDEN_INTERFACE_PROPERTY_MISMATCH =
+-      DiagnosticType.warning(
+-          "JSC_HIDDEN_INTERFACE_PROPERTY_MISMATCH",
+-          "mismatch of the {0} property type and the type " +
+-          "of the property it overrides from interface {1}\n" +
+-          "original: {2}\n" +
+-          "override: {3}");
+   static final DiagnosticType UNKNOWN_OVERRIDE =
+       DiagnosticType.warning(
+           "JSC_UNKNOWN_OVERRIDE",
+@@ -239,7 +232,6 @@ public class TypeCheck implements NodeTraversal.Callback, CompilerPass {
+       HIDDEN_SUPERCLASS_PROPERTY,
+       HIDDEN_INTERFACE_PROPERTY,
+       HIDDEN_SUPERCLASS_PROPERTY_MISMATCH,
+-      HIDDEN_INTERFACE_PROPERTY_MISMATCH,
+       UNKNOWN_OVERRIDE,
+       INTERFACE_METHOD_OVERRIDE,
+       UNKNOWN_EXPR_TYPE,
+@@ -1046,16 +1038,6 @@ public class TypeCheck implements NodeTraversal.Callback, CompilerPass {
+               HIDDEN_INTERFACE_PROPERTY, propertyName,
+               interfaceType.getTopMostDefiningType(propertyName).toString()));
+         }
+-        if (interfaceHasProperty) {
+-          JSType interfacePropType =
+-              interfaceType.getPrototype().getPropertyType(propertyName);
+-          if (!propertyType.canAssignTo(interfacePropType)) {
+-            compiler.report(t.makeError(n,
+-                HIDDEN_INTERFACE_PROPERTY_MISMATCH, propertyName,
+-                interfaceType.getTopMostDefiningType(propertyName).toString(),
+-                interfacePropType.toString(), propertyType.toString()));
+-          }
+-        }
+       }
+     }
+ 
+
+=== MODIFIED SOURCE: com.google.javascript.jscomp.TypeValidator ===
+diff --git a/src/com/google/javascript/jscomp/TypeValidator.java b/src/com/google/javascript/jscomp/TypeValidator.java
+index 1d5852261..24bf792f0 100644
+--- a/src/com/google/javascript/jscomp/TypeValidator.java
++++ b/src/com/google/javascript/jscomp/TypeValidator.java
+@@ -107,6 +107,13 @@ class TypeValidator {
+           "JSC_INTERFACE_METHOD_NOT_IMPLEMENTED",
+           "property {0} on interface {1} is not implemented by type {2}");
+ 
++  static final DiagnosticType HIDDEN_INTERFACE_PROPERTY_MISMATCH =
++      DiagnosticType.warning(
++        "JSC_HIDDEN_INTERFACE_PROPERTY_MISMATCH",
++        "mismatch of the {0} property type and the type " +
++        "of the property it overrides from interface {1}\n" +
++        "original: {2}\n" +
++        "override: {3}");
+ 
+   static final DiagnosticGroup ALL_DIAGNOSTICS = new DiagnosticGroup(
+       INVALID_CAST,
+@@ -114,7 +121,8 @@ class TypeValidator {
+       MISSING_EXTENDS_TAG_WARNING,
+       DUP_VAR_DECLARATION,
+       HIDDEN_PROPERTY_MISMATCH,
+-      INTERFACE_METHOD_NOT_IMPLEMENTED);
++      INTERFACE_METHOD_NOT_IMPLEMENTED,
++      HIDDEN_INTERFACE_PROPERTY_MISMATCH);
+ 
+   TypeValidator(AbstractCompiler compiler) {
+     this.compiler = compiler;
+@@ -585,7 +593,24 @@ class TypeValidator {
+             prop, implementedInterface.toString(), instance.toString()));
+       }
+       registerMismatch(instance, implementedInterface);
++    } else {
++      JSType found = instance.getPropertyType(prop);
++      JSType required
++        = implementedInterface.getImplicitPrototype().getPropertyType(prop);
++      found = found.restrictByNotNullOrUndefined();
++      required = required.restrictByNotNullOrUndefined();
++      if (!found.canAssignTo(required)) {
+         // Implemented, but not correctly typed
++        if (shouldReport) {
++          FunctionType constructor
++            = implementedInterface.toObjectType().getConstructor();
++          compiler.report(t.makeError(n,
++              HIDDEN_INTERFACE_PROPERTY_MISMATCH, prop,
++              constructor.getTopMostDefiningType(prop).toString(),
++              required.toString(), found.toString()));
++        }
++        registerMismatch(found, required);
++      }
+     }
+   }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testInterfaceInheritanceCheck12() throws Exception {
+    testTypes(
+        "/** @interface */ function I() {};\n" +
+        "/** @type {string} */ I.prototype.foobar;\n" +
+        "/** \n * @constructor \n * @implements {I} */\n" +
+        "function C() {\n" +
+        "/** \n * @type {number} */ this.foobar = 2;};\n" +
+        "/** @type {I} */ \n var test = new C(); alert(test.foobar);",
+        "mismatch of the foobar property type and the type of the property" +
+        " it overrides from interface I\n" +
+        "original: string\n" +
+        "override: number");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

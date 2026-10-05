@@ -1,0 +1,78 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791184758-L1Gr0UqK33FXIbvtEQ5V","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing Jackson Bug**\n\nI've identified the exact location of the `JacksonDatabind-57` bug within `ObjectReader.readValues(byte[] src, int offset, int length)`. The issue lies in the erroneous inclusion of `_considerFilter(_parserFactory.createParser(src), true)` which I've now removed in the corrected version, simplifying the call.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Testing Jackson Byte Parsing**\n\nI'm now focusing on crafting a robust test case for the Jackson byte array parsing. The goal is to specifically trigger the `JacksonDatabind-57` bug by providing byte arrays with offsets and lengths that expose the incorrect `_parserFactory.createParser(src)` call, ensuring it respects the intended `offset` and `length`.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".jackson.databind.seq;\n\nimport java.io.IOException;\nimport java.nio.charset.StandardCharsets;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\nimport com.fasterxml.jackson.databind.BaseMapTest;\nimport com.fasterxml.jackson.databind."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"MappingIterator;\nimport com.fasterxml.jackson.databind.ObjectMapper;\nimport com.fasterxml.jackson.databind.ObjectReader;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\npublic class ReadValuesOffsetTest extends BaseMapTest {\n    private final ObjectMapper MAPPER = new ObjectMapper();\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    public void testReadValuesWithOffsetAndLength() throws IOException {\n        String json = \"{\\\"a\\\":1"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"} {\\\"a\\\":2}\";\n        byte[] jsonBytes = json.getBytes(StandardCharsets.UTF_8"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":");\n\n        // Prefix and suffix padding around the valid JSON payload\n        byte[] buffer = new byte"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"[jsonBytes.length + 10];\n        // Fill prefix with arbitrary non-JSON bytes that would trigger parse error if parsed"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" from 0\n        buffer[0] = '!';\n        buffer[1] = '@';\n        buffer[2] = '#"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"';\n        int offset = 3;\n        System.arraycopy(jsonBytes, 0, buffer,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" offset, jsonBytes.length);\n\n        ObjectReader reader = MAPPER.readerFor(POJO.class);\n        MappingIterator"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"<POJO> it = reader.readValues(buffer, offset, jsonBytes.length);\n\n        assertTrue("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"it.hasNext());\n        POJO p1 = it.nextValue();\n        assertEquals(1, p1"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".a);\n\n        assertTrue(it.hasNext());\n        POJO p2 = it.nextValue();\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        assertEquals(2, p2.a);\n\n        assertFalse(it.hasNext());\n        it.close();\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"}\n\n    static class POJO {\n        public int a;\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":976,"output_tokens":890,"output_tokens_details":{"thinking_tokens":483},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.0040695,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0040695,"upstream_inference_prompt_cost":0.000732,"upstream_inference_completions_cost":0.0033375}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

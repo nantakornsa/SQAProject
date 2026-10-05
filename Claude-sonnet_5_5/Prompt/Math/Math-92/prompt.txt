@@ -1,0 +1,219 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-92
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+944446a1a8a3004ddd81298e0e922e4d47b99997
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-01-19 23:52:02 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-241
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-241
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.util.MathUtilsTest::testBinomialCoefficientLarge
+   --> junit.framework.AssertionFailedError: 48,22 expected:<27385657281648> but was:<27385657281647>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.util.MathUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.util.MathUtils ===
+diff --git a/src/java/org/apache/commons/math/util/MathUtils.java b/src/java/org/apache/commons/math/util/MathUtils.java
+index 1ae554ced..03c92eb20 100644
+--- a/src/java/org/apache/commons/math/util/MathUtils.java
++++ b/src/java/org/apache/commons/math/util/MathUtils.java
+@@ -181,30 +181,43 @@ public final class MathUtils {
+         if ((k == 1) || (k == n - 1)) {
+             return n;
+         }
+-        long result = Math.round(binomialCoefficientDouble(n, k));
+-        if (result == Long.MAX_VALUE) {
+-            throw new ArithmeticException(
+-                "result too large to represent in a long integer");
+-        }
+         // Use symmetry for large k
++        if (k > n / 2)
++            return binomialCoefficient(n, n - k);
+         
+         // We use the formula
+         // (n choose k) = n! / (n-k)! / k!
+         // (n choose k) == ((n-k+1)*...*n) / (1*...*k)
+         // which could be written
+         // (n choose k) == (n-1 choose k-1) * n / k
++        long result = 1;
++        if (n <= 61) {
+             // For n <= 61, the naive implementation cannot overflow.
++            for (int j = 1, i = n - k + 1; j <= k; i++, j++) {
++                result = result * i / j;
++            }
++        } else if (n <= 66) {
+             // For n > 61 but n <= 66, the result cannot overflow,
+             // but we must take care not to overflow intermediate values.
++            for (int j = 1, i = n - k + 1; j <= k; i++, j++) {
+                 // We know that (result * i) is divisible by j,
+                 // but (result * i) may overflow, so we split j:
+                 // Filter out the gcd, d, so j/d and i/d are integer.
+                 // result is divisible by (j/d) because (j/d)
+                 // is relative prime to (i/d) and is a divisor of
+                 // result * (i/d).
++                long d = gcd(i, j);
++                result = (result / (j / d)) * (i / d);
++            }
++        } else {
+             // For n > 66, a result overflow might occur, so we check
+             // the multiplication, taking care to not overflow
+             // unnecessary.
++            for (int j = 1, i = n - k + 1; j <= k; i++, j++) {
++                long d = gcd(i, j);
++                result = mulAndCheck((result / (j / d)), (i / d));
++            }
++        }
+         return result;
+     }
+ 
+@@ -231,9 +244,33 @@ public final class MathUtils {
+      * @throws IllegalArgumentException if preconditions are not met.
+      */
+     public static double binomialCoefficientDouble(final int n, final int k) {
++        if (n < k) {
++            throw new IllegalArgumentException(
++                "must have n >= k for binomial coefficient (n,k)");
++        }
++        if (n < 0) {
++            throw new IllegalArgumentException(
++                "must have n >= 0 for binomial coefficient (n,k)");
++        }
++        if ((n == k) || (k == 0)) {
++            return 1d;
++        }
++        if ((k == 1) || (k == n - 1)) {
++            return n;
++        }
++        if (k > n/2) {
++            return binomialCoefficientDouble(n, n - k);
++        }
++        if (n < 67) {
++            return binomialCoefficient(n,k);
++        }
+         
++        double result = 1d;
++        for (int i = 1; i <= k; i++) {
++             result *= (double)(n - k + i) / (double)i;
++        }
+   
+-        return Math.floor(Math.exp(binomialCoefficientLog(n, k)) + 0.5);
++        return Math.floor(result + 0.5);
+     }
+     
+     /**
+@@ -274,11 +311,17 @@ public final class MathUtils {
+          * For values small enough to do exact integer computation,
+          * return the log of the exact value 
+          */
++        if (n < 67) {  
++            return Math.log(binomialCoefficient(n,k));
++        }
+         
+         /*
+          * Return the log of binomialCoefficientDouble for values that will not
+          * overflow binomialCoefficientDouble
+          */
++        if (n < 1030) { 
++            return Math.log(binomialCoefficientDouble(n, k));
++        } 
+         
+         /*
+          * Sum logs for values that could overflow
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testBinomialCoefficientLarge() throws Exception {
+        // This tests all legal and illegal values for n <= 200.
+        for (int n = 0; n <= 200; n++) {
+            for (int k = 0; k <= n; k++) {
+                long ourResult = -1;
+                long exactResult = -1;
+                boolean shouldThrow = false;
+                boolean didThrow = false;
+                try {
+                    ourResult = MathUtils.binomialCoefficient(n, k);
+                } catch (ArithmeticException ex) {
+                    didThrow = true;
+                }
+                try {
+                    exactResult = binomialCoefficient(n, k);
+                } catch (ArithmeticException ex) {
+                    shouldThrow = true;
+                }
+                assertEquals(n+","+k, shouldThrow, didThrow);
+                assertEquals(n+","+k, exactResult, ourResult);
+                assertTrue(n+","+k, (n > 66 || !didThrow));
+            }
+        }
+
+        long ourResult = MathUtils.binomialCoefficient(300, 3);
+        long exactResult = binomialCoefficient(300, 3);
+        assertEquals(exactResult, ourResult);
+
+        ourResult = MathUtils.binomialCoefficient(700, 697);
+        exactResult = binomialCoefficient(700, 697);
+        assertEquals(exactResult, ourResult);
+
+        // This one should throw
+        try {
+            MathUtils.binomialCoefficient(700, 300);
+            fail("Expecting ArithmeticException");
+        } catch (ArithmeticException ex) {
+            // Expected
+        }
+
+        // Larger values cannot be computed directly by our
+        // test implementation because of stack limitations,
+        // so we make little jumps to fill the cache.
+        for (int i = 2000; i <= 10000; i += 2000) {
+            ourResult = MathUtils.binomialCoefficient(i, 3);
+            exactResult = binomialCoefficient(i, 3);
+            assertEquals(exactResult, ourResult);
+        }
+
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

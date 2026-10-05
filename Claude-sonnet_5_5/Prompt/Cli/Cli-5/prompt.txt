@@ -1,0 +1,84 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Cli
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Cli
+       Program: commons-cli
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/Cli.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-cli.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/active-bugs.csv
+Number of bugs: 39
+--------------------------------------------------------------------------------
+
+Summary for Bug: Cli-5
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+3880640ee6268a2ecb2912e1ae896153dc2229e5
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2007-06-06 07:10:30 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CLI-133
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CLI-133
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.cli.UtilTest::testStripLeadingHyphens
+   --> java.lang.NullPointerException
+ - org.apache.commons.cli.bug.BugCLI133Test::testOrder
+   --> java.lang.NullPointerException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.cli.Util
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.cli.Util ===
+diff --git a/src/java/org/apache/commons/cli/Util.java b/src/java/org/apache/commons/cli/Util.java
+index 2d88c30..94e97e3 100644
+--- a/src/java/org/apache/commons/cli/Util.java
++++ b/src/java/org/apache/commons/cli/Util.java
+@@ -33,6 +33,9 @@ class Util {
+      */
+     static String stripLeadingHyphens(String str)
+     {
++        if (str == null) {
++            return null;
++        }
+         if (str.startsWith("--"))
+         {
+             return str.substring(2, str.length());
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testStripLeadingHyphens() {
+        assertEquals("f", Util.stripLeadingHyphens("-f"));
+        assertEquals("foo", Util.stripLeadingHyphens("--foo"));
+        assertNull(Util.stripLeadingHyphens(null));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

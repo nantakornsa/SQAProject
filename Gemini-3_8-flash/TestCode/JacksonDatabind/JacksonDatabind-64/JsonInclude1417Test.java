@@ -1,0 +1,31 @@
+package com.fasterxml.jackson.databind.filter;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class JsonInclude1417Test extends BaseMapTest {
+
+    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+    static final class Issue1351Bean {
+        private final String str;
+
+        @JsonCreator
+        public Issue1351Bean(@JsonProperty("str") String str) {
+            this.str = str;
+        }
+
+        public String getStr() {
+            return str;
+        }
+    }
+
+    private final ObjectMapper MAPPER = newObjectMapper();
+
+    public void testNonDefaultWithNoDefaultConstructor() throws Exception {
+        String json = MAPPER.writeValueAsString(new Issue1351Bean(null));
+        assertEquals("{}", json);
+    }
+}

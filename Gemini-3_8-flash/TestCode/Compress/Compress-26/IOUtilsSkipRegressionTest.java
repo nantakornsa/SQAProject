@@ -1,0 +1,46 @@
+package org.apache.commons.compress.utils;
+
+import java.io.ByteArrayInputStream;
+import java.io.FilterInputStream;
+import java.io.InputStream;
+import org.junit.Assert;
+import org.junit.Test;
+
+public class IOUtilsSkipRegressionTest {
+
+    @Test
+    public void testSkipUsingReadWhenSkipReturnsZero() throws Exception {
+        byte[] data = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        InputStream in = new FilterInputStream(new ByteArrayInputStream(data)) {
+            @Override
+            public long skip(long n) {
+                return 0; // Simulate an InputStream whose skip() returns 0
+            }
+        };
+
+        long skipped = IOUtils.skip(in, 10);
+        Assert.assertEquals(10, skipped);
+        Assert.assertEquals(-1, in.read());
+    }
+
+    @Test
+    public void testSkipUsingSkipAndRead() throws Exception {
+        byte[] data = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+        InputStream in = new FilterInputStream(new ByteArrayInputStream(data)) {
+            private int skipCalls = 0;
+
+            @Override
+            public long skip(long n) {
+                if (skipCalls++ == 0) {
+                    // Only skip partially on first call, then return 0
+                    return 5;
+                }
+                return 0;
+            }
+        };
+
+        long skipped = IOUtils.skip(in, 10);
+        Assert.assertEquals(10, skipped);
+        Assert.assertEquals(-1, in.read());
+    }
+}

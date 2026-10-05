@@ -1,0 +1,144 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791148143-W0cYrZXqx6KmEvnVqX4Z","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":2410,"output_tokens":2,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I need to write this"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" reg"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ression test matching the project's JUnit 3 style, and I'm checking what estimation classes are available in this version of commons-math—whether LinearProblem and LinearMeasurement"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" need to be defined as inner classes like in GaussNewtonEstimatorTest, or if something like SimpleEstimationProblem already exists in commons-math 1.2."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I'll"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" define my own LinearMeasurement class extending WeightedMeasurement, storing factors and parameters, computing the theoretical value as a weighted sum and the partial derivatives with respect to each parameter."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"For L"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"inearProblem, I'm checking whether it should extend SimpleEstimationProblem rather than implement the interface directly, since that base class already provides addParameter and addMeasurement helpers that match the 2.0 API more safely than reimplementing the three"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" interface methods myself. I'm now sketching the constructor that builds up measurements from the array passed in."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I'm tr"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ying to recall whether LinearProblem's constructor registers parameters automatically through addMeasurement or if I need to call addParameter separately, worried about causing duplicate registration if I do both."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"Given the u"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ncertainty, I decide to implement EstimationProblem myself with the three required methods, filtering getUnboundParameters by !isBound(), preserving parameter order, and relying on EstimatedParameter's isBound() and getName() getters with weight"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" 1.0."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1zb25uZXQtNS41LTIwMjYwOTI4fGNsYXVkZS1vbi1hd3MifQ"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.apache.commons.math.estimation;\n\nimport junit.fram"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ework.Test;\nimport junit.framework.TestCase;\nimport junit.framework.TestSuite;\n\n/**\n * Regression test for MATH-200: AbstractEstimator used all parameters\n * (including bound ones) instead of only the unbound "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ones when computing\n * covariances and parameter errors.\n */\npublic class AbstractEstimatorBoundParametersTest extends TestCase {\n\n    public AbstractEstimatorBoundParametersTest(String name) {\n        super(name"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":");\n    }\n\n    public void testBoundParameters() throws EstimationException {\n        EstimatedParameter[] p = {\n            new EstimatedParameter(\"unbound0\", 2, false),\n            new EstimatedParameter(\"unbound1\", 2, false),\n            new EstimatedParameter(\"b"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ound\",    2, true)\n        };\n        LinearProblem problem = new LinearProblem(p, new LinearMeasurement[] {\n            new LinearMeasurement(new double[] { 1.0, 1.0, 1.0 },\n                                  new EstimatedParameter[] { p["}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"0], p[1], p[2] },\n                                  3.0),\n            new LinearMeasurement(new double[] { 1.0, -1.0, 1.0 },\n                                  new EstimatedParameter[] { p[0], p[1], p[2] },\n                                  1.0),\n            new LinearM"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"easurement(new double[] { 1.0, 3.0, 2.0 },\n                                  new EstimatedParameter[] { p[0], p[1], p[2] },\n                                  7.0)\n        });\n\n        GaussNewtonEstimator estimator = new GaussNewtonEstimator("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"100, 1.0e-6, 1.0e-6);\n        estimator.estimate(problem);\n        assertTrue(estimator.getRMS(problem) < 1.0e-10);\n        double[][] covariances = estimator.getCovariances(problem);\n        int i0 = 0, i"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"1 = 1;\n        if (problem.getUnboundParameters()[0].getName().endsWith(\"1\")) {\n            i0 = 1;\n            i1 = 0;\n        }\n        assertEquals(11.0 / 24, covariances[i0][i0], 1.0e-10);\n        assert"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Equals(-3.0 / 24, covariances[i0][i1], 1.0e-10);\n        assertEquals(-3.0 / 24, covariances[i1][i0], 1.0e-10);\n        assertEquals( 3.0 / 24, covariances[i1][i1], 1."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"0e-10);\n\n        double[] errors = estimator.guessParametersErrors(problem);\n        assertEquals(2, errors.length);\n        assertEquals(0, errors[i0], 1.0e-10);\n        assertEquals(0, errors[i1], 1.0e-10);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n    }\n\n    public static Test suite() {\n        return new TestSuite(AbstractEstimatorBoundParametersTest.class);\n    }\n\n    private static class LinearProblem implements EstimationProblem {\n\n        private final EstimatedParameter[] allParameters;\n        private final"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" WeightedMeasurement[] measurements;\n\n        public LinearProblem(EstimatedParameter[] parameters,\n                             LinearMeasurement[] measurements) {\n            this.allParameters = parameters.clone();\n            this.measurements = new WeightedMeasur"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ement[measurements.length];\n            for (int i = 0; i < measurements.length; ++i) {\n                this.measurements[i] = measurements[i];\n            }\n        }\n\n        public WeightedMeasurement[] getMeasurements() {\n            return measurements;\n        }\n\n        public Est"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"imatedParameter[] getAllParameters() {\n            return allParameters;\n        }\n\n        public EstimatedParameter[] getUnboundParameters() {\n            int count = 0;\n            for (int i = 0; i < allParameters.length; ++i) {\n                if (!allParameters[i].isB"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ound()) {\n                    ++count;\n                }\n            }\n            EstimatedParameter[] unbound = new EstimatedParameter[count];\n            int index = 0;\n            for (int i = 0; i < allParameters.length; ++i) {\n                if (!allParameters[i].isBound()) {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n                    unbound[index++] = allParameters[i];\n                }\n            }\n            return unbound;\n        }\n    }\n\n    private static class LinearMeasurement extends WeightedMeasurement {\n\n        private static final long serialVersionUID = 1L;\n\n        private final double[] factors;\n        private final Estim"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"atedParameter[] parameters;\n\n        public LinearMeasurement(double[] factors,\n                                 EstimatedParameter[] parameters,\n                                 double setPoint) {\n            super(1.0, setPoint);\n            this.factors    = factors.clone();"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n            this.parameters = parameters.clone();\n        }\n\n        public double getTheoreticalValue() {\n            double v = 0;\n            for (int i = 0; i < factors.length; ++i) {\n                v += factors[i] * parameters[i].getEstimate();\n            }\n            return v;\n        }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\n        public double getPartial(EstimatedParameter parameter) {\n            for (int i = 0; i < parameters.length; ++i) {\n                if (parameters[i] == parameter) {\n                    return factors[i];\n                }\n            }\n            return 0;\n        }\n    }\n}"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2410,"output_tokens":3605,"output_tokens_details":{"thinking_tokens":1829},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.04087,"is_byok":false,"cost_details":{"upstream_inference_cost":0.04087,"upstream_inference_prompt_cost":0.00482,"upstream_inference_completions_cost":0.03605}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

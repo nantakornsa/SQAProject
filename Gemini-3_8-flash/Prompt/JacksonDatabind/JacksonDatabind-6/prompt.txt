@@ -1,0 +1,120 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-6
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+5e799a2e2265cbb6a056b37b50f82cc1eebf1d45
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2014-10-02 23:16:26 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+570
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/570
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.deser.TestDateDeserialization::testISO8601MissingSeconds
+   --> com.fasterxml.jackson.databind.exc.InvalidFormatException: Can not construct instance of java.util.Date from String value '1997-07-16T19:20+01:00': not a valid representation (error: Failed to parse Date value '1997-07-16T19:20+01:00': Can not parse date "1997-07-16T19:20+01:00": not compatible with any of standard forms ("yyyy-MM-dd'T'HH:mm:ss.SSSZ", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", "EEE, dd MMM yyyy HH:mm:ss zzz", "yyyy-MM-dd"))
+ - com.fasterxml.jackson.databind.deser.TestDateDeserialization::testISO8601PartialMilliseconds
+   --> com.fasterxml.jackson.databind.exc.InvalidFormatException: Can not construct instance of java.util.Date from String value '2014-10-03T18:00:00.6-05:00': not a valid representation (error: Failed to parse Date value '2014-10-03T18:00:00.6-05:00': Can not parse date "2014-10-03T18:00:00.6-05:00": not compatible with any of standard forms ("yyyy-MM-dd'T'HH:mm:ss.SSSZ", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", "EEE, dd MMM yyyy HH:mm:ss zzz", "yyyy-MM-dd"))
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.util.StdDateFormat
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.util.StdDateFormat ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/util/StdDateFormat.java b/src/main/java/com/fasterxml/jackson/databind/util/StdDateFormat.java
+index e04380c51..6c9d6b3cb 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/util/StdDateFormat.java
++++ b/src/main/java/com/fasterxml/jackson/databind/util/StdDateFormat.java
+@@ -403,10 +403,26 @@ public class StdDateFormat
+                 // Milliseconds partial or missing; and even seconds are optional
+                 len = dateStr.length();
+                 // remove 'T', '+'/'-' and 4-digit timezone-offset
+-                c = dateStr.charAt(len-9);
+-                if (Character.isDigit(c)) {
++                int timeLen = len - dateStr.lastIndexOf('T') - 6;
++                if (timeLen < 12) { // 8 for hh:mm:ss, 4 for .sss
++                    int offset = len - 5; // insertion offset, before tz-offset
+                     StringBuilder sb = new StringBuilder(dateStr);
+-                    sb.insert(len-5, ".000");
++                    switch (timeLen) {
++                    case 11:
++                        sb.insert(offset, '0'); break;
++                    case 10:
++                        sb.insert(offset, "00"); break;
++                    case 9: // is this legal? (just second fraction marker)
++                        sb.insert(offset, "000"); break;
++                    case 8:
++                        sb.insert(offset, ".000"); break;
++                    case 7: // not legal to have single-digit second
++                        break;
++                    case 6: // probably not legal, but let's allow
++                        sb.insert(offset, "00.000");
++                    case 5: // is legal to omit seconds
++                        sb.insert(offset, ":00.000");
++                    }
+                     dateStr = sb.toString();
+                 }
+                 df = _formatISO8601;
+@@ -418,8 +434,15 @@ public class StdDateFormat
+                 StringBuilder sb = new StringBuilder(dateStr);
+                 // And possible also millisecond part if missing
+                 int timeLen = len - dateStr.lastIndexOf('T') - 1;
+-                if (timeLen <= 8) {
++                if (timeLen < 12) { // missing, or partial
++                    switch (timeLen) {
++                    case 11: sb.append('0');
++                    case 10: sb.append('0');
++                    case 9: sb.append('0');
++                        break;
++                    default:
+                         sb.append(".000");
++                    }
+                 }
+                 sb.append('Z');
+                 dateStr = sb.toString();
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testISO8601MissingSeconds() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

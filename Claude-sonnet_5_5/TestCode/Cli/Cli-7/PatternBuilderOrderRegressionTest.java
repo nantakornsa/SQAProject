@@ -1,0 +1,29 @@
+package org.apache.commons.cli2.bug;
+
+import java.util.Iterator;
+
+import junit.framework.TestCase;
+
+import org.apache.commons.cli2.Option;
+import org.apache.commons.cli2.builder.PatternBuilder;
+import org.apache.commons.cli2.option.GroupImpl;
+
+/**
+ * Regression test for CLI-121: PatternBuilder must preserve the order in which
+ * options appear in the pattern.
+ */
+public class PatternBuilderOrderRegressionTest extends TestCase {
+
+    public void testRequiredOptions() {
+        PatternBuilder builder = new PatternBuilder();
+        builder.withPattern("hc!<");
+        Option option = builder.create();
+        assertTrue(option instanceof GroupImpl);
+
+        GroupImpl group = (GroupImpl) option;
+        Iterator i = group.getOptions().iterator();
+        assertEquals("[-h]", i.next().toString());
+        assertEquals("-c <arg>", i.next().toString());
+        assertFalse(i.hasNext());
+    }
+}

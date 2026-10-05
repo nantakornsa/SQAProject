@@ -1,0 +1,35 @@
+package com.fasterxml.jackson.dataformat.xml.stream;
+
+import java.io.StringReader;
+
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.xml.XmlTestBase;
+import com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser;
+
+public class XmlParserNextXxxTest extends XmlTestBase
+{
+    private final XmlMapper _xmlMapper = new XmlMapper();
+
+    // [dataformat-xml#204]: nextTextValue() must return attribute values
+    public void testXmlAttributesWithNextTextValue() throws Exception
+    {
+        final String XML = "<data max=\"7\" offset=\"9\"/>";
+
+        FromXmlParser xp = (FromXmlParser) _xmlMapper.getFactory()
+                .createParser(new StringReader(XML));
+
+        assertEquals(JsonToken.START_OBJECT, xp.nextToken());
+
+        assertEquals(JsonToken.FIELD_NAME, xp.nextToken());
+        assertEquals("max", xp.getCurrentName());
+        assertEquals("7", xp.nextTextValue());
+
+        assertEquals(JsonToken.FIELD_NAME, xp.nextToken());
+        assertEquals("offset", xp.getCurrentName());
+        assertEquals("9", xp.nextTextValue());
+
+        assertEquals(JsonToken.END_OBJECT, xp.nextToken());
+        xp.close();
+    }
+}

@@ -1,0 +1,83 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-111
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+6f981f77e5bd9e2eecbd851a2a02933cdb9af0d8
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-10-23 00:47:12 -0400
+--------------------------------------------------------------------------------
+Bug report id:
+1114
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-1114.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.ClosureReverseAbstractInterpreterTest::testGoogIsArray2
+   --> junit.framework.AssertionFailedError: Expected: Array
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.type.ClosureReverseAbstractInterpreter
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.type.ClosureReverseAbstractInterpreter ===
+diff --git a/src/com/google/javascript/jscomp/type/ClosureReverseAbstractInterpreter.java b/src/com/google/javascript/jscomp/type/ClosureReverseAbstractInterpreter.java
+index 1706e345e..e3c599d6d 100644
+--- a/src/com/google/javascript/jscomp/type/ClosureReverseAbstractInterpreter.java
++++ b/src/com/google/javascript/jscomp/type/ClosureReverseAbstractInterpreter.java
+@@ -51,7 +51,8 @@ public class ClosureReverseAbstractInterpreter
+       new RestrictByTrueTypeOfResultVisitor() {
+         @Override
+         protected JSType caseTopType(JSType topType) {
+-          return topType;
++          return topType.isAllType() ?
++              getNativeType(ARRAY_TYPE) : topType;
+         }
+ 
+         @Override
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testGoogIsArray2() throws Exception {
+    testClosureFunction("goog.isArray",
+        ALL_TYPE,
+        ARRAY_TYPE,
+        ALL_TYPE);
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,75 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791186131-SYmEXmwiXyFu41zemCEq","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Jackson Bug**\n\nI'm currently pinpointing the root cause of JacksonDatabind-86. It appears the issue stems from `ResolvedRecursiveType` neglecting to override `getSuperClass()`, leading to a null `_superClass` under specific recursive type scenarios.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Exploring Recursive Type Resolution**\n\nMy focus is on how `Base.class` influences `ResolvedRecursiveType` when resolving `Sub`'s superclass. I'm examining a test case to understand the precise sequence of events and how the type resolution cache is populated, which seems critical to triggering the bug.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing Recursive Type Definitions**\n\nI'm now understanding how recursive type definitions are formed. It appears the bug is triggered when `Base` references `Sub`, and `Sub` extends `Base`, causing a circular dependency during resolution. My current focus is tracing how `ResolvedRecursiveType` handles the `_superClass` in this specific circular setup.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".type;\n\nimport com.fasterxml.jackson.databind.BaseMapTest;\nimport com.fasterxml.jackson"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".databind.JavaType;\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\npublic class RecursiveType8"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"6Test extends BaseMapTest {\n\n    static class Base {\n        public int base = 1;\n        public Sub sub;\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    }\n\n    static class Sub extends Base {\n        public int sub = 2;\n    }\n\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"public void testSuperClassWithReferencedJavaType() {\n        TypeFactory tf = newTypeFactory();\n        tf"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".constructType(Base.class);\n        JavaType subType = tf.constructType(Sub.class);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        JavaType baseTypeFromSub = subType.getSuperClass();\n        assertNotNull(baseTypeFrom"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Sub);\n        assertNotNull(\"Super class of ResolvedRecursiveType should not be null\", baseTypeFromSub.getSuperClass());\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"assertEquals(Object.class, baseTypeFromSub.getSuperClass().getRawClass());\n    }\n\n    public void testBase"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"PropertiesIncludedWhenSerializingSubWhenSubTypeLoadedAfterBaseType() throws Exception {\n        ObjectMapper mapper = newObjectMapper();\n        mapper"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".constructType(Base.class);\n        Sub sub = new Sub();\n        String json = mapper.writeValue"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"AsString(sub);\n        assertTrue(\"JSON should contain 'base' property: \" + json, json.contains(\"\\\""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"base\\\":1\"));\n        assertTrue(\"JSON should contain 'sub' property: \" + json, json.contains(\"\\\""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"sub\\\":2\"));\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1138,"output_tokens":1088,"output_tokens_details":{"thinking_tokens":736},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.0049335,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0049335,"upstream_inference_prompt_cost":0.0008535,"upstream_inference_completions_cost":0.00408}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

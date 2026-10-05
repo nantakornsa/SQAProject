@@ -1,0 +1,35 @@
+```java
+package org.apache.commons.jxpath.ri.model;
+
+import java.io.StringReader;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import junit.framework.TestCase;
+
+import org.apache.commons.jxpath.JXPathContext;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+
+/**
+ * Regression test for JXPATH-97: a prefixed element in a DOM tree that was
+ * built without namespace awareness (so its namespace URI is null) must still
+ * be matched by a prefixed name test when the prefix is registered.
+ */
+public class DOMPrefixedElementWithoutNamespaceURITest extends TestCase {
+
+    public void testPrefixedElementWithNullNamespaceURI() throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(false);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document doc = builder.parse(new InputSource(new StringReader(
+                "<ElementA><B:ElementB>MY TEXT</B:ElementB></ElementA>")));
+
+        JXPathContext context = JXPathContext.newContext(doc);
+        context.registerNamespace("B", "namespace-b");
+
+        assertEquals("MY TEXT", context.getValue("/ElementA/B:ElementB"));
+    }
+}
+```

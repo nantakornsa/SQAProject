@@ -1,0 +1,97 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-84
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+a810d2e3615da9a37ad74a7db2ca8bc6945ab9a8
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2018-04-29 16:16:12 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+848
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/848
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.helper.W3CDomTest::treatsUndeclaredNamespaceAsLocalName
+   --> org.w3c.dom.DOMException: NAMESPACE_ERR: An attempt is made to create or change an object in a way which is incorrect with regard to namespaces.
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.helper.W3CDom
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.helper.W3CDom ===
+diff --git a/src/main/java/org/jsoup/helper/W3CDom.java b/src/main/java/org/jsoup/helper/W3CDom.java
+index 7b309a3f..68475747 100644
+--- a/src/main/java/org/jsoup/helper/W3CDom.java
++++ b/src/main/java/org/jsoup/helper/W3CDom.java
+@@ -88,7 +88,8 @@ public class W3CDom {
+                 String namespace = namespacesStack.peek().get(prefix);
+                 String tagName = sourceEl.tagName();
+ 
+-                Element el = 
++                Element el = namespace == null && tagName.contains(":") ?
++                    doc.createElementNS("", tagName) : // doesn't have a real namespace defined
+                     doc.createElementNS(namespace, tagName);
+                 copyAttributes(sourceEl, el);
+                 if (dest == null) { // sets up the root
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void treatsUndeclaredNamespaceAsLocalName() {
+        String html = "<fb:like>One</fb:like>";
+        org.jsoup.nodes.Document doc = Jsoup.parse(html);
+
+        Document w3Doc = new W3CDom().fromJsoup(doc);
+        Node htmlEl = w3Doc.getFirstChild();
+
+        assertNull(htmlEl.getNamespaceURI());
+        assertEquals("html", htmlEl.getLocalName());
+        assertEquals("html", htmlEl.getNodeName());
+
+        Node fb = htmlEl.getFirstChild().getNextSibling().getFirstChild();
+        assertNull(fb.getNamespaceURI());
+        assertEquals("like", fb.getLocalName());
+        assertEquals("fb:like", fb.getNodeName());
+
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

@@ -1,0 +1,86 @@
+package org.joda.time;
+
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+/**
+ * Regression test for LocalDate/LocalDateTime handling of BC era dates
+ * in fromDateFields and fromCalendarFields.
+ */
+public class TestBeforeYearZeroRegression extends TestCase {
+
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
+
+    public static TestSuite suite() {
+        return new TestSuite(TestBeforeYearZeroRegression.class);
+    }
+
+    public TestBeforeYearZeroRegression(String name) {
+        super(name);
+    }
+
+    public void testLocalDateTime_fromDateFields_beforeYearZero1() throws Exception {
+        GregorianCalendar cal = new GregorianCalendar(1, 1, 3, 4, 5, 6);
+        cal.set(Calendar.ERA, GregorianCalendar.BC);
+        cal.set(Calendar.MILLISECOND, 7);
+        LocalDateTime expected = new LocalDateTime(0, 2, 3, 4, 5, 6, 7);
+        assertEquals(expected, LocalDateTime.fromDateFields(cal.getTime()));
+    }
+
+    public void testLocalDateTime_fromDateFields_beforeYearZero3() throws Exception {
+        GregorianCalendar cal = new GregorianCalendar(3, 1, 3, 4, 5, 6);
+        cal.set(Calendar.ERA, GregorianCalendar.BC);
+        cal.set(Calendar.MILLISECOND, 7);
+        LocalDateTime expected = new LocalDateTime(-2, 2, 3, 4, 5, 6, 7);
+        assertEquals(expected, LocalDateTime.fromDateFields(cal.getTime()));
+    }
+
+    public void testLocalDateTime_fromCalendarFields_beforeYearZero1() throws Exception {
+        GregorianCalendar cal = new GregorianCalendar(1, 1, 3, 4, 5, 6);
+        cal.set(Calendar.ERA, GregorianCalendar.BC);
+        cal.set(Calendar.MILLISECOND, 7);
+        LocalDateTime expected = new LocalDateTime(0, 2, 3, 4, 5, 6, 7);
+        assertEquals(expected, LocalDateTime.fromCalendarFields(cal));
+    }
+
+    public void testLocalDateTime_fromCalendarFields_beforeYearZero3() throws Exception {
+        GregorianCalendar cal = new GregorianCalendar(3, 1, 3, 4, 5, 6);
+        cal.set(Calendar.ERA, GregorianCalendar.BC);
+        cal.set(Calendar.MILLISECOND, 7);
+        LocalDateTime expected = new LocalDateTime(-2, 2, 3, 4, 5, 6, 7);
+        assertEquals(expected, LocalDateTime.fromCalendarFields(cal));
+    }
+
+    public void testLocalDate_fromDateFields_beforeYearZero1() throws Exception {
+        GregorianCalendar cal = new GregorianCalendar(1, 1, 3);
+        cal.set(Calendar.ERA, GregorianCalendar.BC);
+        LocalDate expected = new LocalDate(0, 2, 3);
+        assertEquals(expected, LocalDate.fromDateFields(cal.getTime()));
+    }
+
+    public void testLocalDate_fromDateFields_beforeYearZero3() throws Exception {
+        GregorianCalendar cal = new GregorianCalendar(3, 1, 3);
+        cal.set(Calendar.ERA, GregorianCalendar.BC);
+        LocalDate expected = new LocalDate(-2, 2, 3);
+        assertEquals(expected, LocalDate.fromDateFields(cal.getTime()));
+    }
+
+    public void testLocalDate_fromCalendarFields_beforeYearZero1() throws Exception {
+        GregorianCalendar cal = new GregorianCalendar(1, 1, 3);
+        cal.set(Calendar.ERA, GregorianCalendar.BC);
+        LocalDate expected = new LocalDate(0, 2, 3);
+        assertEquals(expected, LocalDate.fromCalendarFields(cal));
+    }
+
+    public void testLocalDate_fromCalendarFields_beforeYearZero3() throws Exception {
+        GregorianCalendar cal = new GregorianCalendar(3, 1, 3);
+        cal.set(Calendar.ERA, GregorianCalendar.BC);
+        LocalDate expected = new LocalDate(-2, 2, 3);
+        assertEquals(expected, LocalDate.fromCalendarFields(cal));
+    }
+}

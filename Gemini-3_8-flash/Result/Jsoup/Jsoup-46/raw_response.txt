@@ -1,0 +1,69 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791142480-IKC9aLyjTNntdu6poiNV","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing Jsoup escape bug**\n\nI've pinpointed the `Jsoup-46` bug to `Entities.java`. The issue arises with `xhtml` escape mode when encountering `\\u00a0`. The current code appends the character directly, which fails when the charset, like Shift_JIS, can't encode it.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.jsoup.nodes;\n\nimport org.jsoup"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".Jsoup;\nimport org.junit.Test;\n\nimport java.io.ByteArrayInputStream;\nimport java"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".io.InputStream;\nimport java.nio.charset.Charset;\n\nimport static org.junit.Assert."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"assertFalse;\nimport static org.junit.Assert.assertTrue;\n\npublic class EntitiesRegressionTest {\n\n    @Test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n    public void testShiftJisRoundtrip() throws Exception {\n        String input =\n                \"<html>\"\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"                        +   \"<head>\"\n                        +     \"<meta http-equiv=\\\"content-type\\\" content=\\\"text/"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"html; charset=Shift_JIS\\\" />\"\n                        +   \"</head>\"\n                        +   \"<body>"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\"\n                        +     \"before&nbsp;after\"\n                        +   \"</body>\"\n                        + \"</html>\";\n        InputStream is"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" = new ByteArrayInputStream(input.getBytes(Charset.forName(\"ASCII\")));\n\n        Document doc = Jsoup.parse"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(is, null, \"http://example.com\");\n        doc.outputSettings().escapeMode(Entities."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"EscapeMode.xhtml);\n\n        String output = new String(doc.html().getBytes(doc.outputSettings()."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"charset()), doc.outputSettings().charset());\n\n        assertFalse(\"Should not have contained a '?'.\", output."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"contains(\"?\"));\n        assertTrue(\"Should have contained a '&#xa0;' or a '&nbsp;'.\","}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n                output.contains(\"&#xa0;\") || output.contains(\"&nbsp;\"));\n    }\n}\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1104,"output_tokens":510,"output_tokens_details":{"thinking_tokens":176},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.0027405,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0027405,"upstream_inference_prompt_cost":0.000828,"upstream_inference_completions_cost":0.0019125}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

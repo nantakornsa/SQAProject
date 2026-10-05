@@ -1,0 +1,103 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-29
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+05ae97865c84536a6cfe7759ca6c382eb761ecb2
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-09-23 12:47:20 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+168
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/168
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.nodes.DocumentTest::testTitles
+   --> junit.framework.AssertionFailedError: expected:<Hello[ there] now> but was:<Hello[
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.nodes.Document
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.nodes.Document ===
+diff --git a/src/main/java/org/jsoup/nodes/Document.java b/src/main/java/org/jsoup/nodes/Document.java
+index c5814afd..d1d0dfdd 100644
+--- a/src/main/java/org/jsoup/nodes/Document.java
++++ b/src/main/java/org/jsoup/nodes/Document.java
+@@ -1,5 +1,6 @@
+ package org.jsoup.nodes;
+ 
++import org.jsoup.helper.StringUtil;
+ import org.jsoup.helper.Validate;
+ import org.jsoup.parser.Tag;
+ import org.jsoup.select.Elements;
+@@ -66,7 +67,7 @@ public class Document extends Element {
+     public String title() {
+         // title is a preserve whitespace tag (for document output), but normalised here
+         Element titleEl = getElementsByTag("title").first();
+-        return titleEl != null ? titleEl.text().trim() : "";
++        return titleEl != null ? StringUtil.normaliseWhitespace(titleEl.text()).trim() : "";
+     }
+ 
+     /**
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void testTitles() {
+        Document noTitle = Jsoup.parse("<p>Hello</p>");
+        Document withTitle = Jsoup.parse("<title>First</title><title>Ignore</title><p>Hello</p>");
+        
+        assertEquals("", noTitle.title());
+        noTitle.title("Hello");
+        assertEquals("Hello", noTitle.title());
+        assertEquals("Hello", noTitle.select("title").first().text());
+        
+        assertEquals("First", withTitle.title());
+        withTitle.title("Hello");
+        assertEquals("Hello", withTitle.title());
+        assertEquals("Hello", withTitle.select("title").first().text());
+
+        Document normaliseTitle = Jsoup.parse("<title>   Hello\nthere   \n   now   \n");
+        assertEquals("Hello there now", normaliseTitle.title());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

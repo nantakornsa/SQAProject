@@ -1,0 +1,34 @@
+```java
+package com.fasterxml.jackson.databind.deser.creators;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+
+public class CreatorWithNamingStrategyTest extends BaseMapTest
+{
+    static class OneProperty {
+        private final String paramName0;
+
+        @JsonCreator
+        public OneProperty(String paramName0) {
+            this.paramName0 = paramName0;
+        }
+
+        public String getParamName0() {
+            return paramName0;
+        }
+    }
+
+    public void testSnakeCaseWithOneArg() throws Exception
+    {
+        ObjectMapper mapper = new ObjectMapper()
+                .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+
+        OneProperty target = mapper.readValue("{\"param_name0\":\"foobar\"}", OneProperty.class);
+        assertEquals("foobar", target.getParamName0());
+    }
+}
+```

@@ -1,0 +1,47 @@
+package org.jfree.data.category.junit;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.jfree.data.category.DefaultIntervalCategoryDataset;
+
+/**
+ * Regression test for bug Chart-16 in DefaultIntervalCategoryDataset.
+ */
+public class DefaultIntervalCategoryDatasetRegressionTest extends TestCase {
+
+    /**
+     * Returns the tests as a test suite.
+     *
+     * @return The test suite.
+     */
+    public static Test suite() {
+        return new TestSuite(DefaultIntervalCategoryDatasetRegressionTest.class);
+    }
+
+    /**
+     * Constructs a new test case.
+     *
+     * @param name  the test name.
+     */
+    public DefaultIntervalCategoryDatasetRegressionTest(String name) {
+        super(name);
+    }
+
+    /**
+     * Test that an empty DefaultIntervalCategoryDataset initializes properly
+     * without null seriesKeys and categoryKeys, preventing NullPointerExceptions
+     * on basic query methods.
+     */
+    public void testEmptyDataset() {
+        DefaultIntervalCategoryDataset empty = new DefaultIntervalCategoryDataset(
+                new double[0][0], new double[0][0]);
+
+        assertEquals(-1, empty.getCategoryIndex("ABC"));
+        assertEquals(-1, empty.getSeriesIndex("XYZ"));
+        assertEquals(0, empty.getRowCount());
+        assertEquals(0, empty.getColumnCount());
+        assertEquals(0, empty.getSeriesCount());
+        assertEquals(0, empty.getCategoryCount());
+    }
+}

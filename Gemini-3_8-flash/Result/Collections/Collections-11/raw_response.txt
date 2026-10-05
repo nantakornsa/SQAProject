@@ -1,0 +1,63 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791109172-lW9TAFYsug9bUmFEdbh3","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing Hashing Logic**\n\nI'm currently digging into a serialization issue within `MultiKey`. It appears the transient `hashCode` field isn't being properly recalculated after deserialization, which is causing inconsistencies. My next step is to implement a `readResolve()` method to ensure this crucial value is updated correctly.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.apache.commons.collections.keyvalue;\n\nimport java.io.ByteArrayInputStream;\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"import java.io.ByteArrayOutputStream;\nimport java.io.IOException;\nimport java.io.ObjectInputStream"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\nimport java.io.ObjectOutputStream;\nimport java.util.HashMap;\nimport java.util."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Map;\n\nimport junit.framework.TestCase;\n\n/**\n * Regression test for COLLECTIONS-266 /"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" Collections-11.\n * Tests that MultiKey recalculates its hashCode upon deserialization.\n */\npublic class"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" MultiKeySerializationTest extends TestCase {\n\n    public void testEqualsAfterSerialization() throws IOException, ClassNotFoundException {\n        MultiKey key"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" = new MultiKey(new Object[] { \"1\", \"2\" });\n        Map map = new HashMap();"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        map.put(key, new Integer(2));\n\n        ByteArrayOutputStream buffer = new ByteArrayOutputStream();\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        ObjectOutputStream out = new ObjectOutputStream(buffer);\n        out.writeObject(key);\n        out.close"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"();\n\n        ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()));\n        Object key2"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" = in.readObject();\n        in.close();\n\n        assertEquals(key.hashCode(), key2.hashCode());\n        assertEquals("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"key, key2);\n        assertEquals(new Integer(2), map.get(key2));\n    }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":915,"output_tokens":658,"output_tokens_details":{"thinking_tokens":356},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.00315375,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00315375,"upstream_inference_prompt_cost":0.00068625,"upstream_inference_completions_cost":0.0024675}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

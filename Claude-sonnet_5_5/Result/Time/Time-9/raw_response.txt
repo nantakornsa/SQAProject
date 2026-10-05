@@ -1,0 +1,84 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791092333-cs2ZYxFfev0eHGXLdkKF","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":2668,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" f"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ix makes `forOffs"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"etHoursMinutes"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"` re"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ject hour"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" values outside -"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"23.."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"23 and `forOffs"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"etMillis` reject mill"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"is outside "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"±(86400000 - 1). On the buggy version, `forOffsetHoursMinutes(24, 0)` returns a zone with a 24-hour offset instead of throwing, so the test fails there. On the fixed version it throws `IllegalAr"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"gumentException`, so the test passes.\n\nThe test follows the project's JUnit 3 style, extending `TestCase`. It calls `forOffsetHoursMinutes` with 24 and -24 hours and exp"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ects `IllegalArgumentException`. It also checks the boundary values 23:59 and -23:59, which must still work. The `forOffsetMillis` range checks are included as well."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n```java\npackage org.joda.time;\n\nimport junit.framework.TestCase;\nimport junit.framework.TestSuite;\n\n/**\n * Regression test for DateTimeZone offset range validation.\n */\npublic class TestDateTimeZoneO"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ffsetRangeRegression extends TestCase {\n\n    public static void main(String[] args) {\n        junit.textui.TestRunner.run(suite());\n    }\n\n    public static TestSuite suite() {\n        return new TestSuite(TestDateTimeZoneOff"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"setRangeRegression.class);\n    }\n\n    public TestDateTimeZoneOffsetRangeRegression(String name) {\n        super(name);\n    }\n\n    public void testForOffsetHoursMinutes_outOfRangeHours() {\n        try {\n            DateTime"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Zone.forOffsetHoursMinutes(24, 0);\n            fail();\n        } catch (IllegalArgumentException ex) {\n            // expected\n        }\n        try {\n            DateTimeZone.forOffsetHoursMinutes(-24, 0);\n            fail();\n        }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" catch (IllegalArgumentException ex) {\n            // expected\n        }\n        try {\n            DateTimeZone.forOffsetHoursMinutes(Integer.MAX_VALUE, 0);\n            fail();\n        } catch (IllegalArgumentException ex) {\n            // expected"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n        }\n    }\n\n    public void testForOffsetHoursMinutes_boundaries() {\n        assertEquals(DateTimeZone.forID(\"+23:59\"), DateTimeZone.forOffsetHoursMinutes(23, 59));\n        assertEquals("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"DateTimeZone.forID(\"-23:59\"), DateTimeZone.forOffsetHoursMinutes(-23, 59));\n    }\n\n    public void testForOffsetMillis_outOfRange() {\n        try {\n            DateTimeZone.forOffsetMillis(86400 "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"* 1000);\n            fail();\n        } catch (IllegalArgumentException ex) {\n            // expected\n        }\n        try {\n            DateTimeZone.forOffsetMillis(-86400 * 1000);\n            fail();\n        } catch (IllegalArgumentException ex) {\n            //"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" expected\n        }\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2668,"output_tokens":992,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.015256,"is_byok":false,"cost_details":{"upstream_inference_cost":0.015256,"upstream_inference_prompt_cost":0.005336,"upstream_inference_completions_cost":0.00992}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,21 @@
+package org.apache.commons.lang3.text.translate;
+
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import org.junit.Test;
+
+public class LookupTranslatorRegressionTest {
+
+    @Test
+    public void testLookupWithNonStringCharSequence() throws IOException {
+        final LookupTranslator lt = new LookupTranslator(new CharSequence[][] {
+            { new StringBuffer("one"), new StringBuffer("two") }
+        });
+        final StringWriter out = new StringWriter();
+        final int result = lt.translate(new StringBuffer("one"), 0, out);
+        assertEquals("Incorrect codepoint consumption", 3, result);
+        assertEquals("Incorrect value", "two", out.toString());
+    }
+}

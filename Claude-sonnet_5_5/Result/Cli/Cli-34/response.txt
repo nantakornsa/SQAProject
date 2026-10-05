@@ -1,0 +1,40 @@
+```java
+package org.apache.commons.cli;
+
+import junit.framework.TestCase;
+
+public class DefaultOptionTypeRegressionTest extends TestCase
+{
+    public void testParsedOptionValueDefaultsToString() throws Exception
+    {
+        Options options = new Options();
+        options.addOption(OptionBuilder.hasArg().withType(Number.class).create("i"));
+        options.addOption(OptionBuilder.hasArg().create("f"));
+
+        CommandLineParser parser = new DefaultParser();
+        CommandLine cmd = parser.parse(options, new String[] { "-i", "123", "-f", "foo" });
+
+        assertEquals(123, ((Number) cmd.getParsedOptionValue("i")).intValue());
+        assertEquals("foo", cmd.getParsedOptionValue("f"));
+    }
+
+    public void testOptionBuilderDefaultTypeIsString() throws Exception
+    {
+        Option first = OptionBuilder.withLongOpt("simple option")
+                                    .hasArg()
+                                    .create('s');
+        assertEquals(String.class, first.getType());
+
+        // builder must be reset to String after a typed option was created
+        OptionBuilder.withType(Number.class).hasArg().create('n');
+        Option second = OptionBuilder.hasArg().create('t');
+        assertEquals(String.class, second.getType());
+    }
+
+    public void testNewOptionDefaultTypeIsString() throws Exception
+    {
+        Option option = new Option("a", "desc");
+        assertEquals(String.class, option.getType());
+    }
+}
+```

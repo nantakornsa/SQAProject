@@ -1,0 +1,72 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791181138-LCiRDS6RkMYefzRt78xu","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Caching Logic**\n\nI'm currently focused on the JacksonDatabind-12 issue. It appears `MapDeserializer.isCachable()` incorrectly returns true when custom deserializers are present for keys or values, leading to unintended caching of `MapDeserializer` instances. This could impact deserialization accuracy for maps with custom handlers.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"jackson.databind.deser;\n\nimport java.io.IOException;\nimport java.util.Map;\n\nimport com.fasterxml"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".jackson.core.JsonParser;\nimport com.fasterxml.jackson.databind.BaseMapTest;\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" com.fasterxml.jackson.databind.DeserializationContext;\nimport com.fasterxml.jackson.databind.JsonDeserial"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"izer;\nimport com.fasterxml.jackson.databind.ObjectMapper;\nimport com.fasterxml.jackson.databind."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"annotation.JsonDeserialize;\n\npublic class CustomMapDeserializer735Test extends BaseMapTest {\n\n    static class"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" CustomIntegerDeserializer extends JsonDeserializer<Integer> {\n        @Override\n        public Integer deserialize(JsonParser"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" jp, DeserializationContext ctxt) throws IOException {\n            return jp.getIntValue() * 10"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"0;\n        }\n    }\n\n    static class TestMapBean735 {\n        @JsonDeserialize"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(contentUsing = CustomIntegerDeserializer.class)\n        public Map<String, Integer> map1;\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        public Map<String, Integer> map2;\n    }\n\n    public void testCustomMapValueDeser"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"735() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n        String json = \"{\\\"map1"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\\\":{\\\"a\\\":1},\\\"map2\\\":{\\\"a\\\":1}}\";\n        TestMapBean735 bean = mapper.readValue"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(json, TestMapBean735.class);\n\n        assertNotNull(bean.map1);\n        assertNotNull("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"bean.map2);\n        assertEquals(100, bean.map1.get(\"a\").intValue());\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"assertEquals(1, bean.map2.get(\"a\").intValue());\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1101,"output_tokens":673,"output_tokens_details":{"thinking_tokens":292},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.0033495,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0033495,"upstream_inference_prompt_cost":0.00082575,"upstream_inference_completions_cost":0.00252375}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

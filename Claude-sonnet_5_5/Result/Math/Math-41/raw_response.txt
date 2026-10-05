@@ -1,0 +1,75 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791145985-QOSYDvdcTOlSEdMjf3br","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":2958,"output_tokens":4,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I need a"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" failing test for the buggy evaluate(values, weights, begin, length) method, focusing on a segment where weights outside the segment could wrongly affect the result. I recall the implementation computes the weighted mean over the segment first, then cal"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ls the variance evaluate with that mean, length, and begin."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"Using values {1,2,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"3,4,5} with weights {10,1,1,1,10} and segment begin=1, length=3 (values 2,3,4), the true variance should be 1.0, but if the sum of weights used in the denominator mistakenly includes weights outside the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" segment (sumWts=23 instead of 3), the result would come out wrong (2/22 instead of 2/2=1). I'll write this as a standalone test with a tight tolerance of 1e"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"-12."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1zb25uZXQtNS41LTIwMjYwOTI4fGNsYXVkZS1vbi1hd3MifQ"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.apache.commons.math"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".stat.descriptive.moment;\n\nimport org.junit.Assert;\nimport org.junit.Test;\n\n/**\n * Regression test for MATH-704: weighted variance over an array segment\n * must sum only the weights inside the segment.\n */"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\npublic class VarianceWeightedSegmentTest {\n\n    @Test\n    public void testEvaluateArraySegmentWeighted() {\n        double[] values  = {1.0, 2.0, 3.0, 4.0, 5.0};\n        // Weights outside the ev"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"aluated segment are large and must be ignored\n        double[] weights = {10.0, 1.0, 1.0, 1.0, 10.0};\n\n        Variance variance = new Variance();\n\n        // Segment {2, 3, 4} with unit weights: b"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ias-corrected variance = 1.0\n        Assert.assertEquals(1.0, variance.evaluate(values, weights, 1, 3), 1E-12);\n\n        // Same segment, population variance = 2/3\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Variance populationVariance = new Variance(false);\n        Assert.assertEquals(2.0 / 3.0, populationVariance.evaluate(values, weights, 1, 3), 1E-12);\n\n        // Result must equal that of the is"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"olated segment\n        double[] segValues  = {2.0, 3.0, 4.0};\n        double[] segWeights = {1.0, 1.0, 1.0};\n        Assert.assertEquals(variance.evaluate(segValues, segWeights, 0, "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"3),\n                            variance.evaluate(values, weights, 1, 3), 1E-12);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2958,"output_tokens":1261,"output_tokens_details":{"thinking_tokens":725},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.018526,"is_byok":false,"cost_details":{"upstream_inference_cost":0.018526,"upstream_inference_prompt_cost":0.005916,"upstream_inference_completions_cost":0.01261}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

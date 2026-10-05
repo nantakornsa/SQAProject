@@ -1,0 +1,63 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791142500-tJHhf64qG3z0gBz24xch","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Developing Regression Test**\n\nI'm focused on creating a regression test for Jsoup-49. I've begun by examining the bug diff in `Node.java`, specifically the `reparentChild` method's loop.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Refining Reparenting Logic**\n\nMy current focus is on the Jsoup-49 bug. I've been analyzing the `Node.java` diff, specifically how `reparentChild` interacts with `insertChildren` when nodes are moved within the same parent. The core issue appears to be inconsistent sibling indices during the insertion loop, which can lead `removeChild` to target incorrect elements.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"package org.jsoup.nodes;\n\nimport org.junit.Test;\nimport java.util.ArrayList;\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"import static org.junit.Assert.assertEquals;\n\npublic class ElementInsertChildrenTest {\n\n    @Test\n    public void"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" appendMustCorrectlyMoveChildrenInsideOneParentElement() {\n        Document doc = new Document(\"\");\n        Element body ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" doc.appendElement(\"body\");\n        body.appendElement(\"div1\");\n        body.appendElement(\""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"div2\");\n        final Element div3 = body.appendElement(\"div3\");\n        div3.text"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(\"Check\");\n        final Element div4 = body.appendElement(\"div4\");\n\n        ArrayList<Element>"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" toMove = new ArrayList<Element>();\n        toMove.add(div3);\n        toMove.add"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(div4);\n\n        body.insertChildren(0, toMove);\n\n        String result = doc.toString"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"().replaceAll(\"\\\\s+\", \"\");\n        assertEquals(\"<body><div3>Check</div3><div4></div"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"4><div1></div1><div2></div2></body>\", result);\n    }\n}\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1108,"output_tokens":860,"output_tokens_details":{"thinking_tokens":614},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.004056,"is_byok":false,"cost_details":{"upstream_inference_cost":0.004056,"upstream_inference_prompt_cost":0.000831,"upstream_inference_completions_cost":0.003225}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

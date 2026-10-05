@@ -1,0 +1,133 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-136
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+938f48a60c544f6b7bdb5d49006f654a51ca9a22
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-03-16 22:53:04 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+103
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-103.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.InlineGettersTest::testIssue2508576_1
+   --> junit.framework.ComparisonFailure: expected:<[({a:alert,b:alert}).a("a")]> but was:<[]>
+ - com.google.javascript.jscomp.InlineGettersTest::testIssue2508576_3
+   --> java.lang.RuntimeException: INTERNAL COMPILER ERROR.
+ - com.google.javascript.jscomp.MethodCheckTest::testSeparateMethods
+   --> junit.framework.AssertionFailedError: Unexpected error(s): JSC_WRONG_ARGUMENT_COUNT. Function oneOrTwoArg2: called with 3 argument(s). All definitions of this function require at least 1 argument(s) and no more than 2 argument(s). at testcode line 1 expected:<0> but was:<1>
+ - com.google.javascript.jscomp.RenameVarsTest::testDollarSignSuperExport2
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.MethodCompilerPass
+ - com.google.javascript.jscomp.RenameVars
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.MethodCompilerPass ===
+diff --git a/src/com/google/javascript/jscomp/MethodCompilerPass.java b/src/com/google/javascript/jscomp/MethodCompilerPass.java
+index cd39b6eea..5e0268f94 100644
+--- a/src/com/google/javascript/jscomp/MethodCompilerPass.java
++++ b/src/com/google/javascript/jscomp/MethodCompilerPass.java
+@@ -99,30 +99,10 @@ abstract class MethodCompilerPass implements CompilerPass {
+    * itself or the name of a function).
+    */
+   private void addPossibleSignature(String name, Node node, NodeTraversal t) {
+-    boolean signatureAdded = false;
+     if (node.getType() == Token.FUNCTION) {
+       // The node we're looking at is a function, so we can add it directly
+       addSignature(name, node, t.getSourceName());
+-      signatureAdded = true;
+-    } else if (node.getType() == Token.NAME) {
+-      String functionName = node.getString();
+-      Scope.Var v = t.getScope().getVar(functionName);
+-      if (v == null) {
+-        if (compiler.isIdeMode()) {
+-          return;
+-        } else {
+-          throw new IllegalStateException(
+-              "VarCheck should have caught this undefined function");
+-        }
+-      }
+-      Node function = v.getInitialValue();
+-      if (function != null &&
+-          function.getType() == Token.FUNCTION) {
+-        addSignature(name, function, v.getInputName());
+-        signatureAdded = true;
+-      }
+-    }
+-    if (!signatureAdded) {
++    } else {
+       nonMethodProperties.add(name);
+     }
+   }
+
+=== MODIFIED SOURCE: com.google.javascript.jscomp.RenameVars ===
+diff --git a/src/com/google/javascript/jscomp/RenameVars.java b/src/com/google/javascript/jscomp/RenameVars.java
+index 29f4d7a40..fb13e4de9 100644
+--- a/src/com/google/javascript/jscomp/RenameVars.java
++++ b/src/com/google/javascript/jscomp/RenameVars.java
+@@ -200,7 +200,15 @@ final class RenameVars implements CompilerPass {
+ 
+       // Check if we can rename this.
+       if (!okToRenameVar(name, local)) {
++        if (local) {
+           // Blindly de-uniquify for the Prototype library for issue 103.
++          String newName =
++            MakeDeclaredNamesUnique.ContextualRenameInverter.getOrginalName(
++                name);
++          if (!newName.equals(name)) {
++            n.setString(newName);
++          }
++        }
+         return;
+       }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue2508576_1() {
+    // Method defined by an extern should be left alone.
+    String externs = "function alert(a) {}";
+    testSame(externs, "({a:alert,b:alert}).a(\"a\")", null);
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

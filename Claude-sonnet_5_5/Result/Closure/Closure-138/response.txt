@@ -1,0 +1,46 @@
+This is a self-contained end-to-end regression test for Issue 124, mirroring `TypeCheckTest::testIssue124`. I have not compiled or run it, and I wrote it from memory without the project sources, so some details are guesses:
+
+- **Compiler API:** the calls (`JSSourceFile.fromCode`, `WarningLevel.VERBOSE.setOptionsForWarningLevel`, `compiler.compile`) are the 2010-era API as I remember it.
+- **Triggering test:** I did not reproduce `ClosureReverseAbstractInterpreterTest::testGoogIsArrayOnNull`. Its `testClosureFunction` helper isn't shown, so I couldn't write the file without guessing at it.
+- **Test source:** the JavaScript snippet is also from memory. It assigns `t = null` inside `if (t != null)`, which on the buggy version should produce a spurious "condition always evaluates to false" warning.
+
+```java
+package com.google.javascript.jscomp;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for Issue 124: type inference of an inferred global
+ * variable read from an inner scope must not use the (stale) type of the
+ * outer scope's slot.
+ */
+public class Issue124RegressionTest extends TestCase {
+
+  private JSError[] compileWithTypeChecking(String js) {
+    CompilerOptions options = new CompilerOptions();
+    options.checkTypes = true;
+    WarningLevel.VERBOSE.setOptionsForWarningLevel(options);
+
+    Compiler compiler = new Compiler();
+    Result result = compiler.compile(
+        new JSSourceFile[] { JSSourceFile.fromCode("externs", "") },
+        new JSSourceFile[] { JSSourceFile.fromCode("input", js) },
+        options);
+    return result.warnings;
+  }
+
+  public void testIssue124() throws Exception {
+    JSError[] warnings = compileWithTypeChecking(
+        "var t = null;" +
+        "function test() {" +
+        "  if (t != null) { t = null; }" +
+        "  t = 1;" +
+        "}");
+    StringBuilder sb = new StringBuilder();
+    for (JSError w : warnings) {
+      sb.append(w.toString()).append('\n');
+    }
+    assertEquals("unexpected warning(s): " + sb, 0, warnings.length);
+  }
+}
+```

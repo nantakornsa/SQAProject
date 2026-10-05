@@ -1,0 +1,28 @@
+```java
+package com.fasterxml.jackson.databind.deser;
+
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+public class TestByteArrayTypeOverride890 extends BaseMapTest {
+
+    static class ByteArrayWrapper {
+        @JsonDeserialize(as = byte[].class)
+        public Object data;
+    }
+
+    public void testByteArrayTypeOverride890() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        ByteArrayWrapper wrapper = mapper.readValue("{\"data\":\"AQID\"}", ByteArrayWrapper.class);
+        assertNotNull(wrapper);
+        assertNotNull(wrapper.data);
+        assertTrue(wrapper.data instanceof byte[]);
+        byte[] bytes = (byte[]) wrapper.data;
+        assertEquals(3, bytes.length);
+        assertEquals(1, bytes[0]);
+        assertEquals(2, bytes[1]);
+        assertEquals(3, bytes[2]);
+    }
+}
+```

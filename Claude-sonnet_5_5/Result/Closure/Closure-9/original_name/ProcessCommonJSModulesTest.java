@@ -1,0 +1,20 @@
+package com.google.javascript.jscomp;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for Closure-9: ProcessCommonJSModules must normalize
+ * Windows-style path separators when guessing the module name.
+ */
+public class ProcessCommonJSModulesTest extends TestCase {
+
+  public void testGuessModuleName() {
+    ProcessCommonJSModules pass = new ProcessCommonJSModules(null, "foo");
+    assertEquals("module$baz",
+        pass.guessCJSModuleName("foo/baz.js"));
+    assertEquals("module$baz",
+        pass.guessCJSModuleName("foo\\baz.js"));
+    assertEquals("module$bar$baz",
+        pass.guessCJSModuleName("foo\\bar\\baz.js"));
+  }
+}

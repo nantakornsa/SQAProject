@@ -1,0 +1,40 @@
+This test builds its own `Compiler` instead of extending `TypeCheckTest`, so it doesn't depend on that class's `testTypes` helper or re-run its inherited tests. I haven't compiled or run it against either version. It also assumes the 2012-era API (`JSSourceFile.fromCode` and the public `options.checkTypes` field), so those two calls may need adjusting if the project's API differs.
+
+On the buggy version, `x.prop = 3` on a `null` value returns early because the node already has a type and its parent is an assignment, so no warning is reported. The fixed version removes that early return and reports "No properties on this expression", which is what the test asserts.
+
+```java
+package com.google.javascript.jscomp;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for Closure issue 810: property assignment on a
+ * null value must produce a "No properties on this expression" warning.
+ */
+public class TypeCheckIssue810Test extends TestCase {
+
+  public void testGetpropAssignOnNullWarns() throws Exception {
+    Compiler compiler = new Compiler();
+    CompilerOptions options = new CompilerOptions();
+    options.checkTypes = true;
+    options.setWarningLevel(DiagnosticGroups.CHECK_TYPES, CheckLevel.WARNING);
+
+    JSSourceFile extern = JSSourceFile.fromCode("externs", "");
+    JSSourceFile input = JSSourceFile.fromCode("input",
+        "var x = null; x.prop = 3;");
+
+    compiler.compile(extern, input, options);
+
+    JSError[] warnings = compiler.getWarnings();
+    assertTrue("expected a warning", warnings.length >= 1);
+
+    boolean found = false;
+    for (JSError warning : warnings) {
+      if (warning.description.contains("No properties on this expression")) {
+        found = true;
+      }
+    }
+    assertTrue("expected 'No properties on this expression' warning", found);
+  }
+}
+```

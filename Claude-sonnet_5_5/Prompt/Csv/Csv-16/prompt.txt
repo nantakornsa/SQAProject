@@ -1,0 +1,157 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Csv
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Csv
+       Program: commons-csv
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Csv/Csv.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-csv.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Csv/active-bugs.csv
+Number of bugs: 16
+--------------------------------------------------------------------------------
+
+Summary for Bug: Csv-16
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+f368f64fa7f9acdcc01084f676e8b9c2b86f946e
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2018-05-18 14:24:50 -0600
+--------------------------------------------------------------------------------
+Bug report id:
+CSV-224
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CSV-224
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.csv.CSVParserTest::testIteratorSequenceBreaking
+   --> junit.framework.AssertionFailedError: expected:<[3]> but was:<[4]>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.csv.CSVParser
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.csv.CSVParser ===
+diff --git a/src/main/java/org/apache/commons/csv/CSVParser.java b/src/main/java/org/apache/commons/csv/CSVParser.java
+index 1e3106e8..7e9d7d41 100644
+--- a/src/main/java/org/apache/commons/csv/CSVParser.java
++++ b/src/main/java/org/apache/commons/csv/CSVParser.java
+@@ -286,6 +286,7 @@ public final class CSVParser implements Iterable<CSVRecord>, Closeable {
+ 
+     private final Lexer lexer;
+ 
++    private final CSVRecordIterator csvRecordIterator;
+     
+     /** A record buffer for getRecord(). Grows as necessary and is reused. */
+     private final List<String> recordList = new ArrayList<>();
+@@ -354,6 +355,7 @@ public final class CSVParser implements Iterable<CSVRecord>, Closeable {
+ 
+         this.format = format;
+         this.lexer = new Lexer(format, new ExtendedBufferedReader(reader));
++        this.csvRecordIterator = new CSVRecordIterator();
+         this.headerMap = this.initializeHeader();
+         this.characterOffset = characterOffset;
+         this.recordNumber = recordNumber - 1;
+@@ -520,7 +522,10 @@ public final class CSVParser implements Iterable<CSVRecord>, Closeable {
+      */
+     @Override
+     public Iterator<CSVRecord> iterator() {
+-        return new Iterator<CSVRecord>() {
++        return csvRecordIterator;
++    }
++    
++    class CSVRecordIterator implements Iterator<CSVRecord> {
+         private CSVRecord current;
+   
+         private CSVRecord getNextRecord() {
+@@ -568,7 +573,6 @@ public final class CSVParser implements Iterable<CSVRecord>, Closeable {
+             throw new UnsupportedOperationException();
+         }
+     };
+-    }
+ 
+     /**
+      * Parses the next record from the current point in the stream.
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testIteratorSequenceBreaking() throws IOException {
+        final String fiveRows = "1\n2\n3\n4\n5\n";
+
+        // Iterator hasNext() shouldn't break sequence
+        CSVParser parser = CSVFormat.DEFAULT.parse(new StringReader(fiveRows));
+        int recordNumber = 0;
+        Iterator<CSVRecord> iter = parser.iterator();
+        recordNumber = 0;
+        while (iter.hasNext()) {
+            CSVRecord record = iter.next();
+            recordNumber++;
+            assertEquals(String.valueOf(recordNumber), record.get(0));
+            if (recordNumber >= 2) {
+                break;
+            }
+        }
+        iter.hasNext();
+        while (iter.hasNext()) {
+            CSVRecord record = iter.next();
+            recordNumber++;
+            assertEquals(String.valueOf(recordNumber), record.get(0));
+        }
+
+        // Consecutive enhanced for loops shouldn't break sequence
+        parser = CSVFormat.DEFAULT.parse(new StringReader(fiveRows));
+        recordNumber = 0;
+        for (CSVRecord record : parser) {
+            recordNumber++;
+            assertEquals(String.valueOf(recordNumber), record.get(0));
+            if (recordNumber >= 2) {
+                break;
+            }
+        }
+        for (CSVRecord record : parser) {
+            recordNumber++;
+            assertEquals(String.valueOf(recordNumber), record.get(0));
+        }
+
+        // Consecutive enhanced for loops with hasNext() peeking shouldn't break sequence
+        parser = CSVFormat.DEFAULT.parse(new StringReader(fiveRows));
+        recordNumber = 0;
+        for (CSVRecord record : parser) {
+            recordNumber++;
+            assertEquals(String.valueOf(recordNumber), record.get(0));
+            if (recordNumber >= 2) {
+                break;
+            }
+        }
+        parser.iterator().hasNext();
+        for (CSVRecord record : parser) {
+            recordNumber++;
+            assertEquals(String.valueOf(recordNumber), record.get(0));
+        }
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,36 @@
+The bug is in `operate(...)`, which sized its output array by the input vector length instead of the number of matrix rows. A 3x2 matrix times a length-2 vector therefore throws `ArrayIndexOutOfBoundsException`. I wrote one JUnit 3 test class covering both `BigMatrixImpl` and `RealMatrixImpl`, since both were fixed. The test uses the same 3x2 matrix as the triggering test and checks the result length and values.
+
+```java
+package org.apache.commons.math.linear;
+
+import java.math.BigDecimal;
+
+import junit.framework.TestCase;
+
+public class MatrixOperateRegressionTest extends TestCase {
+
+    public void testMath209BigMatrix() {
+        BigMatrix a = new BigMatrixImpl(new BigDecimal[][] {
+                { new BigDecimal(1), new BigDecimal(2) },
+                { new BigDecimal(3), new BigDecimal(4) },
+                { new BigDecimal(5), new BigDecimal(6) }
+        }, false);
+        BigDecimal[] b = a.operate(new BigDecimal[] { new BigDecimal(1), new BigDecimal(1) });
+        assertEquals(a.getRowDimension(), b.length);
+        assertEquals( 3.0, b[0].doubleValue(), 1.0e-12);
+        assertEquals( 7.0, b[1].doubleValue(), 1.0e-12);
+        assertEquals(11.0, b[2].doubleValue(), 1.0e-12);
+    }
+
+    public void testMath209RealMatrix() {
+        RealMatrix a = new RealMatrixImpl(new double[][] {
+                { 1, 2 }, { 3, 4 }, { 5, 6 }
+        }, false);
+        double[] b = a.operate(new double[] { 1, 1 });
+        assertEquals(a.getRowDimension(), b.length);
+        assertEquals( 3.0, b[0], 1.0e-12);
+        assertEquals( 7.0, b[1], 1.0e-12);
+        assertEquals(11.0, b[2], 1.0e-12);
+    }
+}
+```

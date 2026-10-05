@@ -1,0 +1,75 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791215627-9g7mIDer2dskcxx5PFrV","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1568,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" test below"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" is a"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" reg"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ression test for"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Closure-168 "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"(issue 726)."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" I"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" have"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" not comp"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"iled or run it against"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" the buggy and fixed versions.\n\nIt lives in `TypeCheckTest`, which extends `CompilerTypeTestCase` and uses JUnit 3 style (`junit.framework`). It re"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"uses the project's `testTypes(String js, String description)` helper, which asserts that exactly one warning is reported and that its text matches the expected description.\n\nThe test mirrors the tri"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ggering case. An inner function calls `self.bar(true)`, where `self` is a local variable assigned from `this` in the enclosing function, and `bar` expects a number. On the buggy version, the scope-"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"depth check in `TypedScopeCreator` skips `self` for inference, so no warning is produced. The fixed version reports the type mismatch.\n\nBecause the file is one class in the project's test suite, the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" code below is only the new test method inside that class. The surrounding `TypeCheckTest` members (the `testTypes` helper and"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" the setup) already exist and are not repeated.\n\n```java\npackage com.google.javascript.jscomp;\n\npublic class TypeCheckTest extends CompilerTypeTestCase {\n\n  public void testIssue726() thro"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ws Exception {\n    testTypes(\n        \"/** @constructor */ function Foo() {}\" +\n        \"/** @param {number} x */ Foo.prototype.bar = function(x) {};\" +\n        \"/** @return {!Function} */ \" +\n        \"Foo.prototype.getDeferred"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Bar = function() { \" +\n        \"  var self = this;\" +\n        \"  return function() {\" +\n        \"    self.bar(true);\" +\n        \"  };\" +\n        \"};\",\n        \"actual parameter 1 of Foo.prototype.bar does not match formal parameter\\n\" +\n        \"found   : bool"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ean\\n\" +\n        \"required: number\");\n  }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1568,"output_tokens":600,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.009136,"is_byok":false,"cost_details":{"upstream_inference_cost":0.009136,"upstream_inference_prompt_cost":0.003136,"upstream_inference_completions_cost":0.006}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

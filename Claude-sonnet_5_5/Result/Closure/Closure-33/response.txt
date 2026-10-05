@@ -1,0 +1,52 @@
+The test below extends `TypeCheckTest` and reuses its `testTypes` helper, which asserts that no warnings are produced. I have not compiled or run it, so the fail-on-buggy and pass-on-fixed behaviour is unconfirmed. Two assumptions: `testTypes(String)` is visible to a same-package subclass, and no inherited method clashes with the name `testIssue700Regression`.
+
+Because it extends `TypeCheckTest`, running this class also re-runs every inherited test. Only `testIssue700Regression` is new.
+
+```java
+package com.google.javascript.jscomp;
+
+public class TypeCheckIssue700Test extends TypeCheckTest {
+
+  public void testIssue700Regression() throws Exception {
+    testTypes(
+        "/**\n" +
+        " * @param {{text: string}} opt_data\n" +
+        " * @return {string}\n" +
+        " */\n" +
+        "function temp1(opt_data) {\n" +
+        "  return opt_data.text;\n" +
+        "}\n" +
+        "\n" +
+        "/**\n" +
+        " * @param {{activity: (boolean|number|string|null|Object)}} opt_data\n" +
+        " * @return {string}\n" +
+        " */\n" +
+        "function temp2(opt_data) {\n" +
+        "  /** @notypecheck */\n" +
+        "  function __inner() {\n" +
+        "    return temp1(opt_data.activity);\n" +
+        "  }\n" +
+        "  return __inner();\n" +
+        "}\n" +
+        "\n" +
+        "/**\n" +
+        " * @param {{n: number, text: string, b: boolean}} opt_data\n" +
+        " * @return {string}\n" +
+        " */\n" +
+        "function temp3(opt_data) {\n" +
+        "  return 'n: ' + opt_data.n + ', t: ' + opt_data.text + '.';\n" +
+        "}\n" +
+        "\n" +
+        "function callee() {\n" +
+        "  var output = temp3({\n" +
+        "    n: 0,\n" +
+        "    text: 'a string',\n" +
+        "    b: true\n" +
+        "  })\n" +
+        "  alert(output);\n" +
+        "}\n" +
+        "\n" +
+        "callee();");
+  }
+}
+```

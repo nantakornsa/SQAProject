@@ -1,0 +1,81 @@
+package org.apache.commons.lang3;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
+import java.util.Locale;
+import org.junit.Test;
+
+public class LocaleUtilsLang865RegressionTest {
+
+    @Test
+    public void testToLocaleStartsWithUnderscore() {
+        Locale l = LocaleUtils.toLocale("_GB");
+        assertNotNull("Locale should not be null", l);
+        assertEquals("", l.getLanguage());
+        assertEquals("GB", l.getCountry());
+        assertEquals("", l.getVariant());
+
+        l = LocaleUtils.toLocale("_GB_P");
+        assertNotNull("Locale should not be null", l);
+        assertEquals("", l.getLanguage());
+        assertEquals("GB", l.getCountry());
+        assertEquals("P", l.getVariant());
+
+        l = LocaleUtils.toLocale("_GB_POSIX");
+        assertNotNull("Locale should not be null", l);
+        assertEquals("", l.getLanguage());
+        assertEquals("GB", l.getCountry());
+        assertEquals("POSIX", l.getVariant());
+
+        try {
+            LocaleUtils.toLocale("_G");
+            fail("Must be at least 3 chars if starts with underscore");
+        } catch (final IllegalArgumentException expected) {
+            // expected
+        }
+
+        try {
+            LocaleUtils.toLocale("_Gb");
+            fail("Must be uppercase if starts with underscore");
+        } catch (final IllegalArgumentException expected) {
+            // expected
+        }
+
+        try {
+            LocaleUtils.toLocale("_gB");
+            fail("Must be uppercase if starts with underscore");
+        } catch (final IllegalArgumentException expected) {
+            // expected
+        }
+
+        try {
+            LocaleUtils.toLocale("_1B");
+            fail("Must be letter if starts with underscore");
+        } catch (final IllegalArgumentException expected) {
+            // expected
+        }
+
+        try {
+            LocaleUtils.toLocale("_G1");
+            fail("Must be letter if starts with underscore");
+        } catch (final IllegalArgumentException expected) {
+            // expected
+        }
+
+        try {
+            LocaleUtils.toLocale("_GB_");
+            fail("Must be at least 5 chars if starts with underscore");
+        } catch (final IllegalArgumentException expected) {
+            // expected
+        }
+
+        try {
+            LocaleUtils.toLocale("_GBAP");
+            fail("Must have underscore after the country if starts with underscore and is at least 5 chars");
+        } catch (final IllegalArgumentException expected) {
+            // expected
+        }
+    }
+}

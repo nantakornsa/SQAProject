@@ -1,0 +1,51 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791189498-QdspFHEEy5rOyrnfEloI","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing Bug JacksonDatabind-108**\n\nI'm currently focused on the `ObjectReader.readTree(JsonParser p)` method within Jackson Databind. My analysis points to a potential issue in how tree nodes are returned by `_bindAsTree`, specifically concerning type safety.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind.node;\n\nimport java"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".io.StringReader;\n\nimport com.fasterxml.jackson.core.JsonParser;\nimport com.fasterxml."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"jackson.databind.BaseMapTest;\nimport com.fasterxml.jackson.databind.JsonNode;\nimport com"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".fasterxml.jackson.databind.ObjectMapper;\nimport com.fasterxml.jackson.databind.ObjectReader;\n\npublic"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" class ObjectReaderReadTreeEOFTest extends BaseMapTest\n{\n    private final ObjectMapper MAPPER = newObjectMapper();\n\n    public void test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"NullFromEOFWithParserAndReader() throws Exception\n    {\n        ObjectReader reader = MAPPER.reader();\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        JsonParser p = reader.createParser(new StringReader(\"\"));\n        JsonNode node = reader.read"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Tree(p);\n        assertNull(\"Should get `null` for reads with `JsonParser` at EOF,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" instead got: \" + node, node);\n        p.close();\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1358,"output_tokens":414,"output_tokens_details":{"thinking_tokens":200},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.002571,"is_byok":false,"cost_details":{"upstream_inference_cost":0.002571,"upstream_inference_prompt_cost":0.0010185,"upstream_inference_completions_cost":0.0015525}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

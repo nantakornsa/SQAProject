@@ -1,0 +1,111 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-19
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+b55e020684e54bd3d339572f1ef3543be360b6eb
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-09-21 15:32:18 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-865
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-865
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math3.optimization.direct.CMAESOptimizerTest::testBoundaryRangeTooLarge
+   --> java.lang.Exception: Unexpected exception, expected<org.apache.commons.math3.exception.NumberIsTooLargeException> but was<org.apache.commons.math3.exception.MathIllegalStateException>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math3.optimization.direct.CMAESOptimizer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math3.optimization.direct.CMAESOptimizer ===
+diff --git a/src/main/java/org/apache/commons/math3/optimization/direct/CMAESOptimizer.java b/src/main/java/org/apache/commons/math3/optimization/direct/CMAESOptimizer.java
+index 51d1c6428..f6a4f2820 100644
+--- a/src/main/java/org/apache/commons/math3/optimization/direct/CMAESOptimizer.java
++++ b/src/main/java/org/apache/commons/math3/optimization/direct/CMAESOptimizer.java
+@@ -537,6 +537,19 @@ public class CMAESOptimizer
+                 boundaries[1] = uB;
+ 
+                 // Abort early if the normalization will overflow (cf. "encode" method).
++                for (int i = 0; i < lB.length; i++) {
++                    if (Double.isInfinite(boundaries[1][i] - boundaries[0][i])) {
++                        final double max = Double.MAX_VALUE + boundaries[0][i];
++                        final NumberIsTooLargeException e
++                            = new NumberIsTooLargeException(boundaries[1][i],
++                                                            max,
++                                                            true);
++                        e.getContext().addMessage(LocalizedFormats.OVERFLOW);
++                        e.getContext().addMessage(LocalizedFormats.INDEX, i);
++
++                        throw e;
++                    }
++                }
+             }
+         } else {
+             // Convert API to internal handling of boundaries.
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testBoundaryRangeTooLarge() {
+        final CMAESOptimizer optimizer = new CMAESOptimizer();
+        final MultivariateFunction fitnessFunction = new MultivariateFunction() {
+                public double value(double[] parameters) {
+                    if (Double.isNaN(parameters[0])) {
+                        throw new MathIllegalStateException();
+                    }
+                    final double target = 1;
+                    final double error = target - parameters[0];
+                    return error * error;
+                }
+            };
+
+        final double[] start = { 0 };
+
+        // The difference between upper and lower bounds is used to used
+        // normalize the variables: In case of overflow, NaN is produced.
+        final double max = Double.MAX_VALUE / 2;
+        final double tooLarge = FastMath.nextUp(max);
+        final double[] lower = { -tooLarge };
+        final double[] upper = { tooLarge };
+        final double[] result = optimizer.optimize(10000, fitnessFunction, GoalType.MINIMIZE,
+                                                   start, lower, upper).getPoint();
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

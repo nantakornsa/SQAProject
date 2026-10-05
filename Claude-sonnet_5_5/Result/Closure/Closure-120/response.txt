@@ -1,0 +1,37 @@
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.jscomp.CompilerOptions.LanguageMode;
+
+/**
+ * Regression test for Closure issue 1053: InlineVariables must not inline a
+ * variable that is assigned in a function when the value it is assigned from
+ * may be changed by a recursive call.
+ */
+public class InlineVariablesIssue1053Test extends CompilerTestCase {
+
+  public InlineVariablesIssue1053Test() {
+    super("");
+  }
+
+  @Override
+  protected CompilerPass getProcessor(final Compiler compiler) {
+    return new InlineVariables(compiler, InlineVariables.Mode.ALL, true);
+  }
+
+  @Override
+  protected int getNumRepetitions() {
+    return 1;
+  }
+
+  public void testExternalIssue1053() {
+    testSame(
+        "var u; function f() { u = Random(); var x = u; f(); alert(x===u)}");
+  }
+
+  public void testExternalIssue1053WithAlert() {
+    testSame(
+        "var v; function g() { v = Random(); var y = v; g(); alert(y === v); }");
+  }
+}
+```

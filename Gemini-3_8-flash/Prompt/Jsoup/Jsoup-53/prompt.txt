@@ -1,0 +1,93 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-53
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+a229d7354da5210a728ce5d43158d5cd780772db
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-05-07 17:18:58 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+611
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/611
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.select.SelectorTest::attributeWithBrackets
+   --> org.jsoup.select.Selector$SelectorParseException: Could not parse query 'div[data='End]'': unexpected token at '''
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.parser.TokenQueue
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.parser.TokenQueue ===
+diff --git a/src/main/java/org/jsoup/parser/TokenQueue.java b/src/main/java/org/jsoup/parser/TokenQueue.java
+index 269a7554..47947fa5 100644
+--- a/src/main/java/org/jsoup/parser/TokenQueue.java
++++ b/src/main/java/org/jsoup/parser/TokenQueue.java
+@@ -262,11 +262,16 @@ public class TokenQueue {
+         int end = -1;
+         int depth = 0;
+         char last = 0;
++        boolean inQuote = false;
+ 
+         do {
+             if (isEmpty()) break;
+             Character c = consume();
+             if (last == 0 || last != ESC) {
++                if (c.equals('\'') || c.equals('"') && c != open)
++                    inQuote = !inQuote;
++                if (inQuote)
++                    continue;
+                 if (c.equals(open)) {
+                     depth++;
+                     if (start == -1)
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void attributeWithBrackets() {
+        String html = "<div data='End]'>One</div> <div data='[Another)]]'>Two</div>";
+        Document doc = Jsoup.parse(html);
+        assertEquals("One", doc.select("div[data='End]'").first().text());
+        assertEquals("Two", doc.select("div[data='[Another)]]'").first().text());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

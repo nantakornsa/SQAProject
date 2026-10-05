@@ -1,0 +1,26 @@
+package org.jsoup.nodes;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Entities.EscapeMode;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
+public class EntitiesRegressionTest {
+
+    @Test
+    public void testEscapesLtInXmlAttributesButNotInHtml() {
+        // Issue 528: '<' is permitted unescaped in HTML attribute values, but must be escaped in XML/XHTML
+        String docHtml = "<a title='<p>One</p>'>One</a>";
+        Document doc = Jsoup.parse(docHtml);
+        Element element = doc.select("a").first();
+
+        doc.outputSettings().escapeMode(EscapeMode.base);
+        assertEquals("<a title=\"<p>One</p>\">One</a>", element.outerHtml());
+
+        doc.outputSettings().escapeMode(EscapeMode.xhtml);
+        assertEquals("<a title=\"&lt;p>One&lt;/p>\">One</a>", element.outerHtml());
+    }
+}

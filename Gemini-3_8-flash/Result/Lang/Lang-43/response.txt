@@ -1,0 +1,39 @@
+```java
+package org.apache.commons.lang.text;
+
+import java.text.FieldPosition;
+import java.text.Format;
+import java.text.ParsePosition;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for LANG-477: ExtendedMessageFormat causes OutOfMemoryError
+ * due to an infinite loop when an escaped quote is encountered.
+ */
+public class ExtendedMessageFormatLANG477Test extends TestCase {
+
+    public void testEscapedQuote_LANG_477() {
+        Map registry = new HashMap();
+        registry.put("lower", new FormatFactory() {
+            public Format getFormat(String name, String arguments, java.util.Locale locale) {
+                return new Format() {
+                    public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
+                        return toAppendTo.append(((String) obj).toLowerCase());
+                    }
+                    public Object parseObject(String source, ParsePosition pos) {
+                        throw new UnsupportedOperationException();
+                    }
+                };
+            }
+        });
+
+        String pattern = "it''s a {0,lower} 'test'!";
+        ExtendedMessageFormat emf = new ExtendedMessageFormat(pattern, registry);
+        assertEquals("it's a dummy test!", emf.format(new Object[] {"DUMMY"}));
+    }
+}
+```

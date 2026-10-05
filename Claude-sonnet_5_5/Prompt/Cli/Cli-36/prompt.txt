@@ -1,0 +1,110 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Cli
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Cli
+       Program: commons-cli
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/Cli.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-cli.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/active-bugs.csv
+Number of bugs: 39
+--------------------------------------------------------------------------------
+
+Summary for Bug: Cli-36
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+afc13c445a4c80432e52d735685b272fadfeeddf
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-06-21 20:27:06 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CLI-266
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CLI-266
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.cli.bug.BugCLI266Test::testOptionComparatorInsertedOrder
+   --> junit.framework.AssertionFailedError: expected:<[p]> but was:<[x]>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.cli.OptionGroup
+ - org.apache.commons.cli.Options
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.cli.OptionGroup ===
+diff --git a/src/main/java/org/apache/commons/cli/OptionGroup.java b/src/main/java/org/apache/commons/cli/OptionGroup.java
+index 322053f..dc6d5db 100644
+--- a/src/main/java/org/apache/commons/cli/OptionGroup.java
++++ b/src/main/java/org/apache/commons/cli/OptionGroup.java
+@@ -19,8 +19,8 @@ package org.apache.commons.cli;
+ 
+ import java.io.Serializable;
+ import java.util.Collection;
+-import java.util.HashMap;
+ import java.util.Iterator;
++import java.util.LinkedHashMap;
+ import java.util.Map;
+ 
+ /**
+@@ -34,7 +34,7 @@ public class OptionGroup implements Serializable
+     private static final long serialVersionUID = 1L;
+     
+     /** hold the options */
+-    private final Map<String, Option> optionMap = new HashMap<String, Option>();
++    private final Map<String, Option> optionMap = new LinkedHashMap<String, Option>();
+ 
+     /** the name of the selected option */
+     private String selected;
+
+=== MODIFIED SOURCE: org.apache.commons.cli.Options ===
+diff --git a/src/main/java/org/apache/commons/cli/Options.java b/src/main/java/org/apache/commons/cli/Options.java
+index 721baaf..796fe5c 100644
+--- a/src/main/java/org/apache/commons/cli/Options.java
++++ b/src/main/java/org/apache/commons/cli/Options.java
+@@ -57,7 +57,7 @@ public class Options implements Serializable
+     private final List<Object> requiredOpts = new ArrayList<Object>();
+ 
+     /** a map of the option groups */
+-    private final Map<String, OptionGroup> optionGroups = new java.util.HashMap<String, OptionGroup>();
++    private final Map<String, OptionGroup> optionGroups = new LinkedHashMap<String, OptionGroup>();
+ 
+     /**
+      * Add the specified option group.
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testOptionComparatorInsertedOrder() throws ParseException {
+        Collection<Option> options = getOptions().getOptions();
+        int i = 0;
+        for(Option o: options) {
+            Assert.assertEquals(o.getOpt(), insertedOrder.get(i));
+            i++;
+        }
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

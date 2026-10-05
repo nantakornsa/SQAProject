@@ -1,0 +1,63 @@
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.Node;
+
+public class DeadAssignmentsEliminationTest extends CompilerTestCase {
+
+  public DeadAssignmentsEliminationTest() {
+    super("", false);
+  }
+
+  @Override
+  protected CompilerPass getProcessor(final Compiler compiler) {
+    return new DeadAssignmentsElimination(compiler);
+  }
+
+  @Override
+  protected int getNumRepetitions() {
+    return 1;
+  }
+
+  public void testInExpression2() {
+    // This can be improved.  "a = 1" is dead but "a" is read in the following
+    // expression.
+    inFunction(
+        "var a; a = 1; if ((a = 2) || (a = 3) || (a)) {}",
+        "var a; a = 1; if ((    2) || (a = 3) || (a)) {}");
+
+    inFunction(
+        "var a; (a = 1) || (a = 2)",
+        "var a; 1 || 2");
+
+    inFunction("var a; (a = 1) || (a = 2); return a");
+
+    inFunction(
+        "var a; a = 1; a ? a = 2 : a;",
+        "var a; a = 1; a ?     2 : a;");
+
+    inFunction("var a; a = 1; a ? a = 2 : a; return a");
+
+    inFunction(
+        "var a; a = 1; a ? a : a = 2;",
+        "var a; a = 1; a ? a : 2;");
+
+    inFunction("var a; a = 1; a ? a : a =2; return a");
+
+    inFunction(
+        "var a; (a = 1) ? a = 2 : a = 3;",
+        "var a;      1  ?     2 :     3;");
+
+    // This can be improved.  "a = 1" is dead but "a" is read in the following
+    // expression.
+    inFunction("var a; (a = 1) ? a = 2 : a = 3; return a");
+  }
+
+  private void inFunction(String src) {
+    inFunction(src, src);
+  }
+
+  private void inFunction(String src, String expected) {
+    test("function FUNC(){" + src + "}",
+         "function FUNC(){" + expected + "}");
+  }
+}

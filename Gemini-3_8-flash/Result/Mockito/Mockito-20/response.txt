@@ -1,0 +1,31 @@
+```java
+package org.mockitousage.constructor;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
+
+public class Mockito20RegressionTest {
+
+    static class Message {
+        private final String text;
+
+        public Message() {
+            this.text = "hey!";
+        }
+
+        public String getMessage() {
+            return text;
+        }
+    }
+
+    @Test
+    public void can_create_mock_with_constructor() {
+        Message mock = mock(Message.class, withSettings().useConstructor().defaultAnswer(CALLS_REAL_METHODS));
+        assertEquals("hey!", mock.getMessage());
+    }
+}
+```

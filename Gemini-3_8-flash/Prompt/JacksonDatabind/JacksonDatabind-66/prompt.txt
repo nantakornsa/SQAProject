@@ -1,0 +1,102 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-66
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+cd5430a91723ff8cd61928524ec21ab4e14b20f6
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-11-02 22:17:18 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1441
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1441
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.module.TestCustomEnumKeyDeserializer::testCustomEnumKeySerializerWithPolymorphic
+   --> com.fasterxml.jackson.databind.exc.InvalidFormatException: Can not deserialize Map key of type com.fasterxml.jackson.databind.module.TestCustomEnumKeyDeserializer$SuperTypeEnum from String "FOO": not a valid representation: No enum constant com.fasterxml.jackson.databind.module.TestCustomEnumKeyDeserializer.SuperTypeEnum.}
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.deser.std.StdKeyDeserializer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.deser.std.StdKeyDeserializer ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/deser/std/StdKeyDeserializer.java b/src/main/java/com/fasterxml/jackson/databind/deser/std/StdKeyDeserializer.java
+index f827c318d..d1148bac1 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/deser/std/StdKeyDeserializer.java
++++ b/src/main/java/com/fasterxml/jackson/databind/deser/std/StdKeyDeserializer.java
+@@ -8,6 +8,7 @@ import java.net.URI;
+ import java.net.URL;
+ import java.util.*;
+ 
++import com.fasterxml.jackson.core.JsonParser;
+ import com.fasterxml.jackson.core.JsonProcessingException;
+ import com.fasterxml.jackson.core.io.NumberInput;
+ import com.fasterxml.jackson.databind.*;
+@@ -15,6 +16,7 @@ import com.fasterxml.jackson.databind.annotation.JacksonStdImpl;
+ import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
+ import com.fasterxml.jackson.databind.util.ClassUtil;
+ import com.fasterxml.jackson.databind.util.EnumResolver;
++import com.fasterxml.jackson.databind.util.TokenBuffer;
+ 
+ /**
+  * Default {@link KeyDeserializer} implementation used for most {@link java.util.Map}
+@@ -311,9 +313,13 @@ public class StdKeyDeserializer extends KeyDeserializer
+             if (key == null) { // is this even legal call?
+                 return null;
+             }
++            TokenBuffer tb = new TokenBuffer(ctxt.getParser(), ctxt);
++            tb.writeString(key);
+             try {
+                 // Ugh... should not have to give parser which may or may not be correct one...
+-                Object result = _delegate.deserialize(ctxt.getParser(), ctxt);
++                JsonParser p = tb.asParser();
++                p.nextToken();
++                Object result = _delegate.deserialize(p, ctxt);
+                 if (result != null) {
+                     return result;
+                 }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testCustomEnumKeySerializerWithPolymorphic() throws IOException
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

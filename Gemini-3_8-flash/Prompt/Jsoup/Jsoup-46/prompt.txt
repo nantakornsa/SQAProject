@@ -1,0 +1,100 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-46
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+3ba88d8c2ab500c07f9e2ddbc07a4bd01fadbd78
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-07-05 23:45:23 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+523
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/523
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.nodes.DocumentTest::testShiftJisRoundtrip
+   --> junit.framework.AssertionFailedError: Should not have contained a '?'.
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.nodes.Entities
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.nodes.Entities ===
+diff --git a/src/main/java/org/jsoup/nodes/Entities.java b/src/main/java/org/jsoup/nodes/Entities.java
+index 6ccb84ed..ad80489e 100644
+--- a/src/main/java/org/jsoup/nodes/Entities.java
++++ b/src/main/java/org/jsoup/nodes/Entities.java
+@@ -115,7 +115,7 @@ public class Entities {
+                         if (escapeMode != EscapeMode.xhtml)
+                             accum.append("&nbsp;");
+                         else
+-                            accum.append(c);
++                            accum.append("&#xa0;");
+                         break;
+                     case '<':
+                         if (!inAttribute)
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testShiftJisRoundtrip() throws Exception {
+        String input =
+                "<html>"
+                        +   "<head>"
+                        +     "<meta http-equiv=\"content-type\" content=\"text/html; charset=Shift_JIS\" />"
+                        +   "</head>"
+                        +   "<body>"
+                        +     "before&nbsp;after"
+                        +   "</body>"
+                        + "</html>";
+        InputStream is = new ByteArrayInputStream(input.getBytes(Charset.forName("ASCII")));
+
+        Document doc = Jsoup.parse(is, null, "http://example.com");
+        doc.outputSettings().escapeMode(Entities.EscapeMode.xhtml);
+
+        String output = new String(doc.html().getBytes(doc.outputSettings().charset()), doc.outputSettings().charset());
+
+        assertFalse("Should not have contained a '?'.", output.contains("?"));
+        assertTrue("Should have contained a '&#xa0;' or a '&nbsp;'.",
+                output.contains("&#xa0;") || output.contains("&nbsp;"));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

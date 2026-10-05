@@ -1,0 +1,54 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791186060-RPX0i5You1w96ARztNQO","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating JacksonDatabind-81**\n\nI've pinpointed the issue to JacksonDatabind-81. The `testTypeCoercion1592` in `com.fasterxml.jackson.databind.introspect.TypeCoercion1592Test` is throwing an `InvalidDefinitionException`, specifically related to property definition. I'm diving deeper into the exact cause of this definition error.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind.introspect;\n\nimport com.fasterxml.jackson"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".databind.BaseMapTest;\nimport com.fasterxml.jackson.databind.ObjectMapper;\nimport com.fasterxml"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".jackson.databind.annotation.JsonDeserialize;\nimport com.fasterxml.jackson.databind.annotation.JsonSerialize"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\n\npublic class TypeCoercion1592Test extends BaseMapTest\n{\n    static class Bean"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"1592 {\n        @JsonSerialize(as = Integer.class)\n        @JsonDeserialize(as"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" = Integer.class)\n        public int i = 3;\n    }\n\n    public void testTypeCo"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ercion1592() throws Exception\n    {\n        ObjectMapper mapper = newObjectMapper();\n        String json ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" mapper.writeValueAsString(new Bean1592());\n        assertEquals(\"{\\\"i\\\":3}\", json);\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        Bean1592 result = mapper.readValue(json, Bean1592.class);\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"assertEquals(3, result.i);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2195,"output_tokens":662,"output_tokens_details":{"thinking_tokens":431},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.00412875,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00412875,"upstream_inference_prompt_cost":0.00164625,"upstream_inference_completions_cost":0.0024825}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

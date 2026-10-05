@@ -1,0 +1,50 @@
+```java
+package com.google.javascript.jscomp;
+
+/**
+ * Regression test for Closure issue 538: FunctionRewriter must not try to
+ * reduce getter/setter function expressions in object literals.
+ */
+public class FunctionRewriterTest extends CompilerTestCase {
+
+  public FunctionRewriterTest() {
+    super("");
+  }
+
+  @Override
+  protected CompilerPass getProcessor(Compiler compiler) {
+    return new FunctionRewriter(compiler);
+  }
+
+  @Override
+  protected int getNumRepetitions() {
+    return 1;
+  }
+
+  public void testIssue538() {
+    String js =
+        "/** @constructor */\n" +
+        "WebInspector.Setting = function() {}\n" +
+        "WebInspector.Setting.prototype = {\n" +
+        "    get name0(){return this._name;},\n" +
+        "    get name1(){return this._name;},\n" +
+        "    get name2(){return this._name;},\n" +
+        "    get name3(){return this._name;},\n" +
+        "    get name4(){return this._name;},\n" +
+        "    get name5(){return this._name;},\n" +
+        "    get name6(){return this._name;},\n" +
+        "    get name7(){return this._name;},\n" +
+        "    get name8(){return this._name;},\n" +
+        "    get name9(){return this._name;},\n" +
+        "}";
+    test(js, js);
+  }
+}
+```
+
+I haven't compiled or run this against either version. I wrote it from memory of the project's test setup, so two things may need adjusting:
+
+- **Parser language mode:** the test sets no ES5 language mode. The getters and trailing comma need ES5 parsing, and I'm assuming `CompilerTestCase` accepts that by default at this revision.
+- **Constructor and helpers:** I assumed `super("")` is a valid constructor call. I used `test(js, js)` in place of the original `checkCompilesToSame(js, 1)` helper, so the test class is self-contained.
+
+On the buggy version, `FunctionRewriter` treats the getter functions as reducible and throws the `IllegalStateException` from the bug report. On the fixed version, the code is left unchanged.

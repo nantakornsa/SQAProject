@@ -1,0 +1,84 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791053802-bZ9hEShP2fJTAdyjE1my","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":2482,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" b"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ug is that `CSVPar"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ser.iterator()` retur"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ns"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" a new i"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"terator on"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" every call. Each i"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"terator keeps its own one"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"-record"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" l"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ookahead (`current`), so calling `hasNext()` on one iterator consumes a record from the parser that a later iterator never sees. The fix makes `iterator()` return a"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" single shared instance.\n\nThe test below uses `parser.iterator().hasNext()` to peek, then continues with a second `iterator()` call. On the buggy version the pe"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"eked record is lost, so the record numbers skip and the assertion fails. On the fixed version both calls share the same iterator, so the sequence stays intact.\n\n```java\npackage"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" org.apache.commons.csv;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertSame;\nimport static org.junit.Assert.assertTrue;\n\nimport java.io.IOException;\nimport java.io.StringReader;\nimport java.util."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Iterator;\n\nimport org.junit.Test;\n\npublic class CSVParserIteratorSequenceRegressionTest {\n\n    @Test\n    public void testIteratorSequenceBreaking() throws IOException {\n        final String fiveRows = \"1\\n2\\n3\\n4\\n5"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\\n\";\n\n        // Peeking with hasNext() on a fresh iterator must not lose a record\n        CSVParser parser = CSVFormat.DEFAULT.parse(new StringReader(fiveRows));\n        int recordNumber = 0;\n        for ("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"final CSVRecord record : parser) {\n            recordNumber++;\n            assertEquals(String.valueOf(recordNumber), record.get(0));\n            if (recordNumber >= 2) {\n                break;\n            }\n        }\n        assertTrue(parser.iterator()."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"hasNext());\n        for (final CSVRecord record : parser) {\n            recordNumber++;\n            assertEquals(String.valueOf(recordNumber), record.get(0));\n        }\n        assertEquals(5, recordNumber);\n        parser.close();\n\n        // Cons"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ecutive enhanced for loops must not break the sequence\n        parser = CSVFormat.DEFAULT.parse(new StringReader(fiveRows));\n        recordNumber = 0;\n        for (final CSVRecord record : parser) {\n            recordNumber"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"++;\n            assertEquals(String.valueOf(recordNumber), record.get(0));\n            if (recordNumber >= 2) {\n                break;\n            }\n        }\n        for (final CSVRecord record : parser) {\n            recordNumber++;\n            assertEquals(String.valueOf(rec"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ordNumber), record.get(0));\n        }\n        assertEquals(5, recordNumber);\n        parser.close();\n\n        // The same iterator instance should be returned each time\n        parser = CSVFormat.DEFAULT.parse(new StringReader(fiveRows));\n        final I"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"terator<CSVRecord> first = parser.iterator();\n        assertSame(first, parser.iterator());\n        parser.close();\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2482,"output_tokens":973,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.014694,"is_byok":false,"cost_details":{"upstream_inference_cost":0.014694,"upstream_inference_prompt_cost":0.004964,"upstream_inference_completions_cost":0.00973}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

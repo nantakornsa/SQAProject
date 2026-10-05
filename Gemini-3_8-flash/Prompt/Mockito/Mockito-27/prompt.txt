@@ -1,0 +1,90 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Mockito
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Mockito
+       Program: mockito
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/Mockito.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/mockito.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/active-bugs.csv
+Number of bugs: 38
+--------------------------------------------------------------------------------
+
+Summary for Bug: Mockito-27
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+a8ec4fa290bc1cdde060218d6bb811ac1fa6da6f
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-10-01 17:09:50 +0200
+--------------------------------------------------------------------------------
+Bug report id:
+282
+--------------------------------------------------------------------------------
+Bug report url:
+https://code.google.com/archive/p/mockito/issues/282
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.mockitousage.bugs.ListenersLostOnResetMockTest::listener
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.mockito.internal.util.MockUtil
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.mockito.internal.util.MockUtil ===
+diff --git a/src/org/mockito/internal/util/MockUtil.java b/src/org/mockito/internal/util/MockUtil.java
+index 3c20596b0..d7c530c5a 100644
+--- a/src/org/mockito/internal/util/MockUtil.java
++++ b/src/org/mockito/internal/util/MockUtil.java
+@@ -61,8 +61,7 @@ public class MockUtil {
+ 
+     public <T> void resetMock(T mock) {
+         MockHandlerInterface<T> oldMockHandler = getMockHandler(mock);
+-        MockHandler<T> newMockHandler = new MockHandler<T>(oldMockHandler);
+-        MethodInterceptorFilter newFilter = new MethodInterceptorFilter(newMockHandler, (MockSettingsImpl) org.mockito.Mockito.withSettings().defaultAnswer(org.mockito.Mockito.RETURNS_DEFAULTS));
++        MethodInterceptorFilter newFilter = newMethodInterceptorFilter(oldMockHandler.getMockSettings());
+         ((Factory) mock).setCallback(0, newFilter);
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void listener() throws Exception {
+        InvocationListener invocationListener = mock(InvocationListener.class);
+
+        List mockedList = mock(List.class, withSettings().invocationListeners(invocationListener));
+        reset(mockedList);
+
+        mockedList.clear();
+
+        verify(invocationListener).reportInvocation(any(MethodInvocationReport.class));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

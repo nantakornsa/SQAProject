@@ -1,0 +1,63 @@
+```java
+package org.jfree.data.junit;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.jfree.data.DefaultKeyedValues;
+import org.jfree.data.UnknownKeyException;
+
+/**
+ * Regression test for bug Chart-18 in DefaultKeyedValues.
+ */
+public class DefaultKeyedValuesBug18Test extends TestCase {
+
+    /**
+     * Returns the tests as a suite.
+     *
+     * @return The test suite.
+     */
+    public static Test suite() {
+        return new TestSuite(DefaultKeyedValuesBug18Test.class);
+    }
+
+    /**
+     * Constructs a new set of tests.
+     *
+     * @param name  the name of the tests.
+     */
+    public DefaultKeyedValuesBug18Test(String name) {
+        super(name);
+    }
+
+    /**
+     * Tests removing the last value by key and verifying that getIndex
+     * returns -1 and does not retain the stale index mapping.
+     */
+    public void testRemoveLastValueRebuildsIndex() {
+        DefaultKeyedValues v = new DefaultKeyedValues();
+        v.addValue("K1", new Double(1.0));
+        v.addValue("K2", new Double(2.0));
+        v.addValue("K3", new Double(3.0));
+
+        assertEquals(2, v.getIndex("K3"));
+        v.removeValue("K3");
+        assertEquals(-1, v.getIndex("K3"));
+    }
+
+    /**
+     * Tests that removeValue(Comparable) throws UnknownKeyException
+     * when the key does not exist.
+     */
+    public void testRemoveUnknownKeyThrowsException() {
+        DefaultKeyedValues v = new DefaultKeyedValues();
+        v.addValue("K1", new Double(1.0));
+        try {
+            v.removeValue("UnknownKey");
+            fail("Expected UnknownKeyException when removing non-existent key.");
+        } catch (UnknownKeyException e) {
+            // expected
+        }
+    }
+}
+```

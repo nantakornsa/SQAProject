@@ -1,0 +1,117 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-171
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+6d38965a1e0a3a61435b9bebc91ff1ba0a64013a
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-06-20 12:10:03 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1023
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-1023.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.TypeCheckTest::testIssue1023
+   --> junit.framework.AssertionFailedError: expected a warning
+ - com.google.javascript.jscomp.TypedScopeCreatorTest::testMethodBeforeFunction2
+   --> junit.framework.ComparisonFailure: expected:<[function (this:Window, ?): undefined]> but was:<[?]>
+ - com.google.javascript.jscomp.TypedScopeCreatorTest::testPropertiesOnInterface2
+   --> java.lang.NullPointerException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.TypeInference
+ - com.google.javascript.jscomp.TypedScopeCreator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.TypeInference ===
+diff --git a/src/com/google/javascript/jscomp/TypeInference.java b/src/com/google/javascript/jscomp/TypeInference.java
+index 9367b32f1..4a03b1e3b 100644
+--- a/src/com/google/javascript/jscomp/TypeInference.java
++++ b/src/com/google/javascript/jscomp/TypeInference.java
+@@ -728,12 +728,7 @@ class TypeInference
+     // See CodingConvention#getObjectLiteralCase and goog.object.reflect.
+     // Ignore these types of literals.
+     ObjectType objectType = ObjectType.cast(type);
+-    if (objectType == null) {
+-      return scope;
+-    }
+-    boolean hasLendsName = n.getJSDocInfo() != null &&
+-        n.getJSDocInfo().getLendsName() != null;
+-    if (objectType.hasReferenceName() && !hasLendsName) {
++    if (objectType == null || n.getBooleanProp(Node.REFLECTED_OBJECT)) {
+       return scope;
+     }
+ 
+
+=== MODIFIED SOURCE: com.google.javascript.jscomp.TypedScopeCreator ===
+diff --git a/src/com/google/javascript/jscomp/TypedScopeCreator.java b/src/com/google/javascript/jscomp/TypedScopeCreator.java
+index e9e8486f6..ef02b9c1b 100644
+--- a/src/com/google/javascript/jscomp/TypedScopeCreator.java
++++ b/src/com/google/javascript/jscomp/TypedScopeCreator.java
+@@ -1666,6 +1666,9 @@ final class TypedScopeCreator implements ScopeCreator {
+       }
+ 
+       // Prototype sets are always declared.
++      if (qName != null && qName.endsWith(".prototype")) {
++        return false;
++      }
+ 
+       boolean inferred = true;
+       if (info != null) {
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue1023() throws Exception {
+    testTypes(
+        "/** @constructor */" +
+        "function F() {}" +
+        "(function () {" +
+        "  F.prototype = {" +
+        "    /** @param {string} x */" +
+        "    bar: function (x) {  }" +
+        "  };" +
+        "})();" +
+        "(new F()).bar(true)",
+        "actual parameter 1 of F.prototype.bar does not match formal parameter\n" +
+        "found   : boolean\n" +
+        "required: string");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,43 @@
+package org.apache.commons.cli2.bug;
+
+import junit.framework.TestCase;
+
+import org.apache.commons.cli2.Argument;
+import org.apache.commons.cli2.CommandLine;
+import org.apache.commons.cli2.Group;
+import org.apache.commons.cli2.Option;
+import org.apache.commons.cli2.OptionException;
+import org.apache.commons.cli2.builder.ArgumentBuilder;
+import org.apache.commons.cli2.builder.DefaultOptionBuilder;
+import org.apache.commons.cli2.builder.GroupBuilder;
+import org.apache.commons.cli2.commandline.Parser;
+import org.apache.commons.cli2.validation.NumberValidator;
+
+public class ClaudeBugCLI150Test extends TestCase {
+
+    public void testNegativeNumber() throws OptionException {
+        final DefaultOptionBuilder obuilder = new DefaultOptionBuilder();
+        final ArgumentBuilder abuilder = new ArgumentBuilder();
+        final GroupBuilder gbuilder = new GroupBuilder();
+
+        Argument numArg = abuilder
+                .withValidator(NumberValidator.getNumberInstance())
+                .withMinimum(1)
+                .withMaximum(1)
+                .create();
+        Option numOpt = obuilder
+                .withLongName("num")
+                .withArgument(numArg)
+                .create();
+        Group options = gbuilder
+                .withOption(numOpt)
+                .create();
+
+        Parser parser = new Parser();
+        parser.setGroup(options);
+
+        CommandLine cl = parser.parse(new String[] { "--num", "-42" });
+        Number num = (Number) cl.getValue(numOpt);
+        assertEquals("Wrong option value", -42, num.intValue());
+    }
+}

@@ -1,0 +1,94 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-68
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+adb7a15a1e2dd6742a25592602a6e8ee77b518b6
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-11-06 22:28:56 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+966
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/966
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.parser.HtmlParserTest::testHandlesDeepSpans
+   --> java.lang.StackOverflowError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.parser.HtmlTreeBuilder
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.parser.HtmlTreeBuilder ===
+diff --git a/src/main/java/org/jsoup/parser/HtmlTreeBuilder.java b/src/main/java/org/jsoup/parser/HtmlTreeBuilder.java
+index 08444ef0..b8cc1f03 100644
+--- a/src/main/java/org/jsoup/parser/HtmlTreeBuilder.java
++++ b/src/main/java/org/jsoup/parser/HtmlTreeBuilder.java
+@@ -465,10 +465,7 @@ public class HtmlTreeBuilder extends TreeBuilder {
+ 
+     private boolean inSpecificScope(String[] targetNames, String[] baseTypes, String[] extraTypes) {
+         // https://html.spec.whatwg.org/multipage/parsing.html#has-an-element-in-the-specific-scope
+-        int bottom = stack.size() -1;
+-        if (bottom > MaxScopeSearchDepth) {
+-            bottom = MaxScopeSearchDepth;
+-        }
++        final int bottom = stack.size() -1;
+         final int top = bottom > MaxScopeSearchDepth ? bottom - MaxScopeSearchDepth : 0;
+         // don't walk too far up the tree
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  @Test public void testHandlesDeepSpans() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 200; i++) {
+            sb.append("<span>");
+        }
+
+        sb.append("<p>One</p>");
+
+        Document doc = Jsoup.parse(sb.toString());
+        assertEquals(200, doc.select("span").size());
+        assertEquals(1, doc.select("p").size());
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

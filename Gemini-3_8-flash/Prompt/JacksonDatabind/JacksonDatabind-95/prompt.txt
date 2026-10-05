@@ -1,0 +1,114 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-95
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+18dc249e793b15e40e67753ea5e988bd428b1a92
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2018-03-01 14:28:31 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+1941
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1941
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.type.TestTypeFactory::testCanonicalNames
+   --> java.lang.NullPointerException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.type.TypeFactory
+ - com.fasterxml.jackson.databind.type.TypeParser
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.type.TypeFactory ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/type/TypeFactory.java b/src/main/java/com/fasterxml/jackson/databind/type/TypeFactory.java
+index 41ffafb2b..46910eb45 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/type/TypeFactory.java
++++ b/src/main/java/com/fasterxml/jackson/databind/type/TypeFactory.java
+@@ -352,7 +352,7 @@ public final class TypeFactory
+         // also: if we start from untyped, not much to save
+         do { // bogus loop to be able to break
+             if (rawBase == Object.class) {
+-                newType = _fromClass(null, subclass, TypeBindings.emptyBindings());
++                newType = _fromClass(null, subclass, EMPTY_BINDINGS);
+                 break;
+             }
+             if (!rawBase.isAssignableFrom(subclass)) {
+@@ -363,7 +363,7 @@ public final class TypeFactory
+ 
+             // (1) Original target type has no generics -- just resolve subtype
+             if (baseType.getBindings().isEmpty()) {
+-                newType = _fromClass(null, subclass, TypeBindings.emptyBindings());     
++                newType = _fromClass(null, subclass, EMPTY_BINDINGS);     
+                 break;
+             }
+             // (2) A small set of "well-known" List/Map subtypes where can take a short-cut
+@@ -893,7 +893,7 @@ public final class TypeFactory
+         int len = parameterClasses.length;
+         JavaType[] pt = new JavaType[len];
+         for (int i = 0; i < len; ++i) {
+-            pt[i] = _fromClass(null, parameterClasses[i], null);
++            pt[i] = _fromClass(null, parameterClasses[i], EMPTY_BINDINGS);
+         }
+         return constructParametricType(parametrized, pt);
+     }
+
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.type.TypeParser ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/type/TypeParser.java b/src/main/java/com/fasterxml/jackson/databind/type/TypeParser.java
+index c3697f5e5..1817e0aad 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/type/TypeParser.java
++++ b/src/main/java/com/fasterxml/jackson/databind/type/TypeParser.java
+@@ -56,7 +56,7 @@ public class TypeParser
+             // can be comma that separates types, or closing '>'
+             tokens.pushBack(token);
+         }
+-        return _factory._fromClass(null, base, null);
++        return _factory._fromClass(null, base, TypeBindings.emptyBindings());
+     }
+ 
+     protected List<JavaType> parseTypes(MyTokenizer tokens)
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testCanonicalNames()
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

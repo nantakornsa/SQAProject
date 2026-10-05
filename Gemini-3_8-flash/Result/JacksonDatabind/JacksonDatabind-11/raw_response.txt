@@ -1,0 +1,54 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791181130-mmJVpmkyIpVETSz679o5","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Developing Regression Test**\n\nI am currently working on creating a regression test for the `JacksonDatabind-11` bug in Defects4J. My focus is on implementing a test case that specifically targets the conditional logic related to `context` being null in the code. This will ensure that the fix for this issue is properly validated.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Refining Conditional Logic**\n\nI'm focusing on `testLocalType728` and constructing a similar test. The goal is to create an input where a type variable with bounds, like `<T extends CharSequence>`, is encountered. This will trigger the conditional logic to verify the fix correctly handles bounded type variables when `context` is initially null.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"fasterxml.jackson.databind.type;\n\nimport java.lang.reflect.Method;\nimport java.lang.reflect.Type;\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"import com.fasterxml.jackson.databind.BaseMapTest;\nimport com.fasterxml.jackson.databind.JavaType;\n\npublic class"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" Issue609Test extends BaseMapTest {\n\n    static class LocalType728 {\n        public <T extends CharSequence>"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" void method(T arg) { }\n    }\n\n    public void testTypeVariableBoundsWithoutContext() throws Exception {\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        Method method = LocalType728.class.getDeclaredMethod(\"method\", CharSequence.class);\n        Type genericParamType ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" method.getGenericParameterTypes()[0];\n\n        JavaType javaType = TypeFactory.defaultInstance().constructType(generic"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ParamType);\n        assertEquals(CharSequence.class, javaType.getRawClass());\n    }\n}\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1165,"output_tokens":763,"output_tokens_details":{"thinking_tokens":564},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.003735,"is_byok":false,"cost_details":{"upstream_inference_cost":0.003735,"upstream_inference_prompt_cost":0.00087375,"upstream_inference_completions_cost":0.00286125}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

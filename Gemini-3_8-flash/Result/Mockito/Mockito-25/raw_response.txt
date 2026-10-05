@@ -1,0 +1,54 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791114522-60C6ieHPNvuAxizg2sfu","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Deep Stubbing Bug**\n\nI'm currently analyzing the intricacies of the `ReturnsDeepStubs` implementation. The core of the bug, Mockito-25, appears to stem from how the return type is determined and subsequently mocked. My focus is on the exact point of invocation where `clz = invocation.getMethod().getReturnType()` is evaluated.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Refining Generic Return Type Handling**\n\nI'm drilling down into the generic return type resolution. It seems the previous logic didn't fully account for type variable bounds or metadata when generating mocks, especially with nested generics and wildcards. My current focus is on correctly utilizing `rawType()` and `rawExtraInterfaces()` with `ReturnsDeepStubs` to address this.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"mockito.internal.stubbing.defaultanswers;\n\nimport org.junit.Test;\n\nimport static org.junit"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".Assert.assertNotNull;\nimport static org.mockito.Mockito.RETURNS_DEEP_STUBS;\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"import static org.mockito.Mockito.mock;\n\npublic class GenericDeepStubsTypeBoundsTest {\n\n    interface"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" MultiBoundedType<K extends Comparable<K> & Cloneable> {\n        K getBounded();\n    }\n\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"@Test\n    public void should_create_mock_with_multiple_type_bounds() {\n        Multi"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"BoundedType<?> mock = mock(MultiBoundedType.class, RETURNS_DEEP_STUBS);\n\n        Comparable"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"<?> comparable = mock.getBounded();\n        Cloneable cloneable = (Cloneable) mock.getBounded();\n\n        assert"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"NotNull(comparable);\n        assertNotNull(cloneable);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2379,"output_tokens":663,"output_tokens_details":{"thinking_tokens":464},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.0042705,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0042705,"upstream_inference_prompt_cost":0.00178425,"upstream_inference_completions_cost":0.00248625}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

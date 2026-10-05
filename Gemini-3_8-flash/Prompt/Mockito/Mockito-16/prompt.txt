@@ -1,0 +1,113 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Mockito
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Mockito
+       Program: mockito
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/Mockito.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/mockito.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/active-bugs.csv
+Number of bugs: 38
+--------------------------------------------------------------------------------
+
+Summary for Bug: Mockito-16
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+620f8faed0ad132961aae3a8671120e0929ce828
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-11-22 14:35:32 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+151
+--------------------------------------------------------------------------------
+Bug report url:
+https://code.google.com/archive/p/mockito/issues/151
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.mockitousage.bugs.StubbingMocksThatAreConfiguredToReturnMocksTest::shouldAllowStubbingMocksConfiguredWithRETURNS_MOCKS
+   --> org.mockito.exceptions.misusing.MissingMethodInvocationException: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.mockito.internal.MockitoCore
+ - org.mockito.Mockito
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.mockito.internal.MockitoCore ===
+diff --git a/src/org/mockito/internal/MockitoCore.java b/src/org/mockito/internal/MockitoCore.java
+index 532156676..61acce8a2 100755
+--- a/src/org/mockito/internal/MockitoCore.java
++++ b/src/org/mockito/internal/MockitoCore.java
+@@ -29,10 +29,11 @@ public class MockitoCore {
+     private final MockUtil mockUtil = new MockUtil();
+     private final MockingProgress mockingProgress = new ThreadSafeMockingProgress();
+     
+-    public <T> T mock(Class<T> classToMock, MockSettings mockSettings, boolean shouldResetOngoingStubbing) { return mock(classToMock, mockSettings); }
+-    public <T> T mock(Class<T> classToMock, MockSettings mockSettings) {
++    public <T> T mock(Class<T> classToMock, MockSettings mockSettings, boolean shouldResetOngoingStubbing) {
+         mockingProgress.validateState();
++        if (shouldResetOngoingStubbing) {
+             mockingProgress.resetOngoingStubbing();
++        }
+         return mockUtil.createMock(classToMock, (MockSettingsImpl) mockSettings);
+     }
+     
+
+=== MODIFIED SOURCE: org.mockito.Mockito ===
+diff --git a/src/org/mockito/Mockito.java b/src/org/mockito/Mockito.java
+index 5eb16aacc..980587db1 100644
+--- a/src/org/mockito/Mockito.java
++++ b/src/org/mockito/Mockito.java
+@@ -824,7 +824,7 @@ public class Mockito extends Matchers {
+      * @return mock object
+      */
+     public static <T> T mock(Class<T> classToMock, MockSettings mockSettings) {
+-        return MOCKITO_CORE.mock(classToMock, mockSettings);
++        return MOCKITO_CORE.mock(classToMock, mockSettings, true);
+     }
+     
+     /**
+@@ -896,7 +896,7 @@ public class Mockito extends Matchers {
+     public static <T> T spy(T object) {
+         return MOCKITO_CORE.mock((Class<T>) object.getClass(), withSettings()
+                 .spiedInstance(object)
+-                .defaultAnswer(CALLS_REAL_METHODS)); 
++                .defaultAnswer(CALLS_REAL_METHODS), true); 
+     }
+ 
+     /**
+
+
+=== TRIGGERING TEST METHOD ===
+    public void shouldAllowStubbingMocksConfiguredWithRETURNS_MOCKS() {
+        IMethods mock = mock(IMethods.class, RETURNS_MOCKS);
+        when(mock.objectReturningMethodNoArgs()).thenReturn(null);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

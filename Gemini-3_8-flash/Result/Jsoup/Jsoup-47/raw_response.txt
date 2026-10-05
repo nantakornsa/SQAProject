@@ -1,0 +1,57 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791142487-dXDY5kvb3M26QGaEQ5Jn","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Developing Regression Test**\n\nI'm currently working on crafting a regression test specifically for Jsoup-47. The core issue revolved around the incomplete escaping of '<' within attribute values in XML/xhtml contexts. My proposed fix addresses this by ensuring proper escaping occurs regardless of the `inAttribute` state, particularly when dealing with XHTML.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.jsoup.nodes;\n\nimport org.jsoup.Jsoup;\nimport org.jsoup.nodes."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Document;\nimport org.jsoup.nodes.Element;\nimport org.jsoup.nodes.Entities.EscapeMode"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\nimport org.junit.Test;\n\nimport static org.junit.Assert.assertEquals;\n\npublic class EntitiesRegression"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Test {\n\n    @Test\n    public void testEscapesLtInXmlAttributesButNotInHtml() {\n        //"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" Issue 528: '<' is permitted unescaped in HTML attribute values, but must be escaped in XML/"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"XHTML\n        String docHtml = \"<a title='<p>One</p>'>One</a>\";\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Document doc = Jsoup.parse(docHtml);\n        Element element = doc.select(\"a\").first();"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\n        doc.outputSettings().escapeMode(EscapeMode.base);\n        assertEquals(\"<a title=\\\"<p>One</"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"p>\\\">One</a>\", element.outerHtml());\n\n        doc.outputSettings().escapeMode(EscapeMode."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"xhtml);\n        assertEquals(\"<a title=\\\"&lt;p>One&lt;/p>\\\">One</a>\", element."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"outerHtml());\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1089,"output_tokens":528,"output_tokens_details":{"thinking_tokens":266},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.00279675,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00279675,"upstream_inference_prompt_cost":0.00081675,"upstream_inference_completions_cost":0.00198}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,182 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Compress
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Compress
+       Program: commons-compress
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/Compress.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-compress.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/active-bugs.csv
+Number of bugs: 47
+--------------------------------------------------------------------------------
+
+Summary for Bug: Compress-8
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+35e4e4fb6848ddfa3878270523f3f9336ae7f9b8
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-06-02 11:00:25 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COMPRESS-113
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COMPRESS-113
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.compress.archivers.tar.TarUtilsTest::testParseOctalInvalid
+   --> junit.framework.AssertionFailedError: Expected IllegalArgumentException - should be at least 2 bytes long
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.compress.archivers.tar.TarUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.compress.archivers.tar.TarUtils ===
+diff --git a/src/main/java/org/apache/commons/compress/archivers/tar/TarUtils.java b/src/main/java/org/apache/commons/compress/archivers/tar/TarUtils.java
+index 31ef5368..27b2a00d 100644
+--- a/src/main/java/org/apache/commons/compress/archivers/tar/TarUtils.java
++++ b/src/main/java/org/apache/commons/compress/archivers/tar/TarUtils.java
+@@ -50,30 +50,50 @@ public class TarUtils {
+      */
+     public static long parseOctal(final byte[] buffer, final int offset, final int length) {
+         long    result = 0;
+-        boolean stillPadding = true;
+         int     end = offset + length;
+         int     start = offset;
+ 
++        if (length < 2){
++            throw new IllegalArgumentException("Length "+length+" must be at least 2");
++        }
++
++        boolean allNUL = true;
+         for (int i = start; i < end; i++){
+-            final byte currentByte = buffer[i];
+-            if (currentByte == 0) {
++            if (buffer[i] != 0){
++                allNUL = false;
+                 break;
+             }
++        }
++        if (allNUL) {
++            return 0L;
++        }
+ 
+         // Skip leading spaces
+-            if (currentByte == (byte) ' ' || currentByte == '0') {
+-                if (stillPadding) {
+-                   continue;
+-            }
+-                if (currentByte == (byte) ' ') {
++        while (start < end){
++            if (buffer[start] == ' '){
++                start++;
++            } else {
+                 break;
+-                }
+             }
++        }
+ 
+         // Must have trailing NUL or space
++        byte trailer;
++        trailer = buffer[end-1];
++        if (trailer == 0 || trailer == ' '){
++            end--;
++        } else {
++            throw new IllegalArgumentException(
++                    exceptionMessage(buffer, offset, length, end-1, trailer));
++        }
+         // May have additional NUL or space
++        trailer = buffer[end-1];
++        if (trailer == 0 || trailer == ' '){
++            end--;
++        }
+ 
+-            stillPadding = false;
++        for ( ;start < end; start++) {
++            final byte currentByte = buffer[start];
+             // CheckStyle:MagicNumber OFF
+             if (currentByte < '0' || currentByte > '7'){
+                 throw new IllegalArgumentException(
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testParseOctalInvalid() throws Exception{
+        byte [] buffer;
+        buffer=new byte[0]; // empty byte array
+        try {
+            TarUtils.parseOctal(buffer,0, buffer.length);
+            fail("Expected IllegalArgumentException - should be at least 2 bytes long");
+        } catch (IllegalArgumentException expected) {
+        }
+        buffer=new byte[]{0}; // 1-byte array
+        try {
+            TarUtils.parseOctal(buffer,0, buffer.length);
+            fail("Expected IllegalArgumentException - should be at least 2 bytes long");
+        } catch (IllegalArgumentException expected) {
+        }
+        buffer=new byte[]{0,0,' '}; // not all NULs
+        try {
+            TarUtils.parseOctal(buffer,0, buffer.length);
+            fail("Expected IllegalArgumentException - not all NULs");
+        } catch (IllegalArgumentException expected) {
+        }
+        buffer=new byte[]{' ',0,0,0}; // not all NULs
+        try {
+            TarUtils.parseOctal(buffer,0, buffer.length);
+            fail("Expected IllegalArgumentException - not all NULs");
+        } catch (IllegalArgumentException expected) {
+        }
+        buffer = "abcdef ".getBytes("UTF-8"); // Invalid input
+        try {
+            TarUtils.parseOctal(buffer,0, buffer.length);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException expected) {
+        }
+        buffer = "77777777777".getBytes("UTF-8"); // Invalid input - no trailer
+        try {
+            TarUtils.parseOctal(buffer,0, buffer.length);
+            fail("Expected IllegalArgumentException - no trailer");
+        } catch (IllegalArgumentException expected) {
+        }
+        buffer = " 0 07 ".getBytes("UTF-8"); // Invalid - embedded space
+        try {
+            TarUtils.parseOctal(buffer,0, buffer.length);
+            fail("Expected IllegalArgumentException - embedded space");
+        } catch (IllegalArgumentException expected) {
+        }
+        buffer = " 0\00007 ".getBytes("UTF-8"); // Invalid - embedded NUL
+        try {
+            TarUtils.parseOctal(buffer,0, buffer.length);
+            fail("Expected IllegalArgumentException - embedded NUL");
+        } catch (IllegalArgumentException expected) {
+        }
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

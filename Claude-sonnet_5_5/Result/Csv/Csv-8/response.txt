@@ -1,0 +1,37 @@
+The fix moves duplicate-header detection into the `CSVFormat` constructor, so it throws `IllegalArgumentException` as soon as `withHeader` builds the format. The buggy version only threw `IllegalStateException`, and only when `validate()` ran. A test that calls `withHeader("A", "A")` without `validate()` therefore fails on the buggy version, because no exception is thrown at all. A test that also calls `validate()` fails on the buggy version because of the wrong exception type. Both pass on the fixed version.
+
+The project uses JUnit 4 (`org.junit.Test`, `Assert`), so I wrote the test in that style.
+
+```java
+package org.apache.commons.csv;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
+
+public class CSVFormatDuplicateHeaderTest {
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testDuplicateHeaderElementsThrowIllegalArgumentException() {
+        CSVFormat.DEFAULT.withHeader("A", "A").validate();
+    }
+
+    @Test
+    public void testDuplicateHeaderRejectedOnCreation() {
+        try {
+            CSVFormat.DEFAULT.withHeader("A", "B", "A");
+            fail("Expected IllegalArgumentException");
+        } catch (final IllegalArgumentException e) {
+            // expected: duplicate detected when the format is constructed
+        }
+    }
+
+    @Test
+    public void testDistinctHeaderElementsAccepted() {
+        final CSVFormat format = CSVFormat.DEFAULT.withHeader("A", "B");
+        format.validate();
+        assertEquals(2, format.getHeader().length);
+    }
+}
+```

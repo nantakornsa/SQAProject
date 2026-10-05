@@ -1,0 +1,54 @@
+The test below should reproduce the failure, but I haven't compiled or run it against either version. I chose a standalone `CompilerTestCase` over adding `testNoThisInference` to `TypeInferenceTest`, because I can't reproduce that large file here.
+
+The test enables type checking and compiles a function that tests `this` against `null` and assigns `this` inside the branch. That makes the reverse abstract interpreter try to refine a `Token.THIS` node.
+
+- **Buggy version:** `declareNameInScope` hits its `default` case and throws `IllegalArgumentException("Node cannot be refined.")`.
+- **Fixed version:** the new `case Token.THIS` breaks out without refining, so the code compiles cleanly.
+
+I didn't use `goog.isNull(this)` as in the original test because that would need Closure library externs. `this == null` should reach the same refinement path, which I haven't confirmed by running it.
+
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.jscomp.CheckLevel;
+
+/**
+ * Regression test: reverse abstract interpretation must not throw when
+ * trying to refine a "this" reference.
+ */
+public class ChainableReverseAbstractInterpreterThisTest
+    extends CompilerTestCase {
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    enableTypeCheck(CheckLevel.WARNING);
+  }
+
+  @Override
+  protected CompilerPass getProcessor(final Compiler compiler) {
+    return new CompilerPass() {
+      @Override
+      public void process(com.google.javascript.rhino.Node externs,
+                          com.google.javascript.rhino.Node root) {
+        // No-op; type checking is run by the test harness.
+      }
+    };
+  }
+
+  public void testNoThisInference() {
+    testSame(
+        "/** @this {Object} */\n" +
+        "function f() {\n" +
+        "  var out = 3;\n" +
+        "  if (this == null) {\n" +
+        "    out = this;\n" +
+        "  }\n" +
+        "  if (this !== null) {\n" +
+        "    out = 4;\n" +
+        "  }\n" +
+        "  return out;\n" +
+        "}");
+  }
+}
+```

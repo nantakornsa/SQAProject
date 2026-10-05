@@ -1,0 +1,154 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-46
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+dd0deed066e728d7b09e5fd69855c5ad7bf6bdb4
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-04-02 16:08:21 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-421
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-421
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang.StringEscapeUtilsTest::testEscapeJavaWithSlash
+   --> junit.framework.ComparisonFailure: expected:<...tring with a slash ([]/) in it> but was:<...tring with a slash ([\]/) in it>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang.StringEscapeUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang.StringEscapeUtils ===
+diff --git a/src/java/org/apache/commons/lang/StringEscapeUtils.java b/src/java/org/apache/commons/lang/StringEscapeUtils.java
+index 7b22e2144..d4f98ecf0 100644
+--- a/src/java/org/apache/commons/lang/StringEscapeUtils.java
++++ b/src/java/org/apache/commons/lang/StringEscapeUtils.java
+@@ -83,7 +83,7 @@ public class StringEscapeUtils {
+      * @return String with escaped values, <code>null</code> if null string input
+      */
+     public static String escapeJava(String str) {
+-        return escapeJavaStyleString(str, false);
++        return escapeJavaStyleString(str, false, false);
+     }
+ 
+     /**
+@@ -99,7 +99,7 @@ public class StringEscapeUtils {
+      * @throws IOException if error occurs on underlying Writer
+      */
+     public static void escapeJava(Writer out, String str) throws IOException {
+-        escapeJavaStyleString(out, str, false);
++        escapeJavaStyleString(out, str, false, false);
+     }
+ 
+     /**
+@@ -124,7 +124,7 @@ public class StringEscapeUtils {
+      * @return String with escaped values, <code>null</code> if null string input
+      */
+     public static String escapeJavaScript(String str) {
+-        return escapeJavaStyleString(str, true);
++        return escapeJavaStyleString(str, true, true);
+     }
+ 
+     /**
+@@ -140,7 +140,7 @@ public class StringEscapeUtils {
+      * @throws IOException if error occurs on underlying Writer
+      **/
+     public static void escapeJavaScript(Writer out, String str) throws IOException {
+-        escapeJavaStyleString(out, str, true);
++        escapeJavaStyleString(out, str, true, true);
+     }
+ 
+     /**
+@@ -151,13 +151,13 @@ public class StringEscapeUtils {
+      * @param escapeForwardSlash TODO
+      * @return the escaped string
+      */
+-    private static String escapeJavaStyleString(String str, boolean escapeSingleQuotes) {
++    private static String escapeJavaStyleString(String str, boolean escapeSingleQuotes, boolean escapeForwardSlash) {
+         if (str == null) {
+             return null;
+         }
+         try {
+             StringWriter writer = new StringWriter(str.length() * 2);
+-            escapeJavaStyleString(writer, str, escapeSingleQuotes);
++            escapeJavaStyleString(writer, str, escapeSingleQuotes, escapeForwardSlash);
+             return writer.toString();
+         } catch (IOException ioe) {
+             // this should never ever happen while writing to a StringWriter
+@@ -175,7 +175,8 @@ public class StringEscapeUtils {
+      * @param escapeForwardSlash TODO
+      * @throws IOException if an IOException occurs
+      */
+-    private static void escapeJavaStyleString(Writer out, String str, boolean escapeSingleQuote) throws IOException {
++    private static void escapeJavaStyleString(Writer out, String str, boolean escapeSingleQuote,
++            boolean escapeForwardSlash) throws IOException {
+         if (out == null) {
+             throw new IllegalArgumentException("The Writer must not be null");
+         }
+@@ -241,7 +242,9 @@ public class StringEscapeUtils {
+                         out.write('\\');
+                         break;
+                     case '/' :
++                        if (escapeForwardSlash) {
+                             out.write('\\');
++                        }
+                         out.write('/');
+                         break;
+                     default :
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testEscapeJavaWithSlash() {
+        final String input = "String with a slash (/) in it";
+
+        final String expected = input;
+        final String actual = StringEscapeUtils.escapeJava(input);
+
+        /**
+         * In 2.4 StringEscapeUtils.escapeJava(String) escapes '/' characters, which are not a valid character to escape
+         * in a Java string.
+         */
+        assertEquals(expected, actual);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

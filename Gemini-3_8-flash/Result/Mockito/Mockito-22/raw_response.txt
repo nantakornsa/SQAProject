@@ -1,0 +1,45 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791114509-XV8NjBgbvi4YJGNF9H5T","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"```java\npackage org.mockito.internal.matchers;\n\nimport org.junit.Test;\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" org.mockitoutil.TestBase;\n\nimport static org.mockito.internal.matchers.Equality.areEqual;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\npublic class EqualityTest extends TestBase {\n\n    static class BadEquals {\n        @Override\n        public boolean"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" equals(Object obj) {\n            throw new RuntimeException(\"equals should not be called when objects are identical\");\n        }\n    }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n    @Test\n    public void shouldReturnTrueWhenComparingIdenticalObjectsEvenIfEqualsThrowsException() {\n        Object bad"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Equals = new BadEquals();\n        assertTrue(areEqual(badEquals, badEquals));\n    }\n}"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n```"}}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"signature_delta","signature":"AY89a18bEIcLQ6ElSWl1lhWD1gcGZJdkf9xGgB8j6YG9FFu+1WUJ0vQQRrcGOckUYmHlMSP/q5ZZNYkUp7rn4ly0Re2GEPQX4zTL1FWmA3dYLCUV/s7f5G4ZIgABPKyojS5Hj0OaCYz1UPak4Fgl2mVCe+NAwgn4/hA/LDckLrRhgdEpdLyffIEN5NikA+AOvR8J2EMi+/8Il24N44vIWldXkgmLGpr0rLlnCQndOTCHZ678Uu8yVC9E2iq/UdPXN74K2WtRmc2LT+8WDtYt2TtNuvXfK4LxC1Usk/rZI15gXyrJyv7Ve0lsg1squGdsGsDwllcJoY72Cft/dAerhwT2h2F3dp+oxqmNy3W+D7HL4Dn9JIDCpvQ2Vx+Ooq6SLnCvpKzaEnYmM4Tk0tsXAC4wGP8gIChXhSMCUhRVwRapzx3nQyUvMLfrIIieBJTtDjkpQyK17FqfV4jaLvRRuRJ0N1woi2Cfz3li7CwOZItU6yMmnzCrJGu2HjK9aYtXhh6Fsxdqq4myXLk7eJ04q/iUIhnk/bktvu9kW8CsLpKWJbuV1UO4CF6v+V8IVbrLsH+RMU+hvDZZv5XZ+wU2FS0/g7iYkcBdBH3Mff1ttMfYmUwHHw/9eGpe4PGB9Qi+6U8lcPeoo0YqUuTJ1yB9/f2jw6Bo2/JZxDyKYrSCtQWnTv8wEaC7Ag=="}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1185,"output_tokens":254,"output_tokens_details":{"thinking_tokens":99},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00184125,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00184125,"upstream_inference_prompt_cost":0.00088875,"upstream_inference_completions_cost":0.0009525}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,137 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-50
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+c3b630fc9c2a1c4eb7cb718f8d324bfb306cb9df
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-10-28 19:55:05 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+558
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-558.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.PeepholeReplaceKnownMethodsTest::testStringJoinAdd
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.PeepholeReplaceKnownMethodsTest::testNoStringJoin
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.PeepholeReplaceKnownMethods
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.PeepholeReplaceKnownMethods ===
+diff --git a/src/com/google/javascript/jscomp/PeepholeReplaceKnownMethods.java b/src/com/google/javascript/jscomp/PeepholeReplaceKnownMethods.java
+index ffe47d3d9..afaf85a82 100644
+--- a/src/com/google/javascript/jscomp/PeepholeReplaceKnownMethods.java
++++ b/src/com/google/javascript/jscomp/PeepholeReplaceKnownMethods.java
+@@ -373,7 +373,7 @@ class PeepholeReplaceKnownMethods extends AbstractPeepholeOptimization{
+ 
+     Node right = callTarget.getNext();
+     if (right != null) {
+-      if (!NodeUtil.isImmutableValue(right)) {
++      if (right.getNext() != null || !NodeUtil.isImmutableValue(right)) {
+         return n;
+       }
+     }
+@@ -386,7 +386,12 @@ class PeepholeReplaceKnownMethods extends AbstractPeepholeOptimization{
+       return n;
+     }
+ 
++    if (right != null && right.getType() == Token.STRING
++        && ",".equals(right.getString())) {
+       // "," is the default, it doesn't need to be explicit
++      n.removeChild(right);
++      reportCodeChange();
++    }
+ 
+     String joinString = (right == null) ? "," : NodeUtil.getStringValue(right);
+     List<Node> arrayFoldedChildren = Lists.newLinkedList();
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testStringJoinAdd() {
+    fold("x = ['a', 'b', 'c'].join('')", "x = \"abc\"");
+    fold("x = [].join(',')", "x = \"\"");
+    fold("x = ['a'].join(',')", "x = \"a\"");
+    fold("x = ['a', 'b', 'c'].join(',')", "x = \"a,b,c\"");
+    fold("x = ['a', foo, 'b', 'c'].join(',')",
+        "x = [\"a\",foo,\"b,c\"].join()");
+    fold("x = [foo, 'a', 'b', 'c'].join(',')",
+        "x = [foo,\"a,b,c\"].join()");
+    fold("x = ['a', 'b', 'c', foo].join(',')",
+        "x = [\"a,b,c\",foo].join()");
+
+    // Works with numbers
+    fold("x = ['a=', 5].join('')", "x = \"a=5\"");
+    fold("x = ['a', '5'].join(7)", "x = \"a75\"");
+
+    // Works on boolean
+    fold("x = ['a=', false].join('')", "x = \"a=false\"");
+    fold("x = ['a', '5'].join(true)", "x = \"atrue5\"");
+    fold("x = ['a', '5'].join(false)", "x = \"afalse5\"");
+
+    // Only optimize if it's a size win.
+    fold("x = ['a', '5', 'c'].join('a very very very long chain')",
+         "x = [\"a\",\"5\",\"c\"].join(\"a very very very long chain\")");
+
+    // TODO(user): Its possible to fold this better.
+    foldSame("x = ['', foo].join('-')");
+    foldSame("x = ['', foo, ''].join()");
+
+    fold("x = ['', '', foo, ''].join(',')",
+         "x = [',', foo, ''].join()");
+    fold("x = ['', '', foo, '', ''].join(',')",
+         "x = [',', foo, ','].join()");
+
+    fold("x = ['', '', foo, '', '', bar].join(',')",
+         "x = [',', foo, ',', bar].join()");
+
+    fold("x = [1,2,3].join('abcdef')",
+         "x = '1abcdef2abcdef3'");
+
+    fold("x = [1,2].join()", "x = '1,2'");
+    fold("x = [null,undefined,''].join(',')", "x = ',,'");
+    fold("x = [null,undefined,0].join(',')", "x = ',,0'");
+    // This can be folded but we don't currently.
+    foldSame("x = [[1,2],[3,4]].join()"); // would like: "x = '1,2,3,4'"
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

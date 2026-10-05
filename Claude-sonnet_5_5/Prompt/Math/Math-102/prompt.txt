@@ -1,0 +1,149 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-102
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+a3dc59a94da24e46c252453f08c4b4b4a91c3ce7
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-01-09 05:16:00 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-175
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-175
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.stat.inference.ChiSquareFactoryTest::testChiSquareLargeTestStatistic
+   --> junit.framework.AssertionFailedError: chi-square test statistic expected:<114875.90421929007> but was:<3624883.3429077636>
+ - org.apache.commons.math.stat.inference.ChiSquareFactoryTest::testChiSquare
+   --> junit.framework.AssertionFailedError: chi-square test statistic expected:<9.023307936427388> but was:<16.413107036160778>
+ - org.apache.commons.math.stat.inference.ChiSquareTestTest::testChiSquareLargeTestStatistic
+   --> junit.framework.AssertionFailedError: chi-square test statistic expected:<114875.90421929007> but was:<3624883.3429077636>
+ - org.apache.commons.math.stat.inference.ChiSquareTestTest::testChiSquare
+   --> junit.framework.AssertionFailedError: chi-square test statistic expected:<9.023307936427388> but was:<16.413107036160778>
+ - org.apache.commons.math.stat.inference.TestUtilsTest::testChiSquareLargeTestStatistic
+   --> junit.framework.AssertionFailedError: chi-square test statistic expected:<114875.90421929007> but was:<3624883.3429077636>
+ - org.apache.commons.math.stat.inference.TestUtilsTest::testChiSquare
+   --> junit.framework.AssertionFailedError: chi-square test statistic expected:<9.023307936427388> but was:<16.413107036160778>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.stat.inference.ChiSquareTestImpl
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.stat.inference.ChiSquareTestImpl ===
+diff --git a/src/java/org/apache/commons/math/stat/inference/ChiSquareTestImpl.java b/src/java/org/apache/commons/math/stat/inference/ChiSquareTestImpl.java
+index c87b0101f..984d56da1 100644
+--- a/src/java/org/apache/commons/math/stat/inference/ChiSquareTestImpl.java
++++ b/src/java/org/apache/commons/math/stat/inference/ChiSquareTestImpl.java
+@@ -71,11 +71,28 @@ public class ChiSquareTestImpl implements UnknownDistributionChiSquareTest {
+             throw new IllegalArgumentException(
+                 "observed counts must be non-negative and expected counts must be postive");
+         }
++        double sumExpected = 0d;
++        double sumObserved = 0d;
++        for (int i = 0; i < observed.length; i++) {
++            sumExpected += expected[i];
++            sumObserved += observed[i];
++        }
++        double ratio = 1.0d;
++        boolean rescale = false;
++        if (Math.abs(sumExpected - sumObserved) > 10E-6) {
++            ratio = sumObserved / sumExpected;
++            rescale = true;
++        }
+         double sumSq = 0.0d;
+         double dev = 0.0d;
+         for (int i = 0; i < observed.length; i++) {
++            if (rescale) {
++                dev = ((double) observed[i] - ratio * expected[i]);
++                sumSq += dev * dev / (ratio * expected[i]);
++            } else {
+                 dev = ((double) observed[i] - expected[i]);
+                 sumSq += dev * dev / expected[i];
++            }
+         }
+         return sumSq;
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.math.stat.inference;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+/**
+ * Test cases for the ChiSquareTestFactory.
+ *
+ * @version $Revision$ $Date$
+ */
+
+public class ChiSquareFactoryTest extends ChiSquareTestTest {
+
+    public ChiSquareFactoryTest(String name) {
+        super(name);
+    }
+    
+    public void setUp() {
+    	super.setUp();
+        testStatistic = TestUtils.getUnknownDistributionChiSquareTest();
+    }
+
+    public static Test suite() {
+        TestSuite suite = new TestSuite(ChiSquareFactoryTest.class);
+        suite.setName("ChiSquareTestFactory Tests");
+        return suite;
+    }
+}
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

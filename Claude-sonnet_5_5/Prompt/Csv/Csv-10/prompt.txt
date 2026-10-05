@@ -1,0 +1,86 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Csv
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Csv
+       Program: commons-csv
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Csv/Csv.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-csv.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Csv/active-bugs.csv
+Number of bugs: 16
+--------------------------------------------------------------------------------
+
+Summary for Bug: Csv-10
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+1282503fb97d621b4225bd031757adbfada66181
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2014-06-09 22:21:22 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CSV-120
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CSV-120
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.csv.CSVPrinterTest::testHeader
+   --> junit.framework.AssertionFailedError: expected:<[C1,C2,C3
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.csv.CSVPrinter
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.csv.CSVPrinter ===
+diff --git a/src/main/java/org/apache/commons/csv/CSVPrinter.java b/src/main/java/org/apache/commons/csv/CSVPrinter.java
+index 94e5852d..d2968b53 100644
+--- a/src/main/java/org/apache/commons/csv/CSVPrinter.java
++++ b/src/main/java/org/apache/commons/csv/CSVPrinter.java
+@@ -67,6 +67,9 @@ public final class CSVPrinter implements Flushable, Closeable {
+         this.format.validate();
+         // TODO: Is it a good idea to do this here instead of on the first call to a print method?
+         // It seems a pain to have to track whether the header has already been printed or not.
++        if (format.getHeader() != null) {
++            this.printRecord((Object[]) format.getHeader());
++        }
+     }
+ 
+     // ======================================================
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testHeader() throws IOException {
+        final StringWriter sw = new StringWriter();
+        final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT.withQuoteChar(null)
+                .withHeader("C1", "C2", "C3"));
+        printer.printRecord("a", "b", "c");
+        printer.printRecord("x", "y", "z");
+        assertEquals("C1,C2,C3\r\na,b,c\r\nx,y,z\r\n", sw.toString());
+        printer.close();
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

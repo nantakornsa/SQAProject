@@ -1,0 +1,27 @@
+The bug is in `CodeGenerator.isSimpleNumber`, which returned false for `"0"`. As a result, the object literal key `0` was printed as `["0"]` instead of `0`. The fix makes `"0"` count as a simple number.
+
+The test below extends `CodePrinterTestBase`, the base class used by `CodePrinterTest`. It uses `assertPrint` and `parse`, which that class provides. I added a direct check of `isSimpleNumber`, which is package-private static and reachable from the same package. I also added a second print case for the key `0` in a different object.
+
+```java
+package com.google.javascript.jscomp;
+
+public class CodePrinterIssue942Test extends CodePrinterTestBase {
+
+  public void testIssue942() {
+    assertPrint("var x = {0: 1};", "var x={0:1}");
+  }
+
+  public void testIssue942ZeroKeyAmongOthers() {
+    assertPrint("var x = {0: 1, 1: 2};", "var x={0:1,1:2}");
+  }
+
+  public void testIsSimpleNumber() {
+    assertTrue(CodeGenerator.isSimpleNumber("0"));
+    assertTrue(CodeGenerator.isSimpleNumber("10"));
+    assertTrue(CodeGenerator.isSimpleNumber("7"));
+    assertFalse(CodeGenerator.isSimpleNumber(""));
+    assertFalse(CodeGenerator.isSimpleNumber("01"));
+    assertFalse(CodeGenerator.isSimpleNumber("1a"));
+  }
+}
+```

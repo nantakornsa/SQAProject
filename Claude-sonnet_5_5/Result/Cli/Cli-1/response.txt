@@ -1,0 +1,37 @@
+```java
+package org.apache.commons.cli.bug;
+
+import junit.framework.TestCase;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
+
+public class BugCLI13Test extends TestCase
+{
+    public void testCLI13() throws ParseException
+    {
+        final String debugOpt = "debug";
+
+        Option debug = OptionBuilder
+            .withArgName(debugOpt)
+            .withDescription("turn on debugging")
+            .withLongOpt(debugOpt)
+            .hasArg()
+            .create('d');
+
+        Options options = new Options();
+        options.addOption(debug);
+
+        CommandLine commandLine = new PosixParser().parse(options, new String[] { "-d", "true" });
+
+        assertEquals("true", commandLine.getOptionValue(debugOpt));
+        assertEquals("true", commandLine.getOptionValue("d"));
+        assertTrue(commandLine.hasOption("d"));
+        assertTrue(commandLine.hasOption(debugOpt));
+    }
+}
+```

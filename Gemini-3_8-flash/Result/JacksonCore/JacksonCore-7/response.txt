@@ -1,0 +1,44 @@
+```java
+package com.fasterxml.jackson.core.json;
+
+import java.io.ByteArrayOutputStream;
+import java.io.StringWriter;
+
+import com.fasterxml.jackson.core.BaseTest;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonGenerator;
+
+public class WriteValueWithoutFieldNameTest extends BaseTest {
+
+    public void testFailOnWritingStringNotFieldNameBytes() throws Exception {
+        JsonFactory f = new JsonFactory();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        JsonGenerator g = f.createGenerator(out);
+        g.writeStartObject();
+        try {
+            g.writeString("a");
+            g.flush();
+            fail("Should not have let " + g.getClass().getName() + ".writeString() be used in place of 'writeFieldName()': output = " + out.toString("UTF-8"));
+        } catch (JsonGenerationException e) {
+            verifyException(e, "can not write a string, expecting field name");
+        }
+        g.close();
+    }
+
+    public void testFailOnWritingStringNotFieldNameChars() throws Exception {
+        JsonFactory f = new JsonFactory();
+        StringWriter sw = new StringWriter();
+        JsonGenerator g = f.createGenerator(sw);
+        g.writeStartObject();
+        try {
+            g.writeString("a");
+            g.flush();
+            fail("Should not have let " + g.getClass().getName() + ".writeString() be used in place of 'writeFieldName()': output = " + sw.toString());
+        } catch (JsonGenerationException e) {
+            verifyException(e, "can not write a string, expecting field name");
+        }
+        g.close();
+    }
+}
+```

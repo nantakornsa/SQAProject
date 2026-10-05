@@ -1,0 +1,146 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-22
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+43a55234ef122a1ed98681ce0350506207b878d5
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-06-19 20:55:55 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+753
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-753.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.CheckSideEffectsTest::testUselessCode
+   --> junit.framework.AssertionFailedError: There should be one warning, repeated 1 time(s). expected:<1> but was:<0>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.CheckSideEffects
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.CheckSideEffects ===
+diff --git a/src/com/google/javascript/jscomp/CheckSideEffects.java b/src/com/google/javascript/jscomp/CheckSideEffects.java
+index b9aa412cc..722d2252d 100644
+--- a/src/com/google/javascript/jscomp/CheckSideEffects.java
++++ b/src/com/google/javascript/jscomp/CheckSideEffects.java
+@@ -98,44 +98,20 @@ final class CheckSideEffects extends AbstractPostOrderCallback
+     // Do not try to remove a block or an expr result. We already handle
+     // these cases when we visit the child, and the peephole passes will
+     // fix up the tree in more clever ways when these are removed.
+-    if (parent.getType() == Token.COMMA) {
+-      Node gramps = parent.getParent();
+-      if (gramps.isCall() && parent == gramps.getFirstChild()) {
+-        if (n == parent.getFirstChild() && parent.getChildCount() == 2 && n.getNext().isName() && "eval".equals(n.getNext().getString())) {
++    if (n.isExprResult() || n.isBlock()) {
+       return;
+-        }
+     }
+ 
+     // This no-op statement was there so that JSDoc information could
+     // be attached to the name. This check should not complain about it.
+-      if (n == parent.getLastChild()) {
+-        for (Node an : parent.getAncestors()) {
+-          int ancestorType = an.getType();
+-          if (ancestorType == Token.COMMA)
+-            continue;
+-          if (ancestorType != Token.EXPR_RESULT && ancestorType != Token.BLOCK)
+-            return;
+-          else
+-            break;
+-        }
+-      }
+-    } else if (parent.getType() != Token.EXPR_RESULT && parent.getType() != Token.BLOCK) {
+-      if (parent.getType() == Token.FOR && parent.getChildCount() == 4 && (n == parent.getFirstChild() ||
+-           n == parent.getFirstChild().getNext().getNext())) {
+-      } else {
++    if (n.isQualifiedName() && n.getJSDocInfo() != null) {
+       return;
+-      }
+     }
+ 
+     boolean isResultUsed = NodeUtil.isExpressionResultUsed(n);
+     boolean isSimpleOp = NodeUtil.isSimpleOperatorType(n.getType());
+     if (!isResultUsed &&
+         (isSimpleOp || !NodeUtil.mayHaveSideEffects(n, t.getCompiler()))) {
+-      if (n.isQualifiedName() && n.getJSDocInfo() != null) {
+-        return;
+-      } else if (n.isExprResult()) {
+-        return;
+-      }
+       String msg = "This code lacks side-effects. Is there a bug?";
+       if (n.isString()) {
+         msg = "Is there a missing '+' on the previous line?";
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testUselessCode() {
+    test("function f(x) { if(x) return; }", ok);
+    test("function f(x) { if(x); }", "function f(x) { if(x); }", e);
+
+    test("if(x) x = y;", ok);
+    test("if(x) x == bar();", "if(x) JSCOMPILER_PRESERVE(x == bar());", e);
+
+    test("x = 3;", ok);
+    test("x == 3;", "JSCOMPILER_PRESERVE(x == 3);", e);
+
+    test("var x = 'test'", ok);
+    test("var x = 'test'\n'str'",
+         "var x = 'test'\nJSCOMPILER_PRESERVE('str')", e);
+
+    test("", ok);
+    test("foo();;;;bar();;;;", ok);
+
+    test("var a, b; a = 5, b = 6", ok);
+    test("var a, b; a = 5, b == 6",
+         "var a, b; a = 5, JSCOMPILER_PRESERVE(b == 6)", e);
+    test("var a, b; a = (5, 6)",
+         "var a, b; a = (JSCOMPILER_PRESERVE(5), 6)", e);
+    test("var a, b; a = (bar(), 6, 7)",
+         "var a, b; a = (bar(), JSCOMPILER_PRESERVE(6), 7)", e);
+    test("var a, b; a = (bar(), bar(), 7, 8)",
+         "var a, b; a = (bar(), bar(), JSCOMPILER_PRESERVE(7), 8)", e);
+    test("var a, b; a = (b = 7, 6)", ok);
+    test("function x(){}\nfunction f(a, b){}\nf(1,(x(), 2));", ok);
+    test("function x(){}\nfunction f(a, b){}\nf(1,(2, 3));",
+         "function x(){}\nfunction f(a, b){}\n" +
+         "f(1,(JSCOMPILER_PRESERVE(2), 3));", e);
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

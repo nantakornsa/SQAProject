@@ -1,0 +1,115 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-108
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+aae547f4d911dfbf42ca5a31aeb401ac83725a14
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-11-25 21:36:03 -0500
+--------------------------------------------------------------------------------
+Bug report id:
+1144
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-1144.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.ScopedAliasesTest::testIssue1144
+   --> java.lang.IllegalStateException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.ScopedAliases
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.ScopedAliases ===
+diff --git a/src/com/google/javascript/jscomp/ScopedAliases.java b/src/com/google/javascript/jscomp/ScopedAliases.java
+index 1e22c9e85..b2a169002 100644
+--- a/src/com/google/javascript/jscomp/ScopedAliases.java
++++ b/src/com/google/javascript/jscomp/ScopedAliases.java
+@@ -256,6 +256,7 @@ class ScopedAliases implements HotSwapCompilerPass {
+     private final Map<String, Var> aliases = Maps.newHashMap();
+ 
+     // Also temporary and cleared for each scope.
++    private final Set<Node> injectedDecls = Sets.newHashSet();
+ 
+     // Suppose you create an alias.
+     // var x = goog.x;
+@@ -313,6 +314,7 @@ class ScopedAliases implements HotSwapCompilerPass {
+ 
+       if (t.getScopeDepth() == 2) {
+         renameNamespaceShadows(t);
++        injectedDecls.clear();
+         aliases.clear();
+         forbiddenLocals.clear();
+         transformation = null;
+@@ -429,6 +431,7 @@ class ScopedAliases implements HotSwapCompilerPass {
+             } else {
+               grandparent.addChildBefore(newDecl, varNode);
+             }
++            injectedDecls.add(newDecl.getFirstChild());
+           }
+ 
+           // Rewrite "var name = EXPR;" to "var name = $jscomp.scope.name;"
+@@ -578,7 +581,7 @@ class ScopedAliases implements HotSwapCompilerPass {
+         // When we inject declarations, we duplicate jsdoc. Make sure
+         // we only process that jsdoc once.
+         JSDocInfo info = n.getJSDocInfo();
+-        if (info != null) {
++        if (info != null && !injectedDecls.contains(n)) {
+           for (Node node : info.getTypeNodes()) {
+             fixTypeNode(node);
+           }
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue1144() {
+    test("var ns = {};" +
+         "ns.sub = {};" +
+         "/** @constructor */ ns.sub.C = function () {};" +
+         "goog.scope(function () {" +
+         "  var sub = ns.sub;" +
+         "  /** @type {sub.C} */" +
+         "  var x = null;" +
+         "});",
+         SCOPE_NAMESPACE +
+         "var ns = {};" +
+         "ns.sub = {};" +
+         "/** @constructor */ ns.sub.C = function () {};" +
+         "$jscomp.scope.x = null;");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,69 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791120229-0EvEJeCJfIXVqlMwgnq8","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"```java\npackage org."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"apache.commons.compress.archivers.tar;\n\nimport org.junit.Test;\n\nimport java.io"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".ByteArrayInputStream;\nimport java.io.ByteArrayOutputStream;\n\nimport static org.junit.Assert.assertEquals;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\nimport static org.junit.Assert.assertNotNull;\n\npublic class Compress32Test {\n\n    @Test\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"    public void testBigGidAndUidInPaxHeader() throws Exception {\n        ByteArrayOutputStream bos = new ByteArrayOutputStream();\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"        TarArchiveOutputStream tos = new TarArchiveOutputStream(bos);\n        tos.setBigNumberMode(TarArchive"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"OutputStream.BIGNUMBER_POSIX);\n        \n        TarArchiveEntry entry = new TarArchiveEntry(\"name\");\n        long"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" bigId = 4294967294L; // > Integer.MAX_VALUE ("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"2147483647)\n        entry.setGroupId(bigId);\n        entry.setUserId(big"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Id);\n        entry.setSize(1);\n        \n        tos.putArchiveEntry(entry);\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"tos.write(0);\n        tos.closeArchiveEntry();\n        tos.close();\n\n        byte[] data = bos.toByteArray"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"();\n        ByteArrayInputStream bis = new ByteArrayInputStream(data);\n        TarArchiveInputStream tis = new TarArchiveInputStream"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"(bis);\n        \n        TarArchiveEntry readEntry = tis.getNextTarEntry();\n        assertNotNull("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"readEntry);\n        assertEquals(bigId, readEntry.getLongGroupId());\n        assertEquals(bigId, read"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Entry.getLongUserId());\n        \n        tis.close();\n    }\n}\n```"}}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"signature_delta","signature":"AY89a182/NOP3d0j2sMyDXbHkWUEW6Olls2KPt1hDJei6lZIZihGwbky5BYL6TFcuZYg7BlbPkvELYMj2Ibt9KCkWqfujcguGlOVNePNT64U/sF+kWghseiUIJ1MGyddq3sab02E4/Rb2ahNOIOnDs4bLRylfaKetd2oznQYDJ8GlnuZ6ehO7kX7rzASAVXkgbIdG++Gdp6GfZtUuQnc70HnWXRyXkjndltqlArJ8BvNThde4TLkKxP4J9oWhRyfbujc4tfEXSVyr5WQYXOubL9wCLLheA9dm7FTAoHwjI3PgS2TyGwXk+4KB6dhLd4tDyUF3N7jnFkMqZmw6+n71FyXBATSBTdhOM0oSqwCS3whu00hHRrx/4gRlmB1tsEky6ODrSIfNiPVG3nfm5mypyxoNZ+2RhWnb/jRcjbcFse0Dli0RmDp1GLMC91CGwwIpC8Qt4vnjAvRTZGEDGVCAuVG72oCegRmwysA9gvrKQLSagB768aOS9CH5/ri3aM01l7RoG5X1hzsB+ThalC+BHvGyo/WhATIijod8ojURFeRvdCGRzPv1gosceauO00izMgSaedv1SOq8Jqs15CfpzxI1vqW5LX4qzl5wpCJDHObDA/QBlc09SL0voQMpkunHcuYvRSPn4qQPzy8XpTMNMuoF3gV88xiKVX/lN6WDHbVaK39YSuo+H0qqNFOwZFxoCLDXSlHQDtaHyl2uy4tsGvl9TdPp0sEccW/fZ0kIA=="}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1258,"output_tokens":474,"output_tokens_details":{"thinking_tokens":118},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.002721,"is_byok":false,"cost_details":{"upstream_inference_cost":0.002721,"upstream_inference_prompt_cost":0.0009435,"upstream_inference_completions_cost":0.0017775}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

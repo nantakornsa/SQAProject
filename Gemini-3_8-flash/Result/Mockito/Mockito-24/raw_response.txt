@@ -1,0 +1,42 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791114518-qNMHq4040A0nMSVuPHkh","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing Mockito Bug**\n\nI've identified the root cause of Mockito-24 in `ReturnsEmptyValues.java`. The issue arises with mocks implementing `Comparable` when `compareTo` is invoked with `self`. My fix ensures a correct return of `0` in this specific scenario, rather than the previous `1`, by checking if the invocation's mock is identical to the argument.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Testing Mockito Behavior**\n\nI'm now focusing on creating a dedicated test case to specifically verify the `compareTo` self-comparison issue within `ReturnsEmptyValues`. This new test will assert that comparing a mock to itself correctly yields `0`, confirming the fix for Mockito-24 and contrasting it with the buggy behavior which returns `1`.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.mockitousage.bugs;\n\nimport org.junit.Test;\nimport java"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".util.Date;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.mockito.Mockito"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".mock;\n\npublic class MockitoCompareToSelfTest {\n\n    @Test\n    public void shouldReturnZero"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"WhenMockComparedToItself() {\n        Date mockDate = mock(Date.class);\n        assertEquals(0, mockDate."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"compareTo(mockDate));\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1136,"output_tokens":583,"output_tokens_details":{"thinking_tokens":471},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00303825,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00303825,"upstream_inference_prompt_cost":0.000852,"upstream_inference_completions_cost":0.00218625}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

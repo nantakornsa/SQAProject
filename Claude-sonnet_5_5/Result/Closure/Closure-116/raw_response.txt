@@ -1,0 +1,144 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791208042-mEF8SZTj1FBHUbw8GYCF","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":2099,"output_tokens":2,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I'm consid"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ering whether to write a full standalone test class or extend an existing test pattern like CompilerTestCase, but without knowing the exact expected output for the issue case, I need a safer approach."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"Recalling the old hel"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"per struct"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ure, it compiles the code into an AST, locates the target function, checks which parameters are modified, and walks through the injector's canInlineReferenceToFunction logic to compare against the expected result before as"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"serting equality."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I'm trying to construct"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" a test case where a function modifies a global variable before returning it, to check whether inlining would incorrectly reorder side effects—testing something like `f(x)` where"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" `modifyX()` mutates `x` before `f`'s argument is evaluated, since block-mode inlining might transform this incorrectly depending on the call context."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I'm trying to recall"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" the exact test setup from FunctionInjectorTest, specifically the helper method that constructs a compiler and injector to verify whether a function reference can be inlined under a given mode."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"Still checking const"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ructor signatures..."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I'm too uncertain"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" about the exact Reference constructor signature and scope-creation API to rely on it directly, so I should pivot to a safer approach: using CompilerTestCase's public test/testSame meth"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ods and letting InlineFunctions decide inlining via block-mode semantics, since a single-return function body as an expression statement should qualify for canInlineReferenceAsStatementBlock."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"'m trying adv"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"anced compilation options"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":", but the d"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ead-code elimination and in"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"lining inter"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"act"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ions make the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" output hard to verify precis"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ely. I think I need to fall back to mirroring the existing InlineFunctionsTest pattern with CompilerTestCase, though I'm still unsure about the exact constructor signature for InlineFunctions."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I'm recalling the F"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"unctionInjectorTest helper structure for finding function nodes, building references, and setting up the FunctionInjector with its traversal callback."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"Confirming the method signature"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" matches and the Reference constructor order, I'll put the test in the jscomp package as a standalone class."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"For parsing, I'll"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" set up a Compiler instance with default options, parse the test code into a root node, then traverse it to locate the reference and function nodes needed for the test."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1zb25uZXQtNS41LTIwMjYwOTI4fGNsYXVkZS1vbi1hd3MifQ"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"max_tokens","stop_sequence":null},"usage":{"input_tokens":2099,"output_tokens":4096,"output_tokens_details":{"thinking_tokens":4096},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.045158,"is_byok":false,"cost_details":{"upstream_inference_cost":0.045158,"upstream_inference_prompt_cost":0.004198,"upstream_inference_completions_cost":0.04096}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,22 @@
+```java
+package com.fasterxml.jackson.databind.deser.exc;
+
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
+public class ExceptionPathInnerClassTest extends BaseMapTest
+{
+    static class Outer {
+        static class Inner {
+            public int value;
+        }
+    }
+
+    public void testReferenceChainForInnerClass() throws Exception
+    {
+        JsonMappingException.Reference ref = new JsonMappingException.Reference(Outer.Inner.class, "value");
+        String desc = ref.getDescription();
+        assertEquals(Outer.Inner.class.getName() + "[\"value\"]", desc);
+    }
+}
+```

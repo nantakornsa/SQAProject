@@ -1,0 +1,93 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-47
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+a025d87deb9cc4cda49ae1b77feb0f29805dd7c5
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-07-13 23:11:21 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+528
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/528
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.nodes.EntitiesTest::escapesGtInXmlAttributesButNotInHtml
+   --> junit.framework.AssertionFailedError: expected:<<a title="[&lt;p>One&lt;]/p>">One</a>> but was:<<a title="[<p>One<]/p>">One</a>>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.nodes.Entities
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.nodes.Entities ===
+diff --git a/src/main/java/org/jsoup/nodes/Entities.java b/src/main/java/org/jsoup/nodes/Entities.java
+index 08cf3113..aa1f9466 100644
+--- a/src/main/java/org/jsoup/nodes/Entities.java
++++ b/src/main/java/org/jsoup/nodes/Entities.java
+@@ -119,7 +119,7 @@ public class Entities {
+                         break;
+                     case '<':
+                         // escape when in character data or when in a xml attribue val; not needed in html attr val
+-                        if (!inAttribute)
++                        if (!inAttribute || escapeMode == EscapeMode.xhtml)
+                             accum.append("&lt;");
+                         else
+                             accum.append(c);
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void escapesGtInXmlAttributesButNotInHtml() {
+        // https://github.com/jhy/jsoup/issues/528 - < is OK in HTML attribute values, but not in XML
+
+
+        String docHtml = "<a title='<p>One</p>'>One</a>";
+        Document doc = Jsoup.parse(docHtml);
+        Element element = doc.select("a").first();
+
+        doc.outputSettings().escapeMode(base);
+        assertEquals("<a title=\"<p>One</p>\">One</a>", element.outerHtml());
+
+        doc.outputSettings().escapeMode(xhtml);
+        assertEquals("<a title=\"&lt;p>One&lt;/p>\">One</a>", element.outerHtml());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

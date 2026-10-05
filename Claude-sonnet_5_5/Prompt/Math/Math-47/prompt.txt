@@ -1,0 +1,111 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-47
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+32b0f7336b7627bc6e471a1091dfb2712b613eee
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-09-02 23:05:01 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-657
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-657
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.complex.ComplexTest::testAtanI
+   --> junit.framework.AssertionFailedError
+ - org.apache.commons.math.complex.ComplexTest::testDivideZero
+   --> junit.framework.AssertionFailedError: expected:<(NaN, NaN)> but was:<(Infinity, Infinity)>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.complex.Complex
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.complex.Complex ===
+diff --git a/src/main/java/org/apache/commons/math/complex/Complex.java b/src/main/java/org/apache/commons/math/complex/Complex.java
+index bebfead56..137765c85 100644
+--- a/src/main/java/org/apache/commons/math/complex/Complex.java
++++ b/src/main/java/org/apache/commons/math/complex/Complex.java
+@@ -79,6 +79,7 @@ public class Complex implements FieldElement<Complex>, Serializable  {
+     /** Record whether this complex number is infinite. */
+     private final transient boolean isInfinite;
+     /** Record whether this complex number is zero. */
++    private final transient boolean isZero;
+ 
+     /**
+      * Create a complex number given only the real part.
+@@ -102,6 +103,7 @@ public class Complex implements FieldElement<Complex>, Serializable  {
+         isNaN = Double.isNaN(real) || Double.isNaN(imaginary);
+         isInfinite = !isNaN &&
+             (Double.isInfinite(real) || Double.isInfinite(imaginary));
++        isZero = real == 0 && imaginary == 0;
+     }
+ 
+     /**
+@@ -253,8 +255,8 @@ public class Complex implements FieldElement<Complex>, Serializable  {
+             return NaN;
+         }
+ 
+-        if (divisor.getReal() == 0.0 && divisor.getImaginary() == 0.0) {
+-            return NaN;
++        if (divisor.isZero) {
++            return isZero ? NaN : INF;
+         }
+ 
+         if (divisor.isInfinite() && !isInfinite()) {
+@@ -290,7 +292,7 @@ public class Complex implements FieldElement<Complex>, Serializable  {
+             return NaN;
+         }
+         if (divisor == 0d) {
+-            return NaN;
++            return isZero ? NaN : INF;
+         }
+         if (Double.isInfinite(divisor)) {
+             return !isInfinite() ? ZERO : NaN;
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testAtanI() {
+        for (int i = -10; i < 10; i++) {
+            System.out.println(new Complex(0, 1 - 0.1 * i).atan());
+        }
+        Assert.assertTrue(Complex.I.atan().isInfinite());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

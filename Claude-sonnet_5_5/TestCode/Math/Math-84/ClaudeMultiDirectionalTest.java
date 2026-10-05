@@ -1,0 +1,45 @@
+package org.apache.commons.math.optimization.direct;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.analysis.MultivariateRealFunction;
+import org.apache.commons.math.optimization.GoalType;
+import org.apache.commons.math.optimization.OptimizationException;
+import org.apache.commons.math.optimization.RealPointValuePair;
+
+public class ClaudeMultiDirectionalTest extends TestCase {
+
+    public ClaudeMultiDirectionalTest(String name) {
+        super(name);
+    }
+
+    /** 2D Gaussian with its maximum at (0, 0) and value 1 there. */
+    private static class Gaussian2D implements MultivariateRealFunction {
+        public double value(double[] point)
+            throws FunctionEvaluationException, IllegalArgumentException {
+            final double x = point[0];
+            final double y = point[1];
+            return Math.exp(-(x * x + y * y) / 2.0);
+        }
+    }
+
+    public void testMath283() throws FunctionEvaluationException, OptimizationException {
+        // fails on buggy code because MultiDirectional.iterateSimplex loops
+        // until the maximal number of iterations is exceeded: no convergence check
+        MultiDirectional optimizer = new MultiDirectional();
+        optimizer.setMaxIterations(100);
+        Gaussian2D function = new Gaussian2D();
+        RealPointValuePair estimate =
+            optimizer.optimize(function, GoalType.MAXIMIZE, new double[] { 0.0, 0.0 });
+        assertEquals(1.0, estimate.getValue(), 1.0e-6);
+        assertEquals(0.0, estimate.getPoint()[0], 1.0e-3);
+        assertEquals(0.0, estimate.getPoint()[1], 1.0e-3);
+    }
+
+    public static Test suite() {
+        return new TestSuite(ClaudeMultiDirectionalTest.class);
+    }
+}

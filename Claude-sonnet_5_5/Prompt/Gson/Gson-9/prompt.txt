@@ -1,0 +1,132 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Gson
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Gson
+       Program: gson
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Gson/Gson.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/gson.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Gson/active-bugs.csv
+Number of bugs: 18
+--------------------------------------------------------------------------------
+
+Summary for Bug: Gson-9
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+874e74a3072f7ff0d2533296698ad126321516d1
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-04-22 14:54:25 -1000
+--------------------------------------------------------------------------------
+Bug report id:
+836
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/google/gson/pull/836
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.gson.stream.JsonWriterTest::testBoxedBooleans
+   --> java.lang.NullPointerException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.gson.internal.bind.JsonTreeWriter
+ - com.google.gson.internal.bind.TypeAdapters
+ - com.google.gson.stream.JsonWriter
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.gson.internal.bind.JsonTreeWriter ===
+diff --git a/gson/src/main/java/com/google/gson/internal/bind/JsonTreeWriter.java b/gson/src/main/java/com/google/gson/internal/bind/JsonTreeWriter.java
+index 502d5ab9..51dc1f3a 100644
+--- a/gson/src/main/java/com/google/gson/internal/bind/JsonTreeWriter.java
++++ b/gson/src/main/java/com/google/gson/internal/bind/JsonTreeWriter.java
+@@ -159,6 +159,13 @@ public final class JsonTreeWriter extends JsonWriter {
+     return this;
+   }
+ 
++  @Override public JsonWriter value(Boolean value) throws IOException {
++    if (value == null) {
++      return nullValue();
++    }
++    put(new JsonPrimitive(value));
++    return this;
++  }
+ 
+   @Override public JsonWriter value(double value) throws IOException {
+     if (!isLenient() && (Double.isNaN(value) || Double.isInfinite(value))) {
+
+=== MODIFIED SOURCE: com.google.gson.internal.bind.TypeAdapters ===
+diff --git a/gson/src/main/java/com/google/gson/internal/bind/TypeAdapters.java b/gson/src/main/java/com/google/gson/internal/bind/TypeAdapters.java
+index 0d6d013c..23ab8a13 100644
+--- a/gson/src/main/java/com/google/gson/internal/bind/TypeAdapters.java
++++ b/gson/src/main/java/com/google/gson/internal/bind/TypeAdapters.java
+@@ -162,10 +162,6 @@ public final class TypeAdapters {
+     }
+     @Override
+     public void write(JsonWriter out, Boolean value) throws IOException {
+-      if (value == null) {
+-        out.nullValue();
+-        return;
+-      }
+       out.value(value);
+     }
+   };
+
+=== MODIFIED SOURCE: com.google.gson.stream.JsonWriter ===
+diff --git a/gson/src/main/java/com/google/gson/stream/JsonWriter.java b/gson/src/main/java/com/google/gson/stream/JsonWriter.java
+index a4178eee..e2fc1961 100644
+--- a/gson/src/main/java/com/google/gson/stream/JsonWriter.java
++++ b/gson/src/main/java/com/google/gson/stream/JsonWriter.java
+@@ -473,6 +473,15 @@ public class JsonWriter implements Closeable, Flushable {
+    *
+    * @return this writer.
+    */
++  public JsonWriter value(Boolean value) throws IOException {
++    if (value == null) {
++      return nullValue();
++    }
++    writeDeferredName();
++    beforeValue();
++    out.write(value ? "true" : "false");
++    return this;
++  }
+ 
+   /**
+    * Encodes {@code value}.
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testBoxedBooleans() throws IOException {
+    StringWriter stringWriter = new StringWriter();
+    JsonWriter jsonWriter = new JsonWriter(stringWriter);
+    jsonWriter.beginArray();
+    jsonWriter.value((Boolean) true);
+    jsonWriter.value((Boolean) false);
+    jsonWriter.value((Boolean) null);
+    jsonWriter.endArray();
+    assertEquals("[true,false,null]", stringWriter.toString());
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

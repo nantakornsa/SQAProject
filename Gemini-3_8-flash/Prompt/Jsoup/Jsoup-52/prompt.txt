@@ -1,0 +1,179 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-52
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+4eb4f2b2e88a2f9e6c5c1e8d0477060954f24218
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-05-07 16:11:01 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+701
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/701
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.nodes.DocumentTest::testMetaCharsetUpdateXmlNoCharset
+   --> junit.framework.AssertionFailedError: expected:<....0" encoding="UTF-8"[?]>
+ - org.jsoup.nodes.DocumentTest::testMetaCharsetUpdateXmlIso8859
+   --> junit.framework.AssertionFailedError: expected:<...ncoding="ISO-8859-1"[?]>
+ - org.jsoup.nodes.DocumentTest::testMetaCharsetUpdateXmlUtf8
+   --> junit.framework.AssertionFailedError: expected:<....0" encoding="UTF-8"[?]>
+ - org.jsoup.nodes.DocumentTest::testMetaCharsetUpdateXmlDisabledNoChanges
+   --> junit.framework.AssertionFailedError: expected:<...encoding="dontTouch"[?]>
+ - org.jsoup.parser.XmlTreeBuilderTest::handlesXmlDeclarationAsDeclaration
+   --> junit.framework.AssertionFailedError: expected:<<?xml encoding=["UTF-8"]?> <body> One </body...> but was:<<?xml encoding=['UTF-8' ]?> <body> One </body...>
+ - org.jsoup.parser.XmlTreeBuilderTest::testDetectCharsetEncodingDeclaration
+   --> junit.framework.AssertionFailedError: expected:<[ISO-8859-1]> but was:<[UTF-8]>
+ - org.jsoup.parser.XmlTreeBuilderTest::testParseDeclarationAttributes
+   --> junit.framework.AssertionFailedError: expected:<[1]> but was:<[]>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.helper.DataUtil
+ - org.jsoup.nodes.XmlDeclaration
+ - org.jsoup.parser.XmlTreeBuilder
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.helper.DataUtil ===
+diff --git a/src/main/java/org/jsoup/helper/DataUtil.java b/src/main/java/org/jsoup/helper/DataUtil.java
+index 99c79761..6567e368 100644
+--- a/src/main/java/org/jsoup/helper/DataUtil.java
++++ b/src/main/java/org/jsoup/helper/DataUtil.java
+@@ -109,13 +109,7 @@ public final class DataUtil {
+                     foundCharset = getCharsetFromContentType(meta.attr("content"));
+                 }
+                 if (foundCharset == null && meta.hasAttr("charset")) {
+-                    try {
+-                        if (Charset.isSupported(meta.attr("charset"))) {
+                     foundCharset = meta.attr("charset");
+-                        }
+-                    } catch (IllegalCharsetNameException e) {
+-                        foundCharset = null;
+-                    }
+                 }
+             }
+             // look for <?xml encoding='ISO-8859-1'?>
+
+=== MODIFIED SOURCE: org.jsoup.nodes.XmlDeclaration ===
+diff --git a/src/main/java/org/jsoup/nodes/XmlDeclaration.java b/src/main/java/org/jsoup/nodes/XmlDeclaration.java
+index 24a9f164..619cd14a 100644
+--- a/src/main/java/org/jsoup/nodes/XmlDeclaration.java
++++ b/src/main/java/org/jsoup/nodes/XmlDeclaration.java
+@@ -43,29 +43,17 @@ public class XmlDeclaration extends Node {
+      @return XML declaration
+      */
+     public String getWholeDeclaration() {
+-        final String decl = this.name;
+-        if(decl.equals("xml") && attributes.size() > 1 ) {
+-            StringBuilder sb = new StringBuilder(decl);
+-            final String version = attributes.get("version");
+-            if( version != null ) {
+-                sb.append(" version=\"").append(version).append("\"");
+-            }
+-            final String encoding = attributes.get("encoding");
+-            if( encoding != null ) {
+-                sb.append(" encoding=\"").append(encoding).append("\"");
+-            }
+-            return sb.toString();
+-        }
+-        else {
+-            return this.name;
+-        }
++        return attributes.html().trim(); // attr html starts with a " "
+     }
+ 
+ 	void outerHtmlHead(Appendable accum, int depth, Document.OutputSettings out) throws IOException {
+         accum
+             .append("<")
+             .append(isProcessingInstruction ? "!" : "?")
+-                .append(getWholeDeclaration())
++            .append(name);
++        attributes.html(accum, out);
++        accum
++            .append(isProcessingInstruction ? "!" : "?")
+             .append(">");
+     }
+ 
+
+=== MODIFIED SOURCE: org.jsoup.parser.XmlTreeBuilder ===
+diff --git a/src/main/java/org/jsoup/parser/XmlTreeBuilder.java b/src/main/java/org/jsoup/parser/XmlTreeBuilder.java
+index 99807fcf..3ccd7dfc 100644
+--- a/src/main/java/org/jsoup/parser/XmlTreeBuilder.java
++++ b/src/main/java/org/jsoup/parser/XmlTreeBuilder.java
+@@ -1,5 +1,6 @@
+ package org.jsoup.parser;
+ 
++import org.jsoup.Jsoup;
+ import org.jsoup.helper.Validate;
+ import org.jsoup.nodes.*;
+ 
+@@ -73,8 +74,10 @@ public class XmlTreeBuilder extends TreeBuilder {
+             // so we do a bit of a hack and parse the data as an element to pull the attributes out
+             String data = comment.getData();
+             if (data.length() > 1 && (data.startsWith("!") || data.startsWith("?"))) {
+-                String declaration = data.substring(1);
+-                insert = new XmlDeclaration(declaration, comment.baseUri(), data.startsWith("!"));
++                Document doc = Jsoup.parse("<" + data.substring(1, data.length() -1) + ">", baseUri, Parser.xmlParser());
++                Element el = doc.child(0);
++                insert = new XmlDeclaration(el.tagName(), comment.baseUri(), data.startsWith("!"));
++                insert.attributes().addAll(el.attributes());
+             }
+         }
+         insertNode(insert);
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testMetaCharsetUpdateXmlNoCharset() {
+        final Document doc = createXmlDocument("1.0", "none", false);
+        doc.updateMetaCharsetElement(true);
+        doc.charset(Charset.forName(charsetUtf8));
+        
+        final String xmlCharsetUTF8 = "<?xml version=\"1.0\" encoding=\"" + charsetUtf8 + "\"?>\n" +
+                                        "<root>\n" +
+                                        " node\n" +
+                                        "</root>";
+        assertEquals(xmlCharsetUTF8, doc.toString());
+        
+        XmlDeclaration selectedNode = (XmlDeclaration) doc.childNode(0);
+        assertEquals(charsetUtf8, selectedNode.attr("encoding"));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

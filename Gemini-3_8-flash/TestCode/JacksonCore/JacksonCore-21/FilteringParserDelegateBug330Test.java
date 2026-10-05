@@ -1,0 +1,29 @@
+package com.fasterxml.jackson.core.filter;
+
+import com.fasterxml.jackson.core.*;
+
+public class FilteringParserDelegateBug330Test extends BaseTest
+{
+    private final JsonFactory JSON_F = new JsonFactory();
+
+    public void testTokensSingleMatchWithPath() throws Exception
+    {
+        String json = "{\"ob\":{\"value\":3}}";
+        JsonParser p0 = JSON_F.createParser(json);
+        TokenFilter filter = new JsonPointerBasedFilter("/ob/value");
+        FilteringParserDelegate p = new FilteringParserDelegate(p0, filter, true, false);
+
+        assertToken(JsonToken.START_OBJECT, p.nextToken());
+        assertToken(JsonToken.FIELD_NAME, p.nextToken());
+        assertEquals("ob", p.getCurrentName());
+        assertToken(JsonToken.START_OBJECT, p.nextToken());
+        assertToken(JsonToken.FIELD_NAME, p.nextToken());
+        assertEquals("value", p.getCurrentName());
+        assertToken(JsonToken.VALUE_NUMBER_INT, p.nextToken());
+        assertEquals(3, p.getIntValue());
+        assertToken(JsonToken.END_OBJECT, p.nextToken());
+        assertToken(JsonToken.END_OBJECT, p.nextToken());
+        assertNull(p.nextToken());
+        p.close();
+    }
+}

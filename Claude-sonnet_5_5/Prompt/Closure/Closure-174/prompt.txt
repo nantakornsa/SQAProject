@@ -1,0 +1,167 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-174
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+d2b3ca66b6088c1c08437c120ae215d91d313b7c
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-09-28 15:20:35 -0400
+--------------------------------------------------------------------------------
+Bug report id:
+1103
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-1103.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.ScopedAliasesTest::testIssue1103a
+   --> junit.framework.AssertionFailedError: Unexpected error(s): JSC_GOOG_SCOPE_NON_ALIAS_LOCAL. The local variable a is in a goog.scope and is not an alias. at testcode line 1 : 30 expected:<0> but was:<1>
+ - com.google.javascript.jscomp.ScopedAliasesTest::testIssue1103b
+   --> java.lang.RuntimeException: INTERNAL COMPILER ERROR.
+ - com.google.javascript.jscomp.ScopedAliasesTest::testIssue1103c
+   --> junit.framework.AssertionFailedError: Unexpected error(s): JSC_GOOG_SCOPE_NON_ALIAS_LOCAL. The local variable a is in a goog.scope and is not an alias. at testcode line 1 : 52 expected:<0> but was:<1>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.JsAst
+ - com.google.javascript.jscomp.NodeUtil
+ - com.google.javascript.jscomp.ScopedAliases
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.JsAst ===
+diff --git a/src/com/google/javascript/jscomp/JsAst.java b/src/com/google/javascript/jscomp/JsAst.java
+index 9f7bf8a57..ff71d944c 100644
+--- a/src/com/google/javascript/jscomp/JsAst.java
++++ b/src/com/google/javascript/jscomp/JsAst.java
+@@ -79,6 +79,7 @@ public class JsAst implements SourceAst {
+   }
+ 
+   private void parse(AbstractCompiler compiler) {
++    int startErrorCount = compiler.getErrorManager().getErrorCount();
+     try {
+       ParserRunner.ParseResult result = ParserRunner.parse(sourceFile, sourceFile.getCode(),
+           compiler.getParserConfig(),
+@@ -92,10 +93,11 @@ public class JsAst implements SourceAst {
+     }
+ 
+ 
+-    if (root == null || compiler.hasHaltingErrors()) {
++    if (root == null ||
+         // Most passes try to report as many errors as possible,
+         // so there may already be errors. We only care if there were
+         // errors in the code we just parsed.
++        (compiler.getErrorManager().getErrorCount() > startErrorCount && !compiler.isIdeMode())) {
+       // There was a parse error or IOException, so use a dummy block.
+       root = IR.script();
+     } else {
+
+=== MODIFIED SOURCE: com.google.javascript.jscomp.NodeUtil ===
+diff --git a/src/com/google/javascript/jscomp/NodeUtil.java b/src/com/google/javascript/jscomp/NodeUtil.java
+index c4f7f8dae..4facea30f 100644
+--- a/src/com/google/javascript/jscomp/NodeUtil.java
++++ b/src/com/google/javascript/jscomp/NodeUtil.java
+@@ -2364,9 +2364,12 @@ public final class NodeUtil {
+     if (nameNode.isName()) {
+       result = IR.var(nameNode, value);
+       result.setJSDocInfo(info);
+-    } else {
++    } else if (value != null) {
+       result = IR.exprResult(IR.assign(nameNode, value));
+       result.getFirstChild().setJSDocInfo(info);
++    } else {
++      result = IR.exprResult(nameNode);
++      result.getFirstChild().setJSDocInfo(info);
+     }
+     return result;
+   }
+
+=== MODIFIED SOURCE: com.google.javascript.jscomp.ScopedAliases ===
+diff --git a/src/com/google/javascript/jscomp/ScopedAliases.java b/src/com/google/javascript/jscomp/ScopedAliases.java
+index a4e503d0c..3a771c95e 100644
+--- a/src/com/google/javascript/jscomp/ScopedAliases.java
++++ b/src/com/google/javascript/jscomp/ScopedAliases.java
+@@ -353,8 +353,8 @@ class ScopedAliases implements HotSwapCompilerPass {
+       for (Var v : scope.getVarIterable()) {
+         Node n = v.getNode();
+         Node parent = n.getParent();
+-        boolean isVarAssign = parent.isVar() && n.hasChildren();
+-        if (isVarAssign && n.getFirstChild().isQualifiedName()) {
++        boolean isVar = parent.isVar();
++        if (isVar && n.getFirstChild() != null && n.getFirstChild().isQualifiedName()) {
+           recordAlias(v);
+         } else if (v.isBleedingFunction()) {
+           // Bleeding functions already get a BAD_PARAMETERS error, so just
+@@ -362,8 +362,10 @@ class ScopedAliases implements HotSwapCompilerPass {
+         } else if (parent.getType() == Token.LP) {
+           // Parameters of the scope function also get a BAD_PARAMETERS
+           // error.
+-        } else if (isVarAssign) {
+-          Node value = v.getInitialValue().detachFromParent();
++        } else if (isVar) {
++          Node value = n.hasChildren() ?
++              v.getInitialValue().detachFromParent() :
++              null;
+           String name = n.getString();
+           int nameCount = scopedAliasNames.count(name);
+           scopedAliasNames.add(name);
+@@ -374,6 +376,7 @@ class ScopedAliases implements HotSwapCompilerPass {
+ 
+           // Add $jscomp.scope.name = EXPR;
+           // Make sure we copy over all the jsdoc and debug info.
++          if (value != null || v.getJSDocInfo() != null) {
+             Node newDecl = NodeUtil.newQualifiedNameNodeDeclaration(
+                 compiler.getCodingConvention(),
+                 globalName,
+@@ -383,6 +386,7 @@ class ScopedAliases implements HotSwapCompilerPass {
+             NodeUtil.setDebugInformation(
+                 newDecl.getFirstChild().getFirstChild(), n, name);
+             parent.getParent().addChildBefore(newDecl, parent);
++          }
+ 
+           // Rewrite "var name = EXPR;" to "var name = $jscomp.scope.name;"
+           v.getNameNode().addChildToFront(
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue1103a() {
+    test("goog.scope(function () {" +
+         "  var a;" +
+         "  foo.bar = function () { a = 1; };" +
+         "});",
+         SCOPE_NAMESPACE + "foo.bar = function () { $jscomp.scope.a = 1; }");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

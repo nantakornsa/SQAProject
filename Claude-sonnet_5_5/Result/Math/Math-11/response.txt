@@ -1,0 +1,54 @@
+The bug is integer division in `-dim / 2`. For `dim = 1`, `-1 / 2` evaluates to 0 in Java, so the `(2π)^(-dim/2)` factor is dropped. Any odd dimension is affected. The fixed code uses `-0.5 * dim`.
+
+The test below uses deterministic inputs and compares the multivariate density with the known univariate and bivariate normal densities. It uses JUnit 4, matching the project's style.
+
+- **1-D case:** with mean 0 and variance 1, the density at 0 is 1/√(2π). The buggy version returns 1 because the `(2π)` factor is dropped.
+- **Second 1-D case:** a comparison against `NormalDistribution` at a non-zero mean.
+- **3-D case:** another odd dimension, with an identity covariance and a zero vector. The expected density is (2π)^(-1.5). The buggy version computes `-3/2 = -1`, which gives (2π)^-1 and fails.
+
+```java
+package org.apache.commons.math3.distribution;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+public class MultivariateNormalDistributionDensityRegressionTest {
+
+    @Test
+    public void testUnivariateDensityAtMean() {
+        final double[] mu = { 0 };
+        final double[][] sigma = { { 1 } };
+        final MultivariateNormalDistribution multi = new MultivariateNormalDistribution(mu, sigma);
+
+        final double expected = 1.0 / Math.sqrt(2 * Math.PI);
+        Assert.assertEquals(expected, multi.density(new double[] { 0 }), 1e-12);
+    }
+
+    @Test
+    public void testUnivariateMatchesNormalDistribution() {
+        final double[] mu = { -1.5 };
+        final double[][] sigma = { { 1 } };
+        final MultivariateNormalDistribution multi = new MultivariateNormalDistribution(mu, sigma);
+        final NormalDistribution uni = new NormalDistribution(mu[0], sigma[0][0]);
+
+        final double[] points = { -5, -3.2, -1.5, 0, 1.7, 4.9 };
+        for (double v : points) {
+            Assert.assertEquals(uni.density(v), multi.density(new double[] { v }), 1e-12);
+        }
+    }
+
+    @Test
+    public void testThreeDimensionalDensityAtMean() {
+        final double[] mu = { 0, 0, 0 };
+        final double[][] sigma = {
+            { 1, 0, 0 },
+            { 0, 1, 0 },
+            { 0, 0, 1 }
+        };
+        final MultivariateNormalDistribution multi = new MultivariateNormalDistribution(mu, sigma);
+
+        final double expected = Math.pow(2 * Math.PI, -1.5);
+        Assert.assertEquals(expected, multi.density(new double[] { 0, 0, 0 }), 1e-12);
+    }
+}
+```

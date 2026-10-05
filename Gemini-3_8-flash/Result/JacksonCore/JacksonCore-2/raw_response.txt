@@ -1,0 +1,66 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791106648-4kiZBNFn763egNEgxlGF","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing JacksonCore-2**\n\nI'm currently investigating the JacksonCore-2 bug. My focus is on `TestParserErrorHandling`, specifically how the parser handles numbers immediately followed by tokens or whitespace, and identifying the source of the misinterpretation of these sequences.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".fasterxml.jackson.core.json;\n\nimport com.fasterxml.jackson.core.JsonFactory;\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" com.fasterxml.jackson.core.JsonParseException;\nimport com.fasterxml.jackson.core.JsonParser;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\nimport com.fasterxml.jackson.core.JsonToken;\nimport com.fasterxml.jackson.test.Base"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Test;\n\nimport java.io.ByteArrayInputStream;\nimport java.io.StringReader;\n\npublic class TestRoot"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"SpaceHandling extends BaseTest {\n\n    private final JsonFactory FACTORY = new JsonFactory();\n\n    public void testMangledNumbers"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Bytes() throws Exception {\n        _testMangledNumbers(true);\n    }\n\n    public void testMangledNumbersChars()"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" throws Exception {\n        _testMangledNumbers(false);\n    }\n\n    private void _testMangled"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Numbers(boolean useBytes) throws Exception {\n        String doc = \"123a\";\n        JsonParser jp = use"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Bytes\n                ? FACTORY.createParser(new ByteArrayInputStream(doc.getBytes(\"UTF-8\")))\n                : FACTORY.create"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Parser(new StringReader(doc));\n        try {\n            JsonToken t = jp.nextToken();\n            fail(\"Should"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" have gotten an exception; instead got token: \" + t);\n        } catch (JsonParseException e) {\n            verify"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Exception(e, \"expected space\");\n        } finally {\n            jp.close();\n        }\n    }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2206,"output_tokens":595,"output_tokens_details":{"thinking_tokens":276},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.00388575,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00388575,"upstream_inference_prompt_cost":0.0016545,"upstream_inference_completions_cost":0.00223125}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

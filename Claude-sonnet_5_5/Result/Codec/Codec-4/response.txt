@@ -1,0 +1,30 @@
+=== ANALYSIS ===
+
+I did not execute this test or inspect the production source. The analysis below follows the bug description.
+
+- **Defect:** The `Base64` encoder in 4b does not produce output that exactly matches Commons Codec 1.3 for the end-of-input case. For a short input with a final partial block, the bytes produced at the end of encoding differ from the expected output. This shows up as extra bytes, or otherwise wrong bytes, after the padding.
+- **Why `{-72}`:** It is a single byte, so it exercises only the final-padding branch of the encoder, with no full 3-byte groups. It encodes to `uA==`, which is short enough that the line-length (chunk) logic could add trailing bytes. It is also the exact case in `Base64Codec13Test` that fails.
+- **Expected output:** The four bytes `'u','A','=','='`, with nothing after them.
+- **Why compare the byte array directly:** Converting to a string or trimming could hide extra trailing bytes. `Arrays.equals` on the raw arrays catches any extra or missing bytes.
+
+=== TEST CODE ===
+package org.apache.commons.codec.binary;
+
+import java.util.Arrays;
+
+import junit.framework.TestCase;
+
+public class Base64Codec4Test extends TestCase {
+
+    public void testEncodeSingleByteRegression() {
+        Base64 base64 = new Base64();
+        byte[] expected = new byte[] {'u', 'A', '=', '='};
+        byte[] actual = base64.encode(new byte[] {-72});
+        assertTrue("Expected uA== but got: " + new String(actual)
+                + " (length " + actual.length + ")",
+                Arrays.equals(expected, actual));
+    }
+}
+
+=== TARGET TEST ===
+Base64Codec4Test::testEncodeSingleByteRegression

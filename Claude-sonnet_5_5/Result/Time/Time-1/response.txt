@@ -1,0 +1,63 @@
+The test below targets the third case of the triggering test: `year, era, monthOfYear`. I haven't compiled or run it against either version.
+
+- **Fixed version:** the new check in `Partial` sees that `era` has an unsupported duration field following the supported `year` field. It throws `IllegalArgumentException` with "must be in order … largest-smallest".
+- **Buggy version:** `UnsupportedDurationField.compareTo` returns 1 against a supported field, so the ordering check never fails. No exception is thrown and `fail()` is reached.
+
+I also added the `year, dayOfMonth, era` case from the triggering test. `ex.getMessage()` is checked directly, so the test does not depend on the project's `assertMessageContains` helper.
+
+```java
+package org.joda.time;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+/**
+ * Regression test for unsupported duration field ordering in Partial.
+ */
+public class TestPartial_UnsupportedFieldOrderRegression extends TestCase {
+
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
+
+    public static TestSuite suite() {
+        return new TestSuite(TestPartial_UnsupportedFieldOrderRegression.class);
+    }
+
+    public TestPartial_UnsupportedFieldOrderRegression(String name) {
+        super(name);
+    }
+
+    private void assertMessageContains(Throwable ex, String... texts) {
+        String msg = ex.getMessage();
+        assertNotNull(msg);
+        for (String text : texts) {
+            assertTrue("Message '" + msg + "' should contain '" + text + "'", msg.contains(text));
+        }
+    }
+
+    public void testConstructor_eraAfterYearNotInOrder() throws Throwable {
+        int[] values = new int[] {1, 1, 1};
+        DateTimeFieldType[] types = new DateTimeFieldType[] {
+            DateTimeFieldType.year(), DateTimeFieldType.era(), DateTimeFieldType.monthOfYear() };
+        try {
+            new Partial(types, values);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            assertMessageContains(ex, "must be in order", "largest-smallest");
+        }
+    }
+
+    public void testConstructor_eraAtEndNotInOrder() throws Throwable {
+        int[] values = new int[] {1, 1, 1};
+        DateTimeFieldType[] types = new DateTimeFieldType[] {
+            DateTimeFieldType.year(), DateTimeFieldType.dayOfMonth(), DateTimeFieldType.era() };
+        try {
+            new Partial(types, values);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            assertMessageContains(ex, "must be in order", "largest-smallest");
+        }
+    }
+}
+```

@@ -1,0 +1,25 @@
+```java
+package com.google.javascript.jscomp;
+
+/**
+ * Regression test for Closure-136 (issue 103): a method defined by an extern
+ * must be left alone by the getter-inlining pass.
+ */
+public class InlineGettersTest extends CompilerTestCase {
+
+  @Override
+  protected CompilerPass getProcessor(Compiler compiler) {
+    return new InlineGetters(compiler);
+  }
+
+  public void testIssue2508576_1() {
+    // Method defined by an extern should be left alone.
+    String externs = "function alert(a) {}";
+    testSame(externs, "({a:alert,b:alert}).a(\"a\")", null);
+  }
+}
+```
+
+I wrote this from memory of the project at that revision and have not compiled or run it. It assumes `InlineGetters` has a constructor taking a `Compiler` and that `CompilerTestCase` provides `testSame(externs, js, warning)`. If either differs in this revision, the test will not compile as written.
+
+The test is the triggering method from the bug report. On the buggy version it fails with the `ComparisonFailure` listed there (`expected:<[({a:alert,b:alert}).a("a")]> but was:<[]>`). On the fixed version `MethodCompilerPass` no longer resolves `NAME` values to function definitions, so `alert` stays a non-method property and the call is left unchanged.

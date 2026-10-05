@@ -1,0 +1,81 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-70
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+f4a4464beea8118386b84bace4b08e6c16443dab
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-05-03 18:42:27 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-369
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-369
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.analysis.solvers.BisectionSolverTest::testMath369
+   --> java.lang.NullPointerException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.analysis.solvers.BisectionSolver
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.analysis.solvers.BisectionSolver ===
+diff --git a/src/main/java/org/apache/commons/math/analysis/solvers/BisectionSolver.java b/src/main/java/org/apache/commons/math/analysis/solvers/BisectionSolver.java
+index 3f669271a..180caefbc 100644
+--- a/src/main/java/org/apache/commons/math/analysis/solvers/BisectionSolver.java
++++ b/src/main/java/org/apache/commons/math/analysis/solvers/BisectionSolver.java
+@@ -69,7 +69,7 @@ public class BisectionSolver extends UnivariateRealSolverImpl {
+     /** {@inheritDoc} */
+     public double solve(final UnivariateRealFunction f, double min, double max, double initial)
+         throws MaxIterationsExceededException, FunctionEvaluationException {
+-        return solve(min, max);
++        return solve(f, min, max);
+     }
+ 
+     /** {@inheritDoc} */
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testMath369() throws Exception {
+        UnivariateRealFunction f = new SinFunction();
+        UnivariateRealSolver solver = new BisectionSolver();
+        assertEquals(Math.PI, solver.solve(f, 3.0, 3.2, 3.1), solver.getAbsoluteAccuracy());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

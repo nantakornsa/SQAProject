@@ -1,0 +1,84 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Mockito
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Mockito
+       Program: mockito
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/Mockito.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/mockito.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/active-bugs.csv
+Number of bugs: 38
+--------------------------------------------------------------------------------
+
+Summary for Bug: Mockito-29
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+918f0a5aed6454b307004b6c9c86afc8e96353ff
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-11-18 17:54:14 +0100
+--------------------------------------------------------------------------------
+Bug report id:
+229
+--------------------------------------------------------------------------------
+Bug report url:
+https://code.google.com/archive/p/mockito/issues/229
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.mockitousage.bugs.NPEWithCertainMatchersTest::shouldNotThrowNPEWhenNullPassedToSame
+   --> java.lang.Exception: Unexpected exception, expected<java.lang.AssertionError> but was<java.lang.NullPointerException>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.mockito.internal.matchers.Same
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.mockito.internal.matchers.Same ===
+diff --git a/src/org/mockito/internal/matchers/Same.java b/src/org/mockito/internal/matchers/Same.java
+index 6c172fee2..b8267b9ac 100644
+--- a/src/org/mockito/internal/matchers/Same.java
++++ b/src/org/mockito/internal/matchers/Same.java
+@@ -26,7 +26,7 @@ public class Same extends ArgumentMatcher<Object> implements Serializable {
+     public void describeTo(Description description) {
+         description.appendText("same(");
+         appendQuoting(description);
+-        description.appendText(wanted.toString());
++        description.appendText(wanted == null ? "null" : wanted.toString());
+         appendQuoting(description);
+         description.appendText(")");
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void shouldNotThrowNPEWhenNullPassedToSame() {
+        mock.objectArgMethod("not null");
+
+        verify(mock).objectArgMethod(same(null));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

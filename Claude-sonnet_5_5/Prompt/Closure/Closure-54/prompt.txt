@@ -1,0 +1,143 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-54
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+7e9b8336568ea7f05c33e1b58eb67fa6d4eee756
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-09-01 02:30:59 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+537
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-537.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.TypeCheckTest::testIssue537a
+   --> junit.framework.ComparisonFailure: expected:<[Function Foo.prototype.method: called with 1 argument(s). Function requires at least 0 argument(s) and no more than 0 argument(s).]> but was:<[Property baz never defined on Bar]>
+ - com.google.javascript.jscomp.TypeCheckTest::testIssue537b
+   --> junit.framework.ComparisonFailure: expected:<[Function Bar.prototype.baz: called with 1 argument(s). Function requires at least 0 argument(s) and no more than 0 argument(s).]> but was:<[Property baz never defined on Bar]>
+ - com.google.javascript.jscomp.TypedScopeCreatorTest::testPropertyOnUnknownSuperClass2
+   --> junit.framework.ComparisonFailure: expected:<[?]> but was:<[number]>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.TypedScopeCreator
+ - com.google.javascript.rhino.jstype.FunctionType
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.TypedScopeCreator ===
+diff --git a/src/com/google/javascript/jscomp/TypedScopeCreator.java b/src/com/google/javascript/jscomp/TypedScopeCreator.java
+index 8654ae654..5bccc06db 100644
+--- a/src/com/google/javascript/jscomp/TypedScopeCreator.java
++++ b/src/com/google/javascript/jscomp/TypedScopeCreator.java
+@@ -1410,7 +1410,13 @@ final class TypedScopeCreator implements ScopeCreator {
+           // then they are responsible for making sure that the object literal's
+           // implicit prototype is set up appropriately. We just obey
+           // the @extends tag.
+-          if (!qVar.isTypeInferred()) {
++          ObjectType qVarType = ObjectType.cast(qVar.getType());
++          if (qVarType != null &&
++              rhsValue != null &&
++              rhsValue.getType() == Token.OBJECTLIT) {
++            typeRegistry.resetImplicitPrototype(
++                rhsValue.getJSType(), qVarType.getImplicitPrototype());
++          } else if (!qVar.isTypeInferred()) {
+             // If the programmer has declared that F inherits from Super,
+             // and they assign F.prototype to some arbitrary expression,
+             // there's not much we can do. We just ignore the expression,
+
+=== MODIFIED SOURCE: com.google.javascript.rhino.jstype.FunctionType ===
+diff --git a/src/com/google/javascript/rhino/jstype/FunctionType.java b/src/com/google/javascript/rhino/jstype/FunctionType.java
+index b65d8b18a..a87be07f4 100644
+--- a/src/com/google/javascript/rhino/jstype/FunctionType.java
++++ b/src/com/google/javascript/rhino/jstype/FunctionType.java
+@@ -338,7 +338,6 @@ public class FunctionType extends PrototypeObjectType {
+     //
+     // In the second case, we just use the anonymous object as the prototype.
+     if (baseType.hasReferenceName() ||
+-        baseType.isUnknownType() ||
+         isNativeObjectType() ||
+         baseType.isFunctionPrototypeType() ||
+         !(baseType instanceof PrototypeObjectType)) {
+@@ -363,14 +362,18 @@ public class FunctionType extends PrototypeObjectType {
+       return false;
+     }
+ 
+-    boolean replacedPrototype = prototype != null;
++    PrototypeObjectType oldPrototype = this.prototype;
++    boolean replacedPrototype = oldPrototype != null;
+ 
+     this.prototype = prototype;
+     this.prototypeSlot = new SimpleSlot("prototype", prototype, true);
+     this.prototype.setOwnerFunction(this);
+ 
++    if (oldPrototype != null) {
+       // Disassociating the old prototype makes this easier to debug--
+       // we don't have to worry about two prototypes running around.
++      oldPrototype.setOwnerFunction(null);
++    }
+ 
+     if (isConstructor() || isInterface()) {
+       FunctionType superClass = getSuperClassConstructor();
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue537a() throws Exception {
+    testTypes(
+        "/** @constructor */ function Foo() {}" +
+        "Foo.prototype = {method: function() {}};" +
+        "/**\n" +
+        " * @constructor\n" +
+        " * @extends {Foo}\n" +
+        " */\n" +
+        "function Bar() {" +
+        "  Foo.call(this);" +
+        "  if (this.baz()) this.method(1);" +
+        "}" +
+        "Bar.prototype = {" +
+        "  baz: function() {" +
+        "    return true;" +
+        "  }" +
+        "};" +
+        "Bar.prototype.__proto__ = Foo.prototype;",
+        "Function Foo.prototype.method: called with 1 argument(s). " +
+        "Function requires at least 0 argument(s) " +
+        "and no more than 0 argument(s).");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

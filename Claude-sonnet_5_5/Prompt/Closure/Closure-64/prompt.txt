@@ -1,0 +1,107 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-64
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+de726510af4329fb8eeb8a54b2d93d8d37c87545
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-06-17 21:36:04 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+489
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-489.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.CommandLineRunnerTest::testES5StrictUseStrictMultipleInputs
+   --> junit.framework.AssertionFailedError: expected:<17> but was:<-1>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.Compiler
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.Compiler ===
+diff --git a/src/com/google/javascript/jscomp/Compiler.java b/src/com/google/javascript/jscomp/Compiler.java
+index 71f76d83e..45d88ba13 100644
+--- a/src/com/google/javascript/jscomp/Compiler.java
++++ b/src/com/google/javascript/jscomp/Compiler.java
+@@ -1429,7 +1429,7 @@ public class Compiler extends AbstractCompiler {
+ 
+         // if LanguageMode is ECMASCRIPT5_STRICT, only print 'use strict'
+         // for the first input file
+-        String code = toSource(root, sourceMap);
++        String code = toSource(root, sourceMap, inputSeqNum == 0);
+         if (!code.isEmpty()) {
+           cb.append(code);
+ 
+@@ -1458,19 +1458,19 @@ public class Compiler extends AbstractCompiler {
+   @Override
+   String toSource(Node n) {
+     initCompilerOptionsIfTesting();
+-    return toSource(n, null);
++    return toSource(n, null, true);
+   }
+ 
+   /**
+    * Generates JavaScript source code for an AST.
+    */
+-  private String toSource(Node n, SourceMap sourceMap) {
++  private String toSource(Node n, SourceMap sourceMap, boolean firstOutput) {
+     CodePrinter.Builder builder = new CodePrinter.Builder(n);
+     builder.setPrettyPrint(options.prettyPrint);
+     builder.setLineBreak(options.lineBreak);
+     builder.setSourceMap(sourceMap);
+     builder.setSourceMapDetailLevel(options.sourceMapDetailLevel);
+-    builder.setTagAsStrict(
++    builder.setTagAsStrict(firstOutput &&
+         options.getLanguageOut() == LanguageMode.ECMASCRIPT5_STRICT);
+     builder.setLineLengthThreshold(options.lineLengthThreshold);
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testES5StrictUseStrictMultipleInputs() {
+    args.add("--language_in=ECMASCRIPT5_STRICT");
+    Compiler compiler = compile(new String[] {"var x = f.function",
+        "var y = f.function", "var z = f.function"});
+    String outputSource = compiler.toSource();
+    assertEquals("'use strict'", outputSource.substring(0, 12));
+    assertEquals(outputSource.substring(13).indexOf("'use strict'"), -1);
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,41 @@
+```java
+package com.fasterxml.jackson.databind.ser;
+
+import java.io.IOException;
+
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+
+public class JsonValueCustomOverrideTest extends BaseMapTest {
+
+    static class CustomValueBean {
+        @JsonValue
+        public String getValue() {
+            return "value";
+        }
+    }
+
+    static class CustomValueSerializer extends JsonSerializer<CustomValueBean> {
+        @Override
+        public void serialize(CustomValueBean value, JsonGenerator gen, SerializerProvider serializers)
+                throws IOException {
+            gen.writeNumber(42);
+        }
+    }
+
+    public void testJsonValueWithCustomOverride() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(CustomValueBean.class, new CustomValueSerializer());
+        mapper.registerModule(module);
+
+        String json = mapper.writeValueAsString(new CustomValueBean());
+        assertEquals("42", json);
+    }
+}
+```

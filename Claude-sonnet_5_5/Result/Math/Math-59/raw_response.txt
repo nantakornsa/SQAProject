@@ -1,0 +1,78 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791146146-8XyyVTWkQjjyViWkoDmT","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1941,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" b"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ug is in `FastMath"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".max(float, float)`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":". When `a >"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" b` and ne"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ither value"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" is NaN, the bu"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ggy code"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" returns `b` instead of"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" `a`. So `max("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"50.0f, -50.0f)` returns `-50.0f`, which the new test catches.\n\nThe test follows the project's JUnit 4 style, using `Assert` and `MathUtils.EPSILON`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" like the triggering test. It includes the following cases:\n\n- `max(50, -50)`, the direct failing case.\n- `max(-50, 50)`, which pass"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"es on both versions.\n- Positive infinity, which makes `a > b` and goes through the buggy branch.\n- NaN, which should still propagate.\n\nI have not compiled or run it against either version.\n\n```"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"java\npackage org.apache.commons.math.util;\n\nimport org.junit.Assert;\nimport org.junit.Test;\n\npublic class FastMathMaxFloatRegressionTest {\n\n    @Test\n    public void testMaxFloatFirstArgumentL"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"arger() {\n        Assert.assertEquals(\"max(50.0, -50.0)\", 50.0f,\n                            FastMath.max(50.0f, -50.0f), MathUtils.EPSILON);\n        Assert.assertEquals(\"max(-50.0, 50.0)\", "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"50.0f,\n                            FastMath.max(-50.0f, 50.0f), MathUtils.EPSILON);\n        Assert.assertEquals(\"max(3.0, 1.0)\", 3.0f,\n                            FastMath.max(3.0f, 1.0f), MathUtils."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"EPSILON);\n        Assert.assertEquals(\"max(+inf, 1.0)\", Float.POSITIVE_INFINITY,\n                            FastMath.max(Float.POSITIVE_INFINITY, 1.0f), M"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"athUtils.EPSILON);\n        Assert.assertEquals(\"max(1.0, -inf)\", 1.0f,\n                            FastMath.max(1.0f, Float.NEGATIVE_INFINITY), MathUtils.EPSILON);\n        Assert.ass"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ertTrue(\"max(NaN, 1.0)\", Float.isNaN(FastMath.max(Float.NaN, 1.0f)));\n        Assert.assertTrue(\"max(1.0, NaN)\", Float.isNaN(FastMath.max(1.0f, Float.NaN)"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"));\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1941,"output_tokens":778,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.011662,"is_byok":false,"cost_details":{"upstream_inference_cost":0.011662,"upstream_inference_prompt_cost":0.003882,"upstream_inference_completions_cost":0.00778}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

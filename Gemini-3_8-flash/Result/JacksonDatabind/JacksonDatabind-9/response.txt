@@ -1,0 +1,23 @@
+```java
+package com.fasterxml.jackson.databind.ser;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class ClassKeySerializationTest extends BaseMapTest
+{
+    private final ObjectMapper MAPPER = new ObjectMapper();
+
+    public void testClassKey() throws IOException
+    {
+        Map<Class<?>, Integer> map = new HashMap<Class<?>, Integer>();
+        map.put(String.class, 2);
+        String json = MAPPER.writeValueAsString(map);
+        assertEquals("{\"java.lang.String\":2}", json);
+    }
+}
+```

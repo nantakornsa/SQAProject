@@ -1,0 +1,27 @@
+```java
+package com.google.gson;
+
+import junit.framework.TestCase;
+
+import java.util.Date;
+
+/**
+ * Regression test for DefaultDateTypeAdapter handling of null values
+ * and unexpected tokens.
+ */
+public class DefaultDateTypeAdapterRegressionTest extends TestCase {
+
+  public void testNullValue() throws Exception {
+    DefaultDateTypeAdapter adapter = new DefaultDateTypeAdapter(Date.class);
+    assertNull(adapter.fromJson("null"));
+  }
+
+  public void testUnexpectedToken() throws Exception {
+    try {
+      DefaultDateTypeAdapter adapter = new DefaultDateTypeAdapter(Date.class);
+      adapter.fromJson("{}");
+      fail("Unexpected token should fail.");
+    } catch (IllegalStateException expected) { }
+  }
+}
+```

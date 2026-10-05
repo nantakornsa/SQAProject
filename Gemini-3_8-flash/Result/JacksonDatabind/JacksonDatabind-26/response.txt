@@ -1,0 +1,48 @@
+```java
+package com.fasterxml.jackson.databind;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+public class BeanPropertyWriterSerializationTest extends BaseMapTest {
+
+    static class SimpleBean {
+        private String name;
+
+        public SimpleBean() { }
+
+        public SimpleBean(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+    public void testBeanPropertyWriterSerialization() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        // Warm up serializer cache so BeanSerializer and BeanPropertyWriter instances are created
+        mapper.writeValueAsString(new SimpleBean("test"));
+
+        // JDK serialize the ObjectMapper (which holds cached serializers containing BeanPropertyWriter)
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(bytes);
+        out.writeObject(mapper);
+        out.close();
+
+        ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()));
+        ObjectMapper deserializedMapper = (ObjectMapper) in.readObject();
+        in.close();
+
+        assertNotNull(deserializedMapper);
+        assertEquals("{\"name\":\"test2\"}", deserializedMapper.writeValueAsString(new SimpleBean("test2")));
+    }
+}
+```

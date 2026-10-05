@@ -1,0 +1,63 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791113200-8Y95BrXC2RvZKUHATnkR","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Mockito Bug**\n\nI'm currently diving into Mockito-17. It appears the issue stems from the interaction between `serializable()` and `extraInterfaces()`. Specifically, `serializable()` seems to incorrectly call `this.extraInterfaces(java.io.Serializable.class)`, which then gets overwritten by subsequent calls to `extraInterfaces()`, corrupting the intended interface configuration.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.mockitousage.basicapi;\n\nimport org.junit"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".Test;\nimport org.mockitousage.IMethods;\nimport org.mockitoutil.TestBase"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\n\nimport java.io.ByteArrayInputStream;\nimport java.io.ByteArrayOutputStream;\nimport java.io.ObjectInputStream"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\nimport java.io.ObjectOutputStream;\nimport java.util.List;\n\nimport static org.mockito"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".Mockito.mock;\nimport static org.mockito.Mockito.withSettings;\n\npublic class SerializationWithExtraInterfacesTest extends Test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Base {\n\n    @Test\n    public void shouldBeSerializableAndHaveExtraInterfaces() throws Exception {\n        IM"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ethods mock = mock(IMethods.class, withSettings().serializable().extraInterfaces(List.class"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"));\n        IMethods mockTwo = mock(IMethods.class, withSettings().extraInterfaces(List"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".class).serializable());\n\n        serializeAndBack(mock);\n        serializeAndBack(mockTwo);\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    }\n\n    @SuppressWarnings(\"unchecked\")\n    private <T> T serializeAndBack(T obj) throws Exception {\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ByteArrayOutputStream os = new ByteArrayOutputStream();\n        new ObjectOutputStream(os).writeObject(obj);\n        ByteArrayInputStream is ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" new ByteArrayInputStream(os.toByteArray());\n        return (T) new ObjectInputStream(is).readObject();\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1483,"output_tokens":641,"output_tokens_details":{"thinking_tokens":340},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.003516,"is_byok":false,"cost_details":{"upstream_inference_cost":0.003516,"upstream_inference_prompt_cost":0.00111225,"upstream_inference_completions_cost":0.00240375}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

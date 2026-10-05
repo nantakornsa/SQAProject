@@ -1,0 +1,112 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-89
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+4b065734d8afb5ab0d241ee5da22af0fa9d75ec3
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-12-01 01:36:46 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+289
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-289.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.CollapsePropertiesTest::testAddPropertyToChildOfUncollapsibleFunctionInLocalScope
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.CollapsePropertiesTest::testAliasCreatedForFunctionDepth1_1
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.CollapsePropertiesTest::testAliasCreatedForFunctionDepth1_2
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.CollapsePropertiesTest::testAliasCreatedForFunctionDepth1_3
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.CollapsePropertiesTest::testAddPropertyToUncollapsibleNamedCtorInLocalScopeDepth1
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.CollapsePropertiesTest::testAddPropertyToUncollapsibleFunctionInLocalScopeDepth1
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.CollapsePropertiesTest::testAddPropertyToUncollapsibleFunctionInLocalScopeDepth2
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.CollapsePropertiesTest::testAliasCreatedForFunctionDepth2
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.CollapseProperties
+ - com.google.javascript.jscomp.GlobalNamespace
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.CollapseProperties ===
+diff --git a/src/com/google/javascript/jscomp/CollapseProperties.java b/src/com/google/javascript/jscomp/CollapseProperties.java
+index 16d533d54..ddccf0db2 100644
+--- a/src/com/google/javascript/jscomp/CollapseProperties.java
++++ b/src/com/google/javascript/jscomp/CollapseProperties.java
+@@ -481,6 +481,9 @@ class CollapseProperties implements CompilerPass {
+     Node greatGramps = gramps.getParent();
+     Node greatGreatGramps = greatGramps.getParent();
+ 
++    if (rvalue != null && rvalue.getType() == Token.FUNCTION) {
++      checkForHosedThisReferences(rvalue, refName.docInfo, refName);
++    }
+ 
+     // Create the new alias node.
+     Node nameNode = NodeUtil.newName(
+
+=== MODIFIED SOURCE: com.google.javascript.jscomp.GlobalNamespace ===
+diff --git a/src/com/google/javascript/jscomp/GlobalNamespace.java b/src/com/google/javascript/jscomp/GlobalNamespace.java
+index 311e34391..826833914 100644
+--- a/src/com/google/javascript/jscomp/GlobalNamespace.java
++++ b/src/com/google/javascript/jscomp/GlobalNamespace.java
+@@ -917,7 +917,7 @@ class GlobalNamespace {
+       }
+ 
+       // If this is aliased, then its properties can't be collapsed either.
+-      if (type != Type.FUNCTION && aliasingGets > 0) {
++      if (aliasingGets > 0) {
+         return false;
+       }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testAddPropertyToChildOfUncollapsibleFunctionInLocalScope() {
+    testSame(
+        "function a() {} a.b = {x: 0}; var c = a;" +
+        "(function() {a.b.y = 0;})(); a.b.y;");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

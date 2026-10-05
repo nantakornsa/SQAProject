@@ -1,0 +1,66 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791092293-BBiWCdFDf0N7HljCRAAg","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1363,"output_tokens":8,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I see the bug now: in"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" Partial.with, when adding a field not already present, it builds newTypes and newValues but calls the private unchecked constructor instead of the public validating one, so invalid combinations slip through"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":". The fix should route through the validating constructor, so a test adding an invalid field like clockhourOfDay to an hour-minute partial should throw IllegalArgumentException."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I'll write a self"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"-contained JUnit3 test that builds a Partial with hourOfDay and minuteOfHour, then asserts that calling with(clockhourOfDay(), 6) throws, while the partial's size and values remain unchanged."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1zb25uZXQtNS41LTIwMjYwOTI4fGNsYXVkZS1vbi1hd3MifQ"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.joda.time;\n\nimport junit.framework.TestCase;\nimport junit.framework.TestSuite;\n\n/**\n * Regression test for Partial.with() not validating a"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" newly added field type.\n */\npublic class TestPartialWithValidationRegression extends TestCase {\n\n    public static void main(String[] args) {\n        junit.textui.TestRunner.run(suite());\n    }\n\n    public static TestSuite suite"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"() {\n        return new TestSuite(TestPartialWithValidationRegression.class);\n    }\n\n    public TestPartialWithValidationRegression(String name) {\n        super(name);\n    }\n\n    private Partial createHourMinPartial() {\n        return new Partial(\n                new DateTimeF"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ieldType[] {\n                    DateTimeFieldType.hourOfDay(),\n                    DateTimeFieldType.minuteOfHour()},\n                new int[] {10, 20});\n    }\n\n    public void testWithInvalidN"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ewFieldTypeIsRejected() {\n        Partial test = createHourMinPartial();\n        try {\n            test.with(DateTimeFieldType.clockhourOfDay(), 6);\n            fail();\n        } catch (IllegalArgumentException ex) {\n            //"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" expected\n        }\n        // original partial must be unchanged\n        assertEquals(2, test.size());\n        assertEquals(DateTimeFieldType.hourOfDay(), test.getFieldType(0));\n        assertEquals(DateTimeFieldType.minuteOfHour(), test."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"getFieldType(1));\n        assertEquals(10, test.getValue(0));\n        assertEquals(20, test.getValue(1));\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1363,"output_tokens":1080,"output_tokens_details":{"thinking_tokens":534},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.013526,"is_byok":false,"cost_details":{"upstream_inference_cost":0.013526,"upstream_inference_prompt_cost":0.002726,"upstream_inference_completions_cost":0.0108}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

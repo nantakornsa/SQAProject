@@ -1,0 +1,116 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-45
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+4342bd5d69d122a16c735416039b4b2ca27897ad
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-05-11 05:18:02 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-419
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-419
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang.WordUtilsTest::testAbbreviate
+   --> java.lang.StringIndexOutOfBoundsException: String index out of range: 15
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang.WordUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang.WordUtils ===
+diff --git a/src/java/org/apache/commons/lang/WordUtils.java b/src/java/org/apache/commons/lang/WordUtils.java
+index 42bd883ef..91c66155a 100644
+--- a/src/java/org/apache/commons/lang/WordUtils.java
++++ b/src/java/org/apache/commons/lang/WordUtils.java
+@@ -613,6 +613,9 @@ public class WordUtils {
+ 
+         // if the lower value is greater than the length of the string,
+         // set to the length of the string
++        if (lower > str.length()) {
++            lower = str.length();    
++        }
+         // if the upper value is -1 (i.e. no limit) or is greater
+         // than the length of the string, set to the length of the string
+         if (upper == -1 || upper > str.length()) {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testAbbreviate() {
+        // check null and empty are returned respectively
+        assertNull(WordUtils.abbreviate(null, 1,-1,""));
+        assertEquals(StringUtils.EMPTY, WordUtils.abbreviate("", 1,-1,""));
+
+        // test upper limit
+        assertEquals("01234", WordUtils.abbreviate("0123456789", 0,5,""));
+        assertEquals("01234", WordUtils.abbreviate("0123456789", 5, 2,""));
+        assertEquals("012", WordUtils.abbreviate("012 3456789", 2, 5,""));
+        assertEquals("012 3", WordUtils.abbreviate("012 3456789", 5, 2,""));
+        assertEquals("0123456789", WordUtils.abbreviate("0123456789", 0,-1,""));
+
+        // test upper limit + append string
+        assertEquals("01234-", WordUtils.abbreviate("0123456789", 0,5,"-"));
+        assertEquals("01234-", WordUtils.abbreviate("0123456789", 5, 2,"-"));
+        assertEquals("012", WordUtils.abbreviate("012 3456789", 2, 5, null));
+        assertEquals("012 3", WordUtils.abbreviate("012 3456789", 5, 2,""));
+        assertEquals("0123456789", WordUtils.abbreviate("0123456789", 0,-1,""));
+
+        // test lower value
+        assertEquals("012", WordUtils.abbreviate("012 3456789", 0,5, null));
+        assertEquals("01234", WordUtils.abbreviate("01234 56789", 5, 10, null));
+        assertEquals("01 23 45 67", WordUtils.abbreviate("01 23 45 67 89", 9, -1, null));
+        assertEquals("01 23 45 6", WordUtils.abbreviate("01 23 45 67 89", 9, 10, null));
+        assertEquals("0123456789", WordUtils.abbreviate("0123456789", 15, 20, null));
+
+        // test lower value + append
+        assertEquals("012", WordUtils.abbreviate("012 3456789", 0,5, null));
+        assertEquals("01234-", WordUtils.abbreviate("01234 56789", 5, 10, "-"));
+        assertEquals("01 23 45 67abc", WordUtils.abbreviate("01 23 45 67 89", 9, -1, "abc"));
+        assertEquals("01 23 45 6", WordUtils.abbreviate("01 23 45 67 89", 9, 10, ""));
+
+        // others
+        assertEquals("", WordUtils.abbreviate("0123456790", 0,0,""));
+        assertEquals("", WordUtils.abbreviate(" 0123456790", 0,-1,""));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

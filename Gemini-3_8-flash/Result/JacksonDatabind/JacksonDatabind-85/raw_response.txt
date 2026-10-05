@@ -1,0 +1,66 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791186121-A04K8u8uIJvkD1QJEPTU","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating JacksonDatabind Bug**\n\nI'm currently digging into JacksonDatabind-85. The `testFormatWithoutPattern` test within `com.fasterxml.jackson.databind.ser.DateSerializationTest` is failing. The error message points to an unexpected format in the date output, specifically `1970-01-01[X01:0`.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing Date Serialization**\n\nI'm focusing on the `testFormatWithoutPattern` failure. It seems a condition where `JsonFormat` has a shape or timezone but no pattern, alongside custom DateFormat configurations, is producing an unexpected ISO8601 variant. I'm examining how the `SimpleDateFormat` is constructed under these specific conditions to pinpoint the exact deviation.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Refining Date Formatting Logic**\n\nI'm pinpointing the logic where `JsonFormat` with a STRING shape, but no explicit pattern, bypasses the mapper's `SimpleDateFormat`. My investigation confirms this leads to `StdDateFormat.DATE_FORMAT_STR_ISO8601` being used instead of the intended custom format.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind.ser;\n\nimport java"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".text.SimpleDateFormat;\nimport java.util.Date;\nimport java.util.TimeZone;\n\nimport com"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".fasterxml.jackson.annotation.JsonFormat;\nimport com.fasterxml.jackson.databind.BaseMapTest;\nimport com"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".fasterxml.jackson.databind.ObjectMapper;\n\npublic class DateSerialization1648Test extends BaseMapTest {\n\n    static"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" class DateWrapper {\n        @JsonFormat(shape = JsonFormat.Shape.STRING)\n        public Date date;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\n        public DateWrapper(Date date) {\n            this.date = date;\n        }\n    }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\n    public void testFormatWithoutPattern() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n        SimpleDateFormat df"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" = new SimpleDateFormat(\"yyyy-MM-dd'X'HH:mm:ss\");\n        df.setTime"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Zone(TimeZone.getTimeZone(\"GMT+1\"));\n        mapper.setDateFormat(df);\n\n        DateWrapper input"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" = new DateWrapper(new Date(0L));\n        String json = mapper.writeValueAsString(input);\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        assertEquals(\"{\\\"date\\\":\\\"1970-01-01X01:00:0"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"0\\\"}\", json);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1759,"output_tokens":953,"output_tokens_details":{"thinking_tokens":676},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.004893,"is_byok":false,"cost_details":{"upstream_inference_cost":0.004893,"upstream_inference_prompt_cost":0.00131925,"upstream_inference_completions_cost":0.00357375}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

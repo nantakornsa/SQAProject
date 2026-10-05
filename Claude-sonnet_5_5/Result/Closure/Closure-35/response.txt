@@ -1,0 +1,27 @@
+The test below reproduces the triggering case from `TypeCheckTest::testIssue669`. I have not compiled or run it against the buggy and fixed versions.
+
+`TypeCheckTest` extends `CompilerTypeTestCase` and provides the `testTypes(String)` helper. `testTypes` fails if there are unexpected warnings. On the buggy version, `TypeInference` infers a record-type property for `results` and produces a spurious type-mismatch warning, so the test fails there. The fix replaces that logic with `type.matchConstraint(constraintObj)`, after which no warning is reported and the test passes.
+
+The class below is a self-contained regression test. It extends `TypeCheckTest` to reuse its `testTypes` helper, which is accessible from the same package. Because it inherits all of `TypeCheckTest`'s tests, those will run again under this class. It adds one method, `testIssue669Regression`.
+
+```java
+package com.google.javascript.jscomp;
+
+public class TypeCheckIssue669Test extends TypeCheckTest {
+
+  public void testIssue669Regression() throws Exception {
+    testTypes(
+        "/** @return {{prop1: (Object|undefined)}} */" +
+        "function f(a) {" +
+        "  var results;" +
+        "  if (a) {" +
+        "    results = {};" +
+        "    results.prop1 = {a: 3};" +
+        "  } else {" +
+        "    results = {prop2: 3};" +
+        "  }" +
+        "  return results;" +
+        "}");
+  }
+}
+```

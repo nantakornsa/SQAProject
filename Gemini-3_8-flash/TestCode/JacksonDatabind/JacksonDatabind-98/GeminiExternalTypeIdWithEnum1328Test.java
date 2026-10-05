@@ -1,0 +1,75 @@
+package com.fasterxml.jackson.databind.jsontype.ext;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * Test case for [databind#1328]: external type id with non-String type (such as Enum)
+ * passed to creator parameter.
+ */
+public class GeminiExternalTypeIdWithEnum1328Test extends BaseMapTest {
+
+    public enum AnimalType {
+        Dog
+    }
+
+    public static class AnimalAndType {
+        private final AnimalType type;
+        private final Animal animal;
+
+        @JsonCreator
+        public AnimalAndType(
+                @JsonProperty("type") AnimalType type,
+                @JsonProperty("animal") Animal animal) {
+            this.type = type;
+            this.animal = animal;
+        }
+
+        public AnimalType getType() {
+            return type;
+        }
+
+        @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "type")
+        @JsonSubTypes({
+                @JsonSubTypes.Type(value = Dog.class, name = "Dog")
+        })
+        public Animal getAnimal() {
+            return animal;
+        }
+    }
+
+    public interface Animal {
+    }
+
+    public static class Dog implements Animal {
+        public String name = "Spot";
+
+        public Dog() { }
+        public Dog(String name) {
+            this.name = name;
+        }
+    }
+
+    public void testExternalTypeIdWithEnumInCreator() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+
+        String json = mapper.writerWithDefaultPrettyPrinter()
+                .writeValueAsString(Arrays.asList(new AnimalAndType(AnimalType.Dog, new Dog())));
+
+        List<AnimalAndType> list = mapper.readerFor(new TypeReference<List<AnimalAndType>>() { })
+                .readValue(json);
+
+        assertNotNull(list);
+        assertEquals(1, list.size());
+        assertEquals(AnimalType.Dog, list.get(0).getType());
+        assertTrue(list.get(0).getAnimal() instanceof Dog);
+    }
+}

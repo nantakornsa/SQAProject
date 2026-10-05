@@ -1,0 +1,24 @@
+```java
+package org.apache.commons.lang;
+
+import java.util.Locale;
+import junit.framework.TestCase;
+
+public class LocaleUtilsLang54RegressionTest extends TestCase {
+
+    /**
+     * Test that LocaleUtils.toLocale properly parses locales with an empty country code,
+     * such as "fr__POSIX".
+     *
+     * In the buggy version, an IllegalArgumentException is thrown for "fr__POSIX".
+     * In the fixed version, it returns a Locale with language "fr", empty country, and variant "POSIX".
+     */
+    public void testLang328() {
+        Locale l = LocaleUtils.toLocale("fr__POSIX");
+        assertNotNull("Locale should not be null", l);
+        assertEquals("fr", l.getLanguage());
+        assertEquals("", l.getCountry());
+        assertEquals("POSIX", l.getVariant());
+    }
+}
+```

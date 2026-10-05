@@ -1,0 +1,60 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791189325-WYrsDYWmXwZExgQvQ0Bv","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Updating Blacklist**\n\nI'm currently reviewing the latest additions to the `DEFAULT_NO_DESER_CLASS_NAMES` blacklist, particularly the inclusion of `java.util.logging.FileHandler`, `java.rmi.server.UnicastRemoteObject`, and the Spring AOP-related classes. This is a critical update for secure deserialization practices.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Refining Blacklist**\n\nI'm now focusing on new candidates for the `DEFAULT_NO_DESER_CLASS_NAMES` blacklist, specifically `support.AbstractBeanFactoryPointcutAdvisor`, `org.springframework.beans.factory.config.PropertyPathFactoryBean`, and several `c3p0` classes. These were flagged by `IllegalTypesCheckTest`, which tests against unsafe deserialization of common JDK and Spring types.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind.interop;\n\nimport com.fasterxml.jackson.databind"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".BaseMapTest;\nimport com.fasterxml.jackson.databind.JsonMappingException;\nimport com.fasterxml.jackson."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"databind.ObjectMapper;\n\n/**\n * Test checking that types added to the blacklist in databind#173"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"7\n * cannot be deserialized via default typing.\n */\npublic class IllegalTypesCheckTest extends BaseMapTest\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"{\n    static class Authentication1737 {\n        public Object authentication;\n    }\n\n    public void test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"JDKTypes1737() throws Exception\n    {\n        ObjectMapper mapper = new ObjectMapper();\n        mapper."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"enableDefaultTyping();\n\n        // Testing java.util.logging.FileHandler which is in the standard JDK\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        String json = aposToQuotes(\n                \"{'authentication':['java.util.logging.FileHandler', {}]}\"\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        );\n        try {\n            mapper.readValue(json, Authentication1737.class);\n            "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"fail(\"Should not pass\");\n        } catch (JsonMappingException e) {\n            verifyException(e, \"Illegal type\");"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n            verifyException(e, \"prevented for security reasons\");\n        }\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1106,"output_tokens":705,"output_tokens_details":{"thinking_tokens":429},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00347325,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00347325,"upstream_inference_prompt_cost":0.0008295,"upstream_inference_completions_cost":0.00264375}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,40 @@
+```java
+package com.google.javascript.jscomp;
+
+public class PeepholeReplaceKnownMethodsTest extends CompilerTestCase {
+
+  public PeepholeReplaceKnownMethodsTest() {
+    super("");
+  }
+
+  @Override
+  public void setUp() throws Exception {
+    super.setUp();
+  }
+
+  @Override
+  protected CompilerPass getProcessor(final Compiler compiler) {
+    return new PeepholeOptimizationsPass(compiler,
+        new PeepholeReplaceKnownMethods());
+  }
+
+  @Override
+  protected int getNumRepetitions() {
+    return 1;
+  }
+
+  public void testJoinWithExtraArgumentsIsNotFolded() {
+    foldSame("x = [].join(',', 2)");
+    foldSame("x = ['a'].join(',', 2)");
+    foldSame("x = ['a', 'b', 'c'].join('', foo)");
+    foldSame("x = ['a', 'b', 'c'].join(',', 'd')");
+    foldSame("x = [1, 2].join('-', 'x')");
+  }
+
+  public void testStringJoinStillFoldsWithSingleArgument() {
+    fold("x = ['a', 'b', 'c'].join('')", "x = \"abc\"");
+    fold("x = ['a', 'b', 'c'].join(',')", "x = \"a,b,c\"");
+    fold("x = [].join(',')", "x = \"\"");
+  }
+}
+```

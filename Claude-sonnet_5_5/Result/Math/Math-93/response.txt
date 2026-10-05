@@ -1,0 +1,67 @@
+```java
+package org.apache.commons.math.util;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for MATH-240: MathUtils.factorialDouble(n) and
+ * MathUtils.factorialLog(n) were inexact for small n (for example 17!).
+ */
+public class MathUtilsFactorialRegressionTest extends TestCase {
+
+    /** Computes n! exactly using long arithmetic (valid for 0 <= n <= 20). */
+    private long factorial(int n) {
+        long result = 1;
+        for (int i = 2; i <= n; i++) {
+            result *= i;
+        }
+        return result;
+    }
+
+    public void testFactorialExactForSmallValues() {
+        for (int i = 1; i < 21; i++) {
+            assertEquals(i + "! ", factorial(i), MathUtils.factorial(i));
+        }
+        assertEquals("0! ", 1L, MathUtils.factorial(0));
+    }
+
+    public void testFactorialDoubleExactForSmallValues() {
+        for (int i = 1; i < 21; i++) {
+            assertEquals(i + "! ", (double) factorial(i),
+                    MathUtils.factorialDouble(i), Double.MIN_VALUE);
+        }
+        assertEquals("0! ", 1.0d, MathUtils.factorialDouble(0), 1E-14);
+    }
+
+    public void testFactorialDouble17() {
+        assertEquals("17! ", 355687428096000.0d,
+                MathUtils.factorialDouble(17), 0.0d);
+    }
+
+    public void testFactorialLogForSmallValues() {
+        for (int i = 1; i < 21; i++) {
+            assertEquals(i + "! ", Math.log((double) factorial(i)),
+                    MathUtils.factorialLog(i), 10E-12);
+        }
+        assertEquals("0! ", 0.0d, MathUtils.factorialLog(0), 1E-14);
+    }
+
+    public void testFactorialOverflow() {
+        try {
+            MathUtils.factorial(21);
+            fail("expected ArithmeticException");
+        } catch (ArithmeticException ex) {
+            // expected
+        }
+    }
+
+    public void testFactorialNegative() {
+        try {
+            MathUtils.factorial(-1);
+            fail("expected IllegalArgumentException");
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+    }
+}
+```

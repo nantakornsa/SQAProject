@@ -1,0 +1,20 @@
+This test is untested: I haven't compiled or run it against either version. The fix in `ArrowType` makes a function with extra required parameters no longer a subtype of a function with fewer parameters. Because of that, `function(number, number)` should not be a subtype of `function()`. The buggy version wrongly treats it as one. The test checks this directly on `FunctionType`, mirroring the override mismatch in `testMethodInference7`. I wrote it as a standalone `BaseJSTypeTestCase` test rather than a full type-check test, because the type-check test helpers belong to the existing `TypeCheckTest` and `LooseTypeCheckTest` classes.
+
+```java
+package com.google.javascript.rhino.jstype;
+
+import com.google.javascript.rhino.testing.BaseJSTypeTestCase;
+
+public class FunctionArityRegressionTest extends BaseJSTypeTestCase {
+
+  public void testFunctionWithExtraRequiredParamsIsNotSubtype() {
+    FunctionType noParams = registry.createFunctionType(UNDEFINED_TYPE);
+    FunctionType twoParams =
+        registry.createFunctionType(UNDEFINED_TYPE, NUMBER_TYPE, NUMBER_TYPE);
+
+    // A function requiring two arguments cannot safely override/replace a
+    // function that takes none.
+    assertFalse(twoParams.isSubtype(noParams));
+  }
+}
+```

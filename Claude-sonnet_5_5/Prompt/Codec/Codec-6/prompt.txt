@@ -1,0 +1,103 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Codec
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Codec
+       Program: commons-codec
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Codec/Codec.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-codec.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Codec/active-bugs.csv
+Number of bugs: 18
+--------------------------------------------------------------------------------
+
+Summary for Bug: Codec-6
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+d74fc31604c805a47c44d7853f63a3b06ad6c016
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-01-21 19:19:51 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CODEC-101
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CODEC-101
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.codec.binary.Base64InputStreamTest::testCodec101
+   --> junit.framework.AssertionFailedError: Codec101: First read successful [c=0]
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.codec.binary.Base64InputStream
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+diff --git a/src/java/org/apache/commons/codec/binary/Base64InputStream.java b/src/java/org/apache/commons/codec/binary/Base64InputStream.java
+index 583a5847..479638bc 100644
+--- a/src/java/org/apache/commons/codec/binary/Base64InputStream.java
++++ b/src/java/org/apache/commons/codec/binary/Base64InputStream.java
+@@ -145,6 +145,7 @@ public class Base64InputStream extends FilterInputStream {
+         } else if (len == 0) {
+             return 0;
+         } else {
++            int readLen = 0;
+             /*
+              Rationale for while-loop on (readLen == 0):
+              -----
+@@ -161,6 +162,7 @@ public class Base64InputStream extends FilterInputStream {
+              -----
+              This is a fix for CODEC-101
+             */
++            while (readLen == 0) {
+                 if (!base64.hasData()) {
+                     byte[] buf = new byte[doEncode ? 4096 : 8192];
+                     int c = in.read(buf);
+@@ -175,7 +177,9 @@ public class Base64InputStream extends FilterInputStream {
+                         base64.decode(buf, 0, c);
+                     }
+                 }
+-            return base64.readResults(b, offset, len);
++                readLen = base64.readResults(b, offset, len);
++            }
++            return readLen;
+         }
+     }
+ 
+
+=== TRIGGERING TEST METHOD ===
+    public void testCodec101() throws Exception {
+        byte[] codec101 = StringUtils.getBytesUtf8(Base64TestData.CODEC_101_MULTIPLE_OF_3);
+        ByteArrayInputStream bais = new ByteArrayInputStream(codec101);
+        Base64InputStream in = new Base64InputStream(bais);
+        byte[] result = new byte[8192];
+        int c = in.read(result);
+        assertTrue("Codec101: First read successful [c=" + c + "]", c > 0);
+
+        c = in.read(result);
+        assertTrue("Codec101: Second read should report end-of-stream [c=" + c + "]", c < 0);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

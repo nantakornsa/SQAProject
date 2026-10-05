@@ -1,0 +1,29 @@
+```java
+package com.google.javascript.jscomp;
+
+public class TypeCheckMethodInferenceRegressionTest extends TypeCheckTest {
+
+  public void testMethodInferenceOverrideWithFewerParams() throws Exception {
+    testTypes(
+        "/** @constructor */ function F() {}" +
+        "/** @param {number} x */ F.prototype.foo = function(x) { };" +
+        "/** @constructor \n * @extends {F} */ " +
+        "function G() {}" +
+        "/** @override */ G.prototype.foo = function() { };" +
+        "(new G()).foo(1);");
+  }
+
+  public void testOverrideKeepsRemainingInheritedParams() throws Exception {
+    testTypes(
+        "/** @constructor */ function Foo(){}" +
+        "/**\n * @param {number} one\n * @param {string} two\n */\n" +
+        "Foo.prototype.add = function(one, two) {};" +
+        "/** @constructor\n * @extends {Foo} */ function Bar(){}" +
+        "/** @override */ Bar.prototype.add = function(ignored) {};" +
+        "(new Bar()).add(1, 2);",
+        "actual parameter 2 of Bar.prototype.add does not match formal parameter\n" +
+        "found   : number\n" +
+        "required: string");
+  }
+}
+```

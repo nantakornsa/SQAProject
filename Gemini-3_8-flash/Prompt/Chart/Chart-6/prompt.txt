@@ -1,0 +1,114 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Chart
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Chart
+       Program: jfreechart
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Chart/Chart.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Svn
+    Repository: file:///Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jfreechart/trunk
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Chart/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Chart-6
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+1166
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-06-17 01:44:13 -0700 
+--------------------------------------------------------------------------------
+Bug report id:
+UNKNOWN
+--------------------------------------------------------------------------------
+Bug report url:
+UNKNOWN
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jfree.chart.util.junit.ShapeListTests::testSerialization
+   --> junit.framework.AssertionFailedError: expected:<org.jfree.chart.util.ShapeList@cef18a3f> but was:<org.jfree.chart.util.ShapeList@e657ea8d>
+ - org.jfree.chart.util.junit.ShapeListTests::testEquals
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jfree.chart.util.ShapeList
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jfree.chart.util.ShapeList ===
+diff --git a/source/org/jfree/chart/util/ShapeList.java b/source/org/jfree/chart/util/ShapeList.java
+index 85f1c81..73ece1c 100644
+--- a/source/org/jfree/chart/util/ShapeList.java
++++ b/source/org/jfree/chart/util/ShapeList.java
+@@ -108,7 +108,14 @@ public class ShapeList extends AbstractObjectList {
+         if (!(obj instanceof ShapeList)) {
+             return false;
+         }
+-        return super.equals(obj);
++        ShapeList that = (ShapeList) obj;
++        int listSize = size();
++        for (int i = 0; i < listSize; i++) {
++           if (!ShapeUtilities.equal((Shape) get(i), (Shape) that.get(i))) {
++               return false;
++           }
++        }
++        return true;
+ 
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testSerialization() {
+
+        ShapeList l1 = new ShapeList();
+        l1.setShape(0, new Rectangle(1, 2, 3, 4));
+        l1.setShape(1, new Line2D.Double(1.0, 2.0, 3.0, 4.0));
+        l1.setShape(2, null);
+
+        ShapeList l2 = null;
+
+        try {
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            ObjectOutput out = new ObjectOutputStream(buffer);
+            out.writeObject(l1);
+            out.close();
+
+            ObjectInput in = new ObjectInputStream(new ByteArrayInputStream(
+            		buffer.toByteArray()));
+            l2 = (ShapeList) in.readObject();
+            in.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        assertEquals(l1, l2);
+
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

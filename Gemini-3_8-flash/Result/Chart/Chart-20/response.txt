@@ -1,0 +1,49 @@
+```java
+package org.jfree.chart.plot.junit;
+
+import java.awt.BasicStroke;
+import java.awt.Color;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.jfree.chart.plot.ValueMarker;
+
+/**
+ * Regression test for bug Chart-20 (ValueMarker constructor parameter mapping).
+ */
+public class ValueMarkerRegressionTest extends TestCase {
+
+    /**
+     * Returns the tests as a test suite.
+     *
+     * @return The test suite.
+     */
+    public static Test suite() {
+        return new TestSuite(ValueMarkerRegressionTest.class);
+    }
+
+    /**
+     * Constructs a new test case.
+     *
+     * @param name  the test name.
+     */
+    public ValueMarkerRegressionTest(String name) {
+        super(name);
+    }
+
+    /**
+     * Tests that the ValueMarker constructor correctly sets the outline paint
+     * and outline stroke properties.
+     */
+    public void test1808376() {
+        ValueMarker m = new ValueMarker(1.0, Color.red, new BasicStroke(1.0f),
+                Color.blue, new BasicStroke(2.0f), 0.5f);
+        assertEquals(1.0, m.getValue(), 0.0);
+        assertEquals(Color.red, m.getPaint());
+        assertEquals(new BasicStroke(1.0f), m.getStroke());
+        assertEquals(Color.blue, m.getOutlinePaint());
+        assertEquals(new BasicStroke(2.0f), m.getOutlineStroke());
+        assertEquals(0.5f, m.getAlpha(), 0.0f);
+    }
+}
+```

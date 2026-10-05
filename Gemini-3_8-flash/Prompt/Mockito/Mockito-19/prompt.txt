@@ -1,0 +1,205 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Mockito
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Mockito
+       Program: mockito
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/Mockito.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/mockito.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/active-bugs.csv
+Number of bugs: 38
+--------------------------------------------------------------------------------
+
+Summary for Bug: Mockito-19
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+110ffa80070bf54ab8efabdaaa27b193a93d6128
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-06-03 00:52:12 +0200
+--------------------------------------------------------------------------------
+Bug report id:
+205
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/mockito/mockito/issues/205
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.mockitousage.annotation.MockInjectionUsingSetterOrPropertyTest::shouldInsertFieldWithCorrectNameWhenMultipleTypesAvailable
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: candidate2
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.mockito.internal.configuration.injection.filter.FinalMockCandidateFilter
+ - org.mockito.internal.configuration.injection.filter.MockCandidateFilter
+ - org.mockito.internal.configuration.injection.filter.NameBasedCandidateFilter
+ - org.mockito.internal.configuration.injection.filter.TypeBasedCandidateFilter
+ - org.mockito.internal.configuration.injection.PropertyAndSetterInjection
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.mockito.internal.configuration.injection.filter.FinalMockCandidateFilter ===
+diff --git a/src/org/mockito/internal/configuration/injection/filter/FinalMockCandidateFilter.java b/src/org/mockito/internal/configuration/injection/filter/FinalMockCandidateFilter.java
+index 7bd70735f..aebf6f71e 100644
+--- a/src/org/mockito/internal/configuration/injection/filter/FinalMockCandidateFilter.java
++++ b/src/org/mockito/internal/configuration/injection/filter/FinalMockCandidateFilter.java
+@@ -10,6 +10,7 @@ import org.mockito.internal.util.reflection.FieldSetter;
+ 
+ import java.lang.reflect.Field;
+ import java.util.Collection;
++import java.util.List;
+ 
+ /**
+  * This node returns an actual injecter which will be either :
+@@ -20,7 +21,7 @@ import java.util.Collection;
+  * </ul>
+  */
+ public class FinalMockCandidateFilter implements MockCandidateFilter {
+-    public OngoingInjecter filterCandidate(final Collection<Object> mocks, final Field field, final Object fieldInstance) {
++    public OngoingInjecter filterCandidate(final Collection<Object> mocks, final Field field, List<Field> fields, final Object fieldInstance) {
+         if(mocks.size() == 1) {
+             final Object matchingMock = mocks.iterator().next();
+ 
+
+=== MODIFIED SOURCE: org.mockito.internal.configuration.injection.filter.MockCandidateFilter ===
+diff --git a/src/org/mockito/internal/configuration/injection/filter/MockCandidateFilter.java b/src/org/mockito/internal/configuration/injection/filter/MockCandidateFilter.java
+index 7a2c08781..81a168b49 100644
+--- a/src/org/mockito/internal/configuration/injection/filter/MockCandidateFilter.java
++++ b/src/org/mockito/internal/configuration/injection/filter/MockCandidateFilter.java
+@@ -6,13 +6,14 @@ package org.mockito.internal.configuration.injection.filter;
+ 
+ import java.lang.reflect.Field;
+ import java.util.Collection;
++import java.util.List;
+ 
+ public interface MockCandidateFilter {
+ 
+     OngoingInjecter filterCandidate(
+             Collection<Object> mocks,
+             Field fieldToBeInjected,
+-            Object fieldInstance
++            List<Field> fields, Object instance
+     );
+ 
+ }
+
+=== MODIFIED SOURCE: org.mockito.internal.configuration.injection.filter.NameBasedCandidateFilter ===
+diff --git a/src/org/mockito/internal/configuration/injection/filter/NameBasedCandidateFilter.java b/src/org/mockito/internal/configuration/injection/filter/NameBasedCandidateFilter.java
+index b95f31a36..abc5d67b4 100644
+--- a/src/org/mockito/internal/configuration/injection/filter/NameBasedCandidateFilter.java
++++ b/src/org/mockito/internal/configuration/injection/filter/NameBasedCandidateFilter.java
+@@ -20,7 +20,7 @@ public class NameBasedCandidateFilter implements MockCandidateFilter {
+ 	}
+ 
+ 	public OngoingInjecter filterCandidate(Collection<Object> mocks,
+-			Field field, Object fieldInstance) {
++			Field field, List<Field> fields, Object fieldInstance) {
+ 		List<Object> mockNameMatches = new ArrayList<Object>();
+ 		if (mocks.size() > 1) {
+ 			for (Object mock : mocks) {
+@@ -28,7 +28,7 @@ public class NameBasedCandidateFilter implements MockCandidateFilter {
+ 					mockNameMatches.add(mock);
+ 				}
+ 			}
+-			return next.filterCandidate(mockNameMatches, field,
++			return next.filterCandidate(mockNameMatches, field, fields,
+ 					fieldInstance);
+ 			/*
+ 			 * In this case we have to check whether we have conflicting naming
+@@ -39,7 +39,23 @@ public class NameBasedCandidateFilter implements MockCandidateFilter {
+ 			 * whenever we find a field that does match its name with the mock
+ 			 * name, we should take that field instead.
+ 			 */
++		} else if (mocks.size() == 1) {
++			String mockName = mockUtil.getMockName(mocks.iterator().next())
++					.toString();
++
++			for (Field otherField : fields) {
++				if (!otherField.equals(field)
++						&& otherField.getType().equals(field.getType())
++						&& otherField.getName().equals(mockName)) {
++
++					return new OngoingInjecter() {
++						public Object thenInject() {
++							return null;
++						}
++					};
++				}
++			}
+ 		}
+-		return next.filterCandidate(mocks, field, fieldInstance);
++		return next.filterCandidate(mocks, field, fields, fieldInstance);
+ 	}
+ }
+
+=== MODIFIED SOURCE: org.mockito.internal.configuration.injection.filter.TypeBasedCandidateFilter ===
+diff --git a/src/org/mockito/internal/configuration/injection/filter/TypeBasedCandidateFilter.java b/src/org/mockito/internal/configuration/injection/filter/TypeBasedCandidateFilter.java
+index dd79991a6..ce7a349fa 100644
+--- a/src/org/mockito/internal/configuration/injection/filter/TypeBasedCandidateFilter.java
++++ b/src/org/mockito/internal/configuration/injection/filter/TypeBasedCandidateFilter.java
+@@ -17,7 +17,7 @@ public class TypeBasedCandidateFilter implements MockCandidateFilter {
+         this.next = next;
+     }
+ 
+-    public OngoingInjecter filterCandidate(Collection<Object> mocks, Field field, Object fieldInstance) {
++    public OngoingInjecter filterCandidate(Collection<Object> mocks, Field field, List<Field> fields, Object fieldInstance) {
+         List<Object> mockTypeMatches = new ArrayList<Object>();
+         for (Object mock : mocks) {
+             if (field.getType().isAssignableFrom(mock.getClass())) {
+@@ -25,6 +25,6 @@ public class TypeBasedCandidateFilter implements MockCandidateFilter {
+             }
+         }
+ 
+-        return next.filterCandidate(mockTypeMatches, field, fieldInstance);
++        return next.filterCandidate(mockTypeMatches, field, fields, fieldInstance);
+     }
+ }
+
+=== MODIFIED SOURCE: org.mockito.internal.configuration.injection.PropertyAndSetterInjection ===
+diff --git a/src/org/mockito/internal/configuration/injection/PropertyAndSetterInjection.java b/src/org/mockito/internal/configuration/injection/PropertyAndSetterInjection.java
+index 67126afd9..c17f961c5 100644
+--- a/src/org/mockito/internal/configuration/injection/PropertyAndSetterInjection.java
++++ b/src/org/mockito/internal/configuration/injection/PropertyAndSetterInjection.java
+@@ -111,7 +111,7 @@ public class PropertyAndSetterInjection extends MockInjectionStrategy {
+     private boolean injectMockCandidatesOnFields(Set<Object> mocks, Object instance, boolean injectionOccurred, List<Field> orderedInstanceFields) {
+         for (Iterator<Field> it = orderedInstanceFields.iterator(); it.hasNext(); ) {
+             Field field = it.next();
+-            Object injected = mockCandidateFilter.filterCandidate(mocks, field, instance).thenInject();
++            Object injected = mockCandidateFilter.filterCandidate(mocks, field, orderedInstanceFields, instance).thenInject();
+             if (injected != null) {
+                 injectionOccurred |= true;
+                 mocks.remove(injected);
+
+
+=== TRIGGERING TEST METHOD ===
+	public void shouldInsertFieldWithCorrectNameWhenMultipleTypesAvailable() {
+		MockitoAnnotations.initMocks(this);
+		assertNull(otherSuperUnderTesting.candidate1);
+		assertNotNull(otherSuperUnderTesting.candidate2);
+	}
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

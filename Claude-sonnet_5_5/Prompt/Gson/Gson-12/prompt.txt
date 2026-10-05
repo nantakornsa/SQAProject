@@ -1,0 +1,100 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Gson
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Gson
+       Program: gson
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Gson/Gson.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/gson.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Gson/active-bugs.csv
+Number of bugs: 18
+--------------------------------------------------------------------------------
+
+Summary for Bug: Gson-12
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+9e6f2bab20257b6823a5b753739f047d79e9dcbd
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-02-15 18:41:39 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+1013
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/google/gson/issues/1013
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.gson.internal.bind.JsonTreeReaderTest::testSkipValue_filledJsonObject
+   --> java.lang.ArrayIndexOutOfBoundsException: -1
+ - com.google.gson.internal.bind.JsonTreeReaderTest::testSkipValue_emptyJsonObject
+   --> java.lang.ArrayIndexOutOfBoundsException: -1
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.gson.internal.bind.JsonTreeReader
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.gson.internal.bind.JsonTreeReader ===
+diff --git a/gson/src/main/java/com/google/gson/internal/bind/JsonTreeReader.java b/gson/src/main/java/com/google/gson/internal/bind/JsonTreeReader.java
+index 2e7644f0..387b29e9 100644
+--- a/gson/src/main/java/com/google/gson/internal/bind/JsonTreeReader.java
++++ b/gson/src/main/java/com/google/gson/internal/bind/JsonTreeReader.java
+@@ -259,9 +259,13 @@ public final class JsonTreeReader extends JsonReader {
+       pathNames[stackSize - 2] = "null";
+     } else {
+       popStack();
++      if (stackSize > 0) {
+         pathNames[stackSize - 1] = "null";
++      }
+     }
++    if (stackSize > 0) {
+       pathIndices[stackSize - 1]++;
++    }
+   }
+ 
+   @Override public String toString() {
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testSkipValue_filledJsonObject() throws IOException {
+    JsonObject jsonObject = new JsonObject();
+    JsonArray jsonArray = new JsonArray();
+    jsonArray.add('c');
+    jsonArray.add("text");
+    jsonObject.add("a", jsonArray);
+    jsonObject.addProperty("b", true);
+    jsonObject.addProperty("i", 1);
+    jsonObject.add("n", JsonNull.INSTANCE);
+    JsonObject jsonObject2 = new JsonObject();
+    jsonObject2.addProperty("n", 2L);
+    jsonObject.add("o", jsonObject2);
+    jsonObject.addProperty("s", "text");
+    JsonTreeReader in = new JsonTreeReader(jsonObject);
+    in.skipValue();
+    assertEquals(JsonToken.END_DOCUMENT, in.peek());
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

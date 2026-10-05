@@ -1,0 +1,91 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-168
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+b675d1da9d5f8b36849db4943f580969105901a4
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-08-10 19:49:41 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+726
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-726.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.TypeCheckTest::testIssue726
+   --> junit.framework.AssertionFailedError: expected a warning
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.TypedScopeCreator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.TypedScopeCreator ===
+diff --git a/src/com/google/javascript/jscomp/TypedScopeCreator.java b/src/com/google/javascript/jscomp/TypedScopeCreator.java
+index cf87eaaf0..36f83466e 100644
+--- a/src/com/google/javascript/jscomp/TypedScopeCreator.java
++++ b/src/com/google/javascript/jscomp/TypedScopeCreator.java
+@@ -1993,7 +1993,7 @@ final class TypedScopeCreator implements ScopeCreator {
+         data.get(t.getScopeRoot()).recordNonEmptyReturn();
+       }
+ 
+-      if (t.getScopeDepth() <= 2) {
++      if (t.getScopeDepth() <= 1) {
+         // The first-order function analyzer looks at two types of variables:
+         //
+         // 1) Local variables that are assigned in inner scopes ("escaped vars")
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue726() throws Exception {
+    testTypes(
+        "/** @constructor */ function Foo() {}" +
+        "/** @param {number} x */ Foo.prototype.bar = function(x) {};" +
+        "/** @return {!Function} */ " +
+        "Foo.prototype.getDeferredBar = function() { " +
+        "  var self = this;" +
+        "  return function() {" +
+        "    self.bar(true);" +
+        "  };" +
+        "};",
+        "actual parameter 1 of Foo.prototype.bar does not match formal parameter\n" +
+        "found   : boolean\n" +
+        "required: number");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

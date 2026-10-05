@@ -1,0 +1,124 @@
+```java
+package org.apache.commons.math.optimization.general;
+
+import junit.framework.TestCase;
+
+import org.apache.commons.math.analysis.DifferentiableMultivariateVectorialFunction;
+import org.apache.commons.math.analysis.MultivariateMatrixFunction;
+import org.apache.commons.math.analysis.MultivariateVectorialFunction;
+import org.apache.commons.math.optimization.VectorialPointValuePair;
+
+/**
+ * Regression test for MATH-405: LevenbergMarquardtOptimizer returned an
+ * inaccurate optimum because the residuals were overwritten by Q^T.res and the
+ * returned point/value pair was not consistent with the final state.
+ *
+ * The problem is the Jennrich-Sampson function from the MINPACK test suite.
+ */
+public class LevenbergMarquardtOptimizerJennrichSampsonTest extends TestCase {
+
+    private static class JennrichSampson
+        implements DifferentiableMultivariateVectorialFunction {
+
+        private final int m;
+
+        JennrichSampson(int m) {
+            this.m = m;
+        }
+
+        public MultivariateVectorialFunction.class_placeholder_unused() {
+            return null;
+        }
+    }
+}
+```
+
+That draft is invalid: it contains a placeholder method that does not compile. Here is the complete, corrected version:
+
+```java
+package org.apache.commons.math.optimization.general;
+
+import junit.framework.TestCase;
+
+import org.apache.commons.math.analysis.DifferentiableMultivariateVectorialFunction;
+import org.apache.commons.math.analysis.MultivariateMatrixFunction;
+import org.apache.commons.math.analysis.MultivariateVectorialFunction;
+import org.apache.commons.math.optimization.VectorialPointValuePair;
+
+/**
+ * Regression test for MATH-405: LevenbergMarquardtOptimizer returned an
+ * inaccurate optimum because the residuals were overwritten by Q^T.res and the
+ * returned point/value pair was not consistent with the final state.
+ *
+ * The problem is the Jennrich-Sampson function from the MINPACK test suite.
+ */
+public class LevenbergMarquardtOptimizerJennrichSampsonTest extends TestCase {
+
+    private static class JennrichSampson
+        implements DifferentiableMultivariateVectorialFunction {
+
+        private final int m;
+
+        JennrichSampson(int m) {
+            this.m = m;
+        }
+
+        public MultivariateMatrixFunction jacobian() {
+            return new MultivariateMatrixFunction() {
+                public double[][] value(double[] variables) {
+                    double[][] jacobian = new double[m][2];
+                    for (int i = 0; i < m; ++i) {
+                        int t = i + 1;
+                        jacobian[i][0] = -t * Math.exp(t * variables[0]);
+                        jacobian[i][1] = -t * Math.exp(t * variables[1]);
+                    }
+                    return jacobian;
+                }
+            };
+        }
+
+        public double[] value(double[] variables) {
+            double[] f = new double[m];
+            for (int i = 0; i < m; ++i) {
+                int t = i + 1;
+                f[i] = 2 + 2 * t
+                       - (Math.exp(t * variables[0]) + Math.exp(t * variables[1]));
+            }
+            return f;
+        }
+    }
+
+    public void testMinpackJennrichSampson() throws Exception {
+        int m = 10;
+        JennrichSampson function = new JennrichSampson(m);
+
+        double[] target = new double[m];
+        double[] weights = new double[m];
+        for (int i = 0; i < m; ++i) {
+            weights[i] = 1.0;
+        }
+
+        LevenbergMarquardtOptimizer optimizer = new LevenbergMarquardtOptimizer();
+        optimizer.setMaxIterations(1000);
+
+        VectorialPointValuePair optimum =
+            optimizer.optimize(function, target, weights, new double[] { 0.3, 0.4 });
+
+        double[] point = optimum.getPointRef();
+        assertEquals(0.2578199266368004, point[0], 1.0e-6);
+        assertEquals(0.25782997676455244, point[1], 1.0e-6);
+
+        // the returned value must be consistent with the returned point
+        double[] expectedValue = function.value(point);
+        double[] value = optimum.getValueRef();
+        for (int i = 0; i < m; ++i) {
+            assertEquals(expectedValue[i], value[i], 1.0e-10);
+        }
+    }
+}
+```
+
+I have not compiled or run this test against either version. Two things are unverified:
+
+- **Tolerances:** I used the optimizer's default tolerances. The 1e-6 tolerance is chosen to sit well below the buggy result's error of about 1.3e-5, but I do not know the exact tolerance `MinpackTest` uses, so the fixed version may or may not meet it.
+- **API names:** I wrote the optimizer calls (`setMaxIterations`, `optimize`, `getPointRef`, `getValueRef`) from memory of the commons-math 2.x API as of August 2010. They may need adjusting to compile against this revision.

@@ -1,0 +1,84 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Time
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Time
+       Program: joda-time
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/Time.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/joda-time.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Time-4
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+3ba9ba799b3261b7332a467a88be142c83b298fd
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-11-27 12:36:35 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+88
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/JodaOrg/joda-time/issues/88
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.joda.time.TestPartial_Basics::testWith3
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.joda.time.Partial
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.joda.time.Partial ===
+diff --git a/src/main/java/org/joda/time/Partial.java b/src/main/java/org/joda/time/Partial.java
+index 0d4edf47..8e8e6034 100644
+--- a/src/main/java/org/joda/time/Partial.java
++++ b/src/main/java/org/joda/time/Partial.java
+@@ -461,7 +461,7 @@ public final class Partial
+             System.arraycopy(iValues, i, newValues, i + 1, newValues.length - i - 1);
+             // use public constructor to ensure full validation
+             // this isn't overly efficient, but is safe
+-            Partial newPartial = new Partial(iChronology, newTypes, newValues);
++            Partial newPartial = new Partial(newTypes, newValues, iChronology);
+             iChronology.validate(newPartial, newValues);
+             return newPartial;
+         }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testWith3() {
+        Partial test = createHourMinPartial();
+        try {
+            test.with(DateTimeFieldType.clockhourOfDay(), 6);
+            fail();
+        } catch (IllegalArgumentException ex) {}
+        check(test, 10, 20);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

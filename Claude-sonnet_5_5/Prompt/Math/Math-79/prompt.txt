@@ -1,0 +1,94 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-79
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+ef9b639afc3dd8d1c35eab23cc9cb6b3a6a2c858
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-11-27 21:45:38 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-305
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-305
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.stat.clustering.KMeansPlusPlusClustererTest::testPerformClusterAnalysisDegenerate
+   --> java.lang.NullPointerException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.util.MathUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.util.MathUtils ===
+diff --git a/src/main/java/org/apache/commons/math/util/MathUtils.java b/src/main/java/org/apache/commons/math/util/MathUtils.java
+index 46368dc9f..ad77a56eb 100644
+--- a/src/main/java/org/apache/commons/math/util/MathUtils.java
++++ b/src/main/java/org/apache/commons/math/util/MathUtils.java
+@@ -1621,9 +1621,9 @@ public final class MathUtils {
+      * @return the L<sub>2</sub> distance between the two points
+      */
+     public static double distance(int[] p1, int[] p2) {
+-      int sum = 0;
++      double sum = 0;
+       for (int i = 0; i < p1.length; i++) {
+-          final int dp = p1[i] - p2[i];
++          final double dp = p1[i] - p2[i];
+           sum += dp * dp;
+       }
+       return Math.sqrt(sum);
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testPerformClusterAnalysisDegenerate() {
+        KMeansPlusPlusClusterer<EuclideanIntegerPoint> transformer = new KMeansPlusPlusClusterer<EuclideanIntegerPoint>(
+                new Random(1746432956321l));
+        EuclideanIntegerPoint[] points = new EuclideanIntegerPoint[] {
+                new EuclideanIntegerPoint(new int[] { 1959, 325100 }),
+                new EuclideanIntegerPoint(new int[] { 1960, 373200 }), };
+        List<Cluster<EuclideanIntegerPoint>> clusters = transformer.cluster(Arrays.asList(points), 1, 1);
+        assertEquals(1, clusters.size());
+        assertEquals(2, (clusters.get(0).getPoints().size()));
+        EuclideanIntegerPoint pt1 = new EuclideanIntegerPoint(new int[] { 1959, 325100 });
+        EuclideanIntegerPoint pt2 = new EuclideanIntegerPoint(new int[] { 1960, 373200 });
+        assertTrue(clusters.get(0).getPoints().contains(pt1));
+        assertTrue(clusters.get(0).getPoints().contains(pt2));
+
+    } 
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,59 @@
+The test below reproduces the Sao Paulo overlap scenario from the triggering test. I have not compiled or run it against either version. It is written to fail on the buggy `adjustOffset` and pass on the fixed one.
+
+The Sao Paulo DST ended on 2012-02-26 at 00:00 local time, when clocks went back to 23:00 on 02-25. That makes 23:15 occur twice on 25 February: first at -02:00, then at -03:00. The test checks these cases:
+
+- 22:15 is outside the overlap, so both `withEarlierOffsetAtOverlap()` and `withLaterOffsetAtOverlap()` should return the same instance.
+- The first 23:15 (-02:00) should stay itself for the earlier offset and move to the second 23:15 (-03:00) for the later offset.
+- The second 23:15 should stay itself for the later offset and move back to the first 23:15 for the earlier offset.
+- Both offsets and instants are asserted, including the expected local-time strings.
+
+The test uses JUnit 3 style (`TestCase`), matching the project's existing tests.
+
+```java
+package org.joda.time;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+/**
+ * Regression test for adjustOffset overlap handling (Time-17).
+ */
+public class TestDateTimeZoneAdjustOffsetRegression extends TestCase {
+
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
+
+    public static TestSuite suite() {
+        return new TestSuite(TestDateTimeZoneAdjustOffsetRegression.class);
+    }
+
+    public TestDateTimeZoneAdjustOffsetRegression(String name) {
+        super(name);
+    }
+
+    public void testBug3476684_adjustOffset() {
+        final DateTimeZone zone = DateTimeZone.forID("America/Sao_Paulo");
+        DateTime base = new DateTime(2012, 2, 25, 22, 15, zone);
+        DateTime baseBefore = base.plusHours(1);  // 23:15 (first)
+        DateTime baseAfter = base.plusHours(2);  // 23:15 (second)
+
+        assertSame(base, base.withEarlierOffsetAtOverlap());
+        assertSame(base, base.withLaterOffsetAtOverlap());
+
+        assertSame(baseBefore, baseBefore.withEarlierOffsetAtOverlap());
+        assertEquals(baseAfter, baseBefore.withLaterOffsetAtOverlap());
+
+        assertSame(baseAfter, baseAfter.withLaterOffsetAtOverlap());
+        assertEquals(baseBefore, baseAfter.withEarlierOffsetAtOverlap());
+
+        // explicit offset checks
+        assertEquals("2012-02-25T23:15:00.000-02:00", baseBefore.toString());
+        assertEquals("2012-02-25T23:15:00.000-03:00", baseAfter.toString());
+        assertEquals("2012-02-25T23:15:00.000-03:00",
+                baseBefore.withLaterOffsetAtOverlap().toString());
+        assertEquals("2012-02-25T23:15:00.000-02:00",
+                baseAfter.withEarlierOffsetAtOverlap().toString());
+    }
+}
+```

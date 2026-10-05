@@ -1,0 +1,117 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-108
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+e797b2271ab9a00b99694a963728f3835f31d1cf
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2019-01-23 22:46:03 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+2211
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/2211
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.node.EmptyContentAsTreeTest::testNullFromEOFWithParserAndReader
+   --> junit.framework.AssertionFailedError: Should get `null` for reads with `JsonParser`, instead got: com.fasterxml.jackson.databind.node.MissingNode
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.ObjectReader
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.ObjectReader ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/ObjectReader.java b/src/main/java/com/fasterxml/jackson/databind/ObjectReader.java
+index ae5f43175..71d11c83f 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/ObjectReader.java
++++ b/src/main/java/com/fasterxml/jackson/databind/ObjectReader.java
+@@ -1166,7 +1166,7 @@ public class ObjectReader
+     @SuppressWarnings("unchecked")
+     @Override
+     public <T extends TreeNode> T readTree(JsonParser p) throws IOException {
+-        return (T) _bindAsTree(p);
++        return (T) _bindAsTreeOrNull(p);
+     }
+ 
+     @Override
+@@ -1704,6 +1704,36 @@ public class ObjectReader
+      * Same as {@link #_bindAsTree} except end-of-input is reported by returning
+      * {@code null}, not "missing node"
+      */
++    protected final JsonNode _bindAsTreeOrNull(JsonParser p) throws IOException
++    {
++        _config.initialize(p);
++        if (_schema != null) {
++            p.setSchema(_schema);
++        }
++        JsonToken t = p.getCurrentToken();
++        if (t == null) {
++            t = p.nextToken();
++            if (t == null) {
++                return null;
++            }
++        }
++        final JsonNode resultNode;
++        if (t == JsonToken.VALUE_NULL) {
++            resultNode = _config.getNodeFactory().nullNode();
++        } else {
++            final DeserializationContext ctxt = createDeserializationContext(p);
++            final JsonDeserializer<Object> deser = _findTreeDeserializer(ctxt);
++            if (_unwrapRoot) {
++                resultNode = (JsonNode) _unwrapAndDeserialize(p, ctxt, JSON_NODE_TYPE, deser);
++            } else {
++                resultNode = (JsonNode) deser.deserialize(p, ctxt);
++                if (_config.isEnabled(DeserializationFeature.FAIL_ON_TRAILING_TOKENS)) {
++                    _verifyNoTrailingTokens(p, ctxt, JSON_NODE_TYPE);
++                }
++            }
++        }
++        return resultNode;
++    }
+     
+     /**
+      * @since 2.1
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testNullFromEOFWithParserAndReader() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

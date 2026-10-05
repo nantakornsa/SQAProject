@@ -1,0 +1,30 @@
+```java
+package org.apache.commons.collections;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for COLLECTIONS-271: ExtendedProperties.combine() does not properly
+ * register combined properties for subset() queries.
+ */
+public class ExtendedPropertiesCombineTest extends TestCase {
+
+    public ExtendedPropertiesCombineTest(String name) {
+        super(name);
+    }
+
+    public void testCombineSubset() {
+        ExtendedProperties props1 = new ExtendedProperties();
+        props1.setProperty("sub.test", "foo");
+
+        ExtendedProperties props2 = new ExtendedProperties();
+        props2.combine(props1);
+
+        assertEquals("foo", props2.getProperty("sub.test"));
+
+        ExtendedProperties subs = props2.subset("sub");
+        assertNotNull(subs);
+        assertEquals("foo", subs.getProperty("test"));
+    }
+}
+```

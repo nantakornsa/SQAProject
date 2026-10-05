@@ -1,0 +1,99 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-17
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+33ab4df84afbdb36216b8a1ea3a526c438615e26
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-07-09 16:00:23 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+688
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-688.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.TypeCheckTest::testIssue688
+   --> junit.framework.ComparisonFailure: expected:<in[consistent return type
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.TypedScopeCreator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.TypedScopeCreator ===
+diff --git a/src/com/google/javascript/jscomp/TypedScopeCreator.java b/src/com/google/javascript/jscomp/TypedScopeCreator.java
+index efaba2cc8..8bc7bdadd 100644
+--- a/src/com/google/javascript/jscomp/TypedScopeCreator.java
++++ b/src/com/google/javascript/jscomp/TypedScopeCreator.java
+@@ -1288,8 +1288,12 @@ final class TypedScopeCreator implements ScopeCreator {
+           if (info.isConstant()) {
+             JSType knownType = null;
+             if (rValue != null) {
+-              if (rValue.getJSType() != null && !rValue.getJSType().isUnknownType()) {
++              JSDocInfo rValueInfo = rValue.getJSDocInfo();
++              if (rValueInfo != null && rValueInfo.hasType()) {
+                 // If rValue has a type-cast, we use the type in the type-cast.
++                return rValueInfo.getType().evaluate(scope, typeRegistry);
++              } else if (rValue.getJSType() != null
++                  && !rValue.getJSType().isUnknownType()) {
+                 // If rValue's type was already computed during scope creation,
+                 // then we can safely use that.
+                 return rValue.getJSType();
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue688() throws Exception {
+    testTypes(
+        "/** @const */ var SOME_DEFAULT =\n" +
+        "    /** @type {TwoNumbers} */ ({first: 1, second: 2});\n" +
+        "/**\n" +
+        "* Class defining an interface with two numbers.\n" +
+        "* @interface\n" +
+        "*/\n" +
+        "function TwoNumbers() {}\n" +
+        "/** @type number */\n" +
+        "TwoNumbers.prototype.first;\n" +
+        "/** @type number */\n" +
+        "TwoNumbers.prototype.second;\n" +
+        "/** @return {number} */ function f() { return SOME_DEFAULT; }",
+        "inconsistent return type\n" +
+        "found   : (TwoNumbers|null)\n" +
+        "required: number");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

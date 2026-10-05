@@ -1,0 +1,18 @@
+```java
+package org.mockito.internal.util;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+public class PrimitivesDoubleDefaultValueTest {
+
+    @Test
+    public void should_return_double_default_value() {
+        Double value = Primitives.primitiveValueOf(double.class);
+        assertTrue("Value should be an instance of Double", value instanceof Double);
+        assertEquals(0.0D, value, 0.00001);
+    }
+}
+```

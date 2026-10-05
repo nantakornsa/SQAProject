@@ -1,0 +1,50 @@
+package org.apache.commons.codec.binary;
+
+import java.io.ByteArrayInputStream;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for CODEC-101: Base64InputStream.read(byte[], int, int) must not
+ * return 0 when the underlying stream still has data that just hasn't produced
+ * any decoded output yet.
+ */
+public class Base64InputStreamCodec101RegressionTest extends TestCase {
+
+    /**
+     * Input stream that hands out only one byte per bulk read, so the first
+     * chunk seen by the decoder is too short to yield any decoded bytes.
+     */
+    private static class OneByteAtATimeInputStream extends ByteArrayInputStream {
+        OneByteAtATimeInputStream(byte[] data) {
+            super(data);
+        }
+
+        public synchronized int read(byte[] b, int off, int len) {
+            if (len > 1) {
+                len = 1;
+            }
+            return super.read(b, off, len);
+        }
+    }
+
+    public void testReadDoesNotReturnZeroBeforeEndOfStream() throws Exception {
+        // "QUJDREVG" is the Base64 encoding of "ABCDEF"
+        byte[] encoded = "QUJDREVG".getBytes("UTF-8");
+        Base64InputStream in = new Base64InputStream(new OneByteAtATimeInputStream(encoded));
+
+        byte[] result = new byte[8192];
+        int c = in.read(result);
+        assertTrue("Codec101: First read successful [c=" + c + "]", c > 0);
+
+        int total = c;
+        while (c > 0) {
+            c = in.read(result, total, result.length - total);
+            if (c > 0) {
+                total += c;
+            }
+        }
+        assertTrue("Codec101: Final read should report end-of-stream [c=" + c + "]", c < 0);
+        assertEquals("ABCDEF", new String(result, 0, total, "UTF-8"));
+    }
+}

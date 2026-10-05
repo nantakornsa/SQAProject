@@ -1,0 +1,28 @@
+```java
+package org.apache.commons.compress.archivers.zip;
+
+import org.junit.Test;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.zip.ZipException;
+
+import static org.junit.Assert.fail;
+
+public class ZipArchiveInputStreamInvalidEntryTest {
+
+    @Test
+    public void testThrowOnInvalidEntry() throws Exception {
+        final InputStream is = new ByteArrayInputStream(new byte[100]);
+        final ZipArchiveInputStream in = new ZipArchiveInputStream(is);
+        try {
+            in.getNextZipEntry();
+            fail("IOException expected");
+        } catch (final ZipException expected) {
+            // expected
+        } finally {
+            in.close();
+        }
+    }
+}
+```

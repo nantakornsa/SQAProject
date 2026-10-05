@@ -1,0 +1,28 @@
+```java
+package org.jsoup.parser;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.junit.Test;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+
+import static org.junit.Assert.assertEquals;
+
+public class FallbackCharsetTest {
+
+    @Test
+    public void fallbackToUtfIfCantEncode() throws IOException {
+        // ISO-2022-CN can be decoded but cannot be encoded in Java.
+        // When parsing input with an unencodable charset, Jsoup should fall back to UTF-8
+        String in = "<html><head><meta charset=\"ISO-2022-CN\"/></head><body>One</body></html>";
+        Document doc = Jsoup.parse(new ByteArrayInputStream(in.getBytes(StandardCharsets.UTF_8)), null, "http://example.com");
+
+        assertEquals("UTF-8", doc.charset().name());
+        assertEquals("One", doc.text());
+        assertEquals("UTF-8", doc.selectFirst("meta[charset]").attr("charset"));
+    }
+}
+```

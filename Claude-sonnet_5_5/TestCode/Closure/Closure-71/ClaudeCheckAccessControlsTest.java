@@ -1,0 +1,33 @@
+package com.google.javascript.jscomp;
+
+public class ClaudeCheckAccessControlsTest extends CompilerTestCase {
+
+  public ClaudeCheckAccessControlsTest() {
+    super(CompilerTypeTestCase.DEFAULT_EXTERNS);
+    parseTypeInfo = true;
+    enableTypeCheck(CheckLevel.WARNING);
+  }
+
+  @Override
+  protected CompilerPass getProcessor(final Compiler compiler) {
+    return new CheckAccessControls(compiler);
+  }
+
+  @Override
+  protected int getNumRepetitions() {
+    // Run the pass only once.
+    return 1;
+  }
+
+  public void testNoPrivateAccessForProperties6() {
+    // Overriding a private property with a non-private property
+    // in a different file causes problems.
+    test(new String[] {
+      "/** @constructor */ function Foo() {} " +
+      "/** @private */ Foo.prototype.bar_ = function() {};",
+      "/** @constructor \n * @extends {Foo} */ " +
+      "function SubFoo() {};" +
+      "SubFoo.prototype.bar_ = function() {};"
+    }, null, CheckAccessControls.BAD_PRIVATE_PROPERTY_ACCESS);
+  }
+}

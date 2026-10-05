@@ -1,0 +1,53 @@
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.jscomp.CompilerOptions;
+import com.google.javascript.jscomp.Compiler;
+import com.google.javascript.jscomp.WarningLevel;
+
+/**
+ * Regression test for Closure issue 586: a function assigned to an
+ * instance property (this.fn = function() {}) must not override the
+ * declared type of the prototype property.
+ */
+public class TypedScopeCreatorIssue586Test extends CompilerTypeTestCase {
+
+  public void testIssue586() throws Exception {
+    String js =
+        "/** @constructor */" +
+        "var MyClass = function() {};" +
+        "/** @param {boolean} success */" +
+        "MyClass.prototype.fn = function(success) {};" +
+        "MyClass.prototype.test = function() {" +
+        "  this.fn();" +
+        "  this.fn = function() {};" +
+        "};";
+
+    Compiler c = new Compiler();
+    CompilerOptions options = new CompilerOptions();
+    options.checkTypes = true;
+    WarningLevel.VERBOSE.setOptionsForWarningLevel(options);
+
+    c.compile(
+        java.util.Collections.singletonList(
+            JSSourceFile.fromCode("externs", DEFAULT_EXTERNS)),
+        java.util.Collections.singletonList(
+            JSSourceFile.fromCode("testcode", js)),
+        options);
+
+    String expected =
+        "Function MyClass.prototype.fn: called with 0 argument(s). " +
+        "Function requires at least 1 argument(s) " +
+        "and no more than 1 argument(s).";
+
+    JSError[] warnings = c.getWarnings();
+    boolean found = false;
+    for (JSError w : warnings) {
+      if (w.description.equals(expected)) {
+        found = true;
+      }
+    }
+    assertTrue("expected a warning: " + expected, found);
+  }
+}
+```

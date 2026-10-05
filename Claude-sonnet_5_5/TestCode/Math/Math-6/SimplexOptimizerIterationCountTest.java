@@ -1,0 +1,42 @@
+package org.apache.commons.math3.optim.nonlinear.scalar.noderiv;
+
+import org.apache.commons.math3.analysis.MultivariateFunction;
+import org.apache.commons.math3.optim.InitialGuess;
+import org.apache.commons.math3.optim.MaxEval;
+import org.apache.commons.math3.optim.PointValuePair;
+import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
+import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
+import org.junit.Assert;
+import org.junit.Test;
+
+/**
+ * Regression test for MATH-949: the optimizers must update the iteration
+ * counter provided by the base class.
+ */
+public class SimplexOptimizerIterationCountTest {
+
+    @Test
+    public void testGetIterationsIsUpdated() {
+        SimplexOptimizer optimizer = new SimplexOptimizer(1e-10, 1e-30);
+
+        MultivariateFunction function = new MultivariateFunction() {
+            public double value(double[] x) {
+                final double a = x[0] - 1;
+                final double b = x[1] - 2;
+                return a * a + b * b;
+            }
+        };
+
+        PointValuePair optimum =
+            optimizer.optimize(new MaxEval(1000),
+                               new ObjectiveFunction(function),
+                               GoalType.MINIMIZE,
+                               new InitialGuess(new double[] { 5, -3 }),
+                               new NelderMeadSimplex(new double[] { 0.2, 0.2 }));
+
+        Assert.assertEquals(1, optimum.getPoint()[0], 1e-4);
+        Assert.assertEquals(2, optimum.getPoint()[1], 1e-4);
+        Assert.assertTrue("Iteration count should be positive",
+                          optimizer.getIterations() > 0);
+    }
+}

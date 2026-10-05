@@ -1,0 +1,57 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791118599-BxF6FHkIwLdkNN6uutXg","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Compress-9 bug**\n\nI'm currently digging into a bug in `TarArchiveOutputStream` concerning `getBytesWritten()` and `getCount()`. It appears `getBytesWritten()` might be incorrectly inheriting its `bytesWritten` count from `ArchiveOutputStream`, which isn't being updated as expected through `count(...)` calls.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.apache.commons.compress.archivers.tar;\n\nimport java"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".io.ByteArrayOutputStream;\nimport java.io.File;\nimport java.io.FileInputStream;\nimport java.io"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".FileOutputStream;\n\nimport junit.framework.TestCase;\nimport org.apache.commons.compress.archivers."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ArchiveOutputStream;\nimport org.apache.commons.compress.archivers.ArchiveStreamFactory;\n\npublic class TarArchiveOutputStreamBytes"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"WrittenTest extends TestCase {\n\n    public void testBytesWrittenMatchesTotalOutputLength() throws Exception {\n        ByteArrayOutputStream bos = new ByteArray"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"OutputStream();\n        TarArchiveOutputStream tarOut = new TarArchiveOutputStream(bos);\n\n        TarArchiveEntry entry ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" new TarArchiveEntry(\"test.txt\");\n        byte[] content = \"Hello, world!\".getBytes(\"UTF-8\");\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"entry.setSize(content.length);\n\n        tarOut.putArchiveEntry(entry);\n        tarOut."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"write(content);\n        tarOut.closeArchiveEntry();\n        tarOut.close();\n\n        byte[] archive"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Bytes = bos.toByteArray();\n        assertEquals(archiveBytes.length, tarOut.getBytesWritten());\n        assertEquals"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(archiveBytes.length, tarOut.getCount());\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1256,"output_tokens":526,"output_tokens_details":{"thinking_tokens":257},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.0029145,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0029145,"upstream_inference_prompt_cost":0.000942,"upstream_inference_completions_cost":0.0019725}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,25 @@
+package org.apache.commons.lang3;
+
+import junit.framework.TestCase;
+
+public class StringUtilsContainsAnySupplementaryCharsTest extends TestCase {
+
+    private static final String CharU20000 = "\uD840\uDC00";
+    private static final String CharU20001 = "\uD840\uDC01";
+
+    public void testContainsAnyCharArrayWithSupplementaryChars() {
+        assertTrue(StringUtils.containsAny(CharU20000 + CharU20001, CharU20000.toCharArray()));
+        assertTrue(StringUtils.containsAny(CharU20000 + CharU20001, CharU20001.toCharArray()));
+        assertTrue(StringUtils.containsAny(CharU20000, CharU20000.toCharArray()));
+        assertFalse(StringUtils.containsAny(CharU20000, CharU20001.toCharArray()));
+        assertFalse(StringUtils.containsAny(CharU20001, CharU20000.toCharArray()));
+    }
+
+    public void testContainsAnyStringWithSupplementaryChars() {
+        assertTrue(StringUtils.containsAny(CharU20000 + CharU20001, CharU20000));
+        assertTrue(StringUtils.containsAny(CharU20000 + CharU20001, CharU20001));
+        assertTrue(StringUtils.containsAny(CharU20000, CharU20000));
+        assertFalse(StringUtils.containsAny(CharU20000, CharU20001));
+        assertFalse(StringUtils.containsAny(CharU20001, CharU20000));
+    }
+}

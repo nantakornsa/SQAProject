@@ -1,0 +1,133 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-12
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+27bcbcc728434ffb2c45e81c0e75e6a3d6da3441
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-06-09 14:58:34 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-805
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-805
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang3.RandomStringUtilsTest::testExceptions
+   --> java.lang.ArrayIndexOutOfBoundsException: 1171399597
+ - org.apache.commons.lang3.RandomStringUtilsTest::testLANG805
+   --> java.lang.ArrayIndexOutOfBoundsException: 1859709389
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang3.RandomStringUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang3.RandomStringUtils ===
+diff --git a/src/main/java/org/apache/commons/lang3/RandomStringUtils.java b/src/main/java/org/apache/commons/lang3/RandomStringUtils.java
+index b200223d0..a79905754 100644
+--- a/src/main/java/org/apache/commons/lang3/RandomStringUtils.java
++++ b/src/main/java/org/apache/commons/lang3/RandomStringUtils.java
+@@ -227,14 +227,21 @@ public class RandomStringUtils {
+         } else if (count < 0) {
+             throw new IllegalArgumentException("Requested random string length " + count + " is less than 0.");
+         }
++        if (chars != null && chars.length == 0) {
++            throw new IllegalArgumentException("The chars array must not be empty");
++        }
+ 
+         if (start == 0 && end == 0) {
++            if (chars != null) {
++                end = chars.length;
++            } else {
+                 if (!letters && !numbers) {
+                     end = Integer.MAX_VALUE;
+                 } else {
+                     end = 'z' + 1;
+                     start = ' ';                
+                 }
++            }
+         }
+ 
+         char[] buffer = new char[count];
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testExceptions() {
+        final char[] DUMMY = new char[]{'a'}; // valid char array
+        try {
+            RandomStringUtils.random(-1);
+            fail();
+        } catch (IllegalArgumentException ex) {}
+        try {
+            RandomStringUtils.random(-1, true, true);
+            fail();
+        } catch (IllegalArgumentException ex) {}
+        try {
+            RandomStringUtils.random(-1, DUMMY);
+            fail();
+        } catch (IllegalArgumentException ex) {}
+        try {
+            RandomStringUtils.random(1, new char[0]); // must not provide empty array => IAE
+            fail();
+        } catch (IllegalArgumentException ex) {}
+        try {
+            RandomStringUtils.random(-1, "");
+            fail();
+        } catch (IllegalArgumentException ex) {}
+        try {
+            RandomStringUtils.random(-1, (String)null);
+            fail();
+        } catch (IllegalArgumentException ex) {}
+        try {
+            RandomStringUtils.random(-1, 'a', 'z', false, false);
+            fail();
+        } catch (IllegalArgumentException ex) {}
+        try {
+            RandomStringUtils.random(-1, 'a', 'z', false, false, DUMMY);
+            fail();
+        } catch (IllegalArgumentException ex) {}
+        try {
+            RandomStringUtils.random(-1, 'a', 'z', false, false, DUMMY, new Random());
+            fail();
+        } catch (IllegalArgumentException ex) {}
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

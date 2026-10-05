@@ -1,0 +1,133 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Mockito
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Mockito
+       Program: mockito
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/Mockito.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/mockito.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/active-bugs.csv
+Number of bugs: 38
+--------------------------------------------------------------------------------
+
+Summary for Bug: Mockito-20
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+7616cd17d5e1dc7c3dee080c6969183821d4797a
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-02-16 00:10:52 +0100
+--------------------------------------------------------------------------------
+Bug report id:
+92
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/mockito/mockito/issues/92
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.mockitousage.annotation.SpyAnnotationTest::should_spy_inner_class
+   --> junit.framework.ComparisonFailure: expected:<[inner] strength> but was:<[null] strength>
+ - org.mockitousage.annotation.SpyAnnotationTest::should_report_when_constructor_is_explosive
+   --> junit.framework.AssertionFailedError
+ - org.mockitousage.constructor.CreatingMocksWithConstructorTest::can_spy_abstract_classes
+   --> junit.framework.ComparisonFailure: expected:<hey!> but was:<null>
+ - org.mockitousage.constructor.CreatingMocksWithConstructorTest::exception_message_when_constructor_not_found
+   --> junit.framework.AssertionFailedError
+ - org.mockitousage.constructor.CreatingMocksWithConstructorTest::can_create_mock_with_constructor
+   --> junit.framework.ComparisonFailure: expected:<hey!> but was:<null>
+ - org.mockitousage.constructor.CreatingMocksWithConstructorTest::can_mock_inner_classes
+   --> junit.framework.ComparisonFailure: expected:<hey!> but was:<null>
+ - org.mockitousage.constructor.CreatingMocksWithConstructorTest::mocking_inner_classes_with_wrong_outer_instance
+   --> junit.framework.AssertionFailedError
+ - org.mockitousage.constructor.CreatingMocksWithConstructorTest::can_mock_abstract_classes
+   --> junit.framework.ComparisonFailure: expected:<hey!> but was:<null>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.mockito.internal.creation.bytebuddy.ByteBuddyMockMaker
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.mockito.internal.creation.bytebuddy.ByteBuddyMockMaker ===
+diff --git a/src/org/mockito/internal/creation/bytebuddy/ByteBuddyMockMaker.java b/src/org/mockito/internal/creation/bytebuddy/ByteBuddyMockMaker.java
+index 9dc44e663..d5f77b64f 100644
+--- a/src/org/mockito/internal/creation/bytebuddy/ByteBuddyMockMaker.java
++++ b/src/org/mockito/internal/creation/bytebuddy/ByteBuddyMockMaker.java
+@@ -29,9 +29,10 @@ public class ByteBuddyMockMaker implements MockMaker {
+                 settings.getTypeToMock(),
+                 settings.getExtraInterfaces()
+         );
++        Instantiator instantiator = new InstantiatorProvider().getInstantiator(settings);
+         T mockInstance = null;
+         try {
+-            mockInstance = classInstantiator.instantiate(mockedProxyType);
++            mockInstance = instantiator.newInstance(mockedProxyType);
+             MockMethodInterceptor.MockAccess mockAccess = (MockMethodInterceptor.MockAccess) mockInstance;
+             mockAccess.setMockitoInterceptor(new MockMethodInterceptor(asInternalMockHandler(handler), settings));
+ 
+@@ -42,7 +43,7 @@ public class ByteBuddyMockMaker implements MockMaker {
+                     "  class to mock : " + describeClass(mockedProxyType),
+                     "  created class : " + describeClass(settings.getTypeToMock()),
+                     "  proxy instance class : " + describeClass(mockInstance),
+-                    "  instance creation by : " + classInstantiator.getClass().getSimpleName(),
++                    "  instance creation by : " + instantiator.getClass().getSimpleName(),
+                     "",
+                     "You might experience classloading issues, please ask the mockito mailing-list.",
+                     ""
+
+
+=== TRIGGERING TEST METHOD ===
+    public void should_spy_inner_class() throws Exception {
+    	 
+     class WithMockAndSpy {
+    		@Spy private InnerStrength strength;
+    		@Mock private List<String> list;
+
+            abstract class InnerStrength {
+            	private final String name;
+
+            	InnerStrength() {
+            		// Make sure that @Mock fields are always injected before @Spy fields.
+            		assertNotNull(list);
+            		// Make sure constructor is indeed called.
+            		this.name = "inner";
+            	}
+            	
+            	abstract String strength();
+            	
+            	String fullStrength() {
+            		return name + " " + strength();
+            	}
+            }
+    	}
+		WithMockAndSpy outer = new WithMockAndSpy();
+        MockitoAnnotations.initMocks(outer);
+        when(outer.strength.strength()).thenReturn("strength");
+        assertEquals("inner strength", outer.strength.fullStrength());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

@@ -1,0 +1,57 @@
+The code below is a standalone test class, not run against either version. I could not see the project's existing `CrossModuleMethodMotionTest`. I reconstructed the test setup from memory, so two parts may need adjusting to match your tree:
+
+- **`IdGenerator`:** the exact type and constructor signature of `CrossModuleMethodMotion`'s ID generator is my best recollection (`CrossModuleMethodMotion.IdGenerator` with `generateNextId()`).
+- **`EXTERNS`:** this constant is my reconstruction of the original externs string.
+
+The test reproduces the issue 600 case from `testIssue600b`. `size` is defined on `jQuery2.prototype`, but `jQuery2` is local to a function scope rather than global. On the buggy version, `CrossModuleMethodMotion` moves that method into the later module and leaves a stub behind, so `testSame` fails. The fix skips any property whose root var is not global, so the fixed version leaves the code unchanged and passes.
+
+```java
+package com.google.javascript.jscomp;
+
+/**
+ * Tests for {@link CrossModuleMethodMotion}.
+ */
+public class CrossModuleMethodMotionTest extends CompilerTestCase {
+
+  private static final String EXTERNS =
+      "IFoo.prototype.bar; var mExtern; mExtern.bExtern; mExtern['cExtern'];";
+
+  public CrossModuleMethodMotionTest() {
+    super(EXTERNS);
+  }
+
+  @Override
+  public CompilerPass getProcessor(Compiler compiler) {
+    return new CrossModuleMethodMotion(
+        compiler,
+        new CrossModuleMethodMotion.IdGenerator() {
+          private int counter = 0;
+
+          @Override
+          public String generateNextId() {
+            return "" + (counter++);
+          }
+        },
+        false);
+  }
+
+  public void testIssue600b() {
+    testSame(
+        createModuleChain(
+            "var jQuery1 = (function() {\n" +
+            "  var jQuery2 = function() {};\n" +
+            "  jQuery2.prototype = {\n" +
+            "    size: function() {\n" +
+            "      return 1;\n" +
+            "    }\n" +
+            "  };\n" +
+            "  return jQuery2;\n" +
+            "})();\n",
+
+            "(function() {" +
+            "  var div = jQuery1('div');" +
+            "  div.size();" +
+            "})();"));
+  }
+}
+```

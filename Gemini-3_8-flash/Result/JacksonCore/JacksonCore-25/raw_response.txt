@@ -1,0 +1,60 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791106833-AwtATWgklaKTHuOtNCOa","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Parser Exception**\n\nI'm currently pinpointing the root cause of an `ArrayIndexOutOfBoundsException` occurring in the `ReaderBasedJsonParser` when encountering unquoted names. The exception appears to be triggered by specific character codes at the boundary of internal arrays.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.core.read;\n\nimport com.fasterxml.jackson.core."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"JsonFactory;\nimport com.fasterxml.jackson.core.JsonParser;\nimport com.fasterxml.jackson."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"core.JsonToken;\nimport com.fasterxml.jackson.core.BaseTest;\n\npublic class NonStandardUnquotedNamesTest extends"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" BaseTest {\n\n    public void testUnquotedIssue510() throws Exception {\n        JsonFactory f ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" new JsonFactory();\n        f.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"NAMES, true);\n\n        // Character 256 (\\u0100) triggers ArrayIndexOutOfBoundsException when maxCode =="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" 256\n        String json = \"{\\u0100:123}\";\n        try"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" (JsonParser p = f.createParser(new java.io.StringReader(json))) {\n            assertToken(Json"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Token.START_OBJECT, p.nextToken());\n            assertToken(JsonToken.FIELD_NAME, p.nextToken());\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"            assertEquals(\"\\u0100\", p.getCurrentName());\n            assertToken(JsonToken.VALUE_"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"NUMBER_INT, p.nextToken());\n            assertEquals(123, p.getIntValue());\n            assertToken("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"JsonToken.END_OBJECT, p.nextToken());\n        }\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":958,"output_tokens":611,"output_tokens_details":{"thinking_tokens":311},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00300975,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00300975,"upstream_inference_prompt_cost":0.0007185,"upstream_inference_completions_cost":0.00229125}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

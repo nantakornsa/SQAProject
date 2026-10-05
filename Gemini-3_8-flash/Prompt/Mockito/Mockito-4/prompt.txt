@@ -1,0 +1,108 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Mockito
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Mockito
+       Program: mockito
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/Mockito.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/mockito.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/active-bugs.csv
+Number of bugs: 38
+--------------------------------------------------------------------------------
+
+Summary for Bug: Mockito-4
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+42b391d4209024292b6101048389570e4ec36b2a
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-04-19 18:50:25 +0200
+--------------------------------------------------------------------------------
+Bug report id:
+187
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/mockito/mockito/issues/187
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.mockito.exceptions.ReporterTest::can_use_print_mock_name_even_when_mock_bogus_default_answer_and_when_reporting_no_more_interaction_wanted_in_order
+   --> java.lang.Exception: Unexpected exception, expected<org.mockito.exceptions.verification.VerificationInOrderFailure> but was<java.lang.ClassCastException>
+ - org.mockito.exceptions.ReporterTest::can_use_print_mock_name_even_when_mock_bogus_default_answer_and_when_reporting_injection_failure
+   --> java.lang.Exception: Unexpected exception, expected<org.mockito.exceptions.base.MockitoException> but was<java.lang.NullPointerException>
+ - org.mockito.exceptions.ReporterTest::can_use_mock_name_even_when_mock_bogus_default_answer_and_when_reporting_no_more_interaction_wanted
+   --> java.lang.Exception: Unexpected exception, expected<org.mockito.exceptions.verification.NoInteractionsWanted> but was<java.lang.ClassCastException>
+ - org.mockitousage.bugs.ClassCastExOnVerifyZeroInteractionsTest::should_not_throw_a_ClassCastException
+   --> java.lang.Exception: Unexpected exception, expected<org.mockito.exceptions.verification.NoInteractionsWanted> but was<java.lang.ClassCastException>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.mockito.exceptions.Reporter
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.mockito.exceptions.Reporter ===
+diff --git a/src/org/mockito/exceptions/Reporter.java b/src/org/mockito/exceptions/Reporter.java
+index 9581a5483..d57e33d27 100644
+--- a/src/org/mockito/exceptions/Reporter.java
++++ b/src/org/mockito/exceptions/Reporter.java
+@@ -421,7 +421,7 @@ public class Reporter {
+         throw new NoInteractionsWanted(join(
+                 "No interactions wanted here:",
+                 new LocationImpl(),
+-                "But found this interaction on mock '" + undesired.getMock() + "':",
++                "But found this interaction on mock '" + safelyGetMockName(undesired.getMock()) + "':",
+                 undesired.getLocation(),
+                 scenario
+         ));
+@@ -431,7 +431,7 @@ public class Reporter {
+         throw new VerificationInOrderFailure(join(
+                 "No interactions wanted here:",
+                 new LocationImpl(),
+-                "But found this interaction on mock '" + undesired.getMock() + "':",
++                "But found this interaction on mock '" + safelyGetMockName(undesired.getMock()) + "':",
+                 undesired.getLocation()
+         ));
+     }
+@@ -674,6 +674,9 @@ public class Reporter {
+     }
+ 
+     private String exceptionCauseMessageIfAvailable(Exception details) {
++        if (details.getCause() == null) {
++            return details.getMessage();
++        }
+         return details.getCause().getMessage();
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void can_use_print_mock_name_even_when_mock_bogus_default_answer_and_when_reporting_no_more_interaction_wanted_in_order() throws Exception {
+        Invocation invocation_with_bogus_default_answer = new InvocationBuilder().mock(mock(IMethods.class, new Returns(false))).toInvocation();
+        new Reporter().noMoreInteractionsWantedInOrder(invocation_with_bogus_default_answer);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

@@ -1,0 +1,81 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791044855-5t0K1WM17fLmitOKTPt6","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1715,"output_tokens":2,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I should"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" avoid relying on test fixtures that might not exist in the buggy version, and instead construct my own input data that reproduces CODEC-101: a base64 st"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ream where the underlying read returns a chunk decoding to zero bytes on the first pass."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"Rather than gu"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"essing exact fixture bytes, I'll use a custom InputStream that feeds data one byte at a time, forcing the decoder's first read to buffer input without producing output -- which is exactly the scenario the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" buggy version mishandles by returning 0 prematurely instead of looping. I'll write this as a JUnit 3 TestCase with a ByteArrayInputStream subclass overriding read to return single bytes at a time, then assert the first call to"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" read returns a positive count and that the decoded output matches expectations."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1zb25uZXQtNS41LTIwMjYwOTI4fGNsYXVkZS1vbi1hd3MifQ"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.apache.commons.codec.binary;\n\nimport java.io.ByteAr"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"rayInputStream;\n\nimport junit.framework.TestCase;\n\n/**\n * Regression test for CODEC-101: Base64InputStream.read(byte[], int, int) must not\n * return 0 when the underlying stream still has"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" data that just hasn't produced\n * any decoded output yet.\n */\npublic class Base64InputStreamCodec101RegressionTest extends TestCase {\n\n    /**\n     * Input stream that"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" hands out only one byte per bulk read, so the first\n     * chunk seen by the decoder is too short to yield any decoded bytes.\n     */\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"private static class OneByteAtATimeInputStream extends ByteArrayInputStream {\n        OneByteAtATimeInputStream(byte[] data) {\n            super(data);\n        }\n\n        public synchronized int read(byte[] b, int off, int len"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":") {\n            if (len > 1) {\n                len = 1;\n            }\n            return super.read(b, off, len);\n        }\n    }\n\n    public void testReadDoesNotReturnZeroBeforeEndOfStream() throws"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" Exception {\n        // \"QUJDREVG\" is the Base64 encoding of \"ABCDEF\"\n        byte[] encoded = \"QUJDREVG\".getBytes(\"UTF-8\");\n        Base64InputStream in ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" new Base64InputStream(new OneByteAtATimeInputStream(encoded));\n\n        byte[] result = new byte[8192];\n        int c = in.read(result);\n        assertTrue(\"Codec101: First read successful [c=\" + c + \"]\", c > 0);\n\n        int total = c;\n        while"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" (c > 0) {\n            c = in.read(result, total, result.length - total);\n            if (c > 0) {\n                total += c;\n            }\n        }\n        assertTrue(\"Codec101: Final read should report end-of-stream [c=\" + c + \"]\", c < 0);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        assertEquals(\"ABCDEF\", new String(result, 0, total, \"UTF-8\"));\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1715,"output_tokens":1412,"output_tokens_details":{"thinking_tokens":746},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.01755,"is_byok":false,"cost_details":{"upstream_inference_cost":0.01755,"upstream_inference_prompt_cost":0.00343,"upstream_inference_completions_cost":0.01412}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

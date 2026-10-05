@@ -1,0 +1,82 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-65
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+48aea0ff7d027507362007415963a4b662fb10a7
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-06-15 00:09:44 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+486
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-486.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.CodePrinterTest::testZero
+   --> junit.framework.ComparisonFailure: expected:<var x="\0[00]"> but was:<var x="\0[]">
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.CodeGenerator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.CodeGenerator ===
+diff --git a/src/com/google/javascript/jscomp/CodeGenerator.java b/src/com/google/javascript/jscomp/CodeGenerator.java
+index 6117a89bd..cb9229a82 100644
+--- a/src/com/google/javascript/jscomp/CodeGenerator.java
++++ b/src/com/google/javascript/jscomp/CodeGenerator.java
+@@ -1012,7 +1012,7 @@ class CodeGenerator {
+     for (int i = 0; i < s.length(); i++) {
+       char c = s.charAt(i);
+       switch (c) {
+-        case '\0': sb.append("\\0"); break;
++        case '\0': sb.append("\\000"); break;
+         case '\n': sb.append("\\n"); break;
+         case '\r': sb.append("\\r"); break;
+         case '\t': sb.append("\\t"); break;
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testZero() {
+    assertPrint("var x ='\\0';", "var x=\"\\000\"");
+    assertPrint("var x ='\\x00';", "var x=\"\\000\"");
+    assertPrint("var x ='\\u0000';", "var x=\"\\000\"");
+    assertPrint("var x ='\\u00003';", "var x=\"\\0003\"");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

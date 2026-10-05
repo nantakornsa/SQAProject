@@ -1,0 +1,126 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-97
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+ee749e286b477f8d6f53ff5960a38453baf50f31
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-07-19 23:41:45 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+200
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-200.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.PeepholeFoldConstantsTest::testFoldBitShifts
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.PeepholeFoldConstants
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.PeepholeFoldConstants ===
+diff --git a/src/com/google/javascript/jscomp/PeepholeFoldConstants.java b/src/com/google/javascript/jscomp/PeepholeFoldConstants.java
+index d6c194a34..c998d1efb 100644
+--- a/src/com/google/javascript/jscomp/PeepholeFoldConstants.java
++++ b/src/com/google/javascript/jscomp/PeepholeFoldConstants.java
+@@ -695,7 +695,8 @@ public class PeepholeFoldConstants extends AbstractPeepholeOptimization {
+           // JavaScript handles zero shifts on signed numbers differently than
+           // Java as an Java int can not represent the unsigned 32-bit number
+           // where JavaScript can so use a long here.
+-          result = lvalInt >>> rvalInt;
++          long lvalLong = lvalInt & 0xffffffffL;
++          result = lvalLong >>> rvalInt;
+           break;
+         default:
+           throw new AssertionError("Unknown shift operator: " +
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testFoldBitShifts() {
+    fold("x = 1 << 0", "x = 1");
+    fold("x = -1 << 0", "x = -1");
+    fold("x = 1 << 1", "x = 2");
+    fold("x = 3 << 1", "x = 6");
+    fold("x = 1 << 8", "x = 256");
+
+    fold("x = 1 >> 0", "x = 1");
+    fold("x = -1 >> 0", "x = -1");
+    fold("x = 1 >> 1", "x = 0");
+    fold("x = 2 >> 1", "x = 1");
+    fold("x = 5 >> 1", "x = 2");
+    fold("x = 127 >> 3", "x = 15");
+    fold("x = 3 >> 1", "x = 1");
+    fold("x = 3 >> 2", "x = 0");
+    fold("x = 10 >> 1", "x = 5");
+    fold("x = 10 >> 2", "x = 2");
+    fold("x = 10 >> 5", "x = 0");
+
+    fold("x = 10 >>> 1", "x = 5");
+    fold("x = 10 >>> 2", "x = 2");
+    fold("x = 10 >>> 5", "x = 0");
+    fold("x = -1 >>> 1", "x = 2147483647"); // 0x7fffffff
+    fold("x = -1 >>> 0", "x = 4294967295"); // 0xffffffff
+    fold("x = -2 >>> 0", "x = 4294967294"); // 0xfffffffe
+
+    fold("3000000000 << 1", "3000000000<<1",
+         PeepholeFoldConstants.BITWISE_OPERAND_OUT_OF_RANGE);
+    fold("1 << 32", "1<<32",
+        PeepholeFoldConstants.SHIFT_AMOUNT_OUT_OF_BOUNDS);
+    fold("1 << -1", "1<<32",
+        PeepholeFoldConstants.SHIFT_AMOUNT_OUT_OF_BOUNDS);
+    fold("3000000000 >> 1", "3000000000>>1",
+        PeepholeFoldConstants.BITWISE_OPERAND_OUT_OF_RANGE);
+    fold("1 >> 32", "1>>32",
+        PeepholeFoldConstants.SHIFT_AMOUNT_OUT_OF_BOUNDS);
+    fold("1.5 << 0",  "1.5<<0",
+        PeepholeFoldConstants.FRACTIONAL_BITWISE_OPERAND);
+    fold("1 << .5",   "1.5<<0",
+        PeepholeFoldConstants.FRACTIONAL_BITWISE_OPERAND);
+    fold("1.5 >>> 0", "1.5>>>0",
+        PeepholeFoldConstants.FRACTIONAL_BITWISE_OPERAND);
+    fold("1 >>> .5",  "1.5>>>0",
+        PeepholeFoldConstants.FRACTIONAL_BITWISE_OPERAND);
+    fold("1.5 >> 0",  "1.5>>0",
+        PeepholeFoldConstants.FRACTIONAL_BITWISE_OPERAND);
+    fold("1 >> .5",   "1.5>>0",
+        PeepholeFoldConstants.FRACTIONAL_BITWISE_OPERAND);
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

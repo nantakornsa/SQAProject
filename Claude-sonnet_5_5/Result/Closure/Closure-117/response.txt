@@ -1,0 +1,34 @@
+The test below goes in `TypeCheckTest`, which extends `CompilerTypeTestCase` and uses the `testTypes` helper. It is the triggering test from the bug report. I have not run it against either version.
+
+On the buggy version, `getReadableJSTypeName` walks the GETPROP's owner chain before it looks at the dereferenced type. For `this.c2_.prop` that produces `C3.c2_` instead of `C2`, which matches the `ComparisonFailure` in the report. The fix computes the dereferenced type first and returns its name when it is a constructor instance, so the message becomes "Property prop never defined on C2".
+
+```java
+package com.google.javascript.jscomp;
+
+public class TypeCheckTest extends CompilerTypeTestCase {
+
+  public void testIssue1047() throws Exception {
+    testTypes(
+        "/**\n" +
+        " * @constructor\n" +
+        " */\n" +
+        "function C2() {}\n" +
+        "\n" +
+        "/**\n" +
+        " * @constructor\n" +
+        " */\n" +
+        "function C3(c2) {\n" +
+        "  /**\n" +
+        "   * @type {C2} \n" +
+        "   * @private\n" +
+        "   */\n" +
+        "  this.c2_;\n" +
+        "\n" +
+        "  var x = this.c2_.prop;\n" +
+        "}",
+        "Property prop never defined on C2");
+  }
+}
+```
+
+The class declaration and package are placeholders for the real file. In the project this method is added to the existing `TypeCheckTest` class, which already provides `testTypes`.

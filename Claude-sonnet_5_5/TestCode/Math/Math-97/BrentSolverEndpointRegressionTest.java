@@ -1,0 +1,24 @@
+package org.apache.commons.math.analysis;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for MATH-204: BrentSolver must accept an endpoint that is
+ * (numerically) a root even when both endpoint values have the same sign.
+ */
+public class BrentSolverEndpointRegressionTest extends TestCase {
+
+    public void testRootEndpoints() throws Exception {
+        UnivariateRealFunction f = new SinFunction();
+        UnivariateRealSolver solver = new BrentSolver(f);
+
+        // endpoint (lower) is root
+        double result = solver.solve(Math.PI, 4);
+        assertEquals(Math.PI, result, solver.getAbsoluteAccuracy());
+
+        // endpoint (upper) is root; sin(PI) is ~1.2e-16 (same sign as sin(3)),
+        // so the buggy version throws IllegalArgumentException
+        result = solver.solve(3, Math.PI);
+        assertEquals(Math.PI, result, solver.getAbsoluteAccuracy());
+    }
+}

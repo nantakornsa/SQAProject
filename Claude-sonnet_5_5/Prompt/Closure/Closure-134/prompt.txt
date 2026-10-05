@@ -1,0 +1,177 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-134
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+6d374c3ee4c9c2651ffb44048924e127fd2bf37c
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-01-08 21:41:36 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+86
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-86.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.AmbiguatePropertiesTest::testImplementsAndExtends
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.TypeCheckTest::testIssue86
+   --> junit.framework.AssertionFailedError: expected a warning
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.AmbiguateProperties
+ - com.google.javascript.jscomp.TypedScopeCreator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.AmbiguateProperties ===
+diff --git a/src/com/google/javascript/jscomp/AmbiguateProperties.java b/src/com/google/javascript/jscomp/AmbiguateProperties.java
+index aad743ffc..14fe1c326 100644
+--- a/src/com/google/javascript/jscomp/AmbiguateProperties.java
++++ b/src/com/google/javascript/jscomp/AmbiguateProperties.java
+@@ -207,7 +207,6 @@ class AmbiguateProperties implements CompilerPass {
+     for (Property p : propertyMap.values()) {
+       if (!p.skipAmbiguating) {
+         ++numRenamedPropertyNames;
+-        computeRelatedTypes(p.type);
+         propsByFreq.add(p);
+       } else {
+         ++numSkippedPropertyNames;
+@@ -353,7 +352,7 @@ class AmbiguateProperties implements CompilerPass {
+       if (typesRelatedToSet.intersects(prop.typesSet)) {
+         return false;
+       }
+-      return !getRelated(prop.type).intersects(typesInSet);
++      return !prop.relatedTypesSet.intersects(typesInSet);
+     }
+ 
+     /**
+@@ -363,7 +362,7 @@ class AmbiguateProperties implements CompilerPass {
+      */
+     public void addNode(Property prop) {
+       typesInSet.or(prop.typesSet);
+-      typesRelatedToSet.or(getRelated(prop.type));
++      typesRelatedToSet.or(prop.relatedTypesSet);
+     }
+ 
+     /**
+@@ -550,11 +549,11 @@ class AmbiguateProperties implements CompilerPass {
+   /** Encapsulates the information needed for renaming a property. */
+   private class Property {
+     final String oldName;
+-    JSType type;
+     String newName;
+     int numOccurrences;
+     boolean skipAmbiguating;
+     JSTypeBitSet typesSet = new JSTypeBitSet(intForType.size());
++    JSTypeBitSet relatedTypesSet = new JSTypeBitSet(intForType.size());
+ 
+     Property(String name) {
+       this.oldName = name;
+@@ -591,12 +590,12 @@ class AmbiguateProperties implements CompilerPass {
+         return;
+       }
+ 
+-      if (type == null) {
+-        type = newType;
+-      } else {
+-        type = type.getLeastSupertype(newType);
++      int typeInt = getIntForType(newType);
++      if (!typesSet.get(typeInt)) {
++        computeRelatedTypes(newType);
++        typesSet.set(typeInt);
++        relatedTypesSet.or(getRelatedTypesOnNonUnion(newType));
+       }
+-      typesSet.set(getIntForType(newType));
+     }
+   }
+ 
+
+=== MODIFIED SOURCE: com.google.javascript.jscomp.TypedScopeCreator ===
+diff --git a/src/com/google/javascript/jscomp/TypedScopeCreator.java b/src/com/google/javascript/jscomp/TypedScopeCreator.java
+index 5fdec75ec..9d2f7ddad 100644
+--- a/src/com/google/javascript/jscomp/TypedScopeCreator.java
++++ b/src/com/google/javascript/jscomp/TypedScopeCreator.java
+@@ -557,9 +557,17 @@ final class TypedScopeCreator implements ScopeCreator {
+       JSType propType = ownerType.getPropertyType(propName);
+       if (propType instanceof FunctionType) {
+         return (FunctionType) propType;
+-      }
++      } else {
+         // If it's not, then check to see if it's implemented
+         // on an implemented interface.
++        for (ObjectType iface :
++                 ownerType.getCtorImplementedInterfaces()) {
++          propType = iface.getPropertyType(propName);
++          if (propType instanceof FunctionType) {
++            return (FunctionType) propType;
++          }
++        }
++      }
+ 
+       return null;
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testImplementsAndExtends() {
+    String js = ""
+        + "/** @interface */ function Foo() {}\n"
+        + "/**\n"
+        + " * @constructor\n"
+        + " */\n"
+        + "function Bar(){}\n"
+        + "Bar.prototype.y = function() { return 3; };\n"
+        + "/**\n"
+        + " * @constructor\n"
+        + " * @extends {Bar}\n"
+        + " * @implements {Foo}\n"
+        + " */\n"
+        + "function SubBar(){ }\n"
+        + "/** @param {Foo} x */ function f(x) { x.z = 3; }\n"
+        + "/** @param {SubBar} x */ function g(x) { x.z = 3; }";
+    String output = ""
+        + "function Foo(){}\n"
+        + "function Bar(){}\n"
+        + "Bar.prototype.b = function() { return 3; };\n"
+        + "function SubBar(){}\n"
+        + "function f(x) { x.a = 3; }\n"
+        + "function g(x) { x.a = 3; }";
+    test(js, output);
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,167 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Cli
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Cli
+       Program: commons-cli
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/Cli.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-cli.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/active-bugs.csv
+Number of bugs: 39
+--------------------------------------------------------------------------------
+
+Summary for Bug: Cli-16
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+f104dd060c6c88450ac9ee9eb818b26374512440
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-07-24 20:28:16 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CLI-123
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CLI-123
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.cli2.bug.BugCLI123Test::testMultipleChildOptions
+   --> org.apache.commons.cli2.OptionException: Missing option parentOptions
+ - org.apache.commons.cli2.bug.BugCLI123Test::testParentOptionAndChildOption
+   --> junit.framework.AssertionFailedError: Maximum restriction for parent not verified!
+ - org.apache.commons.cli2.bug.BugCLI123Test::testSingleChildOption
+   --> org.apache.commons.cli2.OptionException: Missing option parentOptions
+ - org.apache.commons.cli2.commandline.DefaultingCommandLineTest::testGetOptions_Order
+   --> junit.framework.AssertionFailedError: expected same:<[--help (-?,-h)|login <username>] [<target1> [<target2> ...]]> was not:<[--help (-?,-h)]>
+ - org.apache.commons.cli2.commandline.PreferencesCommandLineTest::testGetOptions_Order
+   --> junit.framework.AssertionFailedError: expected same:<[--help (-?,-h)|login <username>] [<target1> [<target2> ...]]> was not:<[--help (-?,-h)]>
+ - org.apache.commons.cli2.commandline.PropertiesCommandLineTest::testGetOptions_Order
+   --> junit.framework.AssertionFailedError: expected same:<[--help (-?,-h)|login <username>] [<target1> [<target2> ...]]> was not:<[--help (-?,-h)]>
+ - org.apache.commons.cli2.commandline.WriteableCommandLineImplTest::testGetOptions_Order
+   --> junit.framework.AssertionFailedError: expected same:<[--help (-?,-h)|login <username>] [<target1> [<target2> ...]]> was not:<[--help (-?,-h)]>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.cli2.Option
+ - org.apache.commons.cli2.commandline.WriteableCommandLineImpl
+ - org.apache.commons.cli2.option.GroupImpl
+ - org.apache.commons.cli2.option.OptionImpl
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.cli2.Option ===
+diff --git a/src/java/org/apache/commons/cli2/Option.java b/src/java/org/apache/commons/cli2/Option.java
+index 2b53098..0102573 100644
+--- a/src/java/org/apache/commons/cli2/Option.java
++++ b/src/java/org/apache/commons/cli2/Option.java
+@@ -203,6 +203,7 @@ public interface Option {
+      *
+      * @return the parent of this option
+      */
++    Option getParent();
+ 
+     /**
+      * Sets the parent of this option. This method is called when the option is
+@@ -213,4 +214,5 @@ public interface Option {
+      *
+      * @param parent the parent option
+      */
++    void setParent(Option parent);
+ }
+
+=== MODIFIED SOURCE: org.apache.commons.cli2.commandline.WriteableCommandLineImpl ===
+diff --git a/src/java/org/apache/commons/cli2/commandline/WriteableCommandLineImpl.java b/src/java/org/apache/commons/cli2/commandline/WriteableCommandLineImpl.java
+index 337eeb6..ec97eab 100644
+--- a/src/java/org/apache/commons/cli2/commandline/WriteableCommandLineImpl.java
++++ b/src/java/org/apache/commons/cli2/commandline/WriteableCommandLineImpl.java
+@@ -71,6 +71,11 @@ public class WriteableCommandLineImpl
+         }
+ 
+         // ensure that all parent options are also added
++        Option parent = option.getParent();
++        while (parent != null && !options.contains(parent)) {
++            options.add(parent);
++            parent = parent.getParent();
++        }
+     }
+ 
+     public void addValue(final Option option,
+
+=== MODIFIED SOURCE: org.apache.commons.cli2.option.GroupImpl ===
+diff --git a/src/java/org/apache/commons/cli2/option/GroupImpl.java b/src/java/org/apache/commons/cli2/option/GroupImpl.java
+index e3b69f8..38fc6c2 100644
+--- a/src/java/org/apache/commons/cli2/option/GroupImpl.java
++++ b/src/java/org/apache/commons/cli2/option/GroupImpl.java
+@@ -89,6 +89,7 @@ public class GroupImpl
+         // process the options
+         for (final Iterator i = options.iterator(); i.hasNext();) {
+             final Option option = (Option) i.next();
++            option.setParent(this);
+ 
+             if (option instanceof Argument) {
+                 i.remove();
+
+=== MODIFIED SOURCE: org.apache.commons.cli2.option.OptionImpl ===
+diff --git a/src/java/org/apache/commons/cli2/option/OptionImpl.java b/src/java/org/apache/commons/cli2/option/OptionImpl.java
+index f75d470..f74313d 100644
+--- a/src/java/org/apache/commons/cli2/option/OptionImpl.java
++++ b/src/java/org/apache/commons/cli2/option/OptionImpl.java
+@@ -33,6 +33,7 @@ import org.apache.commons.cli2.resource.ResourceHelper;
+ public abstract class OptionImpl implements Option {
+     private final int id;
+     private final boolean required;
++    private Option parent;
+ 
+     /**
+      * Creates an OptionImpl with the specified id
+@@ -125,7 +126,13 @@ public abstract class OptionImpl implements Option {
+         // nothing to do normally
+     }
+ 
++    public Option getParent() {
++        return parent;
++    }
+ 
++    public void setParent(Option parent) {
++        this.parent = parent;
++    }
+ 
+     protected void checkPrefixes(final Set prefixes) {
+         // nothing to do if empty prefix list
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testMultipleChildOptions() throws OptionException {
+        CommandLine cl = parser.parse(new String[] { "--child", "test",
+                "--sub", "anotherTest" });
+        assertTrue("Child option not found", cl.hasOption(childOption1));
+        assertEquals("Wrong value for option", "test", cl
+                .getValue(childOption1));
+        assertTrue("Sub option not found", cl.hasOption(childOption2));
+        assertEquals("Wrong value for sub option", "anotherTest", cl
+                .getValue(childOption2));
+        assertTrue("Child group not found", cl.hasOption(childGroup));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

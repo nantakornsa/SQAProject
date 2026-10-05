@@ -1,0 +1,50 @@
+package com.google.javascript.jscomp;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for Closure issue 314: types declared in an object literal
+ * annotated with {@code @lends} must be defined after the enclosing statement
+ * has been processed, so that the lent properties are visible on the
+ * constructor's prototype.
+ */
+public class TypedScopeCreatorLendsRegressionTest extends TestCase {
+
+  private Compiler compileWithTypeChecking(String js) {
+    Compiler compiler = new Compiler();
+    CompilerOptions options = new CompilerOptions();
+    options.checkTypes = true;
+    options.setWarningLevel(DiagnosticGroups.CHECK_TYPES, CheckLevel.WARNING);
+    compiler.compile(
+        JSSourceFile.fromCode("externs", ""),
+        JSSourceFile.fromCode("input", js),
+        options);
+    return compiler;
+  }
+
+  public void testLends10() throws Exception {
+    String js =
+        "function defineClass(x) { return function() {}; } " +
+        "/** @constructor */" +
+        "var Foo = defineClass(" +
+        "    /** @lends {Foo.prototype} */ ({/** @type {number} */ bar: 1}));" +
+        "/** @return {string} */ function f() { return (new Foo()).bar; }";
+
+    Compiler compiler = compileWithTypeChecking(js);
+
+    String expected =
+        "inconsistent return type\n" +
+        "found   : number\n" +
+        "required: string";
+
+    boolean found = false;
+    for (JSError warning : compiler.getWarnings()) {
+      if (warning.description.equals(expected)) {
+        found = true;
+        break;
+      }
+    }
+    assertTrue("Expected warning '" + expected + "' was not reported",
+        found);
+  }
+}

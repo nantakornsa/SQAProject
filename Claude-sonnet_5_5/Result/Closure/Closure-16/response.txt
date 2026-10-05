@@ -1,0 +1,45 @@
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.jscomp.CompilerOptions;
+import com.google.javascript.jscomp.WarningLevel;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for Issue 772: goog.scope aliases used as a prefix of a
+ * type name in JSDoc (e.g. {@code c.MyType} where {@code c} is an alias) must
+ * be expanded properly, so that type checking produces no warnings.
+ */
+public class ScopedAliasesIssue772Test extends TestCase {
+
+  public void testIssue772() throws Exception {
+    CompilerOptions options = new CompilerOptions();
+    options.closurePass = true;
+    options.checkTypes = true;
+    WarningLevel.VERBOSE.setOptionsForWarningLevel(options);
+
+    Compiler compiler = new Compiler();
+    JSSourceFile extern = JSSourceFile.fromCode("externs", "var window;");
+    JSSourceFile input = JSSourceFile.fromCode("input",
+        "/** @const */ var a = {};" +
+        "/** @const */ a.b = {};" +
+        "/** @const */ a.b.c = {};" +
+        "goog.scope(function() {" +
+        "  var b = a.b;" +
+        "  var c = b.c;" +
+        "  /** @typedef {string} */" +
+        "  c.MyType;" +
+        "  /** @param {c.MyType} x The variable. */" +
+        "  c.myFunc = function(x) {};" +
+        "});");
+
+    compiler.compile(
+        new JSSourceFile[] {extern}, new JSSourceFile[] {input}, options);
+
+    assertEquals("Expected no errors", 0, compiler.getErrors().length);
+    assertEquals("Expected no warnings or errors",
+        0, compiler.getWarnings().length);
+  }
+}
+```

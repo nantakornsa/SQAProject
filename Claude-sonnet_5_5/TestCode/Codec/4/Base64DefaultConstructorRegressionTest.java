@@ -1,0 +1,40 @@
+package org.apache.commons.codec.binary;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for CODEC-89: the default Base64 constructor must not chunk its output.
+ */
+public class Base64DefaultConstructorRegressionTest extends TestCase {
+
+    public void testDefaultConstructorDoesNotChunk() throws Exception {
+        byte[] binary = new byte[200];
+        for (int i = 0; i < binary.length; i++) {
+            binary[i] = (byte) i;
+        }
+
+        byte[] encoded = new Base64().encode(binary);
+        String result = new String(encoded, "UTF-8");
+
+        assertFalse("Default Base64 encoder must not insert line breaks",
+                result.indexOf('\r') >= 0 || result.indexOf('\n') >= 0);
+
+        // Should equal the output of the non-chunking static encoder
+        byte[] expected = Base64.encodeBase64(binary, false);
+        assertTrue("Default encoder output should be unchunked",
+                java.util.Arrays.equals(expected, encoded));
+    }
+
+    public void testDefaultConstructorObjectEncodeDoesNotChunk() throws Exception {
+        byte[] binary = new byte[100];
+        for (int i = 0; i < binary.length; i++) {
+            binary[i] = (byte) (i * 3);
+        }
+
+        byte[] encoded = (byte[]) new Base64().encode((Object) binary);
+        String result = new String(encoded, "UTF-8");
+
+        assertEquals("Encoded length for 100 bytes without chunking", 136, encoded.length);
+        assertTrue("No CRLF expected", result.indexOf("\r\n") < 0);
+    }
+}

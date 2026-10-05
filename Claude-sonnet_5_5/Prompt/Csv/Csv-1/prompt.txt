@@ -1,0 +1,88 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Csv
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Csv
+       Program: commons-csv
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Csv/Csv.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-csv.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Csv/active-bugs.csv
+Number of bugs: 16
+--------------------------------------------------------------------------------
+
+Summary for Bug: Csv-1
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+de1838ea067f3fbc4c7c21b9eeae077c739ecb73
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-03-27 00:49:17 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CSV-75
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CSV-75
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.csv.CSVParserTest::testGetLineNumberWithCR
+   --> junit.framework.AssertionFailedError: expected:<1> but was:<0>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.csv.ExtendedBufferedReader
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.csv.ExtendedBufferedReader ===
+diff --git a/src/main/java/org/apache/commons/csv/ExtendedBufferedReader.java b/src/main/java/org/apache/commons/csv/ExtendedBufferedReader.java
+index 563ece1b..219fe68e 100644
+--- a/src/main/java/org/apache/commons/csv/ExtendedBufferedReader.java
++++ b/src/main/java/org/apache/commons/csv/ExtendedBufferedReader.java
+@@ -55,7 +55,7 @@ class ExtendedBufferedReader extends BufferedReader {
+     @Override
+     public int read() throws IOException {
+         int current = super.read();
+-        if (current == '\n') {
++        if (current == '\r' || (current == '\n' && lastChar != '\r')) {
+             lineCounter++;
+         }
+         lastChar = current;
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testGetLineNumberWithCR() throws Exception {
+        CSVParser parser = new CSVParser("a\rb\rc", CSVFormat.DEFAULT.withLineSeparator("\r"));
+        
+        assertEquals(0, parser.getLineNumber());
+        assertNotNull(parser.getRecord());
+        assertEquals(1, parser.getLineNumber());
+        assertNotNull(parser.getRecord());
+        assertEquals(2, parser.getLineNumber());
+        assertNotNull(parser.getRecord());
+        assertEquals(2, parser.getLineNumber());
+        assertNull(parser.getRecord());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

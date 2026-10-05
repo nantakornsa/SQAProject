@@ -1,0 +1,39 @@
+package com.google.gson.regression;
+
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.reflect.TypeToken;
+
+import junit.framework.TestCase;
+
+public class JsonAdapterNullSafeTest extends TestCase {
+  private final Gson gson = new Gson();
+
+  public void testNullSafeBugSerialize() throws Exception {
+    Device device = new Device("ec57803e2");
+    String json = gson.toJson(device);
+    assertEquals("{\"id\":\"ec57803e2\"}", json);
+  }
+
+  public void testNullSafeBugDeserialize() throws Exception {
+    Device device = gson.fromJson("{'id':'ec57803e2'}", Device.class);
+    assertEquals("ec57803e2", device.id);
+  }
+
+  @JsonAdapter(Device.JsonAdapterFactory.class)
+  private static final class Device {
+    String id;
+
+    private Device(String id) {
+      this.id = id;
+    }
+
+    static final class JsonAdapterFactory implements TypeAdapterFactory {
+      public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
+        return null;
+      }
+    }
+  }
+}

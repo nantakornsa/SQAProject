@@ -1,0 +1,105 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Compress
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Compress
+       Program: commons-compress
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/Compress.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-compress.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/active-bugs.csv
+Number of bugs: 47
+--------------------------------------------------------------------------------
+
+Summary for Bug: Compress-30
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+5cf68bdc46c7bcc0fc5eb3cacd1c84514ef552cf
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-02-20 16:18:00 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COMPRESS-309
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COMPRESS-309
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStreamTest::readOfLength0ShouldReturn0
+   --> junit.framework.AssertionFailedError: expected:<0> but was:<-1>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream ===
+diff --git a/src/main/java/org/apache/commons/compress/compressors/bzip2/BZip2CompressorInputStream.java b/src/main/java/org/apache/commons/compress/compressors/bzip2/BZip2CompressorInputStream.java
+index e0e3b1ec..b32b1f9b 100644
+--- a/src/main/java/org/apache/commons/compress/compressors/bzip2/BZip2CompressorInputStream.java
++++ b/src/main/java/org/apache/commons/compress/compressors/bzip2/BZip2CompressorInputStream.java
+@@ -165,6 +165,9 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
+         if (this.in == null) {
+             throw new IOException("stream closed");
+         }
++        if (len == 0) {
++            return 0;
++        }
+ 
+         final int hi = offs + len;
+         int destOffs = offs;
+
+
+=== TRIGGERING TEST METHOD ===
+    public void readOfLength0ShouldReturn0() throws Exception {
+        // Create a big random piece of data
+        byte[] rawData = new byte[1048576];
+        for (int i=0; i < rawData.length; ++i) {
+            rawData[i] = (byte) Math.floor(Math.random()*256);
+        }
+
+        // Compress it
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        BZip2CompressorOutputStream bzipOut = new BZip2CompressorOutputStream(baos);
+        bzipOut.write(rawData);
+        bzipOut.flush();
+        bzipOut.close();
+        baos.flush();
+        baos.close();
+
+        // Try to read it back in
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        BZip2CompressorInputStream bzipIn = new BZip2CompressorInputStream(bais);
+        byte[] buffer = new byte[1024];
+        Assert.assertEquals(1024, bzipIn.read(buffer, 0, 1024));
+        Assert.assertEquals(0, bzipIn.read(buffer, 1024, 0));
+        Assert.assertEquals(1024, bzipIn.read(buffer, 0, 1024));
+        bzipIn.close();
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

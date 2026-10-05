@@ -1,0 +1,60 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791184786-qnE5MZbqBD057UVwhX3h","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating JacksonDatabind Bug**\n\nI'm currently examining JacksonDatabind bug 60, specifically the fix applied in commit `be114a9a286c4d194cd268ac8153173c52619a8d` via issue #1385. My focus is on reproducing the bug using the `testWithCreatorAndJsonValue` test case.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Reproducing JacksonDatabind Bug**\n\nI'm focusing on reproducing JacksonDatabind bug 60 by leveraging the `testWithCreatorAndJsonValue` test case within `TestDefaultWithCreators`. The failure message indicates an unexpected `[B` type instead of the `Bean1385` class, suggesting an issue with how `serializeWithType` handles `byte[]` when default typing is enabled.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind.jsontype;\n\nimport com."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"fasterxml.jackson.annotation.JsonCreator;\nimport com.fasterxml.jackson.annotation.JsonValue;\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" com.fasterxml.jackson.databind.BaseMapTest;\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\npublic class"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" TestJsonValueWithTypeInfo extends BaseMapTest\n{\n    static class Bean1385 {\n        protected byte[] bytes"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\n\n        @JsonCreator\n        public Bean1385(byte[] b) {\n            bytes ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" b;\n        }\n\n        @JsonValue\n        public byte[] getBytes() {\n            return bytes;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        }\n    }\n\n    public void testWithCreatorAndJsonValue() throws Exception\n    {\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ObjectMapper mapper = new ObjectMapper();\n        mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);\n\n        Bean"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"1385 input = new Bean1385(new byte[] { 1, 2, 3 });\n        String"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" json = mapper.writeValueAsString(input);\n\n        Object result = mapper.readValue(json, Object.class);\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        assertEquals(Bean1385.class, result.getClass());\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2466,"output_tokens":756,"output_tokens_details":{"thinking_tokens":482},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.0046845,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0046845,"upstream_inference_prompt_cost":0.0018495,"upstream_inference_completions_cost":0.002835}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

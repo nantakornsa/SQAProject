@@ -1,0 +1,33 @@
+```java
+package org.apache.commons.math.fraction;
+
+import java.text.ParseException;
+
+import junit.framework.TestCase;
+
+public class ProperFractionFormatRegressionTest extends TestCase {
+
+    private ProperFractionFormat properFormat = new ProperFractionFormat();
+
+    public ProperFractionFormatRegressionTest(String name) {
+        super(name);
+    }
+
+    public void testParseProperInvalidMinus() {
+        String source = "2 -2 / 3";
+        try {
+            Fraction c = properFormat.parse(source);
+            fail("invalid minus in improper fraction.");
+        } catch (ParseException ex) {
+            // expected
+        }
+        source = "2 2 / -3";
+        try {
+            Fraction c = properFormat.parse(source);
+            fail("invalid minus in improper fraction.");
+        } catch (ParseException ex) {
+            // expected
+        }
+    }
+}
+```

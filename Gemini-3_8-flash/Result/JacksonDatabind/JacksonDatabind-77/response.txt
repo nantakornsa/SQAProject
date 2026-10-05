@@ -1,0 +1,37 @@
+```java
+package com.fasterxml.jackson.databind.interop;
+
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+/**
+ * Test case for verifying fix for [databind#1599], blocking deserialization
+ * of known dangerous types such as TemplatesImpl.
+ */
+public class IllegalTypesCheckTest extends BaseMapTest
+{
+    static class Authentication1599 {
+        public Object makeIt;
+    }
+
+    public void testIssue1599() throws Exception
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enableDefaultTyping();
+        final String JSON = aposToQuotes(
+                "{'makeIt':['com.sun.org.apache.xalan.internal.xsltc.trax.TemplatesImpl', {\n"
+                +"  'transletBytecodes' : [ 'ABC=' ],\n"
+                +"  'transletName' : 'foo',\n"
+                +"  'outputProperties' : { }\n"
+                +"}]}"
+        );
+        try {
+            mapper.readValue(JSON, Authentication1599.class);
+            fail("Should not pass");
+        } catch (JsonMappingException e) {
+            verifyException(e, "Illegal type");
+        }
+    }
+}
+```

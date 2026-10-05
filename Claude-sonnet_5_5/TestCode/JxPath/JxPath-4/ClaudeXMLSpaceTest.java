@@ -1,0 +1,36 @@
+package org.apache.commons.jxpath.ri.model;
+
+import java.io.ByteArrayInputStream;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import junit.framework.TestCase;
+
+import org.apache.commons.jxpath.JXPathContext;
+import org.w3c.dom.Document;
+
+/**
+ * Regression test for JXPATH-83: xml:space="preserve" must be honoured
+ * by the DOM model when computing the string value of a node.
+ */
+public class ClaudeXMLSpaceTest extends TestCase {
+
+    private Document parse(String xml) throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        return builder.parse(new ByteArrayInputStream(xml.getBytes("UTF-8")));
+    }
+
+    public void testPreserveDOM() throws Exception {
+        Document doc = parse("<a xml:space=\"preserve\"> foo </a>");
+        JXPathContext context = JXPathContext.newContext(doc);
+        assertEquals(" foo ", context.getValue("/a"));
+    }
+
+    public void testDefaultTrimDOM() throws Exception {
+        Document doc = parse("<a> foo </a>");
+        JXPathContext context = JXPathContext.newContext(doc);
+        assertEquals("foo", context.getValue("/a"));
+    }
+}

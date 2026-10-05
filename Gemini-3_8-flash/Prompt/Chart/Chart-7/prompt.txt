@@ -1,0 +1,94 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Chart
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Chart
+       Program: jfreechart
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Chart/Chart.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Svn
+    Repository: file:///Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jfreechart/trunk
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Chart/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Chart-7
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+1087
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-06-10 02:22:11 -0700 
+--------------------------------------------------------------------------------
+Bug report id:
+UNKNOWN
+--------------------------------------------------------------------------------
+Bug report url:
+UNKNOWN
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jfree.data.time.junit.TimePeriodValuesTests::testGetMaxMiddleIndex
+   --> junit.framework.AssertionFailedError: expected:<1> but was:<3>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jfree.data.time.TimePeriodValues
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jfree.data.time.TimePeriodValues ===
+diff --git a/source/org/jfree/data/time/TimePeriodValues.java b/source/org/jfree/data/time/TimePeriodValues.java
+index 0a3e7a1..589c7ca 100644
+--- a/source/org/jfree/data/time/TimePeriodValues.java
++++ b/source/org/jfree/data/time/TimePeriodValues.java
+@@ -297,9 +297,9 @@ public class TimePeriodValues extends Series implements Serializable {
+         }
+         
+         if (this.maxMiddleIndex >= 0) {
+-            long s = getDataItem(this.minMiddleIndex).getPeriod().getStart()
++            long s = getDataItem(this.maxMiddleIndex).getPeriod().getStart()
+                 .getTime();
+-            long e = getDataItem(this.minMiddleIndex).getPeriod().getEnd()
++            long e = getDataItem(this.maxMiddleIndex).getPeriod().getEnd()
+                 .getTime();
+             long maxMiddle = s + (e - s) / 2;
+             if (middle > maxMiddle) {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testGetMaxMiddleIndex() {
+        TimePeriodValues s = new TimePeriodValues("Test");
+        assertEquals(-1, s.getMaxMiddleIndex());
+        s.add(new SimpleTimePeriod(100L, 200L), 1.0);
+        assertEquals(0, s.getMaxMiddleIndex());
+        s.add(new SimpleTimePeriod(300L, 400L), 2.0);
+        assertEquals(1, s.getMaxMiddleIndex());
+        s.add(new SimpleTimePeriod(0L, 50L), 3.0);
+        assertEquals(1, s.getMaxMiddleIndex());
+        s.add(new SimpleTimePeriod(150L, 200L), 4.0);
+        assertEquals(1, s.getMaxMiddleIndex());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

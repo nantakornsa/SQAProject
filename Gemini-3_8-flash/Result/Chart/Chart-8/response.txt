@@ -1,0 +1,49 @@
+```java
+package org.jfree.data.time.junit;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
+import junit.framework.TestCase;
+import org.jfree.data.time.RegularTimePeriod;
+import org.jfree.data.time.Week;
+
+/**
+ * Regression test for bug Chart-8.
+ */
+public class WeekTests extends TestCase {
+
+    /**
+     * Test that the Week(Date, TimeZone) constructor respects the specified time zone
+     * rather than falling back to RegularTimePeriod.DEFAULT_TIME_ZONE.
+     */
+    public void testWeekConstructorWithTimeZone() {
+        Locale savedLocale = Locale.getDefault();
+        TimeZone savedZone = TimeZone.getDefault();
+        try {
+            Locale.setDefault(Locale.US);
+            TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
+
+            // Ensure RegularTimePeriod class is loaded so DEFAULT_TIME_ZONE is initialized
+            assertNotNull(RegularTimePeriod.DEFAULT_TIME_ZONE);
+
+            // Create a calendar for a time that falls into different weeks depending on timezone
+            // 2007-08-26 01:00:00 in US/Detroit (Sunday)
+            TimeZone zoneDetroit = TimeZone.getTimeZone("US/Detroit");
+            Calendar cal = Calendar.getInstance(zoneDetroit, Locale.US);
+            cal.set(2007, Calendar.AUGUST, 26, 1, 0, 0);
+            cal.set(Calendar.MILLISECOND, 0);
+            Date t = cal.getTime();
+
+            // When evaluated in Europe/Copenhagen, this is Sunday 07:00:00.
+            // With US locale (week starts Sunday), this should be week 35.
+            Week w = new Week(t, TimeZone.getTimeZone("Europe/Copenhagen"));
+            assertEquals(35, w.getWeek());
+        } finally {
+            Locale.setDefault(savedLocale);
+            TimeZone.setDefault(savedZone);
+        }
+    }
+}
+```

@@ -1,0 +1,30 @@
+package org.apache.commons.collections;
+
+import java.util.Properties;
+import junit.framework.TestCase;
+
+/**
+ * Regression test for COLLECTIONS-299 (Collections-13).
+ */
+public class ExtendedPropertiesCollections299Test extends TestCase {
+
+    public ExtendedPropertiesCollections299Test(String name) {
+        super(name);
+    }
+
+    public void testCollections299() {
+        Properties defaults = new Properties();
+        defaults.put("objectTrue", Boolean.TRUE);
+
+        Properties properties = new Properties(defaults);
+        properties.put("objectFalse", Boolean.FALSE);
+
+        ExtendedProperties extended = ExtendedProperties.convertProperties(properties);
+
+        assertNull(extended.getString("objectTrue"));
+        assertNull(extended.getString("objectFalse"));
+
+        assertNull(extended.get("objectTrue"));
+        assertNull(extended.get("objectFalse"));
+    }
+}

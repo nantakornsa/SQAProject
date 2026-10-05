@@ -1,0 +1,182 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Time
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Time
+       Program: joda-time
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/Time.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/joda-time.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Time-3
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+8d109fe1a999a11b4557536dd96f9210460a5936
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-11-27 12:36:35 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+77
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/JodaOrg/joda-time/issues/77
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.joda.time.TestMutableDateTime_Adds::testAddYears_int_dstOverlapWinter_addZero
+   --> junit.framework.ComparisonFailure: expected:<...10-30T02:30:00.000+0[1]:00> but was:<...10-30T02:30:00.000+0[2]:00>
+ - org.joda.time.TestMutableDateTime_Adds::testAddDays_int_dstOverlapWinter_addZero
+   --> junit.framework.ComparisonFailure: expected:<...10-30T02:30:00.000+0[1]:00> but was:<...10-30T02:30:00.000+0[2]:00>
+ - org.joda.time.TestMutableDateTime_Adds::testAddWeeks_int_dstOverlapWinter_addZero
+   --> junit.framework.ComparisonFailure: expected:<...10-30T02:30:00.000+0[1]:00> but was:<...10-30T02:30:00.000+0[2]:00>
+ - org.joda.time.TestMutableDateTime_Adds::testAdd_DurationFieldType_int_dstOverlapWinter_addZero
+   --> junit.framework.ComparisonFailure: expected:<...10-30T02:30:00.000+0[1]:00> but was:<...10-30T02:30:00.000+0[2]:00>
+ - org.joda.time.TestMutableDateTime_Adds::testAddMonths_int_dstOverlapWinter_addZero
+   --> junit.framework.ComparisonFailure: expected:<...10-30T02:30:00.000+0[1]:00> but was:<...10-30T02:30:00.000+0[2]:00>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.joda.time.MutableDateTime
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.joda.time.MutableDateTime ===
+diff --git a/src/main/java/org/joda/time/MutableDateTime.java b/src/main/java/org/joda/time/MutableDateTime.java
+index 310f55d2..9aa8602a 100644
+--- a/src/main/java/org/joda/time/MutableDateTime.java
++++ b/src/main/java/org/joda/time/MutableDateTime.java
+@@ -636,7 +636,9 @@ public class MutableDateTime
+         if (type == null) {
+             throw new IllegalArgumentException("Field must not be null");
+         }
++        if (amount != 0) {
+             setMillis(type.getField(getChronology()).add(getMillis(), amount));
++        }
+     }
+ 
+     //-----------------------------------------------------------------------
+@@ -657,7 +659,9 @@ public class MutableDateTime
+      * @throws IllegalArgumentException if the value is invalid
+      */
+     public void addYears(final int years) {
++        if (years != 0) {
+             setMillis(getChronology().years().add(getMillis(), years));
++        }
+     }
+ 
+     //-----------------------------------------------------------------------
+@@ -678,7 +682,9 @@ public class MutableDateTime
+      * @throws IllegalArgumentException if the value is invalid
+      */
+     public void addWeekyears(final int weekyears) {
++        if (weekyears != 0) {
+             setMillis(getChronology().weekyears().add(getMillis(), weekyears));
++        }
+     }
+ 
+     //-----------------------------------------------------------------------
+@@ -699,7 +705,9 @@ public class MutableDateTime
+      * @throws IllegalArgumentException if the value is invalid
+      */
+     public void addMonths(final int months) {
++        if (months != 0) {
+             setMillis(getChronology().months().add(getMillis(), months));
++        }
+     }
+ 
+     //-----------------------------------------------------------------------
+@@ -720,7 +728,9 @@ public class MutableDateTime
+      * @throws IllegalArgumentException if the value is invalid
+      */
+     public void addWeeks(final int weeks) {
++        if (weeks != 0) {
+             setMillis(getChronology().weeks().add(getMillis(), weeks));
++        }
+     }
+ 
+     //-----------------------------------------------------------------------
+@@ -761,7 +771,9 @@ public class MutableDateTime
+      * @throws IllegalArgumentException if the value is invalid
+      */
+     public void addDays(final int days) {
++        if (days != 0) {
+             setMillis(getChronology().days().add(getMillis(), days));
++        }
+     }
+ 
+     //-----------------------------------------------------------------------
+@@ -782,7 +794,9 @@ public class MutableDateTime
+      * @throws IllegalArgumentException if the value is invalid
+      */
+     public void addHours(final int hours) {
++        if (hours != 0) {
+             setMillis(getChronology().hours().add(getMillis(), hours));
++        }
+     }
+     
+     //-----------------------------------------------------------------------
+@@ -813,7 +827,9 @@ public class MutableDateTime
+      * @throws IllegalArgumentException if the value is invalid
+      */
+     public void addMinutes(final int minutes) {
++        if (minutes != 0) {
+             setMillis(getChronology().minutes().add(getMillis(), minutes));
++        }
+     }
+ 
+     //-----------------------------------------------------------------------
+@@ -844,7 +860,9 @@ public class MutableDateTime
+      * @throws IllegalArgumentException if the value is invalid
+      */
+     public void addSeconds(final int seconds) {
++        if (seconds != 0) {
+             setMillis(getChronology().seconds().add(getMillis(), seconds));
++        }
+     }
+ 
+     //-----------------------------------------------------------------------
+@@ -877,7 +895,9 @@ public class MutableDateTime
+      * @throws IllegalArgumentException if the value is invalid
+      */
+     public void addMillis(final int millis) {
++        if (millis != 0) {
+             setMillis(getChronology().millis().add(getMillis(), millis));
++        }
+     }
+ 
+     //-----------------------------------------------------------------------
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testAddYears_int_dstOverlapWinter_addZero() {
+        MutableDateTime test = new MutableDateTime(2011, 10, 30, 2, 30, 0, 0, DateTimeZone.forID("Europe/Berlin"));
+        test.addHours(1);
+        assertEquals("2011-10-30T02:30:00.000+01:00", test.toString());
+        test.addYears(0);
+        assertEquals("2011-10-30T02:30:00.000+01:00", test.toString());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

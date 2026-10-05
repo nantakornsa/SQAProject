@@ -1,0 +1,105 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-46
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+4a1a31c6a50a0fbe25fa33277909bd51f1deb8e9
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-11-22 16:52:50 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+603
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-603.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.rhino.jstype.JSTypeTest::testRecordTypeLeastSuperType2
+   --> junit.framework.AssertionFailedError: Expected: ({a: number, b: string}|{b: string, c: string, e: number})
+ - com.google.javascript.rhino.jstype.JSTypeTest::testRecordTypeLeastSuperType3
+   --> junit.framework.AssertionFailedError: Expected: ({a: number, b: string}|{d: number, e: string, f: string})
+ - com.google.javascript.rhino.jstype.RecordTypeTest::testSupAndInf
+   --> junit.framework.AssertionFailedError: Expected: ({a: number, b: number}|{b: number, c: number})
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.rhino.jstype.RecordType
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.rhino.jstype.RecordType ===
+diff --git a/src/com/google/javascript/rhino/jstype/RecordType.java b/src/com/google/javascript/rhino/jstype/RecordType.java
+index 7289803e9..b418dbddd 100755
+--- a/src/com/google/javascript/rhino/jstype/RecordType.java
++++ b/src/com/google/javascript/rhino/jstype/RecordType.java
+@@ -137,22 +137,6 @@ class RecordType extends PrototypeObjectType {
+         propertyNode);
+   }
+ 
+-  @Override
+-  public JSType getLeastSupertype(JSType that) {
+-    if (!that.isRecordType()) {
+-      return super.getLeastSupertype(that);
+-    }
+-    RecordTypeBuilder builder = new RecordTypeBuilder(registry);
+-    for (String property : properties.keySet()) {
+-      if (that.toMaybeRecordType().hasProperty(property) &&
+-          that.toMaybeRecordType().getPropertyType(property).isEquivalentTo(
+-              getPropertyType(property))) {
+-        builder.addProperty(property, getPropertyType(property),
+-            getPropertyNode(property));
+-      }
+-    }
+-    return builder.build();
+-  }
+   JSType getGreatestSubtypeHelper(JSType that) {
+     if (that.isRecordType()) {
+       RecordType thatRecord = that.toMaybeRecordType();
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testRecordTypeLeastSuperType2() {
+    RecordTypeBuilder builder = new RecordTypeBuilder(registry);
+    builder.addProperty("e", NUMBER_TYPE, null);
+    builder.addProperty("b", STRING_TYPE, null);
+    builder.addProperty("c", STRING_TYPE, null);
+    JSType otherRecordType = builder.build();
+
+    assertTypeEquals(
+        registry.createUnionType(recordType, otherRecordType),
+        recordType.getLeastSupertype(otherRecordType));
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

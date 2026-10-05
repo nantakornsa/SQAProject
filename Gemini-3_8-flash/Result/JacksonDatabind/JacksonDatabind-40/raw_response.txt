@@ -1,0 +1,69 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791184606-RGrQpIxh01UkmrU4XBT7","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Jackson Bug**\n\nI'm currently examining a bug in JacksonDatabind-40 where `FAIL_ON_NULL_FOR_PRIMITIVES` isn't honored when empty strings are coerced to primitive numeric types. This behavior deviates from the expected null failure.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"deser;\n\nimport com.fasterxml.jackson.core.JsonProcessingException;\nimport com.fasterxml.jackson"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".databind.BaseMapTest;\nimport com.fasterxml.jackson.databind.DeserializationFeature;\nimport com.fasterxml.jackson"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".databind.ObjectMapper;\n\npublic class PrimitiveEmptyStringCoercionTest extends BaseMapTest {\n\n    public void testEmptyTo"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"NullCoercionForPrimitives() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n        mapper.enable(Deserial"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"izationFeature.FAIL_ON_NULL_FOR_PRIMITIVES);\n\n        _testEmptyToNullFail(mapper"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":", int.class);\n        _testEmptyToNullFail(mapper, long.class);\n        _test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"EmptyToNullFail(mapper, double.class);\n        _testEmptyToNullFail(mapper, float."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"class);\n        _testEmptyToNullFail(mapper, byte.class);\n        _testEmptyToNullFail(mapper,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" short.class);\n        _testEmptyToNullFail(mapper, boolean.class);\n        _testEmptyToNullFail"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(mapper, char.class);\n    }\n\n    private void _testEmptyToNullFail(ObjectMapper mapper,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" Class<?> cls) throws Exception {\n        try {\n            mapper.readValue(quote(\"\"), cls);\n            fail(\"Expected"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" JsonProcessingException when mapping empty String to \" + cls.getName()\n                    + \" with FAIL_ON_NULL_FOR_"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"PRIMITIVES enabled\");\n        } catch (JsonProcessingException e) {\n            verifyException(e, \"Can"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" not map Empty String as null\");\n        }\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1179,"output_tokens":730,"output_tokens_details":{"thinking_tokens":366},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00362175,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00362175,"upstream_inference_prompt_cost":0.00088425,"upstream_inference_completions_cost":0.0027375}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

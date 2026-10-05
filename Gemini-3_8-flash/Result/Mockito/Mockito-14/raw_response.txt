@@ -1,0 +1,48 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791113186-URJOV25UkPvCXCBhMMtM","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Mockito Bug**\n\nI'm currently deep into Mockito-14, specifically the issue where `mock.otherMethod()` unexpectedly executes during argument evaluation within a `verify` call. My focus is on how `MockHandler.handle()` contributes to this behavior in the current, buggy implementation.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.mockitousage.bugs;\n\nimport static org.mockito.Mockito.*;\n\nimport org."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"junit.Test;\nimport org.mockitousage.IMethods;\nimport org.mockitoutil.TestBase"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\n\npublic class VerifyingWithAnExtraCallToADifferentMockTest extends TestBase {\n\n    @Test\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    public void shouldAllowVerifyingWhenOtherMockCallIsInTheSameLine() {\n        IMethods mock ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" mock(IMethods.class);\n        IMethods mockTwo = mock(IMethods.class);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\n        // given\n        when(mock.otherMethod()).thenReturn(\"foo\");\n\n        // when\n        mock"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Two.simpleMethod(\"foo\");\n\n        // then\n        verify(mockTwo).simpleMethod(mock.other"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Method());\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1501,"output_tokens":434,"output_tokens_details":{"thinking_tokens":254},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00275325,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00275325,"upstream_inference_prompt_cost":0.00112575,"upstream_inference_completions_cost":0.0016275}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

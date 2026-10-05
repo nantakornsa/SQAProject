@@ -1,0 +1,39 @@
+package com.fasterxml.jackson.databind.jsontype.ext;
+
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class ExternalTypeId999Test extends BaseMapTest
+{
+    static class Envelope {
+        public String type;
+
+        @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "type")
+        @JsonSubTypes({
+            @JsonSubTypes.Type(value = Payload.class, name = "foo")
+        })
+        public Object payload;
+    }
+
+    static class Payload {
+        public int value;
+
+        public Payload() { }
+        public Payload(int v) { value = v; }
+    }
+
+    public void testExternalTypeId() throws Exception
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        String json = aposToQuotes("{'type':'foo','payload':{'value':42}}");
+        Envelope env = mapper.readValue(json, Envelope.class);
+
+        assertNotNull(env);
+        assertEquals("foo", env.type);
+        assertNotNull(env.payload);
+        assertTrue(env.payload instanceof Payload);
+        assertEquals(42, ((Payload) env.payload).value);
+    }
+}

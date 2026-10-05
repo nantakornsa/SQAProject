@@ -1,0 +1,119 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-43
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+f636f23bdef4b27752ca249a28463ec1b6af1f0b
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-01-17 16:37:56 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+314
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-314.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.TypeCheckTest::testLends10
+   --> junit.framework.ComparisonFailure: expected:<[inconsistent return type
+ - com.google.javascript.jscomp.TypeCheckTest::testLends11
+   --> junit.framework.ComparisonFailure: expected:<[inconsistent return type
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.TypedScopeCreator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.TypedScopeCreator ===
+diff --git a/src/com/google/javascript/jscomp/TypedScopeCreator.java b/src/com/google/javascript/jscomp/TypedScopeCreator.java
+index 92d8715c0..f9943a13d 100644
+--- a/src/com/google/javascript/jscomp/TypedScopeCreator.java
++++ b/src/com/google/javascript/jscomp/TypedScopeCreator.java
+@@ -417,6 +417,7 @@ final class TypedScopeCreator implements ScopeCreator {
+      * For more information, see
+      * http://code.google.com/p/closure-compiler/issues/detail?id=314
+      */
++    private List<Node> lentObjectLiterals = null;
+ 
+     /**
+      * Type-less stubs.
+@@ -544,6 +545,13 @@ final class TypedScopeCreator implements ScopeCreator {
+       }
+ 
+       // Analyze any @lends object literals in this statement.
++      if (n.getParent() != null && NodeUtil.isStatement(n) &&
++          lentObjectLiterals != null) {
++        for (Node objLit : lentObjectLiterals) {
++          defineObjectLiteral(objLit);
++        }
++        lentObjectLiterals.clear();
++      }
+     }
+ 
+     private void attachLiteralTypes(NodeTraversal t, Node n) {
+@@ -577,7 +585,16 @@ final class TypedScopeCreator implements ScopeCreator {
+           break;
+ 
+         case Token.OBJECTLIT:
++          JSDocInfo info = n.getJSDocInfo();
++          if (info != null &&
++              info.getLendsName() != null) {
++            if (lentObjectLiterals == null) {
++              lentObjectLiterals = Lists.newArrayList();
++            }
++            lentObjectLiterals.add(n);
++          } else {
+             defineObjectLiteral(n);
++          }
+           break;
+ 
+           // NOTE(nicksantos): If we ever support Array tuples,
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testLends10() throws Exception {
+    testTypes(
+        "function defineClass(x) { return function() {}; } " +
+        "/** @constructor */" +
+        "var Foo = defineClass(" +
+        "    /** @lends {Foo.prototype} */ ({/** @type {number} */ bar: 1}));" +
+        "/** @return {string} */ function f() { return (new Foo()).bar; }",
+        "inconsistent return type\n" +
+        "found   : number\n" +
+        "required: string");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

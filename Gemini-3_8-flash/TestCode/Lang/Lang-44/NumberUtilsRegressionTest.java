@@ -1,0 +1,18 @@
+package org.apache.commons.lang;
+
+import junit.framework.TestCase;
+
+public class NumberUtilsRegressionTest extends TestCase {
+
+    public void testLang457() {
+        String[] invalidNumbers = new String[] { "l", "L", "f", "F", "d", "D" };
+        for (int i = 0; i < invalidNumbers.length; i++) {
+            try {
+                NumberUtils.createNumber(invalidNumbers[i]);
+                fail("Expected NumberFormatException for '" + invalidNumbers[i] + "'");
+            } catch (NumberFormatException nfe) {
+                // Expected
+            }
+        }
+    }
+}

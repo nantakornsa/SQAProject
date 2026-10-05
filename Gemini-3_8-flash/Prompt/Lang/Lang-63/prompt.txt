@@ -1,0 +1,139 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-63
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+1d5c03fac601d6ce291c3fe3e5e51a11881e2fc0
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2006-10-07 00:22:42 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-281
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-281
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang.time.DurationFormatUtilsTest::testJiraLang281
+   --> junit.framework.ComparisonFailure: expected:<[09]> but was:<[-2]>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang.time.DurationFormatUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang.time.DurationFormatUtils ===
+diff --git a/src/java/org/apache/commons/lang/time/DurationFormatUtils.java b/src/java/org/apache/commons/lang/time/DurationFormatUtils.java
+index 127b92795..3a9d9f68a 100644
+--- a/src/java/org/apache/commons/lang/time/DurationFormatUtils.java
++++ b/src/java/org/apache/commons/lang/time/DurationFormatUtils.java
+@@ -303,25 +303,20 @@ public class DurationFormatUtils {
+             days -= 1;
+         }
+         while (days < 0) {
+-            days += 31;
++            end.add(Calendar.MONTH, -1);
++            days += end.getActualMaximum(Calendar.DAY_OF_MONTH);
+ //days += 31; // TODO: Need tests to show this is bad and the new code is good.
+ // HEN: It's a tricky subject. Jan 15th to March 10th. If I count days-first it is 
+ // 1 month and 26 days, but if I count month-first then it is 1 month and 23 days.
+ // Also it's contextual - if asked for no M in the format then I should probably 
+ // be doing no calculating here.
+             months -= 1;
++            end.add(Calendar.MONTH, 1);
+         }
+         while (months < 0) {
+             months += 12;
+             years -= 1;
+         }
+-        milliseconds -= reduceAndCorrect(start, end, Calendar.MILLISECOND, milliseconds);
+-        seconds -= reduceAndCorrect(start, end, Calendar.SECOND, seconds);
+-        minutes -= reduceAndCorrect(start, end, Calendar.MINUTE, minutes);
+-        hours -= reduceAndCorrect(start, end, Calendar.HOUR_OF_DAY, hours);
+-        days -= reduceAndCorrect(start, end, Calendar.DAY_OF_MONTH, days);
+-        months -= reduceAndCorrect(start, end, Calendar.MONTH, months);
+-        years -= reduceAndCorrect(start, end, Calendar.YEAR, years);
+ 
+         // This next block of code adds in values that 
+         // aren't requested. This allows the user to ask for the 
+@@ -429,18 +424,6 @@ public class DurationFormatUtils {
+         }
+         return buffer.toString();
+     }
+-    static int reduceAndCorrect(Calendar start, Calendar end, int field, int difference) {
+-        end.add( field, -1 * difference );
+-        int endValue = end.get(field);
+-        int startValue = start.get(field);
+-        if (endValue < startValue) {
+-            int newdiff = startValue - endValue;
+-            end.add( field, newdiff );
+-            return newdiff;
+-        } else {
+-            return 0;
+-        }
+-    }
+ 
+     static final Object y = "y";
+     static final Object M = "M";
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testJiraLang281() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.MONTH, Calendar.DECEMBER);
+        cal.set(Calendar.DAY_OF_MONTH, 31);
+        cal.set(Calendar.YEAR, 2005);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+
+        Calendar cal2 = Calendar.getInstance();
+        cal2.set(Calendar.MONTH, Calendar.OCTOBER);
+        cal2.set(Calendar.DAY_OF_MONTH, 6);
+        cal2.set(Calendar.YEAR, 2006);
+        cal2.set(Calendar.HOUR_OF_DAY, 0);
+        cal2.set(Calendar.MINUTE, 0);
+        cal2.set(Calendar.SECOND, 0);
+        cal2.set(Calendar.MILLISECOND, 0);
+        String result = DurationFormatUtils.formatPeriod(cal.getTime().getTime(), cal2.getTime().getTime(), "MM");
+        assertEquals("09", result);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

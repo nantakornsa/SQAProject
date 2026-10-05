@@ -1,0 +1,99 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791184774-WtzbiCkh7zDqgMZSgzxt","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Test Failure**\n\nI'm currently diving into the specifics of the `testMapKeyRefinement1384` within `TypeRefinementForMapTest`. My focus is on pinpointing the exact mechanism causing the JacksonDatabind-59 issue. This involves a detailed examination of the test's execution flow to identify the root cause.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing Key Deserializer Loss**\n\nI've identified the core of the `testMapKeyRefinement1384` issue: the `KeyDeserializer` attached to the map's `baseType` is being lost during the `TypeFactory.constructSpecializedType` process. This means custom key deserializers are not correctly preserved when refining map types, contributing to the JacksonDatabind-59 problem.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"jsontype;\n\nimport java.util.LinkedHashMap;\nimport java.util.Map;\n\nimport com."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"fasterxml.jackson.annotation.JsonProperty;\nimport com.fasterxml.jackson.databind.BaseMapTest;\nimport com"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".fasterxml.jackson.databind.DeserializationContext;\nimport com.fasterxml.jackson.databind.KeyDeserializer"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\nimport com.fasterxml.jackson.databind.ObjectMapper;\nimport com.fasterxml.jackson.databind.annotation"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".JsonDeserialize;\n\npublic class TypeRefinementForMapTest extends BaseMapTest {\n\n    static class CompoundKey"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" {\n        final String a, b;\n\n        public CompoundKey(String a, String b) {\n            this"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".a = a;\n            this.b = b;\n        }\n\n        @Override\n        public boolean"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" equals(Object o) {\n            if (this == o) return true;\n            if (o == null || getClass() != o"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".getClass()) return false;\n            CompoundKey that = (CompoundKey) o;\n            return (a != null ? a."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"equals(that.a) : that.a == null) &&\n                   (b != null ? b.equals(that"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".b) : that.b == null);\n        }\n\n        @Override\n        public int hashCode() {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n            return (a != null ? a.hashCode() : 0) * 31 + (b != null ? b.hashCode"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"() : 0);\n        }\n    }\n\n    static class CustomKeyDeserializer extends KeyDeserializer {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        @Override\n        public Object deserializeKey(String key, DeserializationContext ctxt) {\n            "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"String[] parts = key.split(\":\");\n            return new CompoundKey(parts[0], parts[1]);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        }\n    }\n\n    static class MapHolder {\n        @JsonProperty(\"map\")\n        @JsonDeserialize"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(keyUsing = CustomKeyDeserializer.class, as = LinkedHashMap.class)\n        Map<CompoundKey, String>"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" map;\n    }\n\n    public void testMapKeyRefinement1384() throws Exception {\n        ObjectMapper"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" mapper = new ObjectMapper();\n        String json = \"{\\\"map\\\":{\\\"foo:bar\\\":\\\"value\\\"}}\";\n\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"MapHolder holder = mapper.readValue(json, MapHolder.class);\n        assertNotNull(holder);\n        assertNotNull(holder"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".map);\n        assertEquals(1, holder.map.size());\n\n        CompoundKey key = holder.map.keySet"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"().iterator().next();\n        assertEquals(\"foo\", key.a);\n        assertEquals(\"bar\", key.b"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":");\n        assertEquals(\"value\", holder.map.get(key));\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2113,"output_tokens":1097,"output_tokens_details":{"thinking_tokens":504},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.0056985,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0056985,"upstream_inference_prompt_cost":0.00158475,"upstream_inference_completions_cost":0.00411375}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

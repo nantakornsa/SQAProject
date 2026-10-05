@@ -1,0 +1,86 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-62
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+b12d1d6489329c989b15635f6f7f06681b3f6582
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-06-28 17:08:53 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+487
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-487.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.LightweightMessageFormatterTest::testFormatErrorSpaceEndOfLine1
+   --> junit.framework.ComparisonFailure: expected:<...ion here
+ - com.google.javascript.jscomp.LightweightMessageFormatterTest::testFormatErrorSpaceEndOfLine2
+   --> junit.framework.ComparisonFailure: expected:<...iption here
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.LightweightMessageFormatter
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.LightweightMessageFormatter ===
+diff --git a/src/com/google/javascript/jscomp/LightweightMessageFormatter.java b/src/com/google/javascript/jscomp/LightweightMessageFormatter.java
+index 5a4f884c8..420dbc07d 100644
+--- a/src/com/google/javascript/jscomp/LightweightMessageFormatter.java
++++ b/src/com/google/javascript/jscomp/LightweightMessageFormatter.java
+@@ -95,7 +95,7 @@ public class LightweightMessageFormatter extends AbstractMessageFormatter {
+       // charno == sourceExpert.length() means something is missing
+       // at the end of the line
+       if (excerpt.equals(LINE)
+-          && 0 <= charno && charno < sourceExcerpt.length()) {
++          && 0 <= charno && charno <= sourceExcerpt.length()) {
+         for (int i = 0; i < charno; i++) {
+           char c = sourceExcerpt.charAt(i);
+           if (Character.isWhitespace(c)) {
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testFormatErrorSpaceEndOfLine1() throws Exception {
+    JSError error = JSError.make("javascript/complex.js",
+        1, 10, FOO_TYPE);
+    LightweightMessageFormatter formatter = formatter("assert (1;");
+    assertEquals("javascript/complex.js:1: ERROR - error description here\n" +
+        "assert (1;\n" +
+        "          ^\n", formatter.formatError(error));
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

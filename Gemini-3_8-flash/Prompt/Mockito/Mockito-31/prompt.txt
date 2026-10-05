@@ -1,0 +1,95 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Mockito
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Mockito
+       Program: mockito
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/Mockito.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/mockito.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/active-bugs.csv
+Number of bugs: 38
+--------------------------------------------------------------------------------
+
+Summary for Bug: Mockito-31
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+62b6bdf44baeee172b2b1684835fb995bad2a47d
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-11-05 18:33:46 -0200
+--------------------------------------------------------------------------------
+Bug report id:
+225
+--------------------------------------------------------------------------------
+Bug report url:
+https://code.google.com/archive/p/mockito/issues/225
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.mockito.internal.stubbing.defaultanswers.ReturnsSmartNullsTest::shouldPrintTheParametersWhenCallingAMethodWithArgs
+   --> junit.framework.ComparisonFailure: expected:<... unstubbed withArgs([oompa, lumpa]) method on mock> but was:<... unstubbed withArgs([]) method on mock>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.mockito.internal.stubbing.defaultanswers.ReturnsSmartNulls
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.mockito.internal.stubbing.defaultanswers.ReturnsSmartNulls ===
+diff --git a/src/org/mockito/internal/stubbing/defaultanswers/ReturnsSmartNulls.java b/src/org/mockito/internal/stubbing/defaultanswers/ReturnsSmartNulls.java
+index 10d3b0fc8..4942d7cc7 100644
+--- a/src/org/mockito/internal/stubbing/defaultanswers/ReturnsSmartNulls.java
++++ b/src/org/mockito/internal/stubbing/defaultanswers/ReturnsSmartNulls.java
+@@ -6,6 +6,7 @@ package org.mockito.internal.stubbing.defaultanswers;
+ 
+ import java.io.Serializable;
+ import java.lang.reflect.Method;
++import java.util.Arrays;
+ 
+ import org.mockito.Mockito;
+ import org.mockito.cglib.proxy.MethodInterceptor;
+@@ -57,7 +58,8 @@ public class ReturnsSmartNulls implements Answer<Object>, Serializable {
+         }
+ 
+ 		private String formatMethodCall() {
+-			return invocation.getMethod().getName() + "()";
++			String args = Arrays.toString(invocation.getArguments());
++			return invocation.getMethod().getName() + "(" + args.substring(1, args.length() - 1) +	")";
+ 		}
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void shouldPrintTheParametersWhenCallingAMethodWithArgs() throws Throwable {
+    	Answer<Object> answer = new ReturnsSmartNulls();
+
+    	Foo smartNull = (Foo) answer.answer(invocationOf(Foo.class, "withArgs", "oompa", "lumpa"));
+
+    	assertEquals("SmartNull returned by unstubbed withArgs(oompa, lumpa) method on mock", smartNull + "");
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

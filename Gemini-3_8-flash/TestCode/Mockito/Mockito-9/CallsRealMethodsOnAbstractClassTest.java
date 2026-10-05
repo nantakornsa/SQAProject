@@ -1,0 +1,26 @@
+package org.mockitousage.constructor;
+
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+
+public class CallsRealMethodsOnAbstractClassTest {
+
+    static abstract class AbstractThing {
+        abstract String name();
+
+        String fullName() {
+            return "abstract " + name();
+        }
+    }
+
+    @Test
+    public void shouldAllowCallingOrStubbingAbstractMethodOnSpy() {
+        AbstractThing thing = spy(AbstractThing.class);
+        when(thing.name()).thenReturn("me");
+        assertEquals("abstract me", thing.fullName());
+    }
+}

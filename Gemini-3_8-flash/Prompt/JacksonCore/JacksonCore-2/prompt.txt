@@ -1,0 +1,193 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonCore
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonCore
+       Program: jackson-core
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonCore/JacksonCore.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-core.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonCore/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonCore-2
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+38d6e35d1f1a9b48193804925517500de8efee1f
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-09-21 11:26:42 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+105
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-core/issues/105
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.core.json.TestParserErrorHandling::testMangledNumbersBytes
+   --> junit.framework.AssertionFailedError: Should have gotten an exception; instead got token: VALUE_NUMBER_INT
+ - com.fasterxml.jackson.core.json.TestParserErrorHandling::testMangledNumbersChars
+   --> junit.framework.AssertionFailedError: Should have gotten an exception; instead got token: VALUE_NUMBER_INT
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.core.json.ReaderBasedJsonParser
+ - com.fasterxml.jackson.core.json.UTF8StreamJsonParser
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.core.json.ReaderBasedJsonParser ===
+diff --git a/src/main/java/com/fasterxml/jackson/core/json/ReaderBasedJsonParser.java b/src/main/java/com/fasterxml/jackson/core/json/ReaderBasedJsonParser.java
+index 12af5fb0..98b56302 100644
+--- a/src/main/java/com/fasterxml/jackson/core/json/ReaderBasedJsonParser.java
++++ b/src/main/java/com/fasterxml/jackson/core/json/ReaderBasedJsonParser.java
+@@ -949,6 +949,9 @@ public final class ReaderBasedJsonParser
+             --ptr; // need to push back following separator
+             _inputPtr = ptr;
+             // As per #105, need separating space between root values; check here
++            if (_parsingContext.inRoot()) {
++                _verifyRootSpace(ch);
++            }
+             int len = ptr-startPtr;
+             _textBuffer.resetWithShared(_inputBuffer, startPtr, len);
+             return reset(negative, intLen, fractLen, expLen);
+@@ -1078,6 +1081,9 @@ public final class ReaderBasedJsonParser
+         // Ok; unless we hit end-of-input, need to push last char read back
+         if (!eof) {
+             --_inputPtr;
++            if (_parsingContext.inRoot()) {
++                _verifyRootSpace(c);
++            }
+         }
+         _textBuffer.setCurrentLength(outPtr);
+         // And there we have it!
+@@ -1159,7 +1165,24 @@ public final class ReaderBasedJsonParser
+      * NOTE: caller MUST ensure there is at least one character available;
+      * and that input pointer is AT given char (not past)
+      */
++    private final void _verifyRootSpace(int ch) throws IOException
++    {
+         // caller had pushed it back, before calling; reset
++        ++_inputPtr;
++        switch (ch) {
++        case ' ':
++        case '\t':
++            return;
++        case '\r':
++            _skipCR();
++            return;
++        case '\n':
++            ++_currInputRow;
++            _currInputRowStart = _inputPtr;
++            return;
++        }
++        _reportMissingRootWS(ch);
++    }
+     
+     /*
+     /**********************************************************
+
+=== MODIFIED SOURCE: com.fasterxml.jackson.core.json.UTF8StreamJsonParser ===
+diff --git a/src/main/java/com/fasterxml/jackson/core/json/UTF8StreamJsonParser.java b/src/main/java/com/fasterxml/jackson/core/json/UTF8StreamJsonParser.java
+index 15faeb8b..83ae5b7a 100644
+--- a/src/main/java/com/fasterxml/jackson/core/json/UTF8StreamJsonParser.java
++++ b/src/main/java/com/fasterxml/jackson/core/json/UTF8StreamJsonParser.java
+@@ -1241,6 +1241,9 @@ public final class UTF8StreamJsonParser
+         --_inputPtr; // to push back trailing char (comma etc)
+         _textBuffer.setCurrentLength(outPtr);
+         // As per #105, need separating space between root values; check here
++        if (_parsingContext.inRoot()) {
++            _verifyRootSpace(c);
++        }
+ 
+         // And there we have it!
+         return resetInt(negative, intLen);
+@@ -1277,6 +1280,9 @@ public final class UTF8StreamJsonParser
+         --_inputPtr; // to push back trailing char (comma etc)
+         _textBuffer.setCurrentLength(outPtr);
+         // As per #105, need separating space between root values; check here
++        if (_parsingContext.inRoot()) {
++            _verifyRootSpace(_inputBuffer[_inputPtr++] & 0xFF);
++        }
+ 
+         // And there we have it!
+         return resetInt(negative, intPartLength);
+@@ -1404,6 +1410,9 @@ public final class UTF8StreamJsonParser
+         if (!eof) {
+             --_inputPtr;
+             // As per #105, need separating space between root values; check here
++            if (_parsingContext.inRoot()) {
++                _verifyRootSpace(c);
++            }
+         }
+         _textBuffer.setCurrentLength(outPtr);
+ 
+@@ -1418,8 +1427,25 @@ public final class UTF8StreamJsonParser
+      * NOTE: caller MUST ensure there is at least one character available;
+      * and that input pointer is AT given char (not past)
+      */
++    private final void _verifyRootSpace(int ch) throws IOException
++    {
+         // caller had pushed it back, before calling; reset
++        ++_inputPtr;
+         // TODO? Handle UTF-8 char decoding for error reporting
++        switch (ch) {
++        case ' ':
++        case '\t':
++            return;
++        case '\r':
++            _skipCR();
++            return;
++        case '\n':
++            ++_currInputRow;
++            _currInputRowStart = _inputPtr;
++            return;
++        }
++        _reportMissingRootWS(ch);
++    }
+ 
+     /*
+     /**********************************************************
+@@ -2572,9 +2598,6 @@ public final class UTF8StreamJsonParser
+                 }
+                 break;
+             default: // e.g. -1
+-                if (i < 32) {
+-                    _throwInvalidSpace(i);
+-                }
+                 _reportInvalidChar(i);
+             }
+         }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testMangledNumbersBytes() throws Exception {
+        _testMangledNumbers(true);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

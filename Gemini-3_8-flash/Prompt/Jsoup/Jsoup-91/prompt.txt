@@ -1,0 +1,140 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-91
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+247c5d05f4529e55aa1fdbd333f99e323809b5e0
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2019-05-12 15:28:35 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1192
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/1192
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.integration.ConnectTest::testBinaryThrowsExceptionWhenTypeIgnored
+   --> junit.framework.AssertionFailedError
+ - org.jsoup.integration.ConnectTest::testBinaryResultThrows
+   --> junit.framework.AssertionFailedError
+ - org.jsoup.integration.ParseTest::testBinaryThrowsException
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.UncheckedIOException
+ - org.jsoup.parser.CharacterReader
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.UncheckedIOException ===
+diff --git a/src/main/java/org/jsoup/UncheckedIOException.java b/src/main/java/org/jsoup/UncheckedIOException.java
+index 4cab9f4b..e7a9cc3d 100644
+--- a/src/main/java/org/jsoup/UncheckedIOException.java
++++ b/src/main/java/org/jsoup/UncheckedIOException.java
+@@ -7,6 +7,9 @@ public class UncheckedIOException extends RuntimeException {
+         super(cause);
+     }
+ 
++    public UncheckedIOException(String message) {
++        super(new IOException(message));
++    }
+ 
+     public IOException ioException() {
+         return (IOException) getCause();
+
+=== MODIFIED SOURCE: org.jsoup.parser.CharacterReader ===
+diff --git a/src/main/java/org/jsoup/parser/CharacterReader.java b/src/main/java/org/jsoup/parser/CharacterReader.java
+index 187f9e9d..7f163dd1 100644
+--- a/src/main/java/org/jsoup/parser/CharacterReader.java
++++ b/src/main/java/org/jsoup/parser/CharacterReader.java
+@@ -34,6 +34,9 @@ public final class CharacterReader {
+         charBuf = new char[sz > maxBufferLen ? maxBufferLen : sz];
+         bufferUp();
+ 
++        if (isBinary()) {
++            throw new UncheckedIOException("Input is binary and unsupported");
++        }
+     }
+ 
+     public CharacterReader(Reader input) {
+@@ -449,13 +452,22 @@ public final class CharacterReader {
+         return (nextIndexOf(loScan) > -1) || (nextIndexOf(hiScan) > -1);
+     }
+ 
++    private static final int numNullsConsideredBinary = 10; // conservative
+ 
+     /**
+      *  Heuristic to determine if the current buffer looks like binary content. Reader will already hopefully be
+      *  decoded correctly, so a bunch of NULLs indicates a binary file
+      */
++    boolean isBinary() {
++        int nullsSeen = 0;
+ 
++        for (int i = bufPos; i < bufLength; i++) {
++            if (charBuf[i] == '\0')
++                nullsSeen++;
++        }
+ 
++        return nullsSeen >= numNullsConsideredBinary;
++    }
+ 
+     @Override
+     public String toString() {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testBinaryThrowsExceptionWhenTypeIgnored() {
+        Connection con = Jsoup.connect(FileServlet.Url);
+        con.data(FileServlet.LocationParam, "/htmltests/thumb.jpg");
+        con.data(FileServlet.ContentTypeParam, "image/jpeg");
+        con.ignoreContentType(true);
+
+        boolean threw = false;
+        try {
+            con.execute();
+            Document doc = con.response().parse();
+        } catch (IOException e) {
+            threw = true;
+            assertEquals("Input is binary and unsupported", e.getMessage());
+        }
+        assertTrue(threw);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

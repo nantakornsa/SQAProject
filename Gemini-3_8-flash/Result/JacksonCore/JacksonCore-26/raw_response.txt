@@ -1,0 +1,72 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791106839-hPCoMyEEgPHhs1uIYeGO","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing Location Tracking**\n\nI've identified the root cause of JacksonCore-26: `_currBufferStart` was omitted in the `feedInput` method of `NonBlockingJsonParser`. The triggering test `AsyncLocationTest::testLocationOffsets` highlights this issue. My focus is now on implementing the fix.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".jackson.core.json.async;\n\nimport com.fasterxml.jackson.core.JsonFactory;\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" com.fasterxml.jackson.core.JsonLocation;\nimport com.fasterxml.jackson.core.JsonToken;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\nimport com.fasterxml.jackson.core.async.ByteArrayFeeder;\n\npublic class AsyncLocationOffsetTest extends"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" AsyncTestBase\n{\n    private final JsonFactory JSON_F = new JsonFactory();\n\n    public void testLocationOffsets"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"() throws Exception\n    {\n        NonBlockingJsonParser p = (NonBlockingJsonParser) JSON_F."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"createNonBlockingByteArrayParser();\n        ByteArrayFeeder feeder = p.getNonBlockingInputFeeder();\n\n        byte[] data ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" utf8Bytes(\"   [ true, false ]\");\n\n        // Feed first 2 bytes (spaces)\n        feeder."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"feedInput(data, 0, 2);\n        assertNull(p.nextToken());\n\n        // Feed next"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" 3 bytes with non-zero start offset: \" [ \"\n        feeder.feedInput(data, 2, 5"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":");\n        assertToken(JsonToken.START_ARRAY, p.nextToken());\n        JsonLocation loc = p.getToken"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Location();\n        assertEquals(3, loc.getByteOffset());\n        assertEquals(3, loc.getCharOffset());\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        // Feed next 4 bytes: \"true\"\n        feeder.feedInput(data, 5, 9"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":");\n        assertToken(JsonToken.VALUE_TRUE, p.nextToken());\n        loc = p.getTokenLocation();\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"assertEquals(5, loc.getByteOffset());\n        assertEquals(5, loc.getCharOffset());\n\n        p.close();\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":945,"output_tokens":708,"output_tokens_details":{"thinking_tokens":329},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00336375,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00336375,"upstream_inference_prompt_cost":0.00070875,"upstream_inference_completions_cost":0.002655}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,102 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-4
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+d270055e874148a2742604be36ab977eec030fba
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-06-03 07:15:00 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-988
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-988
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math3.geometry.euclidean.threed.SubLineTest::testIntersectionNotIntersecting
+   --> java.lang.NullPointerException
+ - org.apache.commons.math3.geometry.euclidean.twod.SubLineTest::testIntersectionParallel
+   --> java.lang.NullPointerException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math3.geometry.euclidean.threed.SubLine
+ - org.apache.commons.math3.geometry.euclidean.twod.SubLine
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math3.geometry.euclidean.threed.SubLine ===
+diff --git a/src/main/java/org/apache/commons/math3/geometry/euclidean/threed/SubLine.java b/src/main/java/org/apache/commons/math3/geometry/euclidean/threed/SubLine.java
+index a146cb661..aad7b65a5 100644
+--- a/src/main/java/org/apache/commons/math3/geometry/euclidean/threed/SubLine.java
++++ b/src/main/java/org/apache/commons/math3/geometry/euclidean/threed/SubLine.java
+@@ -111,6 +111,9 @@ public class SubLine {
+ 
+         // compute the intersection on infinite line
+         Vector3D v1D = line.intersection(subLine.line);
++        if (v1D == null) {
++            return null;
++        }
+ 
+         // check location of point with respect to first sub-line
+         Location loc1 = remainingRegion.checkPoint(line.toSubSpace(v1D));
+
+=== MODIFIED SOURCE: org.apache.commons.math3.geometry.euclidean.twod.SubLine ===
+diff --git a/src/main/java/org/apache/commons/math3/geometry/euclidean/twod/SubLine.java b/src/main/java/org/apache/commons/math3/geometry/euclidean/twod/SubLine.java
+index a9d621a44..ea9e96a49 100644
+--- a/src/main/java/org/apache/commons/math3/geometry/euclidean/twod/SubLine.java
++++ b/src/main/java/org/apache/commons/math3/geometry/euclidean/twod/SubLine.java
+@@ -115,6 +115,9 @@ public class SubLine extends AbstractSubHyperplane<Euclidean2D, Euclidean1D> {
+ 
+         // compute the intersection on infinite line
+         Vector2D v2D = line1.intersection(line2);
++        if (v2D == null) {
++            return null;
++        }
+ 
+         // check location of point with respect to first sub-line
+         Location loc1 = getRemainingRegion().checkPoint(line1.toSubSpace(v2D));
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testIntersectionNotIntersecting() throws MathIllegalArgumentException {
+        SubLine sub1 = new SubLine(new Vector3D(1, 1, 1), new Vector3D(1.5, 1, 1));
+        SubLine sub2 = new SubLine(new Vector3D(2, 3, 0), new Vector3D(2, 3, 0.5));
+        Assert.assertNull(sub1.intersection(sub2, true));
+        Assert.assertNull(sub1.intersection(sub2, false));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

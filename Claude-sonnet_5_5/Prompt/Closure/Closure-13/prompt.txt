@@ -1,0 +1,124 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-13
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+d6d733f461ee5ba26e9326c1c7609f1f00d6d2db
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-08-02 17:53:06 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+787
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-787.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.IntegrationTest::testIssue787
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.PeepholeOptimizationsPass
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.PeepholeOptimizationsPass ===
+diff --git a/src/com/google/javascript/jscomp/PeepholeOptimizationsPass.java b/src/com/google/javascript/jscomp/PeepholeOptimizationsPass.java
+index b51c088e4..eeeb6a978 100644
+--- a/src/com/google/javascript/jscomp/PeepholeOptimizationsPass.java
++++ b/src/com/google/javascript/jscomp/PeepholeOptimizationsPass.java
+@@ -123,8 +123,8 @@ class PeepholeOptimizationsPass
+     do {
+       Node c = node.getFirstChild();
+       while(c != null) {
+-        traverse(c);
+         Node next = c.getNext();
++        traverse(c);
+         c = next;
+       }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue787() {
+    CompilerOptions options = createCompilerOptions();
+    CompilationLevel level = CompilationLevel.SIMPLE_OPTIMIZATIONS;
+    level.setOptionsForCompilationLevel(options);
+    WarningLevel warnings = WarningLevel.DEFAULT;
+    warnings.setOptionsForWarningLevel(options);
+
+    String code = "" +
+        "function some_function() {\n" +
+        "  var fn1;\n" +
+        "  var fn2;\n" +
+        "\n" +
+        "  if (any_expression) {\n" +
+        "    fn2 = external_ref;\n" +
+        "    fn1 = function (content) {\n" +
+        "      return fn2();\n" +
+        "    }\n" +
+        "  }\n" +
+        "\n" +
+        "  return {\n" +
+        "    method1: function () {\n" +
+        "      if (fn1) fn1();\n" +
+        "      return true;\n" +
+        "    },\n" +
+        "    method2: function () {\n" +
+        "      return false;\n" +
+        "    }\n" +
+        "  }\n" +
+        "}";
+
+    String result = "" +
+        "function some_function() {\n" +
+        "  var a, b;\n" +
+        "  any_expression && (b = external_ref, a = function() {\n" +
+        "    return b()\n" +
+        "  });\n" +
+        "  return{method1:function() {\n" +
+        "    a && a();\n" +
+        "    return !0\n" +
+        "  }, method2:function() {\n" +
+        "    return !1\n" +
+        "  }}\n" +
+        "}\n" +
+        "";
+
+    test(options, code, result);
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

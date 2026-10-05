@@ -1,0 +1,44 @@
+```java
+package com.fasterxml.jackson.core.filter;
+
+import com.fasterxml.jackson.core.BaseTest;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+
+public class FilteringParserDelegate15Test extends BaseTest {
+
+    public void testNotAllowMultipleMatchesScalar() throws Exception {
+        String json = "3 4";
+        JsonParser p0 = JSON_F.createParser(json);
+        FilteringParserDelegate p = new FilteringParserDelegate(
+                p0,
+                TokenFilter.INCLUDE_ALL,
+                false, // includePath
+                false // allowMultipleMatches
+        );
+
+        assertToken(JsonToken.VALUE_NUMBER_INT, p.nextToken());
+        assertEquals(3, p.getIntValue());
+        assertNull(p.nextToken());
+        p.close();
+    }
+
+    public void testNotAllowMultipleMatchesStruct() throws Exception {
+        String json = "[3] [4]";
+        JsonParser p0 = JSON_F.createParser(json);
+        FilteringParserDelegate p = new FilteringParserDelegate(
+                p0,
+                TokenFilter.INCLUDE_ALL,
+                false, // includePath
+                false // allowMultipleMatches
+        );
+
+        assertToken(JsonToken.START_ARRAY, p.nextToken());
+        assertToken(JsonToken.VALUE_NUMBER_INT, p.nextToken());
+        assertEquals(3, p.getIntValue());
+        assertToken(JsonToken.END_ARRAY, p.nextToken());
+        assertNull(p.nextToken());
+        p.close();
+    }
+}
+```

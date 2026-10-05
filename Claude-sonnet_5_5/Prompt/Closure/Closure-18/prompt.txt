@@ -1,0 +1,96 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-18
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+ea119a2d06328852763f9ee447c3bf74fa1f83dc
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-07-03 04:44:08 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+768
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-768.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.IntegrationTest::testDependencySorting
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.Compiler
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.Compiler ===
+diff --git a/src/com/google/javascript/jscomp/Compiler.java b/src/com/google/javascript/jscomp/Compiler.java
+index 8898f77fe..3756b998e 100644
+--- a/src/com/google/javascript/jscomp/Compiler.java
++++ b/src/com/google/javascript/jscomp/Compiler.java
+@@ -1285,7 +1285,7 @@ public class Compiler extends AbstractCompiler {
+ 
+       // Check if the sources need to be re-ordered.
+       boolean staleInputs = false;
+-      if (options.dependencyOptions.needsManagement() && options.closurePass) {
++      if (options.dependencyOptions.needsManagement()) {
+         for (CompilerInput input : inputs) {
+           // Forward-declare all the provided types, so that they
+           // are not flagged even if they are dropped from the process.
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testDependencySorting() throws Exception {
+    CompilerOptions options = createCompilerOptions();
+    options.setDependencyOptions(
+        new DependencyOptions()
+        .setDependencySorting(true));
+    test(
+        options,
+        new String[] {
+          "goog.require('x');",
+          "goog.provide('x');",
+        },
+        new String[] {
+          "goog.provide('x');",
+          "goog.require('x');",
+
+          // For complicated reasons involving modules,
+          // the compiler creates a synthetic source file.
+          "",
+        });
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,100 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Mockito
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Mockito
+       Program: mockito
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/Mockito.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/mockito.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/active-bugs.csv
+Number of bugs: 38
+--------------------------------------------------------------------------------
+
+Summary for Bug: Mockito-9
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+31f908029b8cd9b1f32bed3a41651b30ebb47b9f
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2014-11-22 22:13:29 +0100
+--------------------------------------------------------------------------------
+Bug report id:
+122
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/mockito/mockito/issues/122
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.mockitousage.constructor.CreatingMocksWithConstructorTest::abstractMethodStubbed
+   --> org.mockito.exceptions.base.MockitoException: 
+ - org.mockitousage.constructor.CreatingMocksWithConstructorTest::testCallsRealInterfaceMethod
+   --> org.mockito.exceptions.base.MockitoException: 
+ - org.mockitousage.constructor.CreatingMocksWithConstructorTest::abstractMethodReturnsDefault
+   --> org.mockito.exceptions.base.MockitoException: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.mockito.internal.stubbing.answers.CallsRealMethods
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.mockito.internal.stubbing.answers.CallsRealMethods ===
+diff --git a/src/org/mockito/internal/stubbing/answers/CallsRealMethods.java b/src/org/mockito/internal/stubbing/answers/CallsRealMethods.java
+index 747655e88..8fb0caea7 100644
+--- a/src/org/mockito/internal/stubbing/answers/CallsRealMethods.java
++++ b/src/org/mockito/internal/stubbing/answers/CallsRealMethods.java
+@@ -5,7 +5,9 @@
+ package org.mockito.internal.stubbing.answers;
+ 
+ import java.io.Serializable;
++import java.lang.reflect.Modifier;
+ 
++import org.mockito.internal.stubbing.defaultanswers.GloballyConfiguredAnswer;
+ import org.mockito.invocation.InvocationOnMock;
+ import org.mockito.stubbing.Answer;
+ 
+@@ -33,6 +35,9 @@ public class CallsRealMethods implements Answer<Object>, Serializable {
+     private static final long serialVersionUID = 9057165148930624087L;
+ 
+     public Object answer(InvocationOnMock invocation) throws Throwable {
++    	if (Modifier.isAbstract(invocation.getMethod().getModifiers())) {
++    		return new GloballyConfiguredAnswer().answer(invocation);
++    	}
+         return invocation.callRealMethod();
+     }
+ }
+\ No newline at end of file
+
+
+=== TRIGGERING TEST METHOD ===
+    public void abstractMethodStubbed() {
+    	AbstractThing thing = spy(AbstractThing.class);
+    	when(thing.name()).thenReturn("me");
+    	assertEquals("abstract me", thing.fullName());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

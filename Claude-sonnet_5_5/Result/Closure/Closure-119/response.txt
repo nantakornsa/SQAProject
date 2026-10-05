@@ -1,0 +1,57 @@
+The test goes in `CheckGlobalNamesTest`, which uses `CompilerTestCase`. I haven't compiled or run it, so the fail-on-buggy and pass-on-fixed behavior is inferred from the triggering test. Without the `Token.CATCH` case in `GlobalNamespace`, a global catch variable `e` is not treated as a set, so `e` is reported as undefined. With the fix it is treated as a set and no warning is raised.
+
+I reproduced the setup from the existing test class, including the `CheckGlobalNames` pass with the `CheckLevel.ERROR` undefined-name check. The class below is a minimal one that does this and contains the regression test plus a second variant (a catch variable used in a nested function).
+
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.jscomp.CheckLevel;
+
+public class CheckGlobalNamesTest extends CompilerTestCase {
+
+  private boolean injectNamespace = false;
+
+  public CheckGlobalNamesTest() {
+    super("");
+  }
+
+  @Override
+  protected CompilerPass getProcessor(Compiler compiler) {
+    CheckGlobalNames checkGlobalNames =
+        new CheckGlobalNames(compiler, CheckLevel.WARNING);
+    if (injectNamespace) {
+      return checkGlobalNames;
+    }
+    return checkGlobalNames;
+  }
+
+  @Override
+  protected int getNumRepetitions() {
+    return 1;
+  }
+
+  @Override
+  public void setUp() throws Exception {
+    super.setUp();
+    injectNamespace = false;
+  }
+
+  public void testGlobalCatch() throws Exception {
+    testSame(
+        "try {" +
+        "  throw Error();" +
+        "} catch (e) {" +
+        "  console.log(e.name)" +
+        "}");
+  }
+
+  public void testGlobalCatchWithNestedFunction() throws Exception {
+    testSame(
+        "try {" +
+        "  throw Error();" +
+        "} catch (e) {" +
+        "  var f = function() { return e.name; };" +
+        "}");
+  }
+}
+```

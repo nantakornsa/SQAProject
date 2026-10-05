@@ -1,0 +1,34 @@
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.Node;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for numeric object literal keys (Closure issue 347).
+ */
+public class ObjectLitNumericKeyRegressionTest extends TestCase {
+
+  private static String print(String js) {
+    Compiler compiler = new Compiler();
+    CompilerOptions options = new CompilerOptions();
+    options.setCodingConvention(new GoogleCodingConvention());
+    compiler.initOptions(options);
+    Node n = compiler.parseTestCode(js);
+    assertEquals(0, compiler.getErrorCount());
+    String result = compiler.toSource(n).trim();
+    if (result.endsWith(";")) {
+      result = result.substring(0, result.length() - 1);
+    }
+    return result;
+  }
+
+  public void testObjectLit2() {
+    assertEquals("var x={1:1}", print("var x={1:1}"));
+    assertEquals("var x={1:1}", print("var x={'1':1}"));
+    assertEquals("var x={\"1.0\":1}", print("var x={'1.0':1}"));
+    assertEquals("var x={\"1.5\":1}", print("var x={1.5:1}"));
+  }
+}
+```

@@ -1,0 +1,40 @@
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.Node;
+
+/**
+ * Tests for {@link CheckGlobalThis}.
+ */
+public class CheckGlobalThisTest extends CompilerTestCase {
+
+  private static final DiagnosticType GLOBAL_THIS = CheckGlobalThis.GLOBAL_THIS;
+
+  public CheckGlobalThisTest() {
+  }
+
+  @Override
+  public CompilerPass getProcessor(final Compiler compiler) {
+    return new CompilerPass() {
+      @Override
+      public void process(Node externs, Node root) {
+        NodeTraversal.traverse(compiler, root, new CheckGlobalThis(compiler));
+      }
+    };
+  }
+
+  @Override
+  public int getNumRepetitions() {
+    return 1;
+  }
+
+  // Regression test for issue 144: a function expression that is returned
+  // from another function is not a global-scope function, so assigning to
+  // "this" inside it must not report a global this warning.
+  public void testStaticFunction6() {
+    testSame("function a() { return function() { this = 8; } }");
+  }
+
+  public void testGlobalThisStillReported() {
+    testSame("var a = this;", GLOBAL_THIS);
+  }
+}

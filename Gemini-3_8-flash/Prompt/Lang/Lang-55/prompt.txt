@@ -1,0 +1,91 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-55
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+b16235ad108c4fcdb7117493394d26d2f0faeace
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2007-02-06 22:49:50 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-315
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-315
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang.time.StopWatchTest::testLang315
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang.time.StopWatch
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang.time.StopWatch ===
+diff --git a/src/java/org/apache/commons/lang/time/StopWatch.java b/src/java/org/apache/commons/lang/time/StopWatch.java
+index 8f394217c..0f0786a36 100644
+--- a/src/java/org/apache/commons/lang/time/StopWatch.java
++++ b/src/java/org/apache/commons/lang/time/StopWatch.java
+@@ -115,7 +115,9 @@ public class StopWatch {
+         if(this.runningState != STATE_RUNNING && this.runningState != STATE_SUSPENDED) {
+             throw new IllegalStateException("Stopwatch is not running. ");
+         }
++        if(this.runningState == STATE_RUNNING) {
+             stopTime = System.currentTimeMillis();
++        }
+         this.runningState = STATE_STOPPED;
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testLang315() {
+        StopWatch watch = new StopWatch();
+        watch.start();
+            try {Thread.sleep(200);} catch (InterruptedException ex) {}
+        watch.suspend();
+        long suspendTime = watch.getTime();
+            try {Thread.sleep(200);} catch (InterruptedException ex) {}
+        watch.stop();
+        long totalTime = watch.getTime();
+        assertTrue( suspendTime == totalTime );
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

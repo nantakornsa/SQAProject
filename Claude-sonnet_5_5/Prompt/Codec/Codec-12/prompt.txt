@@ -1,0 +1,146 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Codec
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Codec
+       Program: commons-codec
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Codec/Codec.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-codec.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Codec/active-bugs.csv
+Number of bugs: 18
+--------------------------------------------------------------------------------
+
+Summary for Bug: Codec-12
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+1fc451c79779bdbf788e8bfbec6dc031a47495d8
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-03-19 18:33:42 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CODEC-130
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CODEC-130
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.codec.binary.Base32InputStreamTest::testSkipToEnd
+   --> junit.framework.AssertionFailedError: expected:<-1> but was:<183>
+ - org.apache.commons.codec.binary.Base32InputStreamTest::testCodec130
+   --> junit.framework.AssertionFailedError: expected:<[ello World]> but was:<[����
+ - org.apache.commons.codec.binary.Base32InputStreamTest::testSkipWrongArgument
+   --> junit.framework.AssertionFailedError: Expected exception: java.lang.IllegalArgumentException
+ - org.apache.commons.codec.binary.Base32InputStreamTest::testAvailable
+   --> junit.framework.AssertionFailedError: expected:<1> but was:<8>
+ - org.apache.commons.codec.binary.Base32InputStreamTest::testSkipPastEnd
+   --> junit.framework.AssertionFailedError: expected:<3> but was:<8>
+ - org.apache.commons.codec.binary.Base32InputStreamTest::testSkipBig
+   --> junit.framework.AssertionFailedError: expected:<3> but was:<8>
+ - org.apache.commons.codec.binary.Base64InputStreamTest::testSkipToEnd
+   --> junit.framework.AssertionFailedError: expected:<-1> but was:<255>
+ - org.apache.commons.codec.binary.Base64InputStreamTest::testCodec130
+   --> junit.framework.AssertionFailedError: expected:<[ello World]> but was:<[[��ܛ]>
+ - org.apache.commons.codec.binary.Base64InputStreamTest::testSkipWrongArgument
+   --> junit.framework.AssertionFailedError: Expected exception: java.lang.IllegalArgumentException
+ - org.apache.commons.codec.binary.Base64InputStreamTest::testAvailable
+   --> junit.framework.AssertionFailedError: expected:<1> but was:<8>
+ - org.apache.commons.codec.binary.Base64InputStreamTest::testSkipPastEnd
+   --> junit.framework.AssertionFailedError: expected:<6> but was:<8>
+ - org.apache.commons.codec.binary.Base64InputStreamTest::testSkipBig
+   --> junit.framework.AssertionFailedError: expected:<6> but was:<8>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.codec.binary.BaseNCodecInputStream
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+diff --git a/src/main/java/org/apache/commons/codec/binary/BaseNCodecInputStream.java b/src/main/java/org/apache/commons/codec/binary/BaseNCodecInputStream.java
+index 02cb18a5..d1eb77bb 100644
+--- a/src/main/java/org/apache/commons/codec/binary/BaseNCodecInputStream.java
++++ b/src/main/java/org/apache/commons/codec/binary/BaseNCodecInputStream.java
+@@ -139,9 +139,31 @@ public class BaseNCodecInputStream extends FilterInputStream {
+      *
+      * @throws IllegalArgumentException if the provided skip length is negative
+      */
++    @Override
++    public long skip(long n) throws IOException {
++        if (n < 0) {
++            throw new IllegalArgumentException("Negative skip length");
++        }
+ 
+         // skip in chunks of 512 bytes
++        final byte[] b = new byte[512];
++        final int max = (int) Math.min(n, Integer.MAX_VALUE);
++        int total = 0;
++
++        while (total < max) {
++            int len = max - total;
++            if (len > b.length) {
++                len = b.length;
++            }
++            len = read(b, 0, len);
++            if (len == EOF) {
++                break;
++            }
++            total += len;
++        }
+ 
++        return total;
++    }
+ 
+     /**
+      * {@inheritDoc}
+@@ -149,10 +171,17 @@ public class BaseNCodecInputStream extends FilterInputStream {
+      * @return <code>0</code> if the {@link InputStream} has reached <code>EOF</code>,
+      * <code>1</code> otherwise
+      */
++    public int available() throws IOException {
+         // Note: the logic is similar to the InflaterInputStream:
+         //       as long as we have not reached EOF, indicate that there is more
+         //       data available. As we do not know for sure how much data is left,
+         //       just return 1 as a safe guess.
+ 
+         // use the EOF flag of the underlying codec instance
++        if (baseNCodec.eof) {
++            return 0;
++        } else {
++            return 1;
++        }
++    }
+ }
+
+=== TRIGGERING TEST METHOD ===
+    public void testSkipToEnd() throws Throwable {
+        InputStream ins = new ByteArrayInputStream(StringUtils.getBytesIso8859_1(ENCODED_FOO));
+        Base32InputStream b32stream = new Base32InputStream(ins);
+        // due to CODEC-130, skip now skips correctly decoded characters rather than encoded
+        assertEquals(3, b32stream.skip(3));
+        // End of stream reached
+        assertEquals(-1, b32stream.read());
+        assertEquals(-1, b32stream.read());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,21 @@
+package org.jsoup.nodes;
+
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+
+public class DocumentTypeTest {
+
+    @Test
+    public void testOuterHtmlGeneration() {
+        DocumentType systemDocType = new DocumentType("html", "", "http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd", "");
+        assertEquals("<!DOCTYPE html \"http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd\">", systemDocType.outerHtml());
+
+        DocumentType combo = new DocumentType("notHtml", "--public", "--system", "");
+        assertEquals("<!DOCTYPE notHtml PUBLIC \"--public\" \"--system\">", combo.outerHtml());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConstructorValidationThrowsExceptionOnBlankName() {
+        new DocumentType("", "", "", "");
+    }
+}

@@ -1,0 +1,169 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-149
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+053636cbd1a8fb97e55b4f82bc4b5bee8beaf47e
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-08-06 02:38:20 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+205
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-205.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.CommandLineRunnerTest::testCharSetExpansion
+   --> junit.framework.AssertionFailedError: expected:<US-ASCII> but was:<null>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.AbstractCommandLineRunner
+ - com.google.javascript.jscomp.CommandLineRunner
+ - com.google.javascript.jscomp.Compiler
+ - com.google.javascript.jscomp.CompilerOptions
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.AbstractCommandLineRunner ===
+diff --git a/src/com/google/javascript/jscomp/AbstractCommandLineRunner.java b/src/com/google/javascript/jscomp/AbstractCommandLineRunner.java
+index 8cb44726c..8e2b26335 100644
+--- a/src/com/google/javascript/jscomp/AbstractCommandLineRunner.java
++++ b/src/com/google/javascript/jscomp/AbstractCommandLineRunner.java
+@@ -156,6 +156,7 @@ abstract class AbstractCommandLineRunner<A extends Compiler,
+     options.setCodingConvention(config.codingConvention);
+     options.setSummaryDetailLevel(config.summaryDetailLevel);
+ 
++    options.outputCharset = getOutputCharset();
+     inputCharset = getInputCharset();
+ 
+     if (config.jsOutputFile.length() > 0) {
+@@ -515,11 +516,6 @@ abstract class AbstractCommandLineRunner<A extends Compiler,
+     Result result;
+ 
+     setRunOptions(options);
+-    if (inputCharset == Charsets.UTF_8) {
+-      options.outputCharset = Charsets.US_ASCII;
+-    } else {
+-      options.outputCharset = inputCharset;
+-    }
+ 
+     boolean writeOutputToFile = !options.jsOutputFile.isEmpty();
+     if (writeOutputToFile) {
+@@ -690,6 +686,16 @@ abstract class AbstractCommandLineRunner<A extends Compiler,
+    *    be a supported charset.
+    * @throws FlagUsageException if flag is not a valid Charset name.
+    */
++  private String getOutputCharset() throws FlagUsageException {
++    if (!config.charset.isEmpty()) {
++      if (!Charset.isSupported(config.charset)) {
++        throw new FlagUsageException(config.charset +
++            " is not a valid charset name.");
++      }
++      return config.charset;
++    }
++    return "US-ASCII";
++  }
+ 
+   protected List<JSSourceFile> createExterns() throws FlagUsageException,
+       IOException {
+
+=== MODIFIED SOURCE: com.google.javascript.jscomp.CommandLineRunner ===
+diff --git a/src/com/google/javascript/jscomp/CommandLineRunner.java b/src/com/google/javascript/jscomp/CommandLineRunner.java
+index e3334a306..bd2de6055 100644
+--- a/src/com/google/javascript/jscomp/CommandLineRunner.java
++++ b/src/com/google/javascript/jscomp/CommandLineRunner.java
+@@ -468,7 +468,6 @@ public class CommandLineRunner extends
+     }
+ 
+     options.closurePass = flags.process_closure_primitives;
+-    initOptionsFromFlags(options);
+     return options;
+   }
+ 
+
+=== MODIFIED SOURCE: com.google.javascript.jscomp.Compiler ===
+diff --git a/src/com/google/javascript/jscomp/Compiler.java b/src/com/google/javascript/jscomp/Compiler.java
+index 7a12c4fcd..56bc4eb88 100644
+--- a/src/com/google/javascript/jscomp/Compiler.java
++++ b/src/com/google/javascript/jscomp/Compiler.java
+@@ -1359,7 +1359,8 @@ public class Compiler extends AbstractCompiler {
+     builder.setSourceMap(sourceMap);
+     builder.setSourceMapDetailLevel(options.sourceMapDetailLevel);
+ 
+-    Charset charset = options.outputCharset;
++    Charset charset = options.outputCharset != null ?
++        Charset.forName(options.outputCharset) : null;
+     builder.setOutputCharset(charset);
+ 
+     return builder.build();
+
+=== MODIFIED SOURCE: com.google.javascript.jscomp.CompilerOptions ===
+diff --git a/src/com/google/javascript/jscomp/CompilerOptions.java b/src/com/google/javascript/jscomp/CompilerOptions.java
+index f4c783637..f1c953573 100644
+--- a/src/com/google/javascript/jscomp/CompilerOptions.java
++++ b/src/com/google/javascript/jscomp/CompilerOptions.java
+@@ -585,7 +585,7 @@ public class CompilerOptions implements Serializable, Cloneable {
+    * Charset to use when generating code.  If null, then output ASCII.
+    * This needs to be a string because CompilerOptions is serializable.
+    */
+-  public Charset outputCharset;
++  String outputCharset;
+ 
+   /**
+    * Whether the named objects types included 'undefined' by default.
+@@ -957,6 +957,9 @@ public class CompilerOptions implements Serializable, Cloneable {
+   /**
+    * Sets the output charset by name.
+    */
++  public void setOutputCharset(String charsetName) {
++    this.outputCharset = charsetName;
++  }
+ 
+   /**
+    * Whether to include "undefined" in the default types.
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testCharSetExpansion() {
+    testSame("");
+    assertEquals("US-ASCII", lastCompiler.getOptions().outputCharset);
+    args.add("--charset=UTF-8");
+    testSame("");
+    assertEquals("UTF-8", lastCompiler.getOptions().outputCharset);
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,54 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791114499-DoTpFf4X7Cfj4EVGYUk6","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing Mockito Constructor Instantiation**\n\nI've identified the root cause in Mockito-20: `ByteBuddyMockMaker` incorrectly instantiated proxies. It bypassed the intended `InstantiatorProvider` and directly used `classInstantiator.instantiate()`, which failed when constructor settings or inner class instantiation were involved. I'm now implementing the correct instantiation path.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Resolving ByteBuddy Instantiation**\n\nI've confirmed the issue: `ByteBuddyMockMaker` bypassed `InstantiatorProvider`, leading to constructor call failures. I'm now working on ensuring the correct instantiation logic is applied, particularly for scenarios like inner classes and `useConstructor()`, to resolve regressions like Mockito-20.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.mockitousage.constructor"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\n\nimport org.junit.Test;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.mockito.Mockito"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".CALLS_REAL_METHODS;\nimport static org.mockito.Mockito.mock;\nimport static org."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"mockito.Mockito.withSettings;\n\npublic class Mockito20RegressionTest {\n\n    static class Message {\n        private final String"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" text;\n\n        public Message() {\n            this.text = \"hey!\";\n        }\n\n        public String"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" getMessage() {\n            return text;\n        }\n    }\n\n    @Test\n    public void can"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"_create_mock_with_constructor() {\n        Message mock = mock(Message.class, withSettings()."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"useConstructor().defaultAnswer(CALLS_REAL_METHODS));\n        assertEquals(\"hey!\", mock.getMessage());\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1642,"output_tokens":743,"output_tokens_details":{"thinking_tokens":550},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00401775,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00401775,"upstream_inference_prompt_cost":0.0012315,"upstream_inference_completions_cost":0.00278625}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

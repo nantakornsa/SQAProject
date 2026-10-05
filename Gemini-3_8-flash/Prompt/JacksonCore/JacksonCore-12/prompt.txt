@@ -1,0 +1,177 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonCore
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonCore
+       Program: jackson-core
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonCore/JacksonCore.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-core.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonCore/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonCore-12
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+fede6c9df74d370f2e728b5c46e14bd570abb83c
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-11-25 21:02:31 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+37
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-core/issues/37
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.core.json.LocationInObjectTest::testOffsetWithObjectFieldsUsingReader
+   --> junit.framework.AssertionFailedError: expected:<6> but was:<1>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.core.json.ReaderBasedJsonParser
+ - com.fasterxml.jackson.core.json.UTF8StreamJsonParser
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.core.json.ReaderBasedJsonParser ===
+diff --git a/src/main/java/com/fasterxml/jackson/core/json/ReaderBasedJsonParser.java b/src/main/java/com/fasterxml/jackson/core/json/ReaderBasedJsonParser.java
+index 60919c88..c2c413f0 100644
+--- a/src/main/java/com/fasterxml/jackson/core/json/ReaderBasedJsonParser.java
++++ b/src/main/java/com/fasterxml/jackson/core/json/ReaderBasedJsonParser.java
+@@ -619,7 +619,6 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
+         if (_parsingContext.expectComma()) {
+             i = _skipComma(i);
+         }
+-        _updateLocation();
+ 
+         /* And should we now have a name? Always true for Object contexts, since
+          * the intermediate 'expect-value' state is never retained.
+@@ -627,11 +626,13 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
+         boolean inObject = _parsingContext.inObject();
+         if (inObject) {
+             // First, field name itself:
++            _updateNameLocation();
+             String name = (i == INT_QUOTE) ? _parseName() : _handleOddName(i);
+             _parsingContext.setCurrentName(name);
+             _currToken = JsonToken.FIELD_NAME;
+             i = _skipColon();
+         }
++        _updateLocation();
+ 
+         // Ok: we must have a value... what is it?
+ 
+@@ -770,13 +771,14 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
+         if (_parsingContext.expectComma()) {
+             i = _skipComma(i);
+         }
+-        _updateLocation();
+ 
+         if (!_parsingContext.inObject()) {
++            _updateLocation();
+             _nextTokenNotInObject(i);
+             return false;
+         }
+ 
++        _updateNameLocation();
+         if (i == INT_QUOTE) {
+             // when doing literal match, must consider escaping:
+             char[] nameChars = sstr.asQuotedChars();
+@@ -848,17 +850,19 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
+         if (_parsingContext.expectComma()) {
+             i = _skipComma(i);
+         }
+-        _updateLocation();
+         if (!_parsingContext.inObject()) {
++            _updateLocation();
+             _nextTokenNotInObject(i);
+             return null;
+         }
+ 
++        _updateNameLocation();
+         String name = (i == INT_QUOTE) ? _parseName() : _handleOddName(i);
+         _parsingContext.setCurrentName(name);
+         _currToken = JsonToken.FIELD_NAME;
+         i = _skipColon();
+ 
++        _updateLocation();
+         if (i == INT_QUOTE) {
+             _tokenIncomplete = true;
+             _nextToken = JsonToken.VALUE_STRING;
+@@ -914,6 +918,7 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
+     private final void _isNextTokenNameYes(int i) throws IOException
+     {
+         _currToken = JsonToken.FIELD_NAME;
++        _updateLocation();
+ 
+         switch (i) {
+         case '"':
+@@ -964,6 +969,7 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
+         _parsingContext.setCurrentName(name);
+         _currToken = JsonToken.FIELD_NAME;
+         i = _skipColon();
++        _updateLocation();
+         if (i == INT_QUOTE) {
+             _tokenIncomplete = true;
+             _nextToken = JsonToken.VALUE_STRING;
+@@ -2668,9 +2674,12 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
+     public JsonLocation getTokenLocation()
+     {
+         final Object src = _ioContext.getSourceReference();
++        if (_currToken == JsonToken.FIELD_NAME) {
++            return new JsonLocation(src,
++                    -1L, _nameInputTotal, _nameInputRow, _tokenInputCol);
++        }
+         return new JsonLocation(src,
+-                -1L, getTokenCharacterOffset(),
+-                getTokenLineNr(),
++                -1L, _tokenInputTotal, _tokenInputRow,
+                 getTokenColumnNr());
+     }
+ 
+
+=== MODIFIED SOURCE: com.fasterxml.jackson.core.json.UTF8StreamJsonParser ===
+diff --git a/src/main/java/com/fasterxml/jackson/core/json/UTF8StreamJsonParser.java b/src/main/java/com/fasterxml/jackson/core/json/UTF8StreamJsonParser.java
+index 589a34c4..b0c007b7 100644
+--- a/src/main/java/com/fasterxml/jackson/core/json/UTF8StreamJsonParser.java
++++ b/src/main/java/com/fasterxml/jackson/core/json/UTF8StreamJsonParser.java
+@@ -3619,7 +3619,7 @@ public class UTF8StreamJsonParser
+                     _nameInputTotal, -1L, _nameInputRow, _tokenInputCol);
+         }
+         return new JsonLocation(src,
+-                getTokenCharacterOffset(), -1L, getTokenLineNr(),
++                _tokenInputTotal, -1L, _tokenInputRow,
+                 getTokenColumnNr());
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testOffsetWithObjectFieldsUsingReader() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

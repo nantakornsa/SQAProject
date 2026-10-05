@@ -1,0 +1,24 @@
+package com.google.javascript.jscomp;
+
+public class ClaudeInlineVariablesTest extends CompilerTestCase {
+
+  public ClaudeInlineVariablesTest() {
+    super("", false);
+  }
+
+  @Override
+  protected CompilerPass getProcessor(final Compiler compiler) {
+    return new InlineVariables(
+        compiler, InlineVariables.Mode.ALL, true);
+  }
+
+  @Override
+  protected int getNumRepetitions() {
+    return 1;
+  }
+
+  public void testExternalIssue1053() {
+    testSame(
+        "var u; function f() { u = Random(); var x = u; f(); alert(x===u)}");
+  }
+}

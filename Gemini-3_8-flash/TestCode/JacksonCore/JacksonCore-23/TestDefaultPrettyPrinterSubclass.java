@@ -1,0 +1,23 @@
+package com.fasterxml.jackson.core.util;
+
+import com.fasterxml.jackson.core.BaseTest;
+
+public class TestDefaultPrettyPrinterSubclass extends BaseTest {
+
+    @SuppressWarnings("serial")
+    static class MyPrettyPrinter extends DefaultPrettyPrinter {
+        public MyPrettyPrinter() {
+            super();
+        }
+    }
+
+    public void testInvalidSubClass() throws Exception {
+        MyPrettyPrinter p = new MyPrettyPrinter();
+        try {
+            p.createInstance();
+            fail("Should not pass");
+        } catch (IllegalStateException e) {
+            verifyException(e, "does not override");
+        }
+    }
+}

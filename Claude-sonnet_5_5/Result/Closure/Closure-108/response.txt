@@ -1,0 +1,52 @@
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.Node;
+
+public class ScopedAliasesTest extends CompilerTestCase {
+
+  private static String EXTERNS = "var window;";
+
+  private static final String SCOPE_NAMESPACE =
+      "/** @const */ var $jscomp = $jscomp || {}; /** @const */ $jscomp.scope = {};";
+
+  public ScopedAliasesTest() {
+    super(EXTERNS);
+  }
+
+  @Override
+  protected CompilerPass getProcessor(Compiler compiler) {
+    return new ScopedAliases(
+        compiler, null, CompilerOptions.NULL_ALIAS_TRANSFORMATION_HANDLER);
+  }
+
+  @Override
+  protected int getNumRepetitions() {
+    return 1;
+  }
+
+  public void testIssue1144() {
+    test("var ns = {};" +
+         "ns.sub = {};" +
+         "/** @constructor */ ns.sub.C = function () {};" +
+         "goog.scope(function () {" +
+         "  var sub = ns.sub;" +
+         "  /** @type {sub.C} */" +
+         "  var x = null;" +
+         "});",
+         SCOPE_NAMESPACE +
+         "var ns = {};" +
+         "ns.sub = {};" +
+         "/** @constructor */ ns.sub.C = function () {};" +
+         "$jscomp.scope.x = null;");
+  }
+}
+```
+
+I wrote this from memory of `ScopedAliasesTest`, so it has not been compiled or run. Three details could fail to compile or behave differently in this revision:
+
+- **Handler constant:** `CompilerOptions.NULL_ALIAS_TRANSFORMATION_HANDLER` is what I recall for the third `ScopedAliases` constructor argument. If it is absent, the project's own test uses a spy handler class instead.
+- **Constructor signature:** I assumed `ScopedAliases(compiler, preprocessorSymbolTable, transformationHandler)`.
+- **Namespace prefix:** the `SCOPE_NAMESPACE` string should match the project's own test constant.
+
+The test replicates `testIssue1144` from the bug report. On the buggy version `ScopedAliases` should throw `IllegalStateException` because it processes the duplicated JSDoc on the injected declaration twice. The fix skips those injected declarations, so the test should pass there.

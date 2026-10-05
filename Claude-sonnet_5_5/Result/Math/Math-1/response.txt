@@ -1,0 +1,28 @@
+The test below reproduces MATH-996 for both `Fraction` and `BigFraction`. I have not compiled or run it against the buggy and fixed versions.
+
+On the buggy version, `new Fraction(0.5000000001, 10)` and `new BigFraction(0.5000000001, 10)` throw a `FractionConversionException`. The fixed version returns 1/2 instead. The test calls the constructors directly, so the exception fails the test on the buggy code. On the fixed code the assertions on numerator and denominator pass.
+
+```java
+package org.apache.commons.math3.fraction;
+
+import org.apache.commons.math3.exception.ConvergenceException;
+import org.junit.Assert;
+import org.junit.Test;
+
+public class DigitLimitConstructorRegressionTest {
+
+    @Test
+    public void testFractionDigitLimitConstructorMath996() throws ConvergenceException {
+        Fraction f = new Fraction(0.5000000001, 10);
+        Assert.assertEquals(1, f.getNumerator());
+        Assert.assertEquals(2, f.getDenominator());
+    }
+
+    @Test
+    public void testBigFractionDigitLimitConstructorMath996() throws ConvergenceException {
+        BigFraction f = new BigFraction(0.5000000001, 10);
+        Assert.assertEquals(1, f.getNumeratorAsInt());
+        Assert.assertEquals(2, f.getDenominatorAsInt());
+    }
+}
+```

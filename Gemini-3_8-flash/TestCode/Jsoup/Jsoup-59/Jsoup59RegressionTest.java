@@ -1,0 +1,24 @@
+package org.jsoup.parser;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
+public class Jsoup59RegressionTest {
+
+    @Test
+    public void handlesControlCodeInAttributeName() {
+        // Control character \06 gets trimmed to empty string; on buggy version this throws
+        // IllegalArgumentException: String must not be empty in new Attribute("", ...)
+        Document doc = Jsoup.parse("<p><a \06=foo>One</a><a/\06=bar><a foo\06=bar>Two</a></p>");
+        assertEquals("<p><a>One</a><a></a><a foo=\"bar\">Two</a></p>", doc.body().html());
+    }
+
+    @Test
+    public void handlesControlCharactersAfterTagName() {
+        Document doc = Jsoup.parse("<a\06>Link</a>");
+        assertEquals("<a>Link</a>", doc.body().html());
+    }
+}

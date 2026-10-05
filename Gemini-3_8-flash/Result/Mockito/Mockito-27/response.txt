@@ -1,0 +1,31 @@
+```java
+package org.mockitousage.bugs;
+
+import org.junit.Test;
+import org.mockito.listeners.InvocationListener;
+import org.mockito.listeners.MethodInvocationReport;
+import org.mockitoutil.TestBase;
+
+import java.util.List;
+
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.withSettings;
+
+public class ListenersLostOnResetMockTest extends TestBase {
+
+    @Test
+    public void listener() throws Exception {
+        InvocationListener invocationListener = mock(InvocationListener.class);
+
+        List mockedList = mock(List.class, withSettings().invocationListeners(invocationListener));
+        reset(mockedList);
+
+        mockedList.clear();
+
+        verify(invocationListener).reportInvocation(any(MethodInvocationReport.class));
+    }
+}
+```

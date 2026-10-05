@@ -1,0 +1,58 @@
+package com.fasterxml.jackson.databind.module;
+
+import java.io.IOException;
+import java.util.Map;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.DeserializationConfig;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.KeyDeserializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.deser.KeyDeserializers;
+import com.fasterxml.jackson.databind.deser.std.StdKeyDeserializer;
+
+public class CustomEnumKeyDeserializerModifierTest extends BaseMapTest
+{
+    static enum TestEnum {
+        FOO,
+        BAR;
+    }
+
+    static class CustomEnumKeyDeserializer extends KeyDeserializer {
+        @Override
+        public Object deserializeKey(String key, DeserializationContext ctxt) throws IOException {
+            return TestEnum.valueOf(key.toUpperCase());
+        }
+    }
+
+    public void testEnumKeyDeserializerModifier() throws Exception
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.setKeyDeserializers(new KeyDeserializers() {
+            @Override
+            public KeyDeserializer findKeyDeserializer(JavaType type, DeserializationConfig config,
+                    com.fasterxml.jackson.databind.BeanDescription beanDesc) {
+                return null;
+            }
+        });
+        module.setDeserializerModifier(new com.fasterxml.jackson.databind.deser.BeanDeserializerModifier() {
+            @Override
+            public KeyDeserializer modifyKeyDeserializer(DeserializationConfig config, JavaType type,
+                    KeyDeserializer defaultKeyDeserializer) {
+                if (type.isEnumType()) {
+                    return new CustomEnumKeyDeserializer();
+                }
+                return defaultKeyDeserializer;
+            }
+        });
+        mapper.registerModule(module);
+
+        Map<TestEnum, String> result = mapper.readValue("{\"foo\":\"value\"}",
+                new TypeReference<Map<TestEnum, String>>() {});
+        assertNotNull(result);
+        assertEquals("value", result.get(TestEnum.FOO));
+    }
+}

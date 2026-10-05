@@ -1,0 +1,78 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Codec
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Codec
+       Program: commons-codec
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Codec/Codec.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-codec.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Codec/active-bugs.csv
+Number of bugs: 18
+--------------------------------------------------------------------------------
+
+Summary for Bug: Codec-10
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+41c68e9ef470696009d72133c7f05a20e2728e34
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-03-01 17:56:14 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CODEC-117
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CODEC-117
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.codec.language.CaverphoneTest::testEndMb
+   --> junit.framework.ComparisonFailure: Source: mbmb expected:<M[PM]1111111> but was:<M[MP]1111111>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.codec.language.Caverphone
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+diff --git a/src/java/org/apache/commons/codec/language/Caverphone.java b/src/java/org/apache/commons/codec/language/Caverphone.java
+index 5ac7e9ce..28505574 100644
+--- a/src/java/org/apache/commons/codec/language/Caverphone.java
++++ b/src/java/org/apache/commons/codec/language/Caverphone.java
+@@ -73,7 +73,7 @@ public class Caverphone implements StringEncoder {
+         txt = txt.replaceAll("^gn", "2n");
+ 
+         // End 
+-        txt = txt.replaceAll("^mb", "m2");
++        txt = txt.replaceAll("mb$", "m2");
+ 
+         // 4. Handle replacements
+         txt = txt.replaceAll("cq", "2q");
+
+=== TRIGGERING TEST METHOD ===
+    public void testEndMb() throws EncoderException {
+        String[][] data = {{"mb", "M111111111"}, {"mbmb", "MPM1111111"}};
+        this.checkEncodings(data);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

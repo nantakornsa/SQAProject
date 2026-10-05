@@ -1,0 +1,57 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791113191-mQD7AB3JO035d1n8cPFJ","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Mockito `@InjectMocks` behavior**\n\nI'm examining the logic in `FinalMockCandidateFilter.java`, specifically how it handles `@InjectMocks`. The current code prioritizes property setters over direct field access for injecting mocks, which seems to be the root of the Mockito-15 bug.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.mockitousage.bugs;\n\nimport org.junit."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Test;\nimport org.junit.runner.RunWith;\nimport org.mockito.InjectMocks;\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" org.mockito.Mock;\nimport org.mockito.runners.MockitoJUnitRunner;\n\nimport static org.junit"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".Assert.assertTrue;\n\n@RunWith(MockitoJUnitRunner.class)\npublic class InjectMocksShouldTryProperty"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"SettersFirstBeforeFieldAccessTest {\n\n    @Mock\n    private Dependency dependency;\n\n    @InjectMocks\n    private A"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"waitingInjection awaitingInjection = new AwaitingInjection();\n\n    @Test\n    public void shouldInjectUsingPropertySetterIfAvailable"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"() {\n        assertTrue(\"Property setter should have been used for injection\", awaitingInjection.propertySetterUsed);\n    }\n\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"static class Dependency {\n    }\n\n    static class AwaitingInjection {\n        private Dependency dependency;\n        private"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" boolean propertySetterUsed = false;\n\n        public void setDependency(Dependency dependency) {\n            this.dependency ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" dependency;\n            this.propertySetterUsed = true;\n        }\n\n        public Dependency getDependency() {\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"            return dependency;\n        }\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1051,"output_tokens":472,"output_tokens_details":{"thinking_tokens":216},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00255825,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00255825,"upstream_inference_prompt_cost":0.00078825,"upstream_inference_completions_cost":0.00177}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

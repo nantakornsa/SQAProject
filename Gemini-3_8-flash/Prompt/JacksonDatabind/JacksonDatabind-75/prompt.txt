@@ -1,0 +1,112 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-75
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+ce114737139538f72d2a7a994db41befc32362fe
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-03-07 19:52:29 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+1543
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1543
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.struct.EnumFormatShapeTest::testEnumPropertyAsNumber
+   --> junit.framework.ComparisonFailure: expected:<{"color":[2]}> but was:<{"color":["GREEN"]}>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.ser.std.EnumSerializer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.ser.std.EnumSerializer ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/ser/std/EnumSerializer.java b/src/main/java/com/fasterxml/jackson/databind/ser/std/EnumSerializer.java
+index 75c12b5c4..dae384a7c 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/ser/std/EnumSerializer.java
++++ b/src/main/java/com/fasterxml/jackson/databind/ser/std/EnumSerializer.java
+@@ -83,7 +83,7 @@ public class EnumSerializer
+          *   handle toString() case dynamically (for example)
+          */
+         EnumValues v = EnumValues.constructFromName(config, (Class<Enum<?>>) enumClass);
+-        Boolean serializeAsIndex = _isShapeWrittenUsingIndex(enumClass, format, true);
++        Boolean serializeAsIndex = _isShapeWrittenUsingIndex(enumClass, format, true, null);
+         return new EnumSerializer(v, serializeAsIndex);
+     }
+ 
+@@ -101,7 +101,7 @@ public class EnumSerializer
+                     property, handledType());
+             if (format != null) {
+                 Boolean serializeAsIndex = _isShapeWrittenUsingIndex(property.getType().getRawClass(),
+-                        format, false);
++                        format, false, _serializeAsIndex);
+                 if (serializeAsIndex != _serializeAsIndex) {
+                     return new EnumSerializer(_values, serializeAsIndex);
+                 }
+@@ -214,15 +214,16 @@ public class EnumSerializer
+      * index (number) or not.
+      */
+     protected static Boolean _isShapeWrittenUsingIndex(Class<?> enumClass,
+-            JsonFormat.Value format, boolean fromClass)
++            JsonFormat.Value format, boolean fromClass,
++            Boolean defaultValue)
+     {
+         JsonFormat.Shape shape = (format == null) ? null : format.getShape();
+         if (shape == null) {
+-            return null;
++            return defaultValue;
+         }
+         // i.e. "default", check dynamically
+         if (shape == Shape.ANY || shape == Shape.SCALAR) {
+-            return null;
++            return defaultValue;
+         }
+         // 19-May-2016, tatu: also consider "natural" shape
+         if (shape == Shape.STRING || shape == Shape.NATURAL) {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testEnumPropertyAsNumber() throws Exception {
+        assertEquals(String.format(aposToQuotes("{'color':%s}"), Color.GREEN.ordinal()),
+                MAPPER.writeValueAsString(new ColorWrapper(Color.GREEN)));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

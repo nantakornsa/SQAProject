@@ -1,0 +1,160 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-110
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+13fb7fcbcad87f8df63535491627bf7b01471064
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-10-24 10:53:13 -0400
+--------------------------------------------------------------------------------
+Bug report id:
+1111
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-1111.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.ScopedAliasesTest::testHoistedFunctionDeclaration
+   --> junit.framework.AssertionFailedError: Unexpected error(s): JSC_GOOG_SCOPE_NON_ALIAS_LOCAL. The local variable f is in a goog.scope and is not an alias. at testcode line 1 : 39 expected:<0> but was:<1>
+ - com.google.javascript.jscomp.ScopedAliasesTest::testFunctionDeclaration
+   --> junit.framework.AssertionFailedError: Unexpected error(s): JSC_GOOG_SCOPE_NON_ALIAS_LOCAL. The local variable f is in a goog.scope and is not an alias. at testcode line 1 : 41 expected:<0> but was:<1>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.ScopedAliases
+ - com.google.javascript.rhino.Node
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.ScopedAliases ===
+diff --git a/src/com/google/javascript/jscomp/ScopedAliases.java b/src/com/google/javascript/jscomp/ScopedAliases.java
+index 7e9c8b89a..fbd46d338 100644
+--- a/src/com/google/javascript/jscomp/ScopedAliases.java
++++ b/src/com/google/javascript/jscomp/ScopedAliases.java
+@@ -355,6 +355,7 @@ class ScopedAliases implements HotSwapCompilerPass {
+         Node n = v.getNode();
+         Node parent = n.getParent();
+         boolean isVar = parent.isVar();
++        boolean isFunctionDecl = NodeUtil.isFunctionDeclaration(parent);
+         if (isVar && n.getFirstChild() != null && n.getFirstChild().isQualifiedName()) {
+           recordAlias(v);
+         } else if (v.isBleedingFunction()) {
+@@ -363,12 +364,13 @@ class ScopedAliases implements HotSwapCompilerPass {
+         } else if (parent.getType() == Token.LP) {
+           // Parameters of the scope function also get a BAD_PARAMETERS
+           // error.
+-        } else if (isVar) {
++        } else if (isVar || isFunctionDecl) {
++          boolean isHoisted = NodeUtil.isHoistedFunctionDeclaration(parent);
+           Node grandparent = parent.getParent();
+-          Node value = n.hasChildren() ?
+-              v.getInitialValue().detachFromParent() :
++          Node value = v.getInitialValue() != null ?
++              v.getInitialValue() :
+               null;
+-          Node varNode = parent;
++          Node varNode = null;
+ 
+           String name = n.getString();
+           int nameCount = scopedAliasNames.count(name);
+@@ -380,7 +382,9 @@ class ScopedAliases implements HotSwapCompilerPass {
+ 
+           // First, we need to free up the function expression (EXPR)
+           // to be used in another expression.
++          if (isFunctionDecl) {
+             // Replace "function NAME() { ... }" with "var NAME;".
++            Node existingName = v.getNameNode();
+ 
+             // We can't keep the local name on the function expression,
+             // because IE is buggy and will leak the name into the global
+@@ -389,9 +393,19 @@ class ScopedAliases implements HotSwapCompilerPass {
+             //
+             // This will only cause problems if this is a hoisted, recursive
+             // function, and the programmer is using the hoisting.
++            Node newName = IR.name("").useSourceInfoFrom(existingName);
++            value.replaceChild(existingName, newName);
+ 
++            varNode = IR.var(existingName).useSourceInfoFrom(existingName);
++            grandparent.replaceChild(parent, varNode);
++          } else {
++            if (value != null) {
+               // If this is a VAR, we can just detach the expression and
+               // the tree will still be valid.
++              value.detachFromParent();
++            }
++            varNode = parent;
++          }
+ 
+           // Add $jscomp.scope.name = EXPR;
+           // Make sure we copy over all the jsdoc and debug info.
+@@ -405,7 +419,11 @@ class ScopedAliases implements HotSwapCompilerPass {
+             NodeUtil.setDebugInformation(
+                 newDecl.getFirstChild().getFirstChild(), n, name);
+ 
++            if (isHoisted) {
++              grandparent.addChildToFront(newDecl);
++            } else {
+               grandparent.addChildBefore(newDecl, varNode);
++            }
+           }
+ 
+           // Rewrite "var name = EXPR;" to "var name = $jscomp.scope.name;"
+
+=== MODIFIED SOURCE: com.google.javascript.rhino.Node ===
+diff --git a/src/com/google/javascript/rhino/Node.java b/src/com/google/javascript/rhino/Node.java
+index b645632da..6a3e9e034 100644
+--- a/src/com/google/javascript/rhino/Node.java
++++ b/src/com/google/javascript/rhino/Node.java
+@@ -551,6 +551,9 @@ public class Node implements Cloneable, Serializable {
+       return null;
+     }
+     Node n = first;
++    if (n == null) {
++      throw new RuntimeException("node is not a child");
++    }
+ 
+     while (n.next != child) {
+       n = n.next;
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testHoistedFunctionDeclaration() {
+    testScoped(" g(f); function f() {} ",
+               SCOPE_NAMESPACE +
+               " $jscomp.scope.f = function () {}; " +
+               "g($jscomp.scope.f); ");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

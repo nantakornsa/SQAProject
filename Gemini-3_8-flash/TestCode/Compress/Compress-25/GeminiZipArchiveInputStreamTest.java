@@ -1,0 +1,44 @@
+package org.apache.commons.compress.archivers.zip;
+
+import org.apache.commons.compress.utils.IOUtils;
+import org.junit.Test;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.util.zip.CRC32;
+import java.util.zip.ZipEntry;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+public class GeminiZipArchiveInputStreamTest {
+
+    @Test
+    public void testReadingOfFirstStoredEntry() throws Exception {
+        byte[] data = new byte[] {'d', 'a', 't', 'a', '\n'};
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ZipArchiveOutputStream zos = new ZipArchiveOutputStream(bos);
+        ZipArchiveEntry entry = new ZipArchiveEntry("test.txt");
+        entry.setMethod(ZipEntry.STORED);
+        entry.setSize(data.length);
+        CRC32 crc = new CRC32();
+        crc.update(data);
+        entry.setCrc(crc.getValue());
+        zos.putArchiveEntry(entry);
+        zos.write(data);
+        zos.closeArchiveEntry();
+        zos.close();
+
+        ZipArchiveInputStream in = new ZipArchiveInputStream(new ByteArrayInputStream(bos.toByteArray()));
+        try {
+            ZipArchiveEntry ze = in.getNextZipEntry();
+            assertNotNull(ze);
+            assertEquals(5, ze.getSize());
+            assertArrayEquals(data, IOUtils.toByteArray(in));
+        } finally {
+            in.close();
+        }
+    }
+}

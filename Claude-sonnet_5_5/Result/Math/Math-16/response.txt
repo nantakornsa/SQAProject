@@ -1,0 +1,73 @@
+The test below covers both the positive and negative overflow ranges of `cosh` and `sinh`. I have not compiled or run it against the buggy and fixed versions.
+
+The tests compare `FastMath` against `java.lang.Math` over the range where `exp(x)` overflows but `cosh(x)` and `sinh(x)` are still finite. The buggy code returns `Infinity` there, so the error becomes infinite or NaN and the assertion fails. The fixed code uses `exp(0.5 * x)` squared, which stays within a few ulps of the reference.
+
+I use `JUnit 4` (`org.junit.Test` and `org.junit.Assert`). Because `Math.cosh` and `Math.sinh` can themselves return `Infinity` near the upper limit, I skip any point where the reference is infinite. This keeps the test from failing on the fixed version because of the reference value rather than `FastMath`.
+
+```java
+package org.apache.commons.math3.util;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+public class FastMathMath905RegressionTest {
+
+    @Test
+    public void testMath905LargePositive() {
+        final double start = StrictMath.log(Double.MAX_VALUE);
+        final double endT = StrictMath.sqrt(2) * StrictMath.sqrt(Double.MAX_VALUE);
+        final double end = 2 * StrictMath.log(endT);
+
+        double maxErr = 0;
+        for (double x = start; x < end; x += 1e-3) {
+            final double tst = FastMath.cosh(x);
+            final double ref = Math.cosh(x);
+            if (Double.isInfinite(ref)) {
+                continue;
+            }
+            maxErr = FastMath.max(maxErr, FastMath.abs(ref - tst) / FastMath.ulp(ref));
+        }
+        Assert.assertEquals(0, maxErr, 3);
+
+        maxErr = 0;
+        for (double x = start; x < end; x += 1e-3) {
+            final double tst = FastMath.sinh(x);
+            final double ref = Math.sinh(x);
+            if (Double.isInfinite(ref)) {
+                continue;
+            }
+            maxErr = FastMath.max(maxErr, FastMath.abs(ref - tst) / FastMath.ulp(ref));
+        }
+        Assert.assertEquals(0, maxErr, 3);
+    }
+
+    @Test
+    public void testMath905LargeNegative() {
+        final double start = -StrictMath.log(Double.MAX_VALUE);
+        final double endT = StrictMath.sqrt(2) * StrictMath.sqrt(Double.MAX_VALUE);
+        final double end = -2 * StrictMath.log(endT);
+
+        double maxErr = 0;
+        for (double x = start; x > end; x -= 1e-3) {
+            final double tst = FastMath.cosh(x);
+            final double ref = Math.cosh(x);
+            if (Double.isInfinite(ref)) {
+                continue;
+            }
+            maxErr = FastMath.max(maxErr, FastMath.abs(ref - tst) / FastMath.ulp(ref));
+        }
+        Assert.assertEquals(0, maxErr, 3);
+
+        maxErr = 0;
+        for (double x = start; x > end; x -= 1e-3) {
+            final double tst = FastMath.sinh(x);
+            final double ref = Math.sinh(x);
+            if (Double.isInfinite(ref)) {
+                continue;
+            }
+            maxErr = FastMath.max(maxErr, FastMath.abs(ref - tst) / FastMath.ulp(ref));
+        }
+        Assert.assertEquals(0, maxErr, 3);
+    }
+}
+```

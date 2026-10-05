@@ -1,0 +1,66 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791146027-KrHoGnJoiLuXbMDpekYb","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1508,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" test below"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" const"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ructs an"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" `OpenMapReal"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Matrix` wh"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ose c"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ell count ("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"3 × `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Integer.MAX_"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"VALUE`) overfl"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ows `int`. The fixed version throws `NumberIsTooLargeException`, so the test passes there. The buggy version has no check in the constructor, so no exception is thrown and `fail()` makes the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" test fail. I have not compiled or run it against either version.\n\nThe project uses JUnit 3 (`junit.framework.AssertionFailedError` in the bug report), so the test extends `TestCase` and uses a"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" try/fail/catch pattern.\n\n```java\npackage org.apache.commons.math.linear;\n\nimport junit.framework.TestCase;\n\nimport org.apache.commons.math.exception.NumberIsTooLargeException;\n\npublic class"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" OpenMapRealMatrixTest extends TestCase {\n\n    public void testMath679() {\n        try {\n            new OpenMapRealMatrix(3, Integer.MAX_VALUE);\n            fail(\"Expected NumberIsTooLargeException\");\n        } catch"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" (NumberIsTooLargeException e) {\n            // expected\n        }\n    }\n\n    public void testMath679LargeBothDimensions() {\n        try {\n            new OpenMapRealMatrix(Integer.MAX_VALUE, Integer.MAX_VAL"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"UE);\n            fail(\"Expected NumberIsTooLargeException\");\n        } catch (NumberIsTooLargeException e) {\n            // expected\n        }\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1508,"output_tokens":485,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.007866,"is_byok":false,"cost_details":{"upstream_inference_cost":0.007866,"upstream_inference_prompt_cost":0.003016,"upstream_inference_completions_cost":0.00485}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,66 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791053744-A437Z81tV8PTw5JMXown","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1433,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" test below"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" parses a record"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" with f"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ewer values"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" than head"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ers and"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" calls `toMap()`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":". On the buggy version `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"putIn` ind"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"exes `values[2"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"]` and throws `ArrayIndexOutOfBoundsException`. On the fixed version it skips the missing column, so the map holds only `A` and `B`.\n\nThe project uses J"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Unit 4 in the `org.apache.commons.csv` package. The test uses `Map`, `assertEquals`, and `assertFalse` with the mat"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ching imports.\n\n```java\npackage org.apache.commons.csv;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assertFalse;\n\nimport java.util.Map;\n\nimport org.junit.Test;\n\npublic class CSVRecordShortRecordRegression"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Test {\n\n    @Test\n    public void testToMapWithShortRecordSkipsMissingColumns() throws Exception {\n        final CSVParser parser = CSVParser.parse(\"a,b\", CSVFormat.DEFAULT.withHeader(\"A\", \"B\", \"C\"));\n        try"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" {\n            final CSVRecord shortRec = parser.iterator().next();\n            final Map<String, String> map = shortRec.toMap();\n            assertEquals(2, map.size());\n            assertEquals(\"a\", map.get(\"A\"));\n            assertEquals(\"b\", map.get(\"B\"));\n            ass"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ertFalse(map.containsKey(\"C\"));\n        } finally {\n            parser.close();\n        }\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1433,"output_tokens":475,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.007616,"is_byok":false,"cost_details":{"upstream_inference_cost":0.007616,"upstream_inference_prompt_cost":0.002866,"upstream_inference_completions_cost":0.00475}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

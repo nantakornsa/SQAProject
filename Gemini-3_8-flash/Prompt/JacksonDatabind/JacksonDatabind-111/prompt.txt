@@ -1,0 +1,196 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-111
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+f36222e5c0b318e2b739e2b77b93c5d2c919413f
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2019-05-07 20:48:24 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+2303
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/2303
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.deser.jdk.JDKAtomicTypesDeserTest::testNullWithinNested
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.deser.CreatorProperty
+ - com.fasterxml.jackson.databind.deser.impl.FieldProperty
+ - com.fasterxml.jackson.databind.deser.impl.MethodProperty
+ - com.fasterxml.jackson.databind.deser.impl.ObjectIdReferenceProperty
+ - com.fasterxml.jackson.databind.deser.impl.ObjectIdValueProperty
+ - com.fasterxml.jackson.databind.deser.impl.SetterlessProperty
+ - com.fasterxml.jackson.databind.deser.std.AtomicReferenceDeserializer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.deser.CreatorProperty ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/deser/CreatorProperty.java b/src/main/java/com/fasterxml/jackson/databind/deser/CreatorProperty.java
+index f93a9dbfa..f9badf80a 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/deser/CreatorProperty.java
++++ b/src/main/java/com/fasterxml/jackson/databind/deser/CreatorProperty.java
+@@ -132,7 +132,8 @@ public class CreatorProperty
+             return this;
+         }
+         // 07-May-2019, tatu: As per [databind#2303], must keep VD/NVP in-sync if they were
+-        return new CreatorProperty(this, deser, _nullProvider);
++        NullValueProvider nvp = (_valueDeserializer == _nullProvider) ? deser : _nullProvider;
++        return new CreatorProperty(this, deser, nvp);
+     }
+ 
+     @Override
+
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.deser.impl.FieldProperty ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/deser/impl/FieldProperty.java b/src/main/java/com/fasterxml/jackson/databind/deser/impl/FieldProperty.java
+index b51b1ea45..973c85b54 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/deser/impl/FieldProperty.java
++++ b/src/main/java/com/fasterxml/jackson/databind/deser/impl/FieldProperty.java
+@@ -90,7 +90,8 @@ public final class FieldProperty
+             return this;
+         }
+         // 07-May-2019, tatu: As per [databind#2303], must keep VD/NVP in-sync if they were
+-        return new FieldProperty(this, deser, _nullProvider);
++        NullValueProvider nvp = (_valueDeserializer == _nullProvider) ? deser : _nullProvider;
++        return new FieldProperty(this, deser, nvp);
+     }
+ 
+     @Override
+@@ -214,4 +215,4 @@ public final class FieldProperty
+     Object readResolve() {
+         return new FieldProperty(this);
+     }
+-}
++}
+\ No newline at end of file
+
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.deser.impl.MethodProperty ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/deser/impl/MethodProperty.java b/src/main/java/com/fasterxml/jackson/databind/deser/impl/MethodProperty.java
+index 2bad734aa..08111d4b4 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/deser/impl/MethodProperty.java
++++ b/src/main/java/com/fasterxml/jackson/databind/deser/impl/MethodProperty.java
+@@ -81,7 +81,8 @@ public final class MethodProperty
+             return this;
+         }
+         // 07-May-2019, tatu: As per [databind#2303], must keep VD/NVP in-sync if they were
+-        return new MethodProperty(this, deser, _nullProvider);
++        NullValueProvider nvp = (_valueDeserializer == _nullProvider) ? deser : _nullProvider;
++        return new MethodProperty(this, deser, nvp);
+     }
+ 
+     @Override
+
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.deser.impl.ObjectIdReferenceProperty ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/deser/impl/ObjectIdReferenceProperty.java b/src/main/java/com/fasterxml/jackson/databind/deser/impl/ObjectIdReferenceProperty.java
+index b96ce7ad5..449cc7990 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/deser/impl/ObjectIdReferenceProperty.java
++++ b/src/main/java/com/fasterxml/jackson/databind/deser/impl/ObjectIdReferenceProperty.java
+@@ -51,7 +51,8 @@ public class ObjectIdReferenceProperty extends SettableBeanProperty
+             return this;
+         }
+         // 07-May-2019, tatu: As per [databind#2303], must keep VD/NVP in-sync if they were
+-        return new ObjectIdReferenceProperty(this, deser, _nullProvider);
++        NullValueProvider nvp = (_valueDeserializer == _nullProvider) ? deser : _nullProvider;
++        return new ObjectIdReferenceProperty(this, deser, nvp);
+     }
+ 
+     @Override
+
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.deser.impl.ObjectIdValueProperty ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/deser/impl/ObjectIdValueProperty.java b/src/main/java/com/fasterxml/jackson/databind/deser/impl/ObjectIdValueProperty.java
+index 206f4ae75..7fe91fcf1 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/deser/impl/ObjectIdValueProperty.java
++++ b/src/main/java/com/fasterxml/jackson/databind/deser/impl/ObjectIdValueProperty.java
+@@ -52,7 +52,8 @@ public final class ObjectIdValueProperty
+             return this;
+         }
+         // 07-May-2019, tatu: As per [databind#2303], must keep VD/NVP in-sync if they were
+-        return new ObjectIdValueProperty(this, deser, _nullProvider);
++        NullValueProvider nvp = (_valueDeserializer == _nullProvider) ? deser : _nullProvider;
++        return new ObjectIdValueProperty(this, deser, nvp);
+     }
+ 
+     @Override
+
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.deser.impl.SetterlessProperty ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/deser/impl/SetterlessProperty.java b/src/main/java/com/fasterxml/jackson/databind/deser/impl/SetterlessProperty.java
+index f5596615e..a901f079f 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/deser/impl/SetterlessProperty.java
++++ b/src/main/java/com/fasterxml/jackson/databind/deser/impl/SetterlessProperty.java
+@@ -65,7 +65,8 @@ public final class SetterlessProperty
+             return this;
+         }
+         // 07-May-2019, tatu: As per [databind#2303], must keep VD/NVP in-sync if they were
+-        return new SetterlessProperty(this, deser, _nullProvider);
++        NullValueProvider nvp = (_valueDeserializer == _nullProvider) ? deser : _nullProvider;
++        return new SetterlessProperty(this, deser, nvp);
+     }
+ 
+     @Override
+@@ -153,4 +154,4 @@ public final class SetterlessProperty
+         set(instance, value);
+         return instance;
+     }
+-}
++}
+\ No newline at end of file
+
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.deser.std.AtomicReferenceDeserializer ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/deser/std/AtomicReferenceDeserializer.java b/src/main/java/com/fasterxml/jackson/databind/deser/std/AtomicReferenceDeserializer.java
+index 9d5c3ded5..486106c65 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/deser/std/AtomicReferenceDeserializer.java
++++ b/src/main/java/com/fasterxml/jackson/databind/deser/std/AtomicReferenceDeserializer.java
+@@ -40,7 +40,7 @@ public class AtomicReferenceDeserializer
+ 
+     @Override
+     public AtomicReference<Object> getNullValue(DeserializationContext ctxt) throws JsonMappingException {
+-        return new AtomicReference<Object>();
++        return new AtomicReference<Object>(_valueDeserializer.getNullValue(ctxt));
+     }
+ 
+     @Override
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testNullWithinNested() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

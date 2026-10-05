@@ -1,0 +1,38 @@
+```java
+package com.google.javascript.jscomp;
+
+import com.google.common.collect.ImmutableList;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test: an unprovided goog.require must be removed (and reported
+ * as MISSING_PROVIDE_ERROR) by ProcessClosurePrimitives when the requires
+ * check is on, so that VarCheck does not additionally report "goog" as an
+ * undeclared variable.
+ */
+public class VarCheckClosurePassRegressionTest extends TestCase {
+
+  public void testNoUndeclaredVarWhenUsingClosurePass() {
+    CompilerOptions options = new CompilerOptions();
+    options.setClosurePass(true);
+    options.setCheckSymbols(true);
+    options.setBrokenClosureRequiresLevel(CheckLevel.ERROR);
+
+    Compiler compiler = new Compiler();
+    compiler.compile(
+        ImmutableList.of(SourceFile.fromCode("externs",
+            "var window; function alert() {}")),
+        ImmutableList.of(SourceFile.fromCode("input",
+            "goog.require('namespace.Class1');\n")),
+        options);
+
+    JSError[] errors = compiler.getErrors();
+    assertEquals("There should be one error.", 1, errors.length);
+    assertEquals(ProcessClosurePrimitives.MISSING_PROVIDE_ERROR,
+        errors[0].getType());
+  }
+}
+```
+
+I could not confirm this fails on the buggy version. It runs the full compiler instead of the `VarCheckTest` harness, because I did not know the constructor signature of `ProcessClosurePrimitives` at this revision. If `PhaseOptimizer` halts after the first error, the buggy build would also report only `MISSING_PROVIDE_ERROR`. In that case the test would pass on both versions and the harness-based `VarCheckTest` approach would be needed. I also did not compile it, so the options setters (`setClosurePass`, `setCheckSymbols`, `setBrokenClosureRequiresLevel`) are written from memory and may differ at this revision.

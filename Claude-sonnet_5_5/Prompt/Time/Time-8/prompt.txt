@@ -1,0 +1,124 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Time
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Time
+       Program: joda-time
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/Time.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/joda-time.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Time-8
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+362ed1787724cda3ded37de2b0aa0f13adf0a66e
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-07-20 11:49:21 +0100
+--------------------------------------------------------------------------------
+Bug report id:
+42
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/JodaOrg/joda-time/issues/42
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.joda.time.TestDateTimeZone::testForOffsetHoursMinutes_int_int
+   --> java.lang.IllegalArgumentException: Minutes out of range: -15
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.joda.time.DateTimeZone
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.joda.time.DateTimeZone ===
+diff --git a/src/main/java/org/joda/time/DateTimeZone.java b/src/main/java/org/joda/time/DateTimeZone.java
+index 7d1719bc..a127604b 100644
+--- a/src/main/java/org/joda/time/DateTimeZone.java
++++ b/src/main/java/org/joda/time/DateTimeZone.java
+@@ -276,14 +276,17 @@ public abstract class DateTimeZone implements Serializable {
+         if (hoursOffset < -23 || hoursOffset > 23) {
+             throw new IllegalArgumentException("Hours out of range: " + hoursOffset);
+         }
+-        if (minutesOffset < 0 || minutesOffset > 59) {
++        if (minutesOffset < -59 || minutesOffset > 59) {
+             throw new IllegalArgumentException("Minutes out of range: " + minutesOffset);
+         }
++        if (hoursOffset > 0 && minutesOffset < 0) {
++            throw new IllegalArgumentException("Positive hours must not have negative minutes: " + minutesOffset);
++        }
+         int offset = 0;
+         try {
+             int hoursInMinutes = hoursOffset * 60;
+             if (hoursInMinutes < 0) {
+-                minutesOffset = hoursInMinutes - minutesOffset;
++                minutesOffset = hoursInMinutes - Math.abs(minutesOffset);
+             } else {
+                 minutesOffset = hoursInMinutes + minutesOffset;
+             }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testForOffsetHoursMinutes_int_int() {
+        assertEquals(DateTimeZone.UTC, DateTimeZone.forOffsetHoursMinutes(0, 0));
+        assertEquals(DateTimeZone.forID("+23:59"), DateTimeZone.forOffsetHoursMinutes(23, 59));
+        
+        assertEquals(DateTimeZone.forID("+02:15"), DateTimeZone.forOffsetHoursMinutes(2, 15));
+        assertEquals(DateTimeZone.forID("+02:00"), DateTimeZone.forOffsetHoursMinutes(2, 0));
+        try {
+            DateTimeZone.forOffsetHoursMinutes(2, -15);
+            fail();
+        } catch (IllegalArgumentException ex) {}
+        
+        assertEquals(DateTimeZone.forID("+00:15"), DateTimeZone.forOffsetHoursMinutes(0, 15));
+        assertEquals(DateTimeZone.forID("+00:00"), DateTimeZone.forOffsetHoursMinutes(0, 0));
+        assertEquals(DateTimeZone.forID("-00:15"), DateTimeZone.forOffsetHoursMinutes(0, -15));
+        
+        assertEquals(DateTimeZone.forID("-02:00"), DateTimeZone.forOffsetHoursMinutes(-2, 0));
+        assertEquals(DateTimeZone.forID("-02:15"), DateTimeZone.forOffsetHoursMinutes(-2, -15));
+        assertEquals(DateTimeZone.forID("-02:15"), DateTimeZone.forOffsetHoursMinutes(-2, 15));
+        
+        assertEquals(DateTimeZone.forID("-23:59"), DateTimeZone.forOffsetHoursMinutes(-23, 59));
+        try {
+            DateTimeZone.forOffsetHoursMinutes(2, 60);
+            fail();
+        } catch (IllegalArgumentException ex) {}
+        try {
+            DateTimeZone.forOffsetHoursMinutes(-2, 60);
+            fail();
+        } catch (IllegalArgumentException ex) {}
+        try {
+            DateTimeZone.forOffsetHoursMinutes(24, 0);
+            fail();
+        } catch (IllegalArgumentException ex) {}
+        try {
+            DateTimeZone.forOffsetHoursMinutes(-24, 0);
+            fail();
+        } catch (IllegalArgumentException ex) {}
+    }        
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

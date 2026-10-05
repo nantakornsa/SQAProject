@@ -1,0 +1,111 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-151
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+fe58a5d1750bab2c5d1d0ef16102c1000e761bd8
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-09-17 19:56:20 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+74
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-74.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.CommandLineRunnerTest::testVersionFlag
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.CommandLineRunner
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.CommandLineRunner ===
+diff --git a/src/com/google/javascript/jscomp/CommandLineRunner.java b/src/com/google/javascript/jscomp/CommandLineRunner.java
+index ebf4b51b1..609df79da 100644
+--- a/src/com/google/javascript/jscomp/CommandLineRunner.java
++++ b/src/com/google/javascript/jscomp/CommandLineRunner.java
+@@ -298,6 +298,9 @@ public class CommandLineRunner extends
+         + "a manifest for each module.")
+     private String output_manifest = "";
+ 
++    @Option(name = "--version",
++        usage = "Prints the compiler version to stderr.")
++    private boolean version = false;
+ 
+     // Our own option parser to be backwards-compatible.
+     // It needs to be public because of the crazy reflection that args4j does.
+@@ -364,6 +367,8 @@ public class CommandLineRunner extends
+ 
+   private final Flags flags = new Flags();
+ 
++  private static final String configResource =
++      "com.google.javascript.jscomp.parsing.ParserConfig";
+ 
+   private boolean isConfigValid = false;
+ 
+@@ -415,6 +420,14 @@ public class CommandLineRunner extends
+       isConfigValid = false;
+     }
+ 
++    if (flags.version) {
++      ResourceBundle config = ResourceBundle.getBundle(configResource);
++      err.println(
++          "Closure Compiler (http://code.google.com/p/closure/compiler)\n" +
++          "Version: " + config.getString("compiler.version") + "\n" +
++          "Built on: " + config.getString("compiler.date"));
++      err.flush();
++    }
+ 
+     if (!isConfigValid || flags.display_help) {
+       isConfigValid = false;
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testVersionFlag() {
+    args.add("--version");
+    testSame("");
+    assertEquals(
+        0,
+        new String(errReader.toByteArray()).indexOf(
+            "Closure Compiler (http://code.google.com/p/closure/compiler)\n" +
+            "Version: HEAD\n" +
+            "Built on:"));
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

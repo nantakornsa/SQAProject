@@ -1,0 +1,96 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Time
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Time
+       Program: joda-time
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/Time.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/joda-time.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Time-11
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+57eb4cbb9044771cd46a9eee0c62016618930226
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-04-19 15:34:57 +0100
+--------------------------------------------------------------------------------
+Bug report id:
+18
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/JodaOrg/joda-time/issues/18
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.joda.time.tz.TestCompiler::testDateTimeZoneBuilder
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.joda.time.tz.ZoneInfoCompiler
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.joda.time.tz.ZoneInfoCompiler ===
+diff --git a/src/main/java/org/joda/time/tz/ZoneInfoCompiler.java b/src/main/java/org/joda/time/tz/ZoneInfoCompiler.java
+index 6efe0716..64da5ea5 100644
+--- a/src/main/java/org/joda/time/tz/ZoneInfoCompiler.java
++++ b/src/main/java/org/joda/time/tz/ZoneInfoCompiler.java
+@@ -65,10 +65,11 @@ public class ZoneInfoCompiler {
+ 
+     static Chronology cLenientISO;
+ 
+-    static ThreadLocal<Boolean> cVerbose = new ThreadLocal<Boolean>();
+-    static {
+-        cVerbose.set(Boolean.FALSE);
+-    }
++    static ThreadLocal<Boolean> cVerbose = new ThreadLocal<Boolean>() {
++        protected Boolean initialValue() {
++            return Boolean.FALSE;
++        }
++    };
+ 
+     /**
+      * Gets a flag indicating that verbose logging is required.
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testDateTimeZoneBuilder() throws Exception {
+        // test multithreading, issue #18
+        getTestDataTimeZoneBuilder().toDateTimeZone("TestDTZ1", true);
+        final DateTimeZone[] zone = new DateTimeZone[1];
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                zone[0] = getTestDataTimeZoneBuilder().toDateTimeZone("TestDTZ2", true);
+            }
+        });
+        t.start();
+        t.join();
+        assertNotNull(zone[0]);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

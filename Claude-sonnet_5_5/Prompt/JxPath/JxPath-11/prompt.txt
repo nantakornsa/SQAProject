@@ -1,0 +1,283 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JxPath
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JxPath
+       Program: commons-jxpath
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JxPath/JxPath.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-jxpath.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JxPath/active-bugs.csv
+Number of bugs: 22
+--------------------------------------------------------------------------------
+
+Summary for Bug: JxPath-11
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+52d73022820d163104c6419f25ca955f86464f63
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2007-07-23 19:27:46 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+JXPATH-97
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/JXPATH-97
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.jxpath.ri.model.dom.DOMModelTest::testNamespaceMapping
+   --> junit.framework.AssertionFailedError: Evaluating <vendor[1]/product[1]/rate:amount[1]/@rate:discount> expected:<10%> but was:<20%>
+ - org.apache.commons.jxpath.ri.model.jdom.JDOMModelTest::testNamespaceMapping
+   --> org.apache.commons.jxpath.JXPathNotFoundException: No value for xpath: vendor[1]/product[1]/rate:amount[1]/@rate:discount
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.jxpath.ri.model.dom.DOMAttributeIterator
+ - org.apache.commons.jxpath.ri.model.jdom.JDOMAttributeIterator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.jxpath.ri.model.dom.DOMAttributeIterator ===
+diff --git a/src/java/org/apache/commons/jxpath/ri/model/dom/DOMAttributeIterator.java b/src/java/org/apache/commons/jxpath/ri/model/dom/DOMAttributeIterator.java
+index f4c2ac6..f9785f6 100644
+--- a/src/java/org/apache/commons/jxpath/ri/model/dom/DOMAttributeIterator.java
++++ b/src/java/org/apache/commons/jxpath/ri/model/dom/DOMAttributeIterator.java
+@@ -19,6 +19,7 @@ package org.apache.commons.jxpath.ri.model.dom;
+ import java.util.ArrayList;
+ import java.util.List;
+ 
++import org.apache.commons.jxpath.ri.NamespaceResolver;
+ import org.apache.commons.jxpath.ri.QName;
+ import org.apache.commons.jxpath.ri.model.NodeIterator;
+ import org.apache.commons.jxpath.ri.model.NodePointer;
+@@ -108,7 +109,9 @@ public class DOMAttributeIterator implements NodeIterator {
+         String testNS = null;
+ 
+         if (testPrefix != null) {
+-            testNS = parent.getNamespaceURI(testPrefix);
++            NamespaceResolver nsr = parent.getNamespaceResolver();
++            testNS = nsr == null ? null : nsr.getNamespaceURI(testPrefix);
++            testNS = testNS == null ? parent.getNamespaceURI(testPrefix) : testNS;
+         }
+ 
+         if (testNS != null) {
+
+=== MODIFIED SOURCE: org.apache.commons.jxpath.ri.model.jdom.JDOMAttributeIterator ===
+diff --git a/src/java/org/apache/commons/jxpath/ri/model/jdom/JDOMAttributeIterator.java b/src/java/org/apache/commons/jxpath/ri/model/jdom/JDOMAttributeIterator.java
+index cfa6da3..84c0afd 100644
+--- a/src/java/org/apache/commons/jxpath/ri/model/jdom/JDOMAttributeIterator.java
++++ b/src/java/org/apache/commons/jxpath/ri/model/jdom/JDOMAttributeIterator.java
+@@ -20,6 +20,7 @@ import java.util.ArrayList;
+ import java.util.Collections;
+ import java.util.List;
+ 
++import org.apache.commons.jxpath.ri.NamespaceResolver;
+ import org.apache.commons.jxpath.ri.QName;
+ import org.apache.commons.jxpath.ri.model.NodeIterator;
+ import org.apache.commons.jxpath.ri.model.NodePointer;
+@@ -49,12 +50,21 @@ public class JDOMAttributeIterator implements NodeIterator {
+                     ns = Namespace.XML_NAMESPACE;
+                 }
+                 else {
++                    NamespaceResolver nsr = parent.getNamespaceResolver();
++                    if (nsr != null) {
++                        String uri = nsr.getNamespaceURI(prefix);
++                        if (uri != null) {
++                            ns = Namespace.getNamespace(prefix, uri);
++                        }
++                    }
++                    if (ns == null) {
+                         ns = element.getNamespace(prefix);
+                         if (ns == null) {
+                             // TBD: no attributes
+                             attributes = Collections.EMPTY_LIST;
+                             return;
+                         }
++                    }
+                 }
+             }
+             else {
+@@ -111,4 +121,4 @@ public class JDOMAttributeIterator implements NodeIterator {
+         this.position = position;
+         return position >= 1 && position <= attributes.size();
+     }
+-}
++}
+\ No newline at end of file
+
+
+=== TRIGGERING TEST METHOD ===
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.jxpath.ri.model.dom;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.apache.commons.jxpath.AbstractFactory;
+import org.apache.commons.jxpath.ri.model.XMLModelTestCase;
+import org.apache.commons.jxpath.xml.DocumentContainer;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+/**
+ * Tests JXPath with DOM
+ *
+ * @author Dmitri Plotnikov
+ * @version $Revision$ $Date$
+ */
+
+public class DOMModelTest extends XMLModelTestCase {
+    
+    /**
+     * Construct a new instance of this test case.
+     *
+     * @param name Name of the test case
+     */
+    public DOMModelTest(String name) {
+        super(name);
+    }
+
+    /**
+     * Return the tests included in this test suite.
+     */
+    public static Test suite() {
+        return (new TestSuite(DOMModelTest.class));
+    }
+
+    protected String getModel() {
+        return DocumentContainer.MODEL_DOM;
+    }
+
+    protected AbstractFactory getAbstractFactory() {
+        return new TestDOMFactory();
+    }
+    
+    public void testGetNode() {
+        assertXPathNodeType(context, "/", Document.class);
+        assertXPathNodeType(context, "/vendor/location", Element.class);
+        assertXPathNodeType(context, "//location/@name", Attr.class);
+        assertXPathNodeType(context, "//vendor", Element.class);
+    }
+    
+    protected String getXMLSignature(
+        Object node,
+        boolean elements,
+        boolean attributes,
+        boolean text,
+        boolean pi) 
+    {
+        StringBuffer buffer = new StringBuffer();
+        appendXMLSignature(buffer, node, elements, attributes, text, pi);
+        return buffer.toString();
+    }
+
+    private void appendXMLSignature(
+        StringBuffer buffer,
+        Object object,
+        boolean elements,
+        boolean attributes,
+        boolean text,
+        boolean pi) 
+    {
+        Node node = (Node) object;
+        int type = node.getNodeType();
+        switch (type) {
+            case Node.DOCUMENT_NODE :
+                buffer.append("<D>");
+                appendXMLSignature(
+                    buffer,
+                    node.getChildNodes(),
+                    elements,
+                    attributes,
+                    text,
+                    pi);
+                buffer.append("</D");
+                break;
+
+            case Node.ELEMENT_NODE :
+                String tag = elements ? ((Element) node).getTagName() : "E";
+                buffer.append("<");
+                buffer.append(tag);
+                buffer.append(">");
+                appendXMLSignature(
+                    buffer,
+                    node.getChildNodes(),
+                    elements,
+                    attributes,
+                    text,
+                    pi);
+                buffer.append("</");
+                buffer.append(tag);
+                buffer.append(">");
+                break;
+
+            case Node.TEXT_NODE :
+            case Node.CDATA_SECTION_NODE :
+                if (text) {
+                    String string = node.getNodeValue();
+                    string = string.replace('\n', '=');
+                    buffer.append(string);
+                }
+                break;
+        }
+    }
+
+    private void appendXMLSignature(
+        StringBuffer buffer,
+        NodeList children,
+        boolean elements,
+        boolean attributes,
+        boolean text,
+        boolean pi) 
+    {
+        for (int i = 0; i < children.getLength(); i++) {
+            appendXMLSignature(
+                buffer,
+                children.item(i),
+                elements,
+                attributes,
+                text,
+                pi);
+        }
+    }
+}
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

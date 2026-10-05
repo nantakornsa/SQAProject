@@ -1,0 +1,75 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791054448-WQ63QRClfrDBB3ChpE4V","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":3077,"output_tokens":8,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"```java\npackage com.google."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"gson.stream;\n\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" java.io.I"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"OException;\nimport java.io"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".StringReader;\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" java.io.StringWri"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ter;\nimport junit.fram"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ework.TestCase;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\npublic final class TopLevel"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ValueRegressionTest"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" extends TestCase {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n  public void testTopLevelValueTypeWithSkipValue() throws IOException {\n    JsonReader reader = new JsonReader(new StringReader(\"true\"));\n    reader.skipValue();\n    assertEquals(JsonToken.END_DOCUMENT, reader.peek());\n  "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"}\n\n  public void testReaderTopLevelValueTypes() throws IOException {\n    JsonReader reader1 = new JsonReader(new StringReader(\"true\"));\n    assertTrue(reader1.nextBoolean());\n    assertEquals(JsonToken.END_DOCUMEN"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"T, reader1.peek());\n\n    JsonReader reader2 = new JsonReader(new StringReader(\"\\\"a string\\\"\"));\n    assertEquals(\"a string\", reader2.nextString());\n    assertEquals(JsonToken.END_DOCUMENT, reader"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"2.peek());\n\n    JsonReader reader3 = new JsonReader(new StringReader(\"123\"));\n    assertEquals(123, reader3.nextInt());\n    assertEquals(JsonToken.END_DOCUMENT, reader3.peek());\n\n    JsonReader reader4 = new"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" JsonReader(new StringReader(\"null\"));\n    reader4.nextNull();\n    assertEquals(JsonToken.END_DOCUMENT, reader4.peek());\n  }\n\n  public void testWriterTopLevelValueTypes() throws IOException {\n    StringWriter string"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"1 = new StringWriter();\n    JsonWriter writer1 = new JsonWriter(string1);\n    writer1.value(true);\n    writer1.close();\n    assertEquals(\"true\", string1.toString());\n\n    StringWriter string2 = new StringWriter();\n    JsonWriter writer"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"2 = new JsonWriter(string2);\n    writer2.nullValue();\n    writer2.close();\n    assertEquals(\"null\", string2.toString());\n\n    StringWriter string3 = new StringWriter();\n    JsonWriter writer3 = new JsonWriter(string3);\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"writer3.value(123);\n    writer3.close();\n    assertEquals(\"123\", string3.toString());\n\n    StringWriter string4 = new StringWriter();\n    JsonWriter writer4 = new JsonWriter(string4);\n    writer4.value(\"a\");\n    writer4.close();"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n    assertEquals(\"\\\"a\\\"\", string4.toString());\n  }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":3077,"output_tokens":861,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.014764,"is_byok":false,"cost_details":{"upstream_inference_cost":0.014764,"upstream_inference_prompt_cost":0.006154,"upstream_inference_completions_cost":0.00861}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

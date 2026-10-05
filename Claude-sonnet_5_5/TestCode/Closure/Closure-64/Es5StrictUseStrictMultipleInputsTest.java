@@ -1,0 +1,35 @@
+package com.google.javascript.jscomp;
+
+import com.google.javascript.jscomp.CompilerOptions.LanguageMode;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test: in ES5 strict output mode, 'use strict' must be emitted
+ * only once (for the first input), not once per input file.
+ */
+public class Es5StrictUseStrictMultipleInputsTest extends TestCase {
+
+  public void testES5StrictUseStrictMultipleInputs() {
+    CompilerOptions options = new CompilerOptions();
+    options.setLanguageIn(LanguageMode.ECMASCRIPT5_STRICT);
+
+    Compiler compiler = new Compiler();
+    JSSourceFile[] externs = new JSSourceFile[] {
+        JSSourceFile.fromCode("externs.js", "")
+    };
+    JSSourceFile[] inputs = new JSSourceFile[] {
+        JSSourceFile.fromCode("input0.js", "var x = f.function"),
+        JSSourceFile.fromCode("input1.js", "var y = f.function"),
+        JSSourceFile.fromCode("input2.js", "var z = f.function")
+    };
+
+    Result result = compiler.compile(externs, inputs, options);
+    assertTrue(result.success);
+
+    String outputSource = compiler.toSource();
+    assertTrue(outputSource.length() > 13);
+    assertEquals("'use strict'", outputSource.substring(0, 12));
+    assertEquals(-1, outputSource.substring(13).indexOf("'use strict'"));
+  }
+}

@@ -1,0 +1,38 @@
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.Node;
+
+public class MinimizeExitPointsTest extends CompilerTestCase {
+
+  @Override
+  protected CompilerPass getProcessor(final Compiler compiler) {
+    return new CompilerPass() {
+      @Override
+      public void process(Node externs, Node js) {
+        NodeTraversal.traverse(compiler, js, new MinimizeExitPoints(compiler));
+      }
+    };
+  }
+
+  @Override
+  protected int getNumRepetitions() {
+    return 1;
+  }
+
+  public void testDontRemoveBreakInTryFinally() throws Exception {
+    foldSame("function f() {b:try{throw 9} finally {break b} return 1;}");
+  }
+
+  public void testDontRemoveBreakInTryFinallyWithLabelAndCode() throws Exception {
+    foldSame("function f() {b:try{throw 9} finally {break b} return 1;}");
+  }
+}
+```
+
+I haven't compiled or run this, so two things are unchecked:
+
+- **Processor wiring:** I wrote `getProcessor` from memory of the project's test layout. It assumes `MinimizeExitPoints` can be passed to `NodeTraversal.traverse` as a callback, so that call may need adjusting.
+- **Fail/pass behaviour:** the test should fail on the buggy version because the removed code minimized exits inside the `finally` block. That would strip the `break b` from `finally {break b}` and change the completion type. The fixed version should leave the code unchanged, which is what `foldSame` checks.
+
+The second test method repeats the first with the same input, so it adds no coverage and can be dropped.

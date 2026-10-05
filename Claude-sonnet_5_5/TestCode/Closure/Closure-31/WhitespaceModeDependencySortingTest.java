@@ -1,0 +1,51 @@
+package com.google.javascript.jscomp;
+
+import junit.framework.TestCase;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.ArrayList;
+
+/**
+ * Regression test: dependency sorting must still be applied when
+ * all passes are skipped (e.g. whitespace-only mode).
+ */
+public class WhitespaceModeDependencySortingTest extends TestCase {
+
+  public void testDependencySortingWhitespaceMode() {
+    CompilerOptions options = new CompilerOptions();
+    options.setDependencyOptions(new DependencyOptions().setDependencySorting(true));
+    options.closurePass = true;
+    options.skipAllPasses = true;
+
+    List<JSSourceFile> inputs = new ArrayList<JSSourceFile>();
+    inputs.add(JSSourceFile.fromCode("a.js", "goog.require('beer');"));
+    inputs.add(JSSourceFile.fromCode("b.js",
+        "goog.provide('beer');\ngoog.require('hops');"));
+    inputs.add(JSSourceFile.fromCode("c.js", "goog.provide('hops');"));
+
+    List<JSSourceFile> externs = Collections.<JSSourceFile>emptyList();
+
+    Compiler compiler = new Compiler();
+    compiler.compile(externs, inputs, options);
+
+    String output = compiler.toSource().replace('"', '\'');
+
+    int provideHops = output.indexOf("goog.provide('hops')");
+    int provideBeer = output.indexOf("goog.provide('beer')");
+    int requireHops = output.indexOf("goog.require('hops')");
+    int requireBeer = output.indexOf("goog.require('beer')");
+
+    assertTrue(output, provideHops >= 0);
+    assertTrue(output, provideBeer >= 0);
+    assertTrue(output, requireHops >= 0);
+    assertTrue(output, requireBeer >= 0);
+
+    assertTrue("hops must be provided before beer: " + output,
+        provideHops < provideBeer);
+    assertTrue("beer provide must precede its hops require: " + output,
+        provideBeer < requireHops);
+    assertTrue("beer must be required last: " + output,
+        requireHops < requireBeer);
+  }
+}

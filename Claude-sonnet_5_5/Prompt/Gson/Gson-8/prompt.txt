@@ -1,0 +1,124 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Gson
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Gson
+       Program: gson
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Gson/Gson.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/gson.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Gson/active-bugs.csv
+Number of bugs: 18
+--------------------------------------------------------------------------------
+
+Summary for Bug: Gson-8
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+0f66f4fac441f7d7d7bc4afc907454f3fe4c0faa
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-04-22 06:47:08 -1000
+--------------------------------------------------------------------------------
+Bug report id:
+817
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/google/gson/issues/817
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.gson.internal.UnsafeAllocatorInstantiationTest::testInterfaceInstantiation
+   --> junit.framework.AssertionFailedError: expected:<class java.lang.reflect.InvocationTargetException> but was:<class java.lang.UnsupportedOperationException>
+ - com.google.gson.internal.UnsafeAllocatorInstantiationTest::testAbstractClassInstantiation
+   --> junit.framework.AssertionFailedError: expected:<class java.lang.reflect.InvocationTargetException> but was:<class java.lang.UnsupportedOperationException>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.gson.internal.UnsafeAllocator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.gson.internal.UnsafeAllocator ===
+diff --git a/gson/src/main/java/com/google/gson/internal/UnsafeAllocator.java b/gson/src/main/java/com/google/gson/internal/UnsafeAllocator.java
+index 49fdf7f6..41e7cd15 100644
+--- a/gson/src/main/java/com/google/gson/internal/UnsafeAllocator.java
++++ b/gson/src/main/java/com/google/gson/internal/UnsafeAllocator.java
+@@ -20,6 +20,7 @@ import java.io.ObjectInputStream;
+ import java.io.ObjectStreamClass;
+ import java.lang.reflect.Field;
+ import java.lang.reflect.Method;
++import java.lang.reflect.Modifier;
+ 
+ /**
+  * Do sneaky things to allocate objects without invoking their constructors.
+@@ -45,6 +46,7 @@ public abstract class UnsafeAllocator {
+         @Override
+         @SuppressWarnings("unchecked")
+         public <T> T newInstance(Class<T> c) throws Exception {
++          assertInstantiable(c);
+           return (T) allocateInstance.invoke(unsafe, c);
+         }
+       };
+@@ -68,6 +70,7 @@ public abstract class UnsafeAllocator {
+         @Override
+         @SuppressWarnings("unchecked")
+         public <T> T newInstance(Class<T> c) throws Exception {
++          assertInstantiable(c);
+           return (T) newInstance.invoke(null, c, constructorId);
+         }
+       };
+@@ -87,6 +90,7 @@ public abstract class UnsafeAllocator {
+         @Override
+         @SuppressWarnings("unchecked")
+         public <T> T newInstance(Class<T> c) throws Exception {
++          assertInstantiable(c);
+           return (T) newInstance.invoke(null, c, Object.class);
+         }
+       };
+@@ -107,4 +111,13 @@ public abstract class UnsafeAllocator {
+    * throw an {@link java.lang.UnsupportedOperationException}
+    * @param c instance of the class to be checked
+    */
++  private static void assertInstantiable(Class<?> c) {
++    int modifiers = c.getModifiers();
++    if (Modifier.isInterface(modifiers)) {
++      throw new UnsupportedOperationException("Interface can't be instantiated! Interface name: " + c.getName());
++    }
++    if (Modifier.isAbstract(modifiers)) {
++      throw new UnsupportedOperationException("Abstract class can't be instantiated! Class name: " + c.getName());
++    }
++  }
+ }
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testInterfaceInstantiation() {
+    UnsafeAllocator unsafeAllocator = UnsafeAllocator.create();
+    try {
+      unsafeAllocator.newInstance(Interface.class);
+      fail();
+    } catch (Exception e) {
+      assertEquals(e.getClass(), UnsupportedOperationException.class);
+    }
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

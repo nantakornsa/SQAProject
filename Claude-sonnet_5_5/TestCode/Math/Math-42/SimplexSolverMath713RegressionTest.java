@@ -1,0 +1,29 @@
+package org.apache.commons.math.optimization.linear;
+
+import java.util.ArrayList;
+
+import org.apache.commons.math.optimization.GoalType;
+import org.apache.commons.math.optimization.RealPointValuePair;
+import org.junit.Assert;
+import org.junit.Test;
+
+public class SimplexSolverMath713RegressionTest {
+
+    @Test
+    public void testMath713NegativeVariable() {
+        LinearObjectiveFunction f = new LinearObjectiveFunction(new double[] {1.0, 1.0}, 0.0d);
+        ArrayList<LinearConstraint> constraints = new ArrayList<LinearConstraint>();
+        constraints.add(new LinearConstraint(new double[] {1, 0}, Relationship.EQ, 1));
+
+        double epsilon = 1e-6;
+        SimplexSolver solver = new SimplexSolver();
+        RealPointValuePair solution = solver.optimize(f, constraints, GoalType.MINIMIZE, true);
+
+        double[] point = solution.getPoint();
+        Assert.assertTrue("x0 must be non-negative", point[0] >= -epsilon);
+        Assert.assertTrue("x1 must be non-negative", point[1] >= -epsilon);
+        Assert.assertEquals(1.0, point[0], epsilon);
+        Assert.assertEquals(0.0, point[1], epsilon);
+        Assert.assertEquals(1.0, solution.getValue(), epsilon);
+    }
+}

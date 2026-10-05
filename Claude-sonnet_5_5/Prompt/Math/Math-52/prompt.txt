@@ -1,0 +1,106 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-52
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+8b41800046f1d336865b48ea4bc65522ebb3e6ea
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-08-05 15:05:33 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-639
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-639
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.geometry.euclidean.threed.RotationTest::testIssue639
+   --> junit.framework.AssertionFailedError: expected:<0.6228370359608201> but was:<NaN>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.geometry.euclidean.threed.Rotation
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.geometry.euclidean.threed.Rotation ===
+diff --git a/src/main/java/org/apache/commons/math/geometry/euclidean/threed/Rotation.java b/src/main/java/org/apache/commons/math/geometry/euclidean/threed/Rotation.java
+index 20f5b3486..ada0a8fb0 100644
+--- a/src/main/java/org/apache/commons/math/geometry/euclidean/threed/Rotation.java
++++ b/src/main/java/org/apache/commons/math/geometry/euclidean/threed/Rotation.java
+@@ -341,7 +341,8 @@ public class Rotation implements Serializable {
+   Vector3D k     = v1Su1.crossProduct(v2Su2);
+   Vector3D u3    = u1.crossProduct(u2);
+   double c       = k.dotProduct(u3);
+-  if (c == 0) {
++  final double inPlaneThreshold = 0.001;
++  if (c <= inPlaneThreshold * k.getNorm() * u3.getNorm()) {
+     // the (q1, q2, q3) vector is close to the (u1, u2) plane
+     // we try other vectors
+     Vector3D v3 = Vector3D.crossProduct(v1, v2);
+@@ -350,13 +351,13 @@ public class Rotation implements Serializable {
+     Vector3D u2Prime = u1.crossProduct(u3);
+     c = k.dotProduct(u2Prime);
+ 
+-    if (c == 0) {
++    if (c <= inPlaneThreshold * k.getNorm() * u2Prime.getNorm()) {
+       // the (q1, q2, q3) vector is also close to the (u1, u3) plane,
+       // it is almost aligned with u1: we try (u2, u3) and (v2, v3)
+       k = v2Su2.crossProduct(v3Su3);;
+       c = k.dotProduct(u2.crossProduct(u3));;
+ 
+-      if (c == 0) {
++      if (c <= 0) {
+         // the (q1, q2, q3) vector is aligned with everything
+         // this is really the identity rotation
+         q0 = 1.0;
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue639(){
+      Vector3D u1 = new Vector3D(-1321008684645961.0 /  268435456.0,
+                                 -5774608829631843.0 /  268435456.0,
+                                 -3822921525525679.0 / 4294967296.0);
+      Vector3D u2 =new Vector3D( -5712344449280879.0 /    2097152.0,
+                                 -2275058564560979.0 /    1048576.0,
+                                  4423475992255071.0 /      65536.0);
+      Rotation rot = new Rotation(u1, u2, Vector3D.PLUS_I,Vector3D.PLUS_K);
+      Assert.assertEquals( 0.6228370359608200639829222, rot.getQ0(), 1.0e-15);
+      Assert.assertEquals( 0.0257707621456498790029987, rot.getQ1(), 1.0e-15);
+      Assert.assertEquals(-0.0000000002503012255839931, rot.getQ2(), 1.0e-15);
+      Assert.assertEquals(-0.7819270390861109450724902, rot.getQ3(), 1.0e-15);
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

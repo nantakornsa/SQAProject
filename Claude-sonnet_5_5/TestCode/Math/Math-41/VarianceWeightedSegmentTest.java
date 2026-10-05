@@ -1,0 +1,33 @@
+package org.apache.commons.math.stat.descriptive.moment;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+/**
+ * Regression test for MATH-704: weighted variance over an array segment
+ * must sum only the weights inside the segment.
+ */
+public class VarianceWeightedSegmentTest {
+
+    @Test
+    public void testEvaluateArraySegmentWeighted() {
+        double[] values  = {1.0, 2.0, 3.0, 4.0, 5.0};
+        // Weights outside the evaluated segment are large and must be ignored
+        double[] weights = {10.0, 1.0, 1.0, 1.0, 10.0};
+
+        Variance variance = new Variance();
+
+        // Segment {2, 3, 4} with unit weights: bias-corrected variance = 1.0
+        Assert.assertEquals(1.0, variance.evaluate(values, weights, 1, 3), 1E-12);
+
+        // Same segment, population variance = 2/3
+        Variance populationVariance = new Variance(false);
+        Assert.assertEquals(2.0 / 3.0, populationVariance.evaluate(values, weights, 1, 3), 1E-12);
+
+        // Result must equal that of the isolated segment
+        double[] segValues  = {2.0, 3.0, 4.0};
+        double[] segWeights = {1.0, 1.0, 1.0};
+        Assert.assertEquals(variance.evaluate(segValues, segWeights, 0, 3),
+                            variance.evaluate(values, weights, 1, 3), 1E-12);
+    }
+}

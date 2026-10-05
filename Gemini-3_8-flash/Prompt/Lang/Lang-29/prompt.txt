@@ -1,0 +1,97 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-29
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+eb79f7c6f37d0d9c4d9252b1020bc19a617a4d23
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-05-28 16:33:23 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-624
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-624
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang3.SystemUtilsTest::testJavaVersionAsInt
+   --> junit.framework.AssertionFailedError: expected:<0> but was:<0.0>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang3.SystemUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang3.SystemUtils ===
+diff --git a/src/main/java/org/apache/commons/lang3/SystemUtils.java b/src/main/java/org/apache/commons/lang3/SystemUtils.java
+index 0c73f4268..2116f7c14 100644
+--- a/src/main/java/org/apache/commons/lang3/SystemUtils.java
++++ b/src/main/java/org/apache/commons/lang3/SystemUtils.java
+@@ -1669,7 +1669,7 @@ public class SystemUtils {
+      * 
+      * @return the version, for example 131 for Java 1.3.1
+      */
+-    static float toJavaVersionInt(String version) {
++    static int toJavaVersionInt(String version) {
+         return toVersionInt(toJavaVersionIntArray(version, JAVA_VERSION_TRIM_SIZE));
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testJavaVersionAsInt() {
+        assertEquals(0, SystemUtils.toJavaVersionInt(null));
+        assertEquals(0, SystemUtils.toJavaVersionInt(""));
+        assertEquals(0, SystemUtils.toJavaVersionInt("0"));
+        assertEquals(110, SystemUtils.toJavaVersionInt("1.1"));
+        assertEquals(120, SystemUtils.toJavaVersionInt("1.2"));
+        assertEquals(130, SystemUtils.toJavaVersionInt("1.3.0"));
+        assertEquals(131, SystemUtils.toJavaVersionInt("1.3.1"));
+        assertEquals(140, SystemUtils.toJavaVersionInt("1.4.0"));
+        assertEquals(141, SystemUtils.toJavaVersionInt("1.4.1"));
+        assertEquals(142, SystemUtils.toJavaVersionInt("1.4.2"));
+        assertEquals(150, SystemUtils.toJavaVersionInt("1.5.0"));
+        assertEquals(160, SystemUtils.toJavaVersionInt("1.6.0"));
+        assertEquals(131, SystemUtils.toJavaVersionInt("JavaVM-1.3.1"));
+        assertEquals(131, SystemUtils.toJavaVersionInt("1.3.1 subset"));
+        // This used to return 0f in [lang] version 2.5:
+        assertEquals(130, SystemUtils.toJavaVersionInt("XXX-1.3.x"));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

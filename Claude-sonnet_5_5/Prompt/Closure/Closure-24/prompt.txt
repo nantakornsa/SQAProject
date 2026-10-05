@@ -1,0 +1,107 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-24
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+70ca6014779735bdc52ca0e80e528257829a15e7
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-05-24 15:54:23 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+737
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-737.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.ScopedAliasesTest::testNonAliasLocal
+   --> junit.framework.AssertionFailedError: There should be one error.  expected:<1> but was:<0>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.ScopedAliases
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.ScopedAliases ===
+diff --git a/src/com/google/javascript/jscomp/ScopedAliases.java b/src/com/google/javascript/jscomp/ScopedAliases.java
+index 30d29d0ad..c248002ed 100644
+--- a/src/com/google/javascript/jscomp/ScopedAliases.java
++++ b/src/com/google/javascript/jscomp/ScopedAliases.java
+@@ -275,8 +275,8 @@ class ScopedAliases implements HotSwapCompilerPass {
+         Node n = v.getNode();
+         int type = n.getType();
+         Node parent = n.getParent();
+-        if (parent.isVar()) {
+-          if (n.hasChildren() && n.getFirstChild().isQualifiedName()) {
++        if (parent.isVar() &&
++            n.hasChildren() && n.getFirstChild().isQualifiedName()) {
+           String name = n.getString();
+           Var aliasVar = scope.getVar(name);
+           aliases.put(name, aliasVar);
+@@ -284,15 +284,16 @@ class ScopedAliases implements HotSwapCompilerPass {
+           String qualifiedName =
+               aliasVar.getInitialValue().getQualifiedName();
+           transformation.addAlias(name, qualifiedName);
++        } else if (v.isBleedingFunction()) {
+           // Bleeding functions already get a BAD_PARAMETERS error, so just
+           // do nothing.
++        } else if (parent.getType() == Token.LP) {
+           // Parameters of the scope function also get a BAD_PARAMETERS
+           // error.
+         } else {
+           // TODO(robbyw): Support using locals for private variables.
+           report(t, n, GOOG_SCOPE_NON_ALIAS_LOCAL, n.getString());
+         }
+-        }
+       }
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testNonAliasLocal() {
+    testScopedFailure("var x = 10", ScopedAliases.GOOG_SCOPE_NON_ALIAS_LOCAL);
+    testScopedFailure("var x = goog.dom + 10",
+        ScopedAliases.GOOG_SCOPE_NON_ALIAS_LOCAL);
+    testScopedFailure("var x = goog['dom']",
+        ScopedAliases.GOOG_SCOPE_NON_ALIAS_LOCAL);
+    testScopedFailure("var x = goog.dom, y = 10",
+        ScopedAliases.GOOG_SCOPE_NON_ALIAS_LOCAL);
+    testScopedFailure("function f() {}",
+        ScopedAliases.GOOG_SCOPE_NON_ALIAS_LOCAL);
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

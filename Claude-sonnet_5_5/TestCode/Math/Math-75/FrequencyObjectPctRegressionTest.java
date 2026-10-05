@@ -1,0 +1,41 @@
+package org.apache.commons.math.stat;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for MATH-329: Frequency.getPct(Object) wrongly delegated
+ * to getCumPct instead of getPct.
+ */
+public class FrequencyObjectPctRegressionTest extends TestCase {
+
+    private static final double TOLERANCE = 10E-15;
+
+    private Frequency f;
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        f = new Frequency();
+    }
+
+    @SuppressWarnings("deprecation")
+    public void testGetPctObjectReturnsPercentageNotCumulative() {
+        f.addValue(1);
+        f.addValue(2);
+        f.addValue(3);
+        f.addValue(3);
+
+        // MATH-329: the Object overload must return the plain percentage
+        assertEquals("three (Object) pct", 0.5,
+                f.getPct((Object) Integer.valueOf(3)), TOLERANCE);
+        assertEquals("two (Object) pct", 0.25,
+                f.getPct((Object) Integer.valueOf(2)), TOLERANCE);
+        assertEquals("one (Object) pct", 0.25,
+                f.getPct((Object) Integer.valueOf(1)), TOLERANCE);
+        assertEquals("missing (Object) pct", 0.0,
+                f.getPct((Object) Integer.valueOf(5)), TOLERANCE);
+
+        // cumulative percentage must still be distinct
+        assertEquals("three cum pct", 1.0, f.getCumPct(3), TOLERANCE);
+    }
+}

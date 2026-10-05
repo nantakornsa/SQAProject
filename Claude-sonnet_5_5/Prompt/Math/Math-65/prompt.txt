@@ -1,0 +1,138 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-65
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+c640932de203b33683679879cdf4b1b637d473d3
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-08-05 08:48:00 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-377
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-377
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.optimization.general.LevenbergMarquardtOptimizerTest::testCircleFitting
+   --> junit.framework.AssertionFailedError: expected:<0.004> but was:<0.0019737107108948474>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.optimization.general.AbstractLeastSquaresOptimizer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.optimization.general.AbstractLeastSquaresOptimizer ===
+diff --git a/src/main/java/org/apache/commons/math/optimization/general/AbstractLeastSquaresOptimizer.java b/src/main/java/org/apache/commons/math/optimization/general/AbstractLeastSquaresOptimizer.java
+index 30ebfff21..5a60da853 100644
+--- a/src/main/java/org/apache/commons/math/optimization/general/AbstractLeastSquaresOptimizer.java
++++ b/src/main/java/org/apache/commons/math/optimization/general/AbstractLeastSquaresOptimizer.java
+@@ -237,12 +237,7 @@ public abstract class AbstractLeastSquaresOptimizer implements DifferentiableMul
+      * @return RMS value
+      */
+     public double getRMS() {
+-        double criterion = 0;
+-        for (int i = 0; i < rows; ++i) {
+-            final double residual = residuals[i];
+-            criterion += residual * residual * residualsWeights[i];
+-        }
+-        return Math.sqrt(criterion / rows);
++        return Math.sqrt(getChiSquare() / rows);
+     }
+ 
+     /**
+@@ -255,7 +250,7 @@ public abstract class AbstractLeastSquaresOptimizer implements DifferentiableMul
+         double chiSquare = 0;
+         for (int i = 0; i < rows; ++i) {
+             final double residual = residuals[i];
+-            chiSquare += residual * residual / residualsWeights[i];
++            chiSquare += residual * residual * residualsWeights[i];
+         }
+         return chiSquare;
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testCircleFitting() throws FunctionEvaluationException, OptimizationException {
+        Circle circle = new Circle();
+        circle.addPoint( 30.0,  68.0);
+        circle.addPoint( 50.0,  -6.0);
+        circle.addPoint(110.0, -20.0);
+        circle.addPoint( 35.0,  15.0);
+        circle.addPoint( 45.0,  97.0);
+        LevenbergMarquardtOptimizer optimizer = new LevenbergMarquardtOptimizer();
+        VectorialPointValuePair optimum =
+            optimizer.optimize(circle, new double[] { 0, 0, 0, 0, 0 }, new double[] { 1, 1, 1, 1, 1 },
+                               new double[] { 98.680, 47.345 });
+        assertTrue(optimizer.getEvaluations() < 10);
+        assertTrue(optimizer.getJacobianEvaluations() < 10);
+        double rms = optimizer.getRMS();
+        assertEquals(1.768262623567235,  Math.sqrt(circle.getN()) * rms,  1.0e-10);
+        Point2D.Double center = new Point2D.Double(optimum.getPointRef()[0], optimum.getPointRef()[1]);
+        assertEquals(69.96016176931406, circle.getRadius(center), 1.0e-10);
+        assertEquals(96.07590211815305, center.x,      1.0e-10);
+        assertEquals(48.13516790438953, center.y,      1.0e-10);
+        double[][] cov = optimizer.getCovariances();
+        assertEquals(1.839, cov[0][0], 0.001);
+        assertEquals(0.731, cov[0][1], 0.001);
+        assertEquals(cov[0][1], cov[1][0], 1.0e-14);
+        assertEquals(0.786, cov[1][1], 0.001);
+        double[] errors = optimizer.guessParametersErrors();
+        assertEquals(1.384, errors[0], 0.001);
+        assertEquals(0.905, errors[1], 0.001);
+
+        // add perfect measurements and check errors are reduced
+        double  r = circle.getRadius(center);
+        for (double d= 0; d < 2 * Math.PI; d += 0.01) {
+            circle.addPoint(center.x + r * Math.cos(d), center.y + r * Math.sin(d));
+        }
+        double[] target = new double[circle.getN()];
+        Arrays.fill(target, 0.0);
+        double[] weights = new double[circle.getN()];
+        Arrays.fill(weights, 2.0);
+        optimizer.optimize(circle, target, weights, new double[] { 98.680, 47.345 });
+        cov = optimizer.getCovariances();
+        assertEquals(0.0016, cov[0][0], 0.001);
+        assertEquals(3.2e-7, cov[0][1], 1.0e-9);
+        assertEquals(cov[0][1], cov[1][0], 1.0e-14);
+        assertEquals(0.0016, cov[1][1], 0.001);
+        errors = optimizer.guessParametersErrors();
+        assertEquals(0.004, errors[0], 0.001);
+        assertEquals(0.004, errors[1], 0.001);
+
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

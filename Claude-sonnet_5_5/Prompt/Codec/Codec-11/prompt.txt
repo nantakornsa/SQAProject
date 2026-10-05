@@ -1,0 +1,225 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Codec
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Codec
+       Program: commons-codec
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Codec/Codec.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-codec.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Codec/active-bugs.csv
+Number of bugs: 18
+--------------------------------------------------------------------------------
+
+Summary for Bug: Codec-11
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+7e8c20bd1b0593c3496a168be573aed40609a433
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-03-07 15:34:01 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CODEC-121
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CODEC-121
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.codec.net.QuotedPrintableCodecTest::testSkipNotEncodedCRLF
+   --> org.apache.commons.codec.DecoderException: Invalid URL encoding: not a valid digit (radix 16): 13
+ - org.apache.commons.codec.net.QuotedPrintableCodecTest::testSoftLineBreakDecode
+   --> org.apache.commons.codec.DecoderException: Invalid URL encoding: not a valid digit (radix 16): 13
+ - org.apache.commons.codec.net.QuotedPrintableCodecTest::testSoftLineBreakEncode
+   --> junit.framework.AssertionFailedError: expected:<...matics is the most b[=
+ - org.apache.commons.codec.net.QuotedPrintableCodecTest::testUltimateSoftBreak
+   --> junit.framework.AssertionFailedError: expected:<...There is no end to i[=
+ - org.apache.commons.codec.net.QuotedPrintableCodecTest::testTrailingSpecial
+   --> junit.framework.AssertionFailedError: expected:<... might contain sp=3D[=
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.codec.net.QuotedPrintableCodec
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+diff --git a/src/main/java/org/apache/commons/codec/net/QuotedPrintableCodec.java b/src/main/java/org/apache/commons/codec/net/QuotedPrintableCodec.java
+index 13291cd5..ed09fecb 100644
+--- a/src/main/java/org/apache/commons/codec/net/QuotedPrintableCodec.java
++++ b/src/main/java/org/apache/commons/codec/net/QuotedPrintableCodec.java
+@@ -67,9 +67,12 @@ public class QuotedPrintableCodec implements BinaryEncoder, BinaryDecoder, Strin
+ 
+     private static final byte SPACE = 32;
+ 
++    private static final byte CR = 13;
+ 
++    private static final byte LF = 10;
+ 
+     /** Safe line length for quoted printable encoded text. */
++    private static final int SAFE_LENGTH = 73;
+ 
+     // Static initializer for printable chars collection
+     static {
+@@ -111,12 +114,13 @@ public class QuotedPrintableCodec implements BinaryEncoder, BinaryDecoder, Strin
+      *            the buffer to write to
+      * @return The number of bytes written to the <code>buffer</code>
+      */
+-    private static final void encodeQuotedPrintable(int b, ByteArrayOutputStream buffer) {
++    private static final int encodeQuotedPrintable(int b, ByteArrayOutputStream buffer) {
+         buffer.write(ESCAPE_CHAR);
+         char hex1 = Character.toUpperCase(Character.forDigit((b >> 4) & 0xF, 16));
+         char hex2 = Character.toUpperCase(Character.forDigit(b & 0xF, 16));
+         buffer.write(hex1);
+         buffer.write(hex2);
++        return 3;
+     }
+ 
+     /**
+@@ -129,6 +133,13 @@ public class QuotedPrintableCodec implements BinaryEncoder, BinaryDecoder, Strin
+      *                  the byte array
+      * @return the unsigned octet at position <code>index</code> from the array
+      */
++    private static int getUnsignedOctet(final int index, final byte[] bytes) {
++        int b = bytes[index];
++        if (b < 0) {
++            b = 256 + b;
++        }
++        return b;
++    }
+ 
+     /**
+      * Write a byte to the buffer.
+@@ -141,6 +152,15 @@ public class QuotedPrintableCodec implements BinaryEncoder, BinaryDecoder, Strin
+      *                  the buffer to write to
+      * @return the number of bytes that have been written to the buffer
+      */
++    private static int encodeByte(final int b, final boolean encode,
++                                  final ByteArrayOutputStream buffer) {
++        if (encode) {
++            return encodeQuotedPrintable(b, buffer);
++        } else {
++            buffer.write(b);
++            return 1;
++        }
++    }
+ 
+     /**
+      * Checks whether the given byte is whitespace.
+@@ -149,6 +169,9 @@ public class QuotedPrintableCodec implements BinaryEncoder, BinaryDecoder, Strin
+      *                  byte to be checked
+      * @return <code>true</code> if the byte is either a space or tab character
+      */
++    private static boolean isWhitespace(final int b) {
++        return b == SPACE || b == TAB;
++    }
+ 
+     /**
+      * Encodes an array of bytes into an array of quoted-printable 7-bit characters. Unsafe characters are escaped.
+@@ -172,31 +195,46 @@ public class QuotedPrintableCodec implements BinaryEncoder, BinaryDecoder, Strin
+             printable = PRINTABLE_CHARS;
+         }
+         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
++        int pos = 1;
+         // encode up to buffer.length - 3, the last three octets will be treated
+         // separately for simplification of note #3
++        for (int i = 0; i < bytes.length - 3; i++) {
++            int b = getUnsignedOctet(i, bytes);
++            if (pos < SAFE_LENGTH) {
+                 // up to this length it is safe to add any byte, encoded or not
+-        for (byte c : bytes) {
+-            int b = c;
+-            if (b < 0) {
+-                b = 256 + b;
+-            }
+-            if (printable.get(b)) {
+-                buffer.write(b);
++                pos += encodeByte(b, !printable.get(b), buffer);
+             } else {
+                 // rule #3: whitespace at the end of a line *must* be encoded
++                encodeByte(b, !printable.get(b) || isWhitespace(b), buffer);
+ 
+                 // rule #5: soft line break
+-                encodeQuotedPrintable(b, buffer);
++                buffer.write(ESCAPE_CHAR);
++                buffer.write(CR);
++                buffer.write(LF);
++                pos = 1;
+             }
+         }
+ 
+         // rule #3: whitespace at the end of a line *must* be encoded
+         // if we would do a soft break line after this octet, encode whitespace
++        int b = getUnsignedOctet(bytes.length - 3, bytes);
++        boolean encode = !printable.get(b) || (isWhitespace(b) && pos > SAFE_LENGTH - 5);
++        pos += encodeByte(b, encode, buffer);
+ 
+         // note #3: '=' *must not* be the ultimate or penultimate character
+         // simplification: if < 6 bytes left, do a soft line break as we may need
+         //                 exactly 6 bytes space for the last 2 bytes
++        if (pos > SAFE_LENGTH - 2) {
++            buffer.write(ESCAPE_CHAR);
++            buffer.write(CR);
++            buffer.write(LF);
++        }
++        for (int i = bytes.length - 2; i < bytes.length; i++) {
++            b = getUnsignedOctet(i, bytes);
+             // rule #3: trailing whitespace shall be encoded
++            encode = !printable.get(b) || (i > bytes.length - 2 && isWhitespace(b));
++            encodeByte(b, encode, buffer);
++        }
+ 
+         return buffer.toByteArray();
+     }
+@@ -226,13 +264,16 @@ public class QuotedPrintableCodec implements BinaryEncoder, BinaryDecoder, Strin
+             if (b == ESCAPE_CHAR) {
+                 try {
+                     // if the next octet is a CR we have found a soft line break
+-                    int u = Utils.digit16(bytes[++i]);
++                    if (bytes[++i] == CR) {
++                        continue;
++                    }
++                    int u = Utils.digit16(bytes[i]);
+                     int l = Utils.digit16(bytes[++i]);
+                     buffer.write((char) ((u << 4) + l));
+                 } catch (ArrayIndexOutOfBoundsException e) {
+                     throw new DecoderException("Invalid quoted-printable encoding", e);
+                 }
+-            } else {
++            } else if (b != CR && b != LF) {
+                 // every other octet is appended except for CR & LF
+                 buffer.write(b);
+             }
+
+=== TRIGGERING TEST METHOD ===
+    public void testSkipNotEncodedCRLF() throws Exception {
+        String qpdata = "CRLF in an\n encoded text should be=20=\r\n\rskipped in the\r decoding.";
+        String expected = "CRLF in an encoded text should be skipped in the decoding.";
+
+        QuotedPrintableCodec qpcodec = new QuotedPrintableCodec();
+        assertEquals(expected, qpcodec.decode(qpdata));
+
+        String encoded = qpcodec.encode(expected);
+        assertEquals(expected, qpcodec.decode(encoded));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

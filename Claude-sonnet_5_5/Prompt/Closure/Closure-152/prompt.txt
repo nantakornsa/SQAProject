@@ -1,0 +1,90 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-152
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+de491e70b971caca03f07531c2caf97b878cd1ff
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-10-28 02:03:31 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+268
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-268.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.TypeCheckTest::testBackwardsTypedefUse1
+   --> java.lang.ClassCastException: com.google.javascript.rhino.jstype.StringType cannot be cast to com.google.javascript.rhino.jstype.ObjectType
+ - com.google.javascript.jscomp.TypeCheckTest::testBackwardsTypedefUse2
+   --> java.lang.ClassCastException: com.google.javascript.rhino.jstype.UnionType cannot be cast to com.google.javascript.rhino.jstype.ObjectType
+ - com.google.javascript.jscomp.TypeCheckTest::testBackwardsTypedefUse3
+   --> java.lang.ClassCastException: com.google.javascript.rhino.jstype.UnionType cannot be cast to com.google.javascript.rhino.jstype.ObjectType
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.rhino.jstype.FunctionType
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.rhino.jstype.FunctionType ===
+diff --git a/src/com/google/javascript/rhino/jstype/FunctionType.java b/src/com/google/javascript/rhino/jstype/FunctionType.java
+index fc2578d8e..cf2d3e864 100644
+--- a/src/com/google/javascript/rhino/jstype/FunctionType.java
++++ b/src/com/google/javascript/rhino/jstype/FunctionType.java
+@@ -868,7 +868,10 @@ public class FunctionType extends PrototypeObjectType {
+     // Warning about typeOfThis if it doesn't resolve to an ObjectType
+     // is handled further upstream.
+     // TODO(nicksantos): Handle this correctly if we have a UnionType.
+-    typeOfThis = (ObjectType) safeResolve(typeOfThis, t, scope);
++    JSType maybeTypeOfThis = safeResolve(typeOfThis, t, scope);
++    if (maybeTypeOfThis instanceof ObjectType) {
++      typeOfThis = (ObjectType) maybeTypeOfThis;
++    }
+ 
+     boolean changed = false;
+     ImmutableList.Builder<ObjectType> resolvedInterfaces =
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testBackwardsTypedefUse1() throws Exception {
+    testTypes(
+        "/** @this {MyTypedef} */ function f() {}" +
+        "/** @typedef {string} */ var MyTypedef;",
+        "@this type of a function must be an object\n" +
+        "Actual type: string");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

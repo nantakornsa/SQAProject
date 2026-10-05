@@ -1,0 +1,108 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-159
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+a4f32ed8acef2880288fe9559f8c60fba444bbe3
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-04-14 17:48:58 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+423
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-423.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.InlineFunctionsTest::testIssue423
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.InlineFunctions
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.InlineFunctions ===
+diff --git a/src/com/google/javascript/jscomp/InlineFunctions.java b/src/com/google/javascript/jscomp/InlineFunctions.java
+index 814a07f49..27caaf23c 100644
+--- a/src/com/google/javascript/jscomp/InlineFunctions.java
++++ b/src/com/google/javascript/jscomp/InlineFunctions.java
+@@ -774,10 +774,9 @@ class InlineFunctions implements SpecializationAwareCompilerPass {
+       Node node, Set<String> changed) {
+     Preconditions.checkArgument(changed != null);
+     // For each referenced function, add a new reference
+-    if (node.getType() == Token.CALL) {
+-      Node child = node.getFirstChild();
+-      if (child.getType() == Token.NAME) {
+-        changed.add(child.getString());
++    if (node.getType() == Token.NAME) {
++      if (isCandidateUsage(node)) {
++        changed.add(node.getString());
+       }
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue423() {
+    test(
+        "(function($) {\n" +
+        "  $.fn.multicheck = function(options) {\n" +
+        "    initialize.call(this, options);\n" +
+        "  };\n" +
+        "\n" +
+        "  function initialize(options) {\n" +
+        "    options.checkboxes = $(this).siblings(':checkbox');\n" +
+        "    preload_check_all.call(this);\n" +
+        "  }\n" +
+        "\n" +
+        "  function preload_check_all() {\n" +
+        "    $(this).data('checkboxes');\n" +
+        "  }\n" +
+        "})(jQuery)",
+        "(function($){" +
+        "  $.fn.multicheck=function(options$$1){" +
+        "    {" +
+        "     options$$1.checkboxes=$(this).siblings(\":checkbox\");" +
+        "     {" +
+        "       $(this).data(\"checkboxes\")" +
+        "     }" +
+        "    }" +
+        "  }" +
+        "})(jQuery)");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

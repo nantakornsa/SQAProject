@@ -1,0 +1,24 @@
+package org.jsoup.parser;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+public class GeminiHtmlParserTest {
+
+    @Test
+    public void testSelfClosingScriptFollowedByHtml() {
+        // When <script /> is self-closing, the tokenizer must transition back to Data state;
+        // otherwise, subsequent content is treated as script data rather than HTML elements.
+        String html = "<script src='/foo' /><div id='content'>Hello</div>";
+        Document doc = Jsoup.parse(html);
+
+        assertNotNull(doc.select("script[src=/foo]").first());
+        assertNotNull(doc.select("div#content").first());
+        assertEquals("Hello", doc.select("div#content").first().text());
+        assertEquals("<script src=\"/foo\"></script>\n<div id=\"content\">\n Hello\n</div>", doc.body().html());
+    }
+}

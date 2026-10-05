@@ -1,0 +1,117 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-37
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+95d15eff45cfcf40871d950c8ffecba2d95d63f9
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-01-27 07:00:19 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-722
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-722
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.complex.ComplexTest::testTanhInf
+   --> junit.framework.AssertionFailedError: expected:<1.0> but was:<NaN>
+ - org.apache.commons.math.complex.ComplexTest::testTan
+   --> junit.framework.AssertionFailedError: expected:<1.0> but was:<NaN>
+ - org.apache.commons.math.complex.ComplexTest::testTanh
+   --> junit.framework.AssertionFailedError: expected:<1.0> but was:<NaN>
+ - org.apache.commons.math.complex.ComplexTest::testTanInf
+   --> junit.framework.AssertionFailedError: expected:<1.0> but was:<NaN>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.complex.Complex
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.complex.Complex ===
+diff --git a/src/main/java/org/apache/commons/math/complex/Complex.java b/src/main/java/org/apache/commons/math/complex/Complex.java
+index 8d28c5ffd..ed76a2950 100644
+--- a/src/main/java/org/apache/commons/math/complex/Complex.java
++++ b/src/main/java/org/apache/commons/math/complex/Complex.java
+@@ -1015,9 +1015,15 @@ public class Complex implements FieldElement<Complex>, Serializable  {
+      * @since 1.2
+      */
+     public Complex tan() {
+-        if (isNaN) {
++        if (isNaN || Double.isInfinite(real)) {
+             return NaN;
+         }
++        if (imaginary > 20.0) {
++            return createComplex(0.0, 1.0);
++        }
++        if (imaginary < -20.0) {
++            return createComplex(0.0, -1.0);
++        }
+ 
+         double real2 = 2.0 * real;
+         double imaginary2 = 2.0 * imaginary;
+@@ -1060,9 +1066,15 @@ public class Complex implements FieldElement<Complex>, Serializable  {
+      * @since 1.2
+      */
+     public Complex tanh() {
+-        if (isNaN) {
++        if (isNaN || Double.isInfinite(imaginary)) {
+             return NaN;
+         }
++        if (real > 20.0) {
++            return createComplex(1.0, 0.0);
++        }
++        if (real < -20.0) {
++            return createComplex(-1.0, 0.0);
++        }
+         double real2 = 2.0 * real;
+         double imaginary2 = 2.0 * imaginary;
+         double d = FastMath.cosh(real2) + FastMath.cos(imaginary2);
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testTanhInf() {
+        TestUtils.assertSame(Complex.NaN, oneInf.tanh());
+        TestUtils.assertSame(Complex.NaN, oneNegInf.tanh());
+        TestUtils.assertSame(Complex.valueOf(1.0, 0.0), infOne.tanh());
+        TestUtils.assertSame(Complex.valueOf(-1.0, 0.0), negInfOne.tanh());
+        TestUtils.assertSame(Complex.NaN, infInf.tanh());
+        TestUtils.assertSame(Complex.NaN, infNegInf.tanh());
+        TestUtils.assertSame(Complex.NaN, negInfInf.tanh());
+        TestUtils.assertSame(Complex.NaN, negInfNegInf.tanh());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

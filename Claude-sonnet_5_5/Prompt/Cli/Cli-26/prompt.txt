@@ -1,0 +1,113 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Cli
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Cli
+       Program: commons-cli
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/Cli.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-cli.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/active-bugs.csv
+Number of bugs: 39
+--------------------------------------------------------------------------------
+
+Summary for Bug: Cli-26
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+aa2434d301c49d100f50af544333886a6767ce9d
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-03-16 07:26:44 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CLI-177
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CLI-177
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.cli.OptionBuilderTest::testBuilderIsResettedAlways
+   --> junit.framework.AssertionFailedError: we inherited a description
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.cli.OptionBuilder
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.cli.OptionBuilder ===
+diff --git a/src/java/org/apache/commons/cli/OptionBuilder.java b/src/java/org/apache/commons/cli/OptionBuilder.java
+index 4d21b8b..60b4967 100644
+--- a/src/java/org/apache/commons/cli/OptionBuilder.java
++++ b/src/java/org/apache/commons/cli/OptionBuilder.java
+@@ -345,8 +345,10 @@ public final class OptionBuilder
+      */
+     public static Option create(String opt) throws IllegalArgumentException
+     {
++        Option option = null;
++        try {
+             // create the option
+-        Option option = new Option(opt, description);
++            option = new Option(opt, description);
+ 
+             // set the option properties
+             option.setLongOpt(longopt);
+@@ -356,8 +358,10 @@ public final class OptionBuilder
+             option.setType(type);
+             option.setValueSeparator(valuesep);
+             option.setArgName(argName);
++        } finally {
+             // reset the OptionBuilder properties
+             OptionBuilder.reset();
++        }
+ 
+         // return the Option instance
+         return option;
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testBuilderIsResettedAlways() {
+        try
+        {
+            OptionBuilder.withDescription("JUnit").create('"');
+            fail("IllegalArgumentException expected");
+        }
+        catch (IllegalArgumentException e)
+        {
+            // expected
+        }
+        assertNull("we inherited a description", OptionBuilder.create('x').getDescription());
+
+        try
+        {
+            OptionBuilder.withDescription("JUnit").create();
+            fail("IllegalArgumentException expected");
+        }
+        catch (IllegalArgumentException e)
+        {
+            // expected
+        }
+        assertNull("we inherited a description", OptionBuilder.create('x').getDescription());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

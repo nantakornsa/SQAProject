@@ -1,0 +1,63 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791185920-ejNOYASchYkUsV0gNSOD","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Refining Deserialization Logic**\n\nI'm currently analyzing JacksonDatabind-68, specifically how `BeanDeserializerBase`'s recent changes to `_delegateDeserializer()` in `deserializeFromString` and `deserializeFromObjectUsingNonDefault` affect unwrapping single values. This is a nuanced area I'm digging into.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind.struct;\n\nimport java.util.List;\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"import com.fasterxml.jackson.annotation.JsonCreator;\nimport com.fasterxml.jackson.databind.BaseMap"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Test;\nimport com.fasterxml.jackson.databind.DeserializationFeature;\nimport com.fasterxml.jackson."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"databind.ObjectMapper;\n\npublic class SingleValueAsArray1421Test extends BaseMapTest\n{\n    static"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" class Bean1421 {\n        protected List<String> values;\n\n        @JsonCreator\n        public Bean"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"1421(List<String> v) {\n            values = v;\n        }\n\n        public List<String>"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" getValues() {\n            return values;\n        }\n    }\n\n    // Test for"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" [databind#1421]: Bean with array delegate creator should accept single value\n    // when ACCEPT_SINGLE_VALUE_AS_ARRAY is enabled"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".\n    public void testWithSingleString() throws Exception\n    {\n        ObjectMapper mapper = new ObjectMapper()\n                "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);\n\n        Bean1421 bean ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" mapper.readValue(quote(\"test2\"), Bean1421.class);\n        assertNotNull(bean);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        assertNotNull(bean.getValues());\n        assertEquals(1, bean.getValues().size());\n        assertEquals"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(\"test2\", bean.getValues().get(0));\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2927,"output_tokens":705,"output_tokens_details":{"thinking_tokens":383},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.004839,"is_byok":false,"cost_details":{"upstream_inference_cost":0.004839,"upstream_inference_prompt_cost":0.00219525,"upstream_inference_completions_cost":0.00264375}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

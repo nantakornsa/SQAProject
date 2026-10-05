@@ -1,0 +1,92 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JxPath
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JxPath
+       Program: commons-jxpath
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JxPath/JxPath.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-jxpath.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JxPath/active-bugs.csv
+Number of bugs: 22
+--------------------------------------------------------------------------------
+
+Summary for Bug: JxPath-5
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+2a01dfaf8d6abbabc7e4cd5cfd05d2e0b4886708
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2007-07-02 20:47:47 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+JXPATH-89
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/JXPATH-89
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.jxpath.ri.compiler.VariableTest::testUnionOfVariableAndNode
+   --> org.apache.commons.jxpath.JXPathException: Cannot compare pointers that do not belong to the same tree: '' and '$var'
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.jxpath.ri.model.NodePointer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.jxpath.ri.model.NodePointer ===
+diff --git a/src/java/org/apache/commons/jxpath/ri/model/NodePointer.java b/src/java/org/apache/commons/jxpath/ri/model/NodePointer.java
+index 6ff8d5f..8ba1c04 100644
+--- a/src/java/org/apache/commons/jxpath/ri/model/NodePointer.java
++++ b/src/java/org/apache/commons/jxpath/ri/model/NodePointer.java
+@@ -662,9 +662,7 @@ public abstract class NodePointer implements Pointer {
+         }
+ 
+         if (depth1 == 1) {
+-            throw new JXPathException(
+-                    "Cannot compare pointers that do not belong to the same tree: '"
+-                            + p1 + "' and '" + p2 + "'");
++            return 0;
+         }
+         int r = compareNodePointers(p1.parent, depth1 - 1, p2.parent, depth2 - 1);
+         if (r != 0) {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testUnionOfVariableAndNode() throws Exception {
+        Document doc = DocumentBuilderFactory.newInstance()
+                .newDocumentBuilder().parse(
+                        new InputSource(new StringReader(
+                                "<MAIN><A/><A/></MAIN>")));
+
+        JXPathContext context = JXPathContext.newContext(doc);
+        context.getVariables().declareVariable("var", "varValue");
+        int sz = 0;
+        for (Iterator ptrs = context.iteratePointers("$var | /MAIN/A"); ptrs.hasNext(); sz++) {
+            ptrs.next();
+        }
+        assertEquals(3, sz);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

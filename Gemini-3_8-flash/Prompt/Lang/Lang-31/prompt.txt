@@ -1,0 +1,106 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-31
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+1ced894df70d66f3a786c2c8cd6e23e0d4263d91
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-03-14 00:54:03 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-607
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-607
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang3.StringUtilsEqualsIndexOfTest::testContainsAnyCharArrayWithSupplementaryChars
+   --> junit.framework.AssertionFailedError: expected:<false> but was:<true>
+ - org.apache.commons.lang3.StringUtilsEqualsIndexOfTest::testContainsAnyStringWithSupplementaryChars
+   --> junit.framework.AssertionFailedError: expected:<false> but was:<true>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang3.StringUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang3.StringUtils ===
+diff --git a/src/main/java/org/apache/commons/lang3/StringUtils.java b/src/main/java/org/apache/commons/lang3/StringUtils.java
+index a90b0673d..4aac02d17 100644
+--- a/src/main/java/org/apache/commons/lang3/StringUtils.java
++++ b/src/main/java/org/apache/commons/lang3/StringUtils.java
+@@ -1443,13 +1443,21 @@ public class StringUtils {
+ 		}
+ 		int csLength = cs.length();
+ 		int searchLength = searchChars.length;
++		int csLastIndex = csLength - 1;
++		int searchLastIndex = searchLength - 1;
+ 		for (int i = 0; i < csLength; i++) {
+ 			char ch = cs.charAt(i);
+ 			for (int j = 0; j < searchLength; j++) {
+ 				if (searchChars[j] == ch) {
++					if (i < csLastIndex && j < searchLastIndex && ch >= Character.MIN_HIGH_SURROGATE && ch <= Character.MAX_HIGH_SURROGATE) {
+ 						// ch is a supplementary character
++						if (searchChars[j + 1] == cs.charAt(i + 1)) {
++							return true;
++						}
++					} else {
+ 						// ch is in the Basic Multilingual Plane
+ 						return true;
++					}
+ 				}
+ 			}
+ 		}
+
+
+=== TRIGGERING TEST METHOD ===
+	public void testContainsAnyCharArrayWithSupplementaryChars() {
+		assertEquals(true, StringUtils.containsAny(CharU20000 + CharU20001, CharU20000.toCharArray()));
+		assertEquals(true, StringUtils.containsAny(CharU20000 + CharU20001, CharU20001.toCharArray()));
+		assertEquals(true, StringUtils.containsAny(CharU20000, CharU20000.toCharArray()));
+		// Sanity check:
+		assertEquals(-1, CharU20000.indexOf(CharU20001));
+		assertEquals(0, CharU20000.indexOf(CharU20001.charAt(0)));
+		assertEquals(-1, CharU20000.indexOf(CharU20001.charAt(1)));
+		// Test:
+		assertEquals(false, StringUtils.containsAny(CharU20000, CharU20001.toCharArray()));
+		assertEquals(false, StringUtils.containsAny(CharU20001, CharU20000.toCharArray()));
+	}
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

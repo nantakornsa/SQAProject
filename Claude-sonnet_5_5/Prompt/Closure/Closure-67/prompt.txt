@@ -1,0 +1,84 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-67
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+aa89d05b48332d68b8e6ebcee427b2ac3b4e3184
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-06-06 22:36:17 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+459
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-459.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.RemoveUnusedPrototypePropertiesTest::testAliasing7
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.AnalyzePrototypeProperties
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.AnalyzePrototypeProperties ===
+diff --git a/src/com/google/javascript/jscomp/AnalyzePrototypeProperties.java b/src/com/google/javascript/jscomp/AnalyzePrototypeProperties.java
+index 30b19e0b3..4472638c8 100644
+--- a/src/com/google/javascript/jscomp/AnalyzePrototypeProperties.java
++++ b/src/com/google/javascript/jscomp/AnalyzePrototypeProperties.java
+@@ -315,7 +315,7 @@ class AnalyzePrototypeProperties implements CompilerPass {
+       Node n = assign.getFirstChild();
+       if (n != null && NodeUtil.isVarOrSimpleAssignLhs(n, assign)
+           && n.getType() == Token.GETPROP
+-          ) {
++          && assign.getParent().getType() == Token.EXPR_RESULT) {
+         // We want to exclude the assignment itself from the usage list
+         boolean isChainedProperty =
+             n.getFirstChild().getType() == Token.GETPROP;
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testAliasing7() {
+    // An exported alias must preserved any referenced values in the
+    // referenced function.
+    testSame("function e(){}" +
+           "e.prototype['alias1'] = e.prototype.method1 = " +
+               "function(){this.method2()};" +
+           "e.prototype.method2 = function(){};");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,142 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Compress
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Compress
+       Program: commons-compress
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/Compress.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-compress.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/active-bugs.csv
+Number of bugs: 47
+--------------------------------------------------------------------------------
+
+Summary for Bug: Compress-34
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+e6e24766377e705e89358fb9cf6253e2e9e645db
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-08-22 19:01:32 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COMPRESS-321
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COMPRESS-321
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.compress.archivers.zip.X7875_NewUnixTest::testParseReparse
+   --> junit.framework.AssertionFailedError: expected:<0> but was:<5>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.compress.archivers.zip.X7875_NewUnix
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.compress.archivers.zip.X7875_NewUnix ===
+diff --git a/src/main/java/org/apache/commons/compress/archivers/zip/X7875_NewUnix.java b/src/main/java/org/apache/commons/compress/archivers/zip/X7875_NewUnix.java
+index 14aebab1..e325b564 100644
+--- a/src/main/java/org/apache/commons/compress/archivers/zip/X7875_NewUnix.java
++++ b/src/main/java/org/apache/commons/compress/archivers/zip/X7875_NewUnix.java
+@@ -55,6 +55,7 @@ import static org.apache.commons.compress.archivers.zip.ZipUtil.unsignedIntToSig
+  */
+ public class X7875_NewUnix implements ZipExtraField, Cloneable, Serializable {
+     private static final ZipShort HEADER_ID = new ZipShort(0x7875);
++    private static final ZipShort ZERO = new ZipShort(0);
+     private static final BigInteger ONE_THOUSAND = BigInteger.valueOf(1000);
+     private static final long serialVersionUID = 1L;
+ 
+@@ -143,7 +144,7 @@ public class X7875_NewUnix implements ZipExtraField, Cloneable, Serializable {
+      * @return a <code>ZipShort</code> for the length of the data of this extra field
+      */
+     public ZipShort getCentralDirectoryLength() {
+-        return getLocalFileDataLength();
++        return ZERO;
+     }
+ 
+     /**
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testParseReparse() throws ZipException {
+
+        // Version=1, Len=0, Len=0.
+        final byte[] ZERO_LEN = {1, 0, 0};
+
+        // Version=1, Len=1, zero, Len=1, zero.
+        final byte[] ZERO_UID_GID = {1, 1, 0, 1, 0};
+
+        // Version=1, Len=1, one, Len=1, one
+        final byte[] ONE_UID_GID = {1, 1, 1, 1, 1};
+
+        // Version=1, Len=2, one thousand, Len=2, one thousand
+        final byte[] ONE_THOUSAND_UID_GID = {1, 2, -24, 3, 2, -24, 3};
+
+        // (2^32 - 2).   I guess they avoid (2^32 - 1) since it's identical to -1 in
+        // two's complement, and -1 often has a special meaning.
+        final byte[] UNIX_MAX_UID_GID = {1, 4, -2, -1, -1, -1, 4, -2, -1, -1, -1};
+
+        // Version=1, Len=5, 2^32, Len=5, 2^32 + 1
+        // Esoteric test:  can we handle 40 bit numbers?
+        final byte[] LENGTH_5 = {1, 5, 0, 0, 0, 0, 1, 5, 1, 0, 0, 0, 1};
+
+        // Version=1, Len=8, 2^63 - 2, Len=8, 2^63 - 1
+        // Esoteric test:  can we handle 64 bit numbers?
+        final byte[] LENGTH_8 = {1, 8, -2, -1, -1, -1, -1, -1, -1, 127, 8, -1, -1, -1, -1, -1, -1, -1, 127};
+
+        final long TWO_TO_32 = 0x100000000L;
+        final long MAX = TWO_TO_32 - 2;
+
+        parseReparse(0, 0, ZERO_LEN, 0, 0);
+        parseReparse(0, 0, ZERO_UID_GID, 0, 0);
+        parseReparse(1, 1, ONE_UID_GID, 1, 1);
+        parseReparse(1000, 1000, ONE_THOUSAND_UID_GID, 1000, 1000);
+        parseReparse(MAX, MAX, UNIX_MAX_UID_GID, MAX, MAX);
+        parseReparse(-2, -2, UNIX_MAX_UID_GID, MAX, MAX);
+        parseReparse(TWO_TO_32, TWO_TO_32 + 1, LENGTH_5, TWO_TO_32, TWO_TO_32 + 1);
+        parseReparse(Long.MAX_VALUE - 1, Long.MAX_VALUE, LENGTH_8, Long.MAX_VALUE - 1, Long.MAX_VALUE);
+
+        // We never emit this, but we should be able to parse it:
+        final byte[] SPURIOUS_ZEROES_1 = {1, 4, -1, 0, 0, 0, 4, -128, 0, 0, 0};
+        final byte[] EXPECTED_1 = {1, 1, -1, 1, -128};
+        xf.parseFromLocalFileData(SPURIOUS_ZEROES_1, 0, SPURIOUS_ZEROES_1.length);
+
+        assertEquals(255, xf.getUID());
+        assertEquals(128, xf.getGID());
+        assertTrue(Arrays.equals(EXPECTED_1, xf.getLocalFileDataData()));
+
+        final byte[] SPURIOUS_ZEROES_2 = {1, 4, -1, -1, 0, 0, 4, 1, 2, 0, 0};
+        final byte[] EXPECTED_2 = {1, 2, -1, -1, 2, 1, 2};
+        xf.parseFromLocalFileData(SPURIOUS_ZEROES_2, 0, SPURIOUS_ZEROES_2.length);
+
+        assertEquals(65535, xf.getUID());
+        assertEquals(513, xf.getGID());
+        assertTrue(Arrays.equals(EXPECTED_2, xf.getLocalFileDataData()));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

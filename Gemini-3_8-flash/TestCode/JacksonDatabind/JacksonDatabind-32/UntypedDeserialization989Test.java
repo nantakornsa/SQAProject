@@ -1,0 +1,30 @@
+package com.fasterxml.jackson.databind.deser;
+
+import java.io.IOException;
+import java.util.Map;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class UntypedDeserialization989Test extends BaseMapTest
+{
+    private final ObjectMapper MAPPER = newObjectMapper();
+
+    public void testNestedUntyped989() throws IOException
+    {
+        final String JSON = "{\"stuff\":{}}";
+        JsonParser p = MAPPER.getFactory().createParser(JSON);
+        assertEquals(JsonToken.START_OBJECT, p.nextToken());
+        assertEquals(JsonToken.FIELD_NAME, p.nextToken());
+        assertEquals(JsonToken.START_OBJECT, p.nextToken());
+        assertEquals(JsonToken.END_OBJECT, p.nextToken());
+
+        Object ob = MAPPER.readValue(p, Object.class);
+        assertNotNull(ob);
+        assertTrue(ob instanceof Map<?,?>);
+        assertTrue(((Map<?,?>) ob).isEmpty());
+        p.close();
+    }
+}

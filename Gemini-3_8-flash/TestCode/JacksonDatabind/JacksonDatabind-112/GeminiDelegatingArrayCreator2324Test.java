@@ -1,0 +1,57 @@
+package com.fasterxml.jackson.databind.deser.creators;
+
+import java.util.AbstractCollection;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class GeminiDelegatingArrayCreator2324Test extends BaseMapTest
+{
+    static class ImmutableBag<E> extends AbstractCollection<E> {
+        private final Collection<E> delegate;
+
+        @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+        public ImmutableBag(E[] delegate) {
+            this.delegate = Arrays.asList(delegate);
+        }
+
+        @Override
+        public Iterator<E> iterator() {
+            return delegate.iterator();
+        }
+
+        @Override
+        public int size() {
+            return delegate.size();
+        }
+    }
+
+    static class WithBagOfStrings {
+        private ImmutableBag<String> strings;
+
+        public ImmutableBag<String> getStrings() {
+            return strings;
+        }
+
+        public void setStrings(ImmutableBag<String> strings) {
+            this.strings = strings;
+        }
+    }
+
+    private final ObjectMapper MAPPER = new ObjectMapper();
+
+    public void testDeserializeBagOfStrings() throws Exception {
+        WithBagOfStrings result = MAPPER.readerFor(WithBagOfStrings.class)
+                .readValue("{\"strings\": [ \"a\", \"b\", \"c\"]}");
+        assertNotNull(result);
+        assertNotNull(result.getStrings());
+        assertEquals(3, result.getStrings().size());
+        assertTrue(result.getStrings().contains("a"));
+        assertTrue(result.getStrings().contains("b"));
+        assertTrue(result.getStrings().contains("c"));
+    }
+}

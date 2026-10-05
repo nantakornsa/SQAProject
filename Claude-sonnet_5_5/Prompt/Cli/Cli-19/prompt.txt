@@ -1,0 +1,84 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Cli
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Cli
+       Program: commons-cli
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/Cli.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-cli.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/active-bugs.csv
+Number of bugs: 39
+--------------------------------------------------------------------------------
+
+Summary for Bug: Cli-19
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+b1331806960001da95424315b6103d755107b519
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-07-28 08:43:28 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CLI-164
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CLI-164
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.cli.PosixParserTest::testUnrecognizedOption2
+   --> junit.framework.AssertionFailedError: UnrecognizedOptionException wasn't thrown
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.cli.PosixParser
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.cli.PosixParser ===
+diff --git a/src/java/org/apache/commons/cli/PosixParser.java b/src/java/org/apache/commons/cli/PosixParser.java
+index 08a9280..fe01ceb 100644
+--- a/src/java/org/apache/commons/cli/PosixParser.java
++++ b/src/java/org/apache/commons/cli/PosixParser.java
+@@ -229,13 +229,13 @@ public class PosixParser extends Parser {
+         if (options.hasOption(token))
+         {
+             currentOption = options.getOption(token);
+-            tokens.add(token);
+         }
+         else if (stopAtNonOption)
+         {
+             eatTheRest = true;
+-            tokens.add(token);
+         }
++
++        tokens.add(token);
+     }
+ 
+     /**
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testUnrecognizedOption2() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

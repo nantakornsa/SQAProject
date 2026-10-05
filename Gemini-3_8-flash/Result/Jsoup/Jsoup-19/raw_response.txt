@@ -1,0 +1,51 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791141603-L37nRwEY7WMfqaEtrizT","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Developing Regression Test**\n\nI'm currently working on a regression test for Jsoup-19. The focus is on verifying the fix for custom protocols in attributes when no base URI is present or when the protocol isn't recognized by `URL`, ensuring it doesn't result in an empty string.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.jsoup.safety;\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"import org.jsoup.Jsoup;\nimport org.junit.Test;\n\nimport static org.junit.Assert.assertEquals;\n\npublic"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" class CustomProtocolsTest {\n\n    @Test\n    public void testCustomProtocolsAllowedByWhitelist() {\n        String"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" html = \"<img src='cid:12345' /> <img src='data:gzzt'"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" />\";\n        String dropped = Jsoup.clean(html, Whitelist.basicWithImages());\n        assertEquals(\"<img /> \\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"<img />\", dropped);\n\n        String preserved = Jsoup.clean(html, Whitelist.basicWithImages"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"().addProtocols(\"img\", \"src\", \"cid\", \"data\"));\n        assertEquals(\"<img src=\\\"cid"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":":12345\\\" /> \\n<img src=\\\"data:gzzt\\\" />\", preserved);\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1062,"output_tokens":549,"output_tokens_details":{"thinking_tokens":352},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00285525,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00285525,"upstream_inference_prompt_cost":0.0007965,"upstream_inference_completions_cost":0.00205875}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

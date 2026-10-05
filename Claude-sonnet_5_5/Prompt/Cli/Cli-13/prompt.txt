@@ -1,0 +1,132 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Cli
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Cli
+       Program: commons-cli
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/Cli.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-cli.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/active-bugs.csv
+Number of bugs: 39
+--------------------------------------------------------------------------------
+
+Summary for Bug: Cli-13
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+538fb6889f0387a40b821cfb315685e929110736
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-06-09 07:37:19 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CLI-61
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CLI-61
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.cli2.bug.BugLoopingOptionLookAlikeTest::testLoopingOptionLookAlike2
+   --> junit.framework.ComparisonFailure: expected:<Unexpected [testfile.txt while processing ]> but was:<Unexpected [value "testfile.txt" found while processing  input]>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.cli2.WriteableCommandLine
+ - org.apache.commons.cli2.commandline.WriteableCommandLineImpl
+ - org.apache.commons.cli2.option.ArgumentImpl
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.cli2.WriteableCommandLine ===
+diff --git a/src/java/org/apache/commons/cli2/WriteableCommandLine.java b/src/java/org/apache/commons/cli2/WriteableCommandLine.java
+index 96ab589..a70c8d6 100644
+--- a/src/java/org/apache/commons/cli2/WriteableCommandLine.java
++++ b/src/java/org/apache/commons/cli2/WriteableCommandLine.java
+@@ -44,6 +44,7 @@ public interface WriteableCommandLine extends CommandLine {
+      * @param option the Option associated with the values
+      * @return a list of values or an empty List if none are found
+      */
++    List getUndefaultedValues(final Option option);
+ 
+     /**
+      * Sets the default values for an Option in the CommandLine
+
+=== MODIFIED SOURCE: org.apache.commons.cli2.commandline.WriteableCommandLineImpl ===
+diff --git a/src/java/org/apache/commons/cli2/commandline/WriteableCommandLineImpl.java b/src/java/org/apache/commons/cli2/commandline/WriteableCommandLineImpl.java
+index b4e3a39..97a5d11 100644
+--- a/src/java/org/apache/commons/cli2/commandline/WriteableCommandLineImpl.java
++++ b/src/java/org/apache/commons/cli2/commandline/WriteableCommandLineImpl.java
+@@ -129,9 +129,17 @@ public class WriteableCommandLineImpl
+         return valueList;
+     }
+ 
++    public List getUndefaultedValues(Option option) {
+       // First grab the command line values
++      List valueList = (List) values.get(option);
+ 
+       // Finally use an empty list
++      if (valueList == null) {
++        valueList = Collections.EMPTY_LIST;
++      }
++
++      return valueList;
++    }
+ 
+     public Boolean getSwitch(final Option option,
+                              final Boolean defaultValue) {
+
+=== MODIFIED SOURCE: org.apache.commons.cli2.option.ArgumentImpl ===
+diff --git a/src/java/org/apache/commons/cli2/option/ArgumentImpl.java b/src/java/org/apache/commons/cli2/option/ArgumentImpl.java
+index 0b05ad7..f776f7e 100644
+--- a/src/java/org/apache/commons/cli2/option/ArgumentImpl.java
++++ b/src/java/org/apache/commons/cli2/option/ArgumentImpl.java
+@@ -141,7 +141,7 @@ public class ArgumentImpl
+                               final Option option)
+         throws OptionException {
+         // count of arguments processed for this option.
+-        int argumentCount = 0;
++        int argumentCount = commandLine.getUndefaultedValues(option).size();
+ 
+         while (arguments.hasNext() && (argumentCount < maximum)) {
+             final String allValuesQuoted = (String) arguments.next();
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testLoopingOptionLookAlike2() {
+        final ArgumentBuilder abuilder = new ArgumentBuilder();
+        final GroupBuilder gbuilder = new GroupBuilder();
+        final Argument inputfile_opt = abuilder.withName("input").withMinimum(1).withMaximum(1).create();
+        final Argument outputfile_opt = abuilder.withName("output").withMinimum(1).withMaximum(1).create();
+        final Argument targets = new SourceDestArgument(inputfile_opt, outputfile_opt);
+        final Group options = gbuilder.withOption(targets).create();
+        final Parser parser = new Parser();
+        parser.setGroup(options);
+        try {
+            parser.parse(new String[] { "testfile.txt", "testfile.txt", "testfile.txt", "testfile.txt" });
+            fail("OptionException");
+        } catch (OptionException e) {
+            assertEquals("Unexpected testfile.txt while processing ", e.getMessage());
+        }
+    }    
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,115 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-16
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+f36b950de16f6db134bd98969cd8fbe578d37480
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-07-02 21:12:11 +1000
+--------------------------------------------------------------------------------
+Bug report id:
+109
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/109
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.nodes.DocumentTypeTest::outerHtmlGeneration
+   --> junit.framework.AssertionFailedError: expected:<<!DOCTYPE html ["]http://www.ibm.com/d...> but was:<<!DOCTYPE html []http://www.ibm.com/d...>
+ - org.jsoup.nodes.DocumentTypeTest::constructorValidationThrowsExceptionOnBlankName
+   --> junit.framework.AssertionFailedError: Expected exception: java.lang.IllegalArgumentException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.nodes.DocumentType
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.nodes.DocumentType ===
+diff --git a/src/main/java/org/jsoup/nodes/DocumentType.java b/src/main/java/org/jsoup/nodes/DocumentType.java
+index f9f77dad..f8c79f0d 100644
+--- a/src/main/java/org/jsoup/nodes/DocumentType.java
++++ b/src/main/java/org/jsoup/nodes/DocumentType.java
+@@ -1,6 +1,7 @@
+ package org.jsoup.nodes;
+ 
+ import org.jsoup.helper.StringUtil;
++import org.jsoup.helper.Validate;
+ 
+ /**
+  * A {@code <!DOCTPYE>} node.
+@@ -18,6 +19,7 @@ public class DocumentType extends Node {
+     public DocumentType(String name, String publicId, String systemId, String baseUri) {
+         super(baseUri);
+ 
++        Validate.notEmpty(name);
+         attr("name", name);
+         attr("publicId", publicId);
+         attr("systemId", systemId);
+@@ -30,11 +32,11 @@ public class DocumentType extends Node {
+ 
+     @Override
+     void outerHtmlHead(StringBuilder accum, int depth, Document.OutputSettings out) {
+-        accum.append("<!DOCTYPE html");
++        accum.append("<!DOCTYPE ").append(attr("name"));
+         if (!StringUtil.isBlank(attr("publicId")))
+             accum.append(" PUBLIC \"").append(attr("publicId")).append("\"");
+         if (!StringUtil.isBlank(attr("systemId")))
+-            accum.append(' ').append(attr("systemId")).append("\"");
++            accum.append(" \"").append(attr("systemId")).append("\"");
+         accum.append('>');
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void outerHtmlGeneration() {
+        DocumentType html5 = new DocumentType("html", "", "", "");
+        assertEquals("<!DOCTYPE html>", html5.outerHtml());
+
+        DocumentType publicDocType = new DocumentType("html", "-//IETF//DTD HTML//", "", "");
+        assertEquals("<!DOCTYPE html PUBLIC \"-//IETF//DTD HTML//\">", publicDocType.outerHtml());
+
+        DocumentType systemDocType = new DocumentType("html", "", "http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd", "");
+        assertEquals("<!DOCTYPE html \"http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd\">", systemDocType.outerHtml());
+
+        DocumentType combo = new DocumentType("notHtml", "--public", "--system", "");
+        assertEquals("<!DOCTYPE notHtml PUBLIC \"--public\" \"--system\">", combo.outerHtml());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

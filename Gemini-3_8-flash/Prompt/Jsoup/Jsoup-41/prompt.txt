@@ -1,0 +1,126 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-41
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+8391b7231a2519557d41209d728acc4f422af381
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-03-29 18:10:57 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+537
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/537
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.nodes.ElementTest::testHashAndEquals
+   --> junit.framework.AssertionFailedError: expected: org.jsoup.nodes.Element<<p class="one">One</p>> but was: org.jsoup.nodes.Element<<p class="one">One</p>>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.nodes.Element
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.nodes.Element ===
+diff --git a/src/main/java/org/jsoup/nodes/Element.java b/src/main/java/org/jsoup/nodes/Element.java
+index cd2e86af..c07018ee 100644
+--- a/src/main/java/org/jsoup/nodes/Element.java
++++ b/src/main/java/org/jsoup/nodes/Element.java
+@@ -1172,7 +1172,7 @@ public class Element extends Node {
+ 
+         Element element = (Element) o;
+ 
+-        return this == o;
++        return tag.equals(element.tag);
+     }
+ 
+     @Override
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testHashAndEquals() {
+        String doc1 = "<div id=1><p class=one>One</p><p class=one>One</p><p class=one>Two</p><p class=two>One</p></div>" +
+                "<div id=2><p class=one>One</p><p class=one>One</p><p class=one>Two</p><p class=two>One</p></div>";
+
+        Document doc = Jsoup.parse(doc1);
+        Elements els = doc.select("p");
+
+        /*
+        for (Element el : els) {
+            System.out.println(el.hashCode() + " - " + el.outerHtml());
+        }
+
+        0 1534787905 - <p class="one">One</p>
+        1 1534787905 - <p class="one">One</p>
+        2 1539683239 - <p class="one">Two</p>
+        3 1535455211 - <p class="two">One</p>
+        4 1534787905 - <p class="one">One</p>
+        5 1534787905 - <p class="one">One</p>
+        6 1539683239 - <p class="one">Two</p>
+        7 1535455211 - <p class="two">One</p>
+        */
+        assertEquals(8, els.size());
+        Element e0 = els.get(0);
+        Element e1 = els.get(1);
+        Element e2 = els.get(2);
+        Element e3 = els.get(3);
+        Element e4 = els.get(4);
+        Element e5 = els.get(5);
+        Element e6 = els.get(6);
+        Element e7 = els.get(7);
+
+        assertEquals(e0, e1);
+        assertEquals(e0, e4);
+        assertEquals(e0, e5);
+        assertFalse(e0.equals(e2));
+        assertFalse(e0.equals(e3));
+        assertFalse(e0.equals(e6));
+        assertFalse(e0.equals(e7));
+
+        assertEquals(e0.hashCode(), e1.hashCode());
+        assertEquals(e0.hashCode(), e4.hashCode());
+        assertEquals(e0.hashCode(), e5.hashCode());
+        assertFalse(e0.hashCode() == (e2.hashCode()));
+        assertFalse(e0.hashCode() == (e3).hashCode());
+        assertFalse(e0.hashCode() == (e6).hashCode());
+        assertFalse(e0.hashCode() == (e7).hashCode());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

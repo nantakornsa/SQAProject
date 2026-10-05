@@ -1,0 +1,34 @@
+```java
+package com.fasterxml.jackson.core.util;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class TextBufferExpandTest {
+
+    @Test
+    public void testExpandBeyondMaxSegmentLen() {
+        TextBuffer tb = new TextBuffer(new BufferRecycler());
+        char[] buf = tb.getCurrentSegment();
+
+        while (buf.length < 262144) {
+            char[] old = buf;
+            buf = tb.expandCurrentSegment();
+            assertTrue("Expected buffer to expand", buf.length > old.length);
+        }
+
+        // At this point buf.length is 262144 (MAX_SEGMENT_LEN)
+        // Expand once: in buggy code, becomes 262145 (MAX_SEGMENT_LEN + 1)
+        char[] old = buf;
+        buf = tb.expandCurrentSegment();
+        assertTrue("Expected buffer to expand beyond MAX_SEGMENT_LEN", buf.length > old.length);
+
+        // Expand again: in buggy code, fails because len != MAX_SEGMENT_LEN
+        // and Math.min(MAX_SEGMENT_LEN, len + (len >> 1)) produces 262144 <= 262145
+        old = buf;
+        buf = tb.expandCurrentSegment();
+        assertTrue("Expected buffer of " + old.length + " to expand, did not, length now " + buf.length,
+                buf.length > old.length);
+    }
+}
+```

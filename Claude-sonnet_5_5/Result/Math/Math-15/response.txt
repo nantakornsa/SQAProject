@@ -1,0 +1,28 @@
+The test below calls `FastMath.pow` with a negative base and a very large exponent, then compares the result with `Math.pow`. I haven't compiled or run it against either version.
+
+**Why it separates the two versions:** the exponent is y = (5 + 1e-15) * 1e15 ≈ 5.000000000000001e15. This lies between 2^52 ≈ 4.5036e15 and 2^53 ≈ 9.007e15. In that range doubles are integers, but they are not necessarily even.
+
+- **Buggy version:** the threshold is 2^52, so it assumes y is even and returns `pow(-x, y)`. That gives 1.0 when the true result is -1.0 (y is odd).
+- **Fixed version:** the threshold is 2^53, so this case is handled correctly and returns -1.0, matching `Math.pow`.
+
+The test checks both y and -y, as in the original triggering test.
+
+```java
+package org.apache.commons.math3.util;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+public class FastMathTest {
+
+    @Test
+    public void testMath904() {
+        final double x = -1;
+        final double y = (5 + 1e-15) * 1e15;
+        Assert.assertEquals(Math.pow(x, y),
+                            FastMath.pow(x, y), 0);
+        Assert.assertEquals(Math.pow(x, -y),
+                            FastMath.pow(x, -y), 0);
+    }
+}
+```

@@ -1,0 +1,75 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791184597-UegL0zeYizjUeDTFOOQa","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Bug Fix**\n\nI'm currently examining commit 308ed4ed89b32d119b5994e457597275c6a0af7d, specifically within `NullifyingDeserializer.java`, to understand the fix for JacksonDatabind-39 as triggered by `testUnknownTypeIDRecovery`.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing Parser Logic**\n\nMy focus is on how `p.skipChildren()` behaves when the current token is `FIELD_NAME` during polymorphic deserialization. It appears this method doesn't fully consume the object's content in such scenarios, which is relevant to fixing JacksonDatabind-39.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind.jsontype;\n\nimport com"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".fasterxml.jackson.annotation.JsonSubTypes;\nimport com.fasterxml.jackson.annotation.JsonTypeInfo;\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" com.fasterxml.jackson.databind.BaseMapTest;\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\npublic class Test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"PolymorphicWithDefaultImplRecovery extends BaseMapTest\n{\n    @JsonTypeInfo(use = JsonType"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Info.Id.NAME, property = \"version\", defaultImpl = Void.class)\n    @JsonSubTypes("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"value = {\n        @JsonSubTypes.Type(value = Event1.class, name = \"event1"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\")\n    })\n    static class CallRecord {\n        public String version;\n        public String application;\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        public Item item;\n        public Item item2;\n    }\n\n    static class Event1 extends CallRecord {\n        public"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" String location;\n    }\n\n    static class Item {\n        public String name;\n    }\n\n    public"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" void testUnknownTypeIDRecovery() throws Exception\n    {\n        ObjectMapper mapper = new ObjectMapper();\n        String json = \"{\\"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"n\" +\n                \"  \\\"version\\\": \\\"event2\\\",\\n\" +\n                \"  \\\"application\\\":"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" \\\"application\\\",\\n\" +\n                \"  \\\"item\\\": {\\n\" +\n                \"    \\\"name\\\": \\\"item"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"1\\\"\\n\" +\n                \"  },\\n\" +\n                \"  \\\"location\\\": \\\"location\\\",\\n\" +\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"                \"  \\\"item2\\\": {\\n\" +\n                \"    \\\"name\\\": \\\"item2\\\"\\n\""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" +\n                \"  }\\n\" +\n                \"}\";\n\n        CallRecord record = mapper.readValue(json"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":", CallRecord.class);\n        assertNull(record);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1105,"output_tokens":871,"output_tokens_details":{"thinking_tokens":473},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.004095,"is_byok":false,"cost_details":{"upstream_inference_cost":0.004095,"upstream_inference_prompt_cost":0.00082875,"upstream_inference_completions_cost":0.00326625}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

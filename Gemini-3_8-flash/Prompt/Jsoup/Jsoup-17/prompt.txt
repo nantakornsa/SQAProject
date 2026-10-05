@@ -1,0 +1,83 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-17
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+3d6f1e47ccf93d01364ed5f7603fa66d43eae0e2
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-07-02 21:12:11 +1000
+--------------------------------------------------------------------------------
+Bug report id:
+107
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/107
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.parser.ParserTest::handles0CharacterAsText
+   --> junit.framework.AssertionFailedError: expected:<[0
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.parser.TreeBuilderState
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.parser.TreeBuilderState ===
+diff --git a/src/main/java/org/jsoup/parser/TreeBuilderState.java b/src/main/java/org/jsoup/parser/TreeBuilderState.java
+index 4ae01e1f..9fd235c3 100644
+--- a/src/main/java/org/jsoup/parser/TreeBuilderState.java
++++ b/src/main/java/org/jsoup/parser/TreeBuilderState.java
+@@ -1448,7 +1448,7 @@ enum TreeBuilderState {
+         }
+     };
+ 
+-    private static String nullString = String.valueOf(0x0000);
++    private static String nullString = String.valueOf('\u0000');
+ 
+     abstract boolean process(Token t, TreeBuilder tb);
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void handles0CharacterAsText() {
+        Document doc = Jsoup.parse("0<p>0</p>");
+        assertEquals("0\n<p>0</p>", doc.body().html());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

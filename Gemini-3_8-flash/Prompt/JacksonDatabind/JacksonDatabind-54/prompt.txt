@@ -1,0 +1,89 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-54
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+f7e476edb42236ad06ab7084ecd5e6c5405bf99a
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-07-12 22:37:47 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1256
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1256
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.deser.TestJDKAtomicTypes::testEmpty1256
+   --> junit.framework.ComparisonFailure: expected:<{[]}> but was:<{["a":null]}>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.ser.PropertyBuilder
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.ser.PropertyBuilder ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/ser/PropertyBuilder.java b/src/main/java/com/fasterxml/jackson/databind/ser/PropertyBuilder.java
+index 9419871d8..248633207 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/ser/PropertyBuilder.java
++++ b/src/main/java/com/fasterxml/jackson/databind/ser/PropertyBuilder.java
+@@ -131,7 +131,7 @@ public class PropertyBuilder
+             // always suppress nulls
+             suppressNulls = true;
+             // and for referential types, also "empty", which in their case means "absent"
+-            if (declaredType.isReferenceType()) {
++            if (actualType.isReferenceType()) {
+                 valueToSuppress = BeanPropertyWriter.MARKER_FOR_EMPTY;
+             }
+             break;
+@@ -147,7 +147,7 @@ public class PropertyBuilder
+         case ALWAYS: // default
+         default:
+             // we may still want to suppress empty collections, as per [JACKSON-254]:
+-            if (declaredType.isContainerType()
++            if (actualType.isContainerType()
+                     && !_config.isEnabled(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS)) {
+                 valueToSuppress = BeanPropertyWriter.MARKER_FOR_EMPTY;
+             }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testEmpty1256() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

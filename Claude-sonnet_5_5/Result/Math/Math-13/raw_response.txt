@@ -1,0 +1,96 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791145724-tqiYXNC7hPs1YzHt5Um1","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1969,"output_tokens":4,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I need a test that fails on"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" the buggy version but passes once fixed. The bug is that computing the square root of a DiagonalMatrix via EigenDecomposition costs O(n^2) memory, so a large di"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"agonal matrix (like 40000x40000) would cause an out-of-memory error—though I should consider whether a smaller test size could still expose the issue without being too heavy."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"Do"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ing the math,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" 40000x40000 doubles would take roughly 12.8GB, which should reliably OOM, while something like 20000 points might still risk passing on larger heaps,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" so I'll keep the larger size for safety. I'll build the test around PolynomialFitter with LevenbergMarquardtOptimizer, fitting a simple degree-2 polyn"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"omial with small Gaussian noise across many points, then asserting the recovered coefficients match closely, letting the fix (or OOM failure) speak for itself."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1zb25uZXQtNS41LTIwMjYwOTI4fGNsYXVkZS1vbi1hd3MifQ"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"The test below is a reduced version of the triggering `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"testLargeSample`. I have not compiled or run it against either version.\n\nOn the buggy version, `squareRoot` runs an `EigenDecomposition` on the diagonal weight matrix."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" With 40000 observations that needs dense 40000×40000 matrices, which is far more than a normal test heap, so it should throw `OutOfMemoryError` and fail. On the fixed version,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" `squareRoot` takes the `DiagonalMatrix` branch, which needs only O(n) memory. The fit should then finish and recover the polynomial coefficients within the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" tolerances asserted.\n\n```java\npackage org.apache.commons.math3.optimization.fitting;\n\nimport java.util.Random;\n\nimport org.apache.commons.math3.analysis.polynomials.PolynomialFunction;\nimport org.apache.commons.math3."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"optimization.general.LevenbergMarquardtOptimizer;\nimport org.apache.commons.math3.util.FastMath;\nimport org.junit.Assert;\nimport org.junit.Test;\n\n/**\n * Regression test for MATH-924: using a diagonal weight mat"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"rix with a large\n * number of observations must not exhaust memory (the square root of a\n * diagonal weight matrix must be computed without an eigen decomposition).\n */\npublic class PolynomialFitterLargeSampleRegressionTest {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\n    @Test\n    public void testLargeSampleDiagonalWeights() {\n        final Random randomizer = new Random(0x5551480dca5b369bL);\n        final double[] coeff = { 0.5, -1"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".0, 2.0 };\n        final PolynomialFunction p = new PolynomialFunction(coeff);\n\n        final PolynomialFitter fitter = new PolynomialFitter(new LevenbergMarquardtOptimizer());\n        for (int i = 0; i "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"< 40000; ++i) {\n            final double x = -1.0 + i / 20000.0;\n            fitter.addObservedPoint(1.0, x, p.value(x) + 0.1 * randomizer.nextGaussian());\n        }\n\n        final double[] init = new double[co"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"eff.length];\n        final PolynomialFunction fitted = new PolynomialFunction(fitter.fit(init));\n\n        for (double x = -1.0; x < 1.0; x += 0.01) {\n            final double error = FastMath.abs(p.value(x) - fit"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ted.value(x)) /\n                                 (1.0 + FastMath.abs(p.value(x)));\n            Assert.assertTrue(error < 0.01);\n        }\n\n        final double[] fittedCoeff = fitted.getCoefficients"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"();\n        Assert.assertEquals(coeff.length, fittedCoeff.length);\n        for (int i = 0; i < coeff.length; ++i) {\n            Assert.assertEquals(coeff[i], fittedCoeff[i], 0.05);\n        }\n    }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1969,"output_tokens":1523,"output_tokens_details":{"thinking_tokens":561},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.019168,"is_byok":false,"cost_details":{"upstream_inference_cost":0.019168,"upstream_inference_prompt_cost":0.003938,"upstream_inference_completions_cost":0.01523}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

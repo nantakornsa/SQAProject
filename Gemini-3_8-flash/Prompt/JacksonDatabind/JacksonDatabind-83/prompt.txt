@@ -1,0 +1,81 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-83
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+9a083ad56b20711eab368a7818fb079a870feb93
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-05-19 13:07:44 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1629
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1629
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.filter.ProblemHandlerTest::testWeirdStringHandling
+   --> com.fasterxml.jackson.databind.exc.InvalidFormatException: Can not deserialize value of type java.util.UUID from String "not a uuid!": not a valid textual representation
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.deser.std.FromStringDeserializer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.deser.std.FromStringDeserializer ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/deser/std/FromStringDeserializer.java b/src/main/java/com/fasterxml/jackson/databind/deser/std/FromStringDeserializer.java
+index 4f4eb672a..0d01e780a 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/deser/std/FromStringDeserializer.java
++++ b/src/main/java/com/fasterxml/jackson/databind/deser/std/FromStringDeserializer.java
+@@ -116,9 +116,7 @@ public abstract class FromStringDeserializer<T> extends StdScalarDeserializer<T>
+                 // 19-May-2017, tatu: Used to require non-null result (assuming `null`
+                 //    indicated error; but that seems wrong. Should be able to return
+                 //    `null` as value.
+-                if (_deserialize(text, ctxt) != null) {
+                 return _deserialize(text, ctxt);
+-                }
+             } catch (IllegalArgumentException iae) {
+                 cause = iae;
+             } catch (MalformedURLException me) {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testWeirdStringHandling() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

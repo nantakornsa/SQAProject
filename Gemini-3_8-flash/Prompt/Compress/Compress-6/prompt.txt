@@ -1,0 +1,100 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Compress
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Compress
+       Program: commons-compress
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/Compress.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-compress.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/active-bugs.csv
+Number of bugs: 47
+--------------------------------------------------------------------------------
+
+Summary for Bug: Compress-6
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+5066e9aeb98f386b29a31cd4acb97aa43844cd30
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-01-07 09:34:55 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COMPRESS-94
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COMPRESS-94
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.compress.archivers.zip.ZipArchiveEntryTest::testNotEquals
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.compress.archivers.zip.ZipArchiveEntry
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.compress.archivers.zip.ZipArchiveEntry ===
+diff --git a/src/main/java/org/apache/commons/compress/archivers/zip/ZipArchiveEntry.java b/src/main/java/org/apache/commons/compress/archivers/zip/ZipArchiveEntry.java
+index 6a7c1e93..fe5270fd 100644
+--- a/src/main/java/org/apache/commons/compress/archivers/zip/ZipArchiveEntry.java
++++ b/src/main/java/org/apache/commons/compress/archivers/zip/ZipArchiveEntry.java
+@@ -61,6 +61,7 @@ public class ZipArchiveEntry extends java.util.zip.ZipEntry
+      */
+     public ZipArchiveEntry(String name) {
+         super(name);
++        setName(name);
+     }
+ 
+     /**
+@@ -459,11 +460,13 @@ public class ZipArchiveEntry extends java.util.zip.ZipEntry
+             return false;
+         }
+         ZipArchiveEntry other = (ZipArchiveEntry) obj;
+-        if (name == null) {
+-            if (other.name != null) {
++        String myName = getName();
++        String otherName = other.getName();
++        if (myName == null) {
++            if (otherName != null) {
+                 return false;
+             }
+-        } else if (!name.equals(other.name)) {
++        } else if (!myName.equals(otherName)) {
+             return false;
+         }
+         return true;
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testNotEquals() {
+        ZipArchiveEntry entry1 = new ZipArchiveEntry("foo");
+        ZipArchiveEntry entry2 = new ZipArchiveEntry("bar");
+        assertFalse(entry1.equals(entry2));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

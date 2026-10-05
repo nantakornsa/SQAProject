@@ -1,0 +1,108 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-45
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+6aa71f116df0102a98c463f471ad8ddd4dba01f8
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-12-12 17:54:10 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+618
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-618.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.RemoveUnusedVarsTest::testIssue618_1
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.RemoveUnusedVars
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.RemoveUnusedVars ===
+diff --git a/src/com/google/javascript/jscomp/RemoveUnusedVars.java b/src/com/google/javascript/jscomp/RemoveUnusedVars.java
+index be72a580e..c93a073cc 100644
+--- a/src/com/google/javascript/jscomp/RemoveUnusedVars.java
++++ b/src/com/google/javascript/jscomp/RemoveUnusedVars.java
+@@ -729,6 +729,7 @@ class RemoveUnusedVars
+             assignedToUnknownValue = true;
+           }
+ 
++          boolean maybeEscaped = false;
+           for (Assign assign : assignsByVar.get(var)) {
+             if (assign.isPropertyAssign) {
+               hasPropertyAssign = true;
+@@ -736,9 +737,12 @@ class RemoveUnusedVars
+                 assign.assignNode.getLastChild(), true)) {
+               assignedToUnknownValue = true;
+             }
++            if (assign.maybeAliased) {
++              maybeEscaped = true;
++            }
+           }
+ 
+-          if (assignedToUnknownValue && hasPropertyAssign) {
++          if ((assignedToUnknownValue || maybeEscaped) && hasPropertyAssign) {
+             changes = markReferencedVar(var) || changes;
+             maybeUnreferenced.remove(current);
+             current--;
+@@ -901,7 +905,7 @@ class RemoveUnusedVars
+       this.nameNode = nameNode;
+       this.isPropertyAssign = isPropertyAssign;
+ 
+-      this.maybeAliased = !assignNode.getParent().isExprResult();
++      this.maybeAliased = NodeUtil.isExpressionResultUsed(assignNode);
+       this.mayHaveSecondarySideEffects =
+           maybeAliased ||
+           NodeUtil.mayHaveSideEffects(assignNode.getFirstChild()) ||
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue618_1() {
+    this.removeGlobal = false;
+    testSame(
+        "function f() {\n" +
+        "  var a = [], b;\n" +
+        "  a.push(b = []);\n" +
+        "  b[0] = 1;\n" +
+        "  return a;\n" +
+        "}");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

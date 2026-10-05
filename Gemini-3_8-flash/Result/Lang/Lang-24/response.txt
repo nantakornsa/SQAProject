@@ -1,0 +1,18 @@
+```java
+package org.apache.commons.lang3.math;
+
+import static org.junit.Assert.assertFalse;
+import org.junit.Test;
+
+public class NumberUtilsLang664Test {
+
+    @Test
+    public void testIsNumberLang664() {
+        assertFalse("1.1L should not be considered a valid number", NumberUtils.isNumber("1.1L"));
+        assertFalse("1.1l should not be considered a valid number", NumberUtils.isNumber("1.1l"));
+        assertFalse("-1.1L should not be considered a valid number", NumberUtils.isNumber("-1.1L"));
+        assertFalse(".1L should not be considered a valid number", NumberUtils.isNumber(".1L"));
+        assertFalse("1.L should not be considered a valid number", NumberUtils.isNumber("1.L"));
+    }
+}
+```

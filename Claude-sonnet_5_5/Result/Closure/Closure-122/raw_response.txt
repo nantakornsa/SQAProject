@@ -1,0 +1,129 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791213208-Hkf4wmYHURR8us3SitvN","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1617,"output_tokens":7,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I'm considering writing a"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" standalone test class using the Parser directly, recalling how ParserTest's parse helper constructs a script node with a test error reporter to check warnings."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I'm not fully certain"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" of the exact ParserRunner API signature across versions, so I'm also weighing an alternative approach: using the Compiler API to compile with options and check warnings, since the parser's errors get surfaced through the compiler's error reporter"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" too."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I'm trying to trace"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" how parse warnings propagate through ParserRunner and the default error reporter, wondering whether the suspicious comment check actually fires through the compiler's default configuration or needs explicit warning levels set"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I'm uncertain about"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" the exact createConfig signature and acceptConstKeyword parameter timing, so I'll settle on the 2013-era version with isIdeMode, languageMode, acceptConstKeyword, and extraAnnotationNames arguments, paired with the parse method returning a Parse"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"Result."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I'll catch a"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" general Exception rather than IOException to avoid compile errors if it's not actually thrown. For tests, I'll write a case triggering the suspicious comment warning plus a negative case, using the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" exact warning string \"Non-JSDoc comment has annotations. Did you mean to start it with '/**'?\" and enabling IDE mode in the config so comments are parsed."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1zb25uZXQtNS41LTIwMjYwOTI4fGNsYXVkZS1vbi1hd3MifQ"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.google.javascript.jscomp.parsing;\n\nimport com.google.javascript.jscomp.SourceFile;\nimport com.google.javascript.jscomp.pars"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ing.Config.LanguageMode;\nimport com.google.javascript.rhino.Node;\nimport com.google.javascript.rhino.testing.TestErrorReporter;\n\nimport junit.framework.TestCase;\n\npublic class SuspiciousBlockCommentRegressionTest extends TestC"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ase {\n\n  private static final String SUSPICIOUS_COMMENT_WARNING =\n      \"Non-JSDoc comment has annotations. Did you mean to start it with '/**'?\";\n\n  private Node parse(String string, String... warnings) {\n    TestErrorReporter testErrorRepor"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ter = new TestErrorReporter(null, warnings);\n    Node script = null;\n    try {\n      script = ParserRunner.parse(\n          SourceFile.fromCode(\"input\", string),\n          string,\n          ParserRunner.createConfig(true, LanguageMode.ECMASC"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"RIPT3, false, null),\n          testErrorReporter).ast;\n    } catch (Exception e) {\n      throw new RuntimeException(e);\n    }\n\n    // verifying that all warnings were seen\n    testErrorReporter.assertHasEncounteredAllWarnings();"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n    return script;\n  }\n\n  public void testSuspiciousBlockCommentWarningNoSpaceAfterStar() {\n    parse(\"/* \\n *@type {number} */ var x = 3;\", SUSPICIOUS_COMMENT_WARNING);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n  }\n\n  public void testSuspiciousBlockCommentWarningTabIndent() {\n    parse(\"/* \\n\\t* @type {number} */ var x = 3;\", SUSPICIOUS_COMMENT_WARNING);\n  }\n\n  public void testSuspici"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ousBlockCommentWarningSpaceBeforeStar() {\n    parse(\"/*\\n   * @type {number} */ var x = 3;\", SUSPICIOUS_COMMENT_WARNING);\n  }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\n  public void testSuspiciousBlockCommentWarningNoSpaceAfterOpening() {\n    parse(\"/*@type {number} */ var x = 3;\", SUSPICIOUS_COMMENT_WARNING);\n  }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n}\n```\n\nI could not check this against the project's sources, so it may need small adjustments to compile and run.\n\n- **"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"API signatures:** The `ParserRunner.createConfig(true, LanguageMode.ECMASCRIPT3, false, null)` and `ParserRunner.parse(...)` signatures are written from memory of the mid-2013 code"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":". They may differ slightly in this revision.\n- **Warning text:** The `SUSPICIOUS_COMMENT_WARNING` string is also from memory and needs to match the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" message in `IRFactory`.\n- **Other tests:** I did not look at the existing `ParserTest` helper. I wrote a similar `parse` helper using `TestErrorRepor"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ter` instead.\n\nThe four tests use comments with an annotation after `/*` or after a newline plus optional whitespace and `*`, for example `/"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"* \\n *@type {number} */`. The fixed regex `(/|(\\n[ \\t]*))\\*[ \\t]*@[a-zA-Z]` accepts all of them and raises the warning. The buggy check only looked for the literal str"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ings `/* @` and `\\n * @`, so it misses them and `assertHasEncounteredAllWarnings()` fails."}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1617,"output_tokens":3251,"output_tokens_details":{"thinking_tokens":2098},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.035744,"is_byok":false,"cost_details":{"upstream_inference_cost":0.035744,"upstream_inference_prompt_cost":0.003234,"upstream_inference_completions_cost":0.03251}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

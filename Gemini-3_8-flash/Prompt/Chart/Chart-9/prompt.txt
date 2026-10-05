@@ -1,0 +1,80 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Chart
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Chart
+       Program: jfreechart
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Chart/Chart.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Svn
+    Repository: file:///Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jfreechart/trunk
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Chart/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Chart-9
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+1083
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-06-10 02:08:12 -0700 
+--------------------------------------------------------------------------------
+Bug report id:
+818
+--------------------------------------------------------------------------------
+Bug report url:
+https://sourceforge.net/p/jfreechart/bugs/818
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jfree.data.time.junit.TimeSeriesTests::testBug1864222
+   --> java.lang.IllegalArgumentException: Requires start <= end.
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jfree.data.time.TimeSeries
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jfree.data.time.TimeSeries ===
+diff --git a/source/org/jfree/data/time/TimeSeries.java b/source/org/jfree/data/time/TimeSeries.java
+index 4067e3e..d16d447 100644
+--- a/source/org/jfree/data/time/TimeSeries.java
++++ b/source/org/jfree/data/time/TimeSeries.java
+@@ -941,7 +941,7 @@ public class TimeSeries extends Series implements Cloneable, Serializable {
+             endIndex = -(endIndex + 1); // this is first item AFTER end period
+             endIndex = endIndex - 1;    // so this is last item BEFORE end
+         }
+-        if (endIndex < 0) {
++        if ((endIndex < 0)  || (endIndex < startIndex)) {
+             emptyRange = true;
+         }
+         if (emptyRange) {
+
+
+=== TRIGGERING TEST METHOD ===
+ * 10-Jan-2008 : Added testBug1864222() (DG);
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

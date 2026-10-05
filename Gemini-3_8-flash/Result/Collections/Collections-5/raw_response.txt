@@ -1,0 +1,60 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791109077-YNddfM0MdmVR4lyiH1bW","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing the SetUniqueList Bug**\n\nI've pinpointed the issue to the `addAll(int index, Collection coll)` method within `SetUniqueList`. The current implementation incorrectly iterates and calls the single `add` method, which doesn't account for the specified index. My focus is now on modifying this loop to correctly handle bulk insertions at the designated position, ensuring list integrity.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.apache.commons.collections.list;\n\nimport java.util.ArrayList;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\nimport java.util.Arrays;\nimport java.util.HashSet;\nimport java.util.List;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\nimport junit.framework.TestCase;\n\n/**\n * Regression test for COLLECTIONS-249: SetUniqueList.addAll("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"int, Collection)\n * appends elements instead of inserting at the specified index.\n */\npublic class SetUniqueListRegression"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Test extends TestCase {\n\n    public void testAddAllAtIndex() {\n        List list = SetUniqueList.decorate(new"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" ArrayList(), new HashSet());\n        Integer existingElement = new Integer(1);\n        list.add(existingElement"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":");\n\n        Integer firstNewElement = new Integer(2);\n        Integer secondNewElement = new Integer(3);\n        List collection"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" = Arrays.asList(new Integer[] {firstNewElement, secondNewElement});\n\n        list.addAll(0, collection);\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        assertEquals(\"Size should be 3 after adding two elements\", 3, list.size());\n        assertEquals(\"First new element should be"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" at index 0\", firstNewElement, list.get(0));\n        assertEquals(\"Second new element should be"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" at index 1\", secondNewElement, list.get(1));\n        assertEquals(\"Existing element should shift to"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" index 2\", existingElement, list.get(2));\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1296,"output_tokens":533,"output_tokens_details":{"thinking_tokens":229},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00297075,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00297075,"upstream_inference_prompt_cost":0.000972,"upstream_inference_completions_cost":0.00199875}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

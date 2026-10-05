@@ -1,0 +1,21 @@
+package org.apache.commons.lang3;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
+
+public class RandomStringUtilsLANG807Test {
+
+    @Test
+    public void testLANG807() {
+        try {
+            RandomStringUtils.random(3, 5, 5, false, false);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException ex) {
+            final String msg = ex.getMessage();
+            assertTrue("Message (" + msg + ") must contain 'start'", msg != null && msg.contains("start"));
+            assertTrue("Message (" + msg + ") must contain 'end'", msg != null && msg.contains("end"));
+        }
+    }
+}

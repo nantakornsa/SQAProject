@@ -1,0 +1,122 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-31
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+caf61a4a0778a72ab713f72e9ef749bf373c98ac
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-09-29 12:58:35 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+242
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/242
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.parser.XmlTreeBuilderTest::handlesXmlDeclarationAsDeclaration
+   --> junit.framework.AssertionFailedError: expected:<<[?xml encoding='UTF-8' ?]> <body> One </body>...> but was:<<[!--?xml encoding='UTF-8' ?--]> <body> One </body>...>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.parser.Token
+ - org.jsoup.parser.TokeniserState
+ - org.jsoup.parser.XmlTreeBuilder
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.parser.Token ===
+diff --git a/src/main/java/org/jsoup/parser/Token.java b/src/main/java/org/jsoup/parser/Token.java
+index 2d5643b6..1679007a 100644
+--- a/src/main/java/org/jsoup/parser/Token.java
++++ b/src/main/java/org/jsoup/parser/Token.java
+@@ -168,6 +168,7 @@ abstract class Token {
+ 
+     static class Comment extends Token {
+         final StringBuilder data = new StringBuilder();
++        boolean bogus = false;
+ 
+         Comment() {
+             type = TokenType.Comment;
+
+=== MODIFIED SOURCE: org.jsoup.parser.TokeniserState ===
+diff --git a/src/main/java/org/jsoup/parser/TokeniserState.java b/src/main/java/org/jsoup/parser/TokeniserState.java
+index 2a46cf2f..cad79334 100644
+--- a/src/main/java/org/jsoup/parser/TokeniserState.java
++++ b/src/main/java/org/jsoup/parser/TokeniserState.java
+@@ -1091,6 +1091,7 @@ enum TokeniserState {
+             // rewind to capture character that lead us here
+             r.unconsume();
+             Token.Comment comment = new Token.Comment();
++            comment.bogus = true;
+             comment.data.append(r.consumeTo('>'));
+             // todo: replace nullChar with replaceChar
+             t.emit(comment);
+
+=== MODIFIED SOURCE: org.jsoup.parser.XmlTreeBuilder ===
+diff --git a/src/main/java/org/jsoup/parser/XmlTreeBuilder.java b/src/main/java/org/jsoup/parser/XmlTreeBuilder.java
+index 11eae8ba..dd2cb9fe 100644
+--- a/src/main/java/org/jsoup/parser/XmlTreeBuilder.java
++++ b/src/main/java/org/jsoup/parser/XmlTreeBuilder.java
+@@ -64,6 +64,13 @@ public class XmlTreeBuilder extends TreeBuilder {
+     void insert(Token.Comment commentToken) {
+         Comment comment = new Comment(commentToken.getData(), baseUri);
+         Node insert = comment;
++        if (commentToken.bogus) { // xml declarations are emitted as bogus comments (which is right for html, but not xml)
++            String data = comment.getData();
++            if (data.length() > 1 && (data.startsWith("!") || data.startsWith("?"))) {
++                String declaration = data.substring(1);
++                insert = new XmlDeclaration(declaration, comment.baseUri(), data.startsWith("!"));
++            }
++        }
+         insertNode(insert);
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void handlesXmlDeclarationAsDeclaration() {
+        String html = "<?xml encoding='UTF-8' ?><body>One</body><!-- comment -->";
+        Document doc = Jsoup.parse(html, "", Parser.xmlParser());
+        assertEquals("<?xml encoding='UTF-8' ?> <body> One </body> <!-- comment -->",
+                StringUtil.normaliseWhitespace(doc.outerHtml()));
+        assertEquals("#declaration", doc.childNode(0).nodeName());
+        assertEquals("#comment", doc.childNode(2).nodeName());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

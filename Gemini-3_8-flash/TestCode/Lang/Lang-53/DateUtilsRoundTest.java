@@ -1,0 +1,33 @@
+package org.apache.commons.lang.time;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import junit.framework.TestCase;
+
+/**
+ * Regression test for LANG-346 / Lang-53.
+ */
+public class DateUtilsRoundTest extends TestCase {
+
+    public void testRoundLang346() throws Exception {
+        DateFormat f = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
+        // When rounding to Calendar.MINUTE with seconds >= 30,
+        // the buggy code failed to set done = true, resulting in minute truncation.
+        Date testDate = f.parse("2007-07-02 08:08:30.000");
+        Date expectedDate = f.parse("2007-07-02 08:09:00.000");
+        Date roundedDate = DateUtils.round(testDate, Calendar.MINUTE);
+
+        assertEquals("Minute Round Up Failed", expectedDate, roundedDate);
+
+        // When rounding to Calendar.SECOND with milliseconds >= 500,
+        // the buggy code failed to set done = true.
+        testDate = f.parse("2007-07-02 08:08:30.500");
+        expectedDate = f.parse("2007-07-02 08:08:31.000");
+        roundedDate = DateUtils.round(testDate, Calendar.SECOND);
+
+        assertEquals("Second Round Up Failed", expectedDate, roundedDate);
+    }
+}

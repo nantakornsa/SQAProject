@@ -1,0 +1,80 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-82
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+4a2b1ae08ded66b77e05bf8fa0ac8a2e8c60709d
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-05-04 12:48:52 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1595
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1595
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.filter.IgnorePropertyOnDeserTest::testIgnoreGetterNotSetter1595
+   --> junit.framework.ComparisonFailure: expected:<jack> but was:<null>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.deser.BeanDeserializerFactory
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.deser.BeanDeserializerFactory ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/deser/BeanDeserializerFactory.java b/src/main/java/com/fasterxml/jackson/databind/deser/BeanDeserializerFactory.java
+index 4b0434e41..1423f2867 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/deser/BeanDeserializerFactory.java
++++ b/src/main/java/com/fasterxml/jackson/databind/deser/BeanDeserializerFactory.java
+@@ -492,7 +492,7 @@ public class BeanDeserializerFactory
+             boolean ignoreAny = ignorals.getIgnoreUnknown();
+             builder.setIgnoreUnknownProperties(ignoreAny);
+             // Or explicit/implicit definitions?
+-            ignored = ignorals.getIgnored();
++            ignored = ignorals.findIgnoredForDeserialization();
+             for (String propName : ignored) {
+                 builder.addIgnorable(propName);
+             }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testIgnoreGetterNotSetter1595() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

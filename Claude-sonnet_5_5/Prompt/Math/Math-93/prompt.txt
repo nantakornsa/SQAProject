@@ -1,0 +1,111 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-93
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+e4886c0a39944ba9fb7a2175cb2d1026747910e1
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-01-19 19:43:01 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-240
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-240
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.util.MathUtilsTest::testFactorial
+   --> junit.framework.AssertionFailedError: 17!  expected:<3.55687428096E14> but was:<3.55687428096001E14>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.util.MathUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.util.MathUtils ===
+diff --git a/src/java/org/apache/commons/math/util/MathUtils.java b/src/java/org/apache/commons/math/util/MathUtils.java
+index 7d8aa4d50..1389d5a28 100644
+--- a/src/java/org/apache/commons/math/util/MathUtils.java
++++ b/src/java/org/apache/commons/math/util/MathUtils.java
+@@ -342,8 +342,10 @@ public final class MathUtils {
+      * @throws IllegalArgumentException if n < 0
+      */
+     public static long factorial(final int n) {
+-        long result = Math.round(factorialDouble(n));
+-        if (result == Long.MAX_VALUE) {
++        if (n < 0) {
++            throw new IllegalArgumentException("must have n >= 0 for n!");
++        }
++        if (n > 20) {
+             throw new ArithmeticException(
+                     "factorial value is too large to fit in a long");
+         }
+@@ -374,6 +376,9 @@ public final class MathUtils {
+         if (n < 0) {
+             throw new IllegalArgumentException("must have n >= 0 for n!");
+         }
++        if (n < 21) {
++            return factorial(n);
++        }
+         return Math.floor(Math.exp(factorialLog(n)) + 0.5);
+     }
+ 
+@@ -394,6 +399,9 @@ public final class MathUtils {
+         if (n < 0) {
+             throw new IllegalArgumentException("must have n > 0 for n!");
+         }
++        if (n < 21) {
++            return Math.log(factorial(n));
++        }
+         double logSum = 0;
+         for (int i = 2; i <= n; i++) {
+             logSum += Math.log((double)i);
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testFactorial() {
+        for (int i = 1; i < 21; i++) {
+            assertEquals(i + "! ", factorial(i), MathUtils.factorial(i));
+            assertEquals(i + "! ", (double)factorial(i), MathUtils.factorialDouble(i), Double.MIN_VALUE);
+            assertEquals(i + "! ", Math.log((double)factorial(i)), MathUtils.factorialLog(i), 10E-12);
+        }
+        
+        assertEquals("0", 1, MathUtils.factorial(0));
+        assertEquals("0", 1.0d, MathUtils.factorialDouble(0), 1E-14);
+        assertEquals("0", 0.0d, MathUtils.factorialLog(0), 1E-14);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

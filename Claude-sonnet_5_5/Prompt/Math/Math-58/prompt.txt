@@ -1,0 +1,119 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-58
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+26a610776cefacb898994e8e4ea493b6b1263022
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-02-22 23:50:46 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-519
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-519
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.optimization.fitting.GaussianFitterTest::testMath519
+   --> org.apache.commons.math.exception.NotStrictlyPositiveException: -1.277 is smaller than, or equal to, the minimum (0)
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.optimization.fitting.GaussianFitter
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.optimization.fitting.GaussianFitter ===
+diff --git a/src/main/java/org/apache/commons/math/optimization/fitting/GaussianFitter.java b/src/main/java/org/apache/commons/math/optimization/fitting/GaussianFitter.java
+index ae7ac3994..e1b54f49e 100644
+--- a/src/main/java/org/apache/commons/math/optimization/fitting/GaussianFitter.java
++++ b/src/main/java/org/apache/commons/math/optimization/fitting/GaussianFitter.java
+@@ -118,7 +118,7 @@ public class GaussianFitter extends CurveFitter {
+      */
+     public double[] fit() {
+         final double[] guess = (new ParameterGuesser(getObservations())).guess();
+-        return fit(new Gaussian.Parametric(), guess);
++        return fit(guess);
+     }
+ 
+     /**
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testMath519() {
+        // The optimizer will try negative sigma values but "GaussianFitter"
+        // will catch the raised exceptions and return NaN values instead.
+
+        final double[] data = { 
+            1.1143831578403364E-29,
+            4.95281403484594E-28,
+            1.1171347211930288E-26,
+            1.7044813962636277E-25,
+            1.9784716574832164E-24,
+            1.8630236407866774E-23,
+            1.4820532905097742E-22,
+            1.0241963854632831E-21,
+            6.275077366673128E-21,
+            3.461808994532493E-20,
+            1.7407124684715706E-19,
+            8.056687953553974E-19,
+            3.460193945992071E-18,
+            1.3883326374011525E-17,
+            5.233894983671116E-17,
+            1.8630791465263745E-16,
+            6.288759227922111E-16,
+            2.0204433920597856E-15,
+            6.198768938576155E-15,
+            1.821419346860626E-14,
+            5.139176445538471E-14,
+            1.3956427429045787E-13,
+            3.655705706448139E-13,
+            9.253753324779779E-13,
+            2.267636001476696E-12,
+            5.3880460095836855E-12,
+            1.2431632654852931E-11
+        };
+
+        GaussianFitter fitter = new GaussianFitter(new LevenbergMarquardtOptimizer());
+        for (int i = 0; i < data.length; i++) {
+            fitter.addObservedPoint(i, data[i]);
+        }
+        final double[] p = fitter.fit();
+
+        Assert.assertEquals(53.1572792, p[1], 1e-7);
+        Assert.assertEquals(5.75214622, p[2], 1e-8);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

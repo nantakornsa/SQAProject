@@ -1,0 +1,103 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-21
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+3e5d5dc9c0a5047152eedb802bc008ce78b8de0c
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-02-02 21:55:15 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-677
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-677
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang3.time.DateUtilsTest::testIsSameLocalTime_Cal
+   --> junit.framework.AssertionFailedError: LANG-677
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang3.time.DateUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang3.time.DateUtils ===
+diff --git a/src/main/java/org/apache/commons/lang3/time/DateUtils.java b/src/main/java/org/apache/commons/lang3/time/DateUtils.java
+index 9a24c00fa..52a443633 100644
+--- a/src/main/java/org/apache/commons/lang3/time/DateUtils.java
++++ b/src/main/java/org/apache/commons/lang3/time/DateUtils.java
+@@ -262,7 +262,7 @@ public class DateUtils {
+         return (cal1.get(Calendar.MILLISECOND) == cal2.get(Calendar.MILLISECOND) &&
+                 cal1.get(Calendar.SECOND) == cal2.get(Calendar.SECOND) &&
+                 cal1.get(Calendar.MINUTE) == cal2.get(Calendar.MINUTE) &&
+-                cal1.get(Calendar.HOUR) == cal2.get(Calendar.HOUR) &&
++                cal1.get(Calendar.HOUR_OF_DAY) == cal2.get(Calendar.HOUR_OF_DAY) &&
+                 cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR) &&
+                 cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                 cal1.get(Calendar.ERA) == cal2.get(Calendar.ERA) &&
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testIsSameLocalTime_Cal() {
+        GregorianCalendar cal1 = new GregorianCalendar(TimeZone.getTimeZone("GMT+1"));
+        GregorianCalendar cal2 = new GregorianCalendar(TimeZone.getTimeZone("GMT-1"));
+        cal1.set(2004, 6, 9, 13, 45, 0);
+        cal1.set(Calendar.MILLISECOND, 0);
+        cal2.set(2004, 6, 9, 13, 45, 0);
+        cal2.set(Calendar.MILLISECOND, 0);
+        assertEquals(true, DateUtils.isSameLocalTime(cal1, cal2));
+
+        Calendar cal3 = Calendar.getInstance();
+        Calendar cal4 = Calendar.getInstance();
+        cal3.set(2004, 6, 9, 4,  0, 0);
+        cal4.set(2004, 6, 9, 16, 0, 0);
+        cal3.set(Calendar.MILLISECOND, 0);
+        cal4.set(Calendar.MILLISECOND, 0);
+        assertFalse("LANG-677", DateUtils.isSameLocalTime(cal3, cal4));
+        
+        cal2.set(2004, 6, 9, 11, 45, 0);
+        assertEquals(false, DateUtils.isSameLocalTime(cal1, cal2));
+        try {
+            DateUtils.isSameLocalTime((Calendar) null, (Calendar) null);
+            fail();
+        } catch (IllegalArgumentException ex) {}
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

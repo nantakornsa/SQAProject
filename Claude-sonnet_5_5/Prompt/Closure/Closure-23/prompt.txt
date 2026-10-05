@@ -1,0 +1,98 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-23
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+b59cdd9e2dc64d2db86b90982c200a78f2f85e50
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-06-07 22:48:58 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+747
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-747.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.PeepholeFoldConstantsTest::testFoldGetElem
+   --> junit.framework.AssertionFailedError: Unexpected error(s): JSC_INDEX_OUT_OF_BOUNDS_ERROR. Array index out of bounds: NUMBER 0.0 1 [source_file: testcode] at testcode line 1 : 10 expected:<0> but was:<1>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.PeepholeFoldConstants
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.PeepholeFoldConstants ===
+diff --git a/src/com/google/javascript/jscomp/PeepholeFoldConstants.java b/src/com/google/javascript/jscomp/PeepholeFoldConstants.java
+index f777b1c20..7a0313cc4 100644
+--- a/src/com/google/javascript/jscomp/PeepholeFoldConstants.java
++++ b/src/com/google/javascript/jscomp/PeepholeFoldConstants.java
+@@ -1448,8 +1448,14 @@ class PeepholeFoldConstants extends AbstractPeepholeOptimization {
+ 
+     Node current = left.getFirstChild();
+     Node elem = null;
+-    for (int i = 0; current != null && i < intIndex; i++) {
++    for (int i = 0; current != null; i++) {
++      if (i != intIndex) {
++        if (mayHaveSideEffects(current)) {
++          return n;
++        }
++      } else {
+         elem = current;
++      }
+ 
+       current = current.getNext();
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testFoldGetElem() {
+    fold("x = [,10][0]", "x = void 0");
+    fold("x = [10, 20][0]", "x = 10");
+    fold("x = [10, 20][1]", "x = 20");
+    fold("x = [10, 20][0.5]", "",
+        PeepholeFoldConstants.INVALID_GETELEM_INDEX_ERROR);
+    fold("x = [10, 20][-1]",    "",
+        PeepholeFoldConstants.INDEX_OUT_OF_BOUNDS_ERROR);
+    fold("x = [10, 20][2]",     "",
+        PeepholeFoldConstants.INDEX_OUT_OF_BOUNDS_ERROR);
+
+    foldSame("x = [foo(), 0][1]");
+    fold("x = [0, foo()][1]", "x = foo()");
+    foldSame("x = [0, foo()][0]");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

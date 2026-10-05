@@ -1,0 +1,60 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791141537-jXx70QbrV9RXPC2Q6K9c","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Implementing Regression Test**\n\nI am currently developing a regression test for the Jsoup-11 bug. My focus is on ensuring the `:not(...)` selector is correctly handled, as its absence was identified as the root cause of the failure.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.jsoup.select;\n\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" org.jsoup.Jsoup;\nimport org.jsoup.nodes.Document;\nimport org.junit.Test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\n\nimport static org.junit.Assert.assertEquals;\n\npublic class SelectorRegressionTest {\n\n    @Test\n    public void test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"NotSelector() {\n        Document doc = Jsoup.parse(\"<p>Two</p> <p><span>Three</span></p>\");"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\n        Elements el1 = doc.body().select(\":not(p)\"); // should just be body and span\n        assertEquals("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"2, el1.size());\n        assertEquals(\"body\", el1.first().tagName());\n        assertEquals(\""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"span\", el1.last().tagName());\n\n        Elements el2 = doc.select(\"p:not(:has("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"span))\");\n        assertEquals(1, el2.size());\n        assertEquals(\"Two\", el2.first"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"().text());\n    }\n\n    @Test\n    public void testPseudoHasAtRoot() {\n        Document doc"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" = Jsoup.parse(\"<div><p><span>One</span></p></div> <div><p>Two</"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"p></div>\");\n        Elements hasSpan = doc.select(\":has(span)\");\n        assertEquals(3, hasSpan.size());"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" // html, body, div, p -> depending on root, here html, body, div, p\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1589,"output_tokens":536,"output_tokens_details":{"thinking_tokens":237},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.00320175,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00320175,"upstream_inference_prompt_cost":0.00119175,"upstream_inference_completions_cost":0.00201}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

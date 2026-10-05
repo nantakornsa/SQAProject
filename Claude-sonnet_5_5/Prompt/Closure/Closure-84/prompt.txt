@@ -1,0 +1,120 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-84
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+4839e1ea57f9a1a26debd2cc8f22beef7282b490
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-01-11 19:28:55 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+215
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-215.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.parsing.ParserTest::testDestructuringAssignForbidden4
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.parsing.IRFactory
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.parsing.IRFactory ===
+diff --git a/src/com/google/javascript/jscomp/parsing/IRFactory.java b/src/com/google/javascript/jscomp/parsing/IRFactory.java
+index cca8d9b7d..d2a4e5dce 100644
+--- a/src/com/google/javascript/jscomp/parsing/IRFactory.java
++++ b/src/com/google/javascript/jscomp/parsing/IRFactory.java
+@@ -338,6 +338,13 @@ public class IRFactory {
+     @Override
+     Node processAssignment(Assignment assignmentNode) {
+       Node assign = processInfixExpression(assignmentNode);
++      Node target = assign.getFirstChild();
++      if (!validAssignmentTarget(target)) {
++        errorReporter.error(
++          "invalid assignment target",
++          sourceName,
++          target.getLineno(), "", 0);
++      }
+       return assign;
+     }
+ 
+@@ -794,6 +801,17 @@ public class IRFactory {
+         operand.setDouble(-operand.getDouble());
+         return operand;
+       } else {
++        if (type == Token.INC || type == Token.DEC) {
++          if (!validAssignmentTarget(operand)) {
++            String msg = (type == Token.INC)
++                ? "invalid increment target"
++                : "invalid decrement target";
++            errorReporter.error(
++              msg,
++              sourceName,
++              operand.getLineno(), "", 0);
++          }
++        }
+ 
+         Node node = newNode(type, operand);
+         if (exprNode.isPostfix()) {
+@@ -803,6 +821,15 @@ public class IRFactory {
+       }
+     }
+ 
++    private boolean validAssignmentTarget(Node target) {
++      switch (target.getType()) {
++        case Token.NAME:
++        case Token.GETPROP:
++        case Token.GETELEM:
++          return true;
++      }
++      return false;
++    }
+ 
+     @Override
+     Node processVariableDeclaration(VariableDeclaration declarationNode) {
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testDestructuringAssignForbidden4() {
+    parseError("[x, y] = foo();",
+        "destructuring assignment forbidden",
+        "invalid assignment target");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

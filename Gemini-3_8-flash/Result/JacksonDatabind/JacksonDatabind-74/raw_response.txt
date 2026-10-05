@@ -1,0 +1,57 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791185996-0bnSvybR5NNFe2HnBdgd","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Developing Regression Test**\n\nI'm currently focused on creating a regression test for JacksonDatabind bug 74. The triggering test case, `com.fasterxml.jackson.databind.jsontype.TestPolymorphicWithDefaultImpl::testWithEmptyStringAsNullObject1533`, has been identified. The bug fix itself resides within `AsPropertyTypeDeserializer`.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind.jsontype;\n\nimport com.fasterxml."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"jackson.annotation.JsonTypeInfo;\nimport com.fasterxml.jackson.databind.BaseMapTest;\nimport com."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"fasterxml.jackson.databind.DeserializationFeature;\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\npublic"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" class PolymorphicEmptyStringAsNullTest extends BaseMapTest {\n\n    @JsonTypeInfo(use = JsonTypeInfo.Id"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".NAME, include = JsonTypeInfo.As.PROPERTY, property = \"type\", defaultImpl = AsPropertyImpl.class)\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    interface AsProperty { }\n\n    static class AsPropertyImpl implements AsProperty {\n        public int a;\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    }\n\n    public void testEmptyStringAsNullObjectWithAsPropertyTypeInfo() throws Exception {\n        ObjectMapper mapper ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" new ObjectMapper();\n        mapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":");\n\n        AsProperty result = mapper.readValue(\"\\\"\\\"\", AsProperty.class);\n        assertNull(result);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\n        result = mapper.readValue(\"\\\"   \\\"\", AsProperty.class);\n        assertNull(result);\n    }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1179,"output_tokens":576,"output_tokens_details":{"thinking_tokens":322},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00304425,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00304425,"upstream_inference_prompt_cost":0.00088425,"upstream_inference_completions_cost":0.00216}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

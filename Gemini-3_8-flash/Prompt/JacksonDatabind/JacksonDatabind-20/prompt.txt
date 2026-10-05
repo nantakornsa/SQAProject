@@ -1,0 +1,87 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-20
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+6456a9ac0bee09e2ae45ae56739102a8071f217a
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-06-04 21:14:49 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+815
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/815
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.introspect.TestNamingStrategyStd::testNamingWithObjectNode
+   --> com.fasterxml.jackson.databind.JsonMappingException: Conflicting setter definitions for property "all": com.fasterxml.jackson.databind.node.ObjectNode#setAll(1 params) vs com.fasterxml.jackson.databind.node.ObjectNode#setAll(1 params)
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.node.ObjectNode
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.node.ObjectNode ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/node/ObjectNode.java b/src/main/java/com/fasterxml/jackson/databind/node/ObjectNode.java
+index 147ac71a1..1ca18f142 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/node/ObjectNode.java
++++ b/src/main/java/com/fasterxml/jackson/databind/node/ObjectNode.java
+@@ -1,6 +1,7 @@
+ package com.fasterxml.jackson.databind.node;
+ 
+ import com.fasterxml.jackson.annotation.JsonAutoDetect;
++import com.fasterxml.jackson.annotation.JsonIgnore;
+ import com.fasterxml.jackson.core.*;
+ import com.fasterxml.jackson.databind.JsonNode;
+ import com.fasterxml.jackson.databind.SerializerProvider;
+@@ -321,6 +322,7 @@ public class ObjectNode
+      *
+      * @since 2.1
+      */
++    @JsonIgnore // work-around for [databind#815]
+     public JsonNode setAll(Map<String,? extends JsonNode> properties)
+     {
+         for (Map.Entry<String,? extends JsonNode> en : properties.entrySet()) {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testNamingWithObjectNode() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

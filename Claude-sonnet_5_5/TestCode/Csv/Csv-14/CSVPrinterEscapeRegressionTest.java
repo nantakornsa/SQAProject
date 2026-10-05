@@ -1,0 +1,44 @@
+package org.apache.commons.csv;
+
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+import java.io.StringWriter;
+
+import org.junit.Test;
+
+/**
+ * Regression test for CSV-171: a value starting with a character that is valid RFC 4180 TEXTDATA
+ * (such as a backslash) must not be quoted at the start of a record.
+ */
+public class CSVPrinterEscapeRegressionTest {
+
+    private String print(final CSVFormat format, final String value) throws IOException {
+        final StringWriter sw = new StringWriter();
+        try (final CSVPrinter printer = new CSVPrinter(sw, format)) {
+            printer.print(value);
+        }
+        return sw.toString();
+    }
+
+    @Test
+    public void testEscapeNullSingleBackslash() throws IOException {
+        assertEquals("\\", print(CSVFormat.DEFAULT.withEscape(null), "\\"));
+    }
+
+    @Test
+    public void testEscapeNullDoubleBackslash() throws IOException {
+        assertEquals("\\\\", print(CSVFormat.DEFAULT.withEscape(null), "\\\\"));
+    }
+
+    @Test
+    public void testEscapeNullOtherTextDataCharacters() throws IOException {
+        assertEquals("[a", print(CSVFormat.DEFAULT.withEscape(null), "[a"));
+        assertEquals("_a", print(CSVFormat.DEFAULT.withEscape(null), "_a"));
+    }
+
+    @Test
+    public void testEscapeBackslashWithQuoteNullCharacter() throws IOException {
+        assertEquals("\\", print(CSVFormat.DEFAULT.withQuote(null).withEscape(null), "\\"));
+    }
+}

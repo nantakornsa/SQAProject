@@ -1,0 +1,32 @@
+The bug is in `Base64.encodeBase64(byte[], boolean, boolean, int)`. It always computed the encoded length as if the output were chunked, so for a one-byte input it returned 6 (4 characters plus the CRLF separator) instead of 4. Passing `out.length` (4) as `maxResultSize` therefore threw `IllegalArgumentException` on the buggy version. The fixed version uses chunk size 0 when `isChunked` is false, so the length is 4 and no exception is thrown.
+
+The test below is written in JUnit 3 style, matching the project's `Base64Test`. It calls the 4-argument `encodeBase64` with chunking off and `maxResultSize` equal to the unchunked output length.
+
+```java
+package org.apache.commons.codec.binary;
+
+import junit.framework.TestCase;
+
+public class Base64Codec112RegressionTest extends TestCase {
+
+    public Base64Codec112RegressionTest(String name) {
+        super(name);
+    }
+
+    public void testCodec112() { // size calculation assumes always chunked
+        byte[] in = new byte[] {0};
+        byte[] out = Base64.encodeBase64(in);
+        byte[] result = Base64.encodeBase64(in, false, false, out.length);
+        assertEquals(out.length, result.length);
+        assertEquals(new String(out, java.nio.charset.Charset.forName("UTF-8")),
+                     new String(result, java.nio.charset.Charset.forName("UTF-8")));
+    }
+
+    public void testUnchunkedMaxSizeExact() {
+        byte[] in = new byte[] {1, 2, 3, 4};
+        byte[] out = Base64.encodeBase64(in);
+        byte[] result = Base64.encodeBase64(in, false, false, out.length);
+        assertEquals(out.length, result.length);
+    }
+}
+```

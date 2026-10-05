@@ -1,0 +1,96 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Mockito
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Mockito
+       Program: mockito
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/Mockito.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/mockito.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/active-bugs.csv
+Number of bugs: 38
+--------------------------------------------------------------------------------
+
+Summary for Bug: Mockito-5
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+42a24dde02923185db3f79ae57e7819f7d70af55
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-01-20 21:24:00 +0100
+--------------------------------------------------------------------------------
+Bug report id:
+152
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/mockito/mockito/issues/152
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.mockitointegration.NoJUnitDependenciesTest::pure_mockito_should_not_depend_JUnit
+   --> junit.framework.AssertionFailedError: 'org.mockito.internal.verification.VerificationOverTimeImpl' has some dependency to JUnit
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.mockito.internal.verification.VerificationOverTimeImpl
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.mockito.internal.verification.VerificationOverTimeImpl ===
+diff --git a/src/org/mockito/internal/verification/VerificationOverTimeImpl.java b/src/org/mockito/internal/verification/VerificationOverTimeImpl.java
+index c5a66c501..4ea2463ad 100644
+--- a/src/org/mockito/internal/verification/VerificationOverTimeImpl.java
++++ b/src/org/mockito/internal/verification/VerificationOverTimeImpl.java
+@@ -88,7 +88,7 @@ public class VerificationOverTimeImpl implements VerificationMode {
+             } catch (MockitoAssertionError e) {
+                 error = handleVerifyException(e);
+             }
+-            catch (org.mockito.exceptions.verification.junit.ArgumentsAreDifferent e) {
++            catch (AssertionError e) {
+                 error = handleVerifyException(e);
+             }
+         }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void pure_mockito_should_not_depend_JUnit() throws Exception {
+        ClassLoader classLoader_without_JUnit = ClassLoaders.excludingClassLoader()
+                .withCodeSourceUrlOf(
+                        Mockito.class,
+                        Matcher.class,
+                        Enhancer.class,
+                        Objenesis.class
+                )
+                .without("junit", "org.junit")
+                .build();
+
+        Set<String> pureMockitoAPIClasses = ClassLoaders.in(classLoader_without_JUnit).omit("runners", "junit", "JUnit").listOwnedClasses();
+
+        for (String pureMockitoAPIClass : pureMockitoAPIClasses) {
+            checkDependency(classLoader_without_JUnit, pureMockitoAPIClass);
+        }
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

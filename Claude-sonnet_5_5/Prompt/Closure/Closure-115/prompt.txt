@@ -1,0 +1,136 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-115
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+4597738e8898f738c1f969fe90479728be81cc80
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-10-01 16:59:46 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1101
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-1101.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.InlineFunctionsTest::testBug4944818
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.InlineFunctionsTest::testDoubleInlining1
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.InlineFunctionsTest::testNoInlineIfParametersModified8
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.InlineFunctionsTest::testNoInlineIfParametersModified9
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.InlineFunctionsTest::testInlineFunctions6
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.FunctionInjector
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.FunctionInjector ===
+diff --git a/src/com/google/javascript/jscomp/FunctionInjector.java b/src/com/google/javascript/jscomp/FunctionInjector.java
+index 73d6a4b3e..5b386006f 100644
+--- a/src/com/google/javascript/jscomp/FunctionInjector.java
++++ b/src/com/google/javascript/jscomp/FunctionInjector.java
+@@ -694,14 +694,6 @@ class FunctionInjector {
+ 
+     Node block = fnNode.getLastChild();
+ 
+-    boolean hasSideEffects = false;
+-    if (block.hasChildren()) {
+-      Preconditions.checkState(block.hasOneChild());
+-      Node stmt = block.getFirstChild();
+-      if (stmt.isReturn()) {
+-        hasSideEffects = NodeUtil.mayHaveSideEffects(stmt.getFirstChild(), compiler);
+-      }
+-    }
+     // CALL NODE: [ NAME, ARG1, ARG2, ... ]
+     Node cArg = callNode.getFirstChild().getNext();
+ 
+@@ -727,9 +719,6 @@ class FunctionInjector {
+       // For each named parameter check if a mutable argument use more than one.
+       if (fnParam != null) {
+         if (cArg != null) {
+-          if (hasSideEffects && NodeUtil.canBeSideEffected(cArg)) {
+-            return CanInlineResult.NO;
+-          }
+           // Check for arguments that are evaluated more than once.
+           // Note: Unlike block inlining, there it is not possible that a
+           // parameter reference will be in a loop.
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testBug4944818() {
+    test(
+        "var getDomServices_ = function(self) {\n" +
+        "  if (!self.domServices_) {\n" +
+        "    self.domServices_ = goog$component$DomServices.get(" +
+        "        self.appContext_);\n" +
+        "  }\n" +
+        "\n" +
+        "  return self.domServices_;\n" +
+        "};\n" +
+        "\n" +
+        "var getOwnerWin_ = function(self) {\n" +
+        "  return getDomServices_(self).getDomHelper().getWindow();\n" +
+        "};\n" +
+        "\n" +
+        "HangoutStarter.prototype.launchHangout = function() {\n" +
+        "  var self = a.b;\n" +
+        "  var myUrl = new goog.Uri(getOwnerWin_(self).location.href);\n" +
+        "};",
+        "HangoutStarter.prototype.launchHangout = function() { " +
+        "  var self$$2 = a.b;" +
+        "  var JSCompiler_temp_const$$0 = goog.Uri;" +
+        "  var JSCompiler_inline_result$$1;" +
+        "  {" +
+        "  var self$$inline_2 = self$$2;" +
+        "  if (!self$$inline_2.domServices_) {" +
+        "    self$$inline_2.domServices_ = goog$component$DomServices.get(" +
+        "        self$$inline_2.appContext_);" +
+        "  }" +
+        "  JSCompiler_inline_result$$1=self$$inline_2.domServices_;" +
+        "  }" +
+        "  var myUrl = new JSCompiler_temp_const$$0(" +
+        "      JSCompiler_inline_result$$1.getDomHelper()." +
+        "          getWindow().location.href)" +
+        "}");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

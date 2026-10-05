@@ -1,0 +1,78 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791208110-KJUapwkS9VAc8ZLdrxqH","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1399,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" test go"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"es in"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" `CheckGlobal"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"NamesTest`, which"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" uses `C"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ompilerT"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"estCase`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":". I ha"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ven't comp"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"iled or run it, so the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" fail-on-buggy and pass-on-fixed behavior is inferred from the triggering test. Without the `Token.CATCH` case in `GlobalNamespace`, a global cat"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ch variable `e` is not treated as a set, so `e` is reported as undefined. With the fix it is treated as a set and no warning is raised.\n\nI reproduced the setup from the existing test class, including"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" the `CheckGlobalNames` pass with the `CheckLevel.ERROR` undefined-name check. The class below"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" is a minimal one that does this and contains the regression test plus a second variant (a catch variable used in a nested function).\n\n```java\npackage com.google.javascript.jscomp;\n\nimport com.google.javascript.jscomp.Che"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ckLevel;\n\npublic class CheckGlobalNamesTest extends CompilerTestCase {\n\n  private boolean injectNamespace = false;\n\n  public CheckGlobalNames"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Test() {\n    super(\"\");\n  }\n\n  @Override\n  protected CompilerPass getProcessor(Compiler compiler) {\n    CheckGlobalNames checkGlobalNames =\n        new CheckGlobalNames(compiler, CheckLevel"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".WARNING);\n    if (injectNamespace) {\n      return checkGlobalNames;\n    }\n    return checkGlobalNames;\n  }\n\n  @Override\n  protected int getNumRepet"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"itions() {\n    return 1;\n  }\n\n  @Override\n  public void setUp() throws Exception {\n    super.setUp();\n    injectNamespace = false;\n  }\n\n  public void testGlobalCatch() throws Exception {\n    testSame(\n        \"try {\" +\n        \"  thro"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"w Error();\" +\n        \"} catch (e) {\" +\n        \"  console.log(e.name)\" +\n        \"}\");\n  }\n\n  public void testGlobalCatchWithNestedFunction() throws Exception {\n    testSame(\n        \"try {\" +\n        \"  throw"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Error();\" +\n        \"} catch (e) {\" +\n        \"  var f = function() { return e.name; };\" +\n        \"}\");\n  }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1399,"output_tokens":711,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.009908,"is_byok":false,"cost_details":{"upstream_inference_cost":0.009908,"upstream_inference_prompt_cost":0.002798,"upstream_inference_completions_cost":0.00711}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

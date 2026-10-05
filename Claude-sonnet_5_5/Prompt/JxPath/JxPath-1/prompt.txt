@@ -1,0 +1,101 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JxPath
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JxPath
+       Program: commons-jxpath
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JxPath/JxPath.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-jxpath.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JxPath/active-bugs.csv
+Number of bugs: 22
+--------------------------------------------------------------------------------
+
+Summary for Bug: JxPath-1
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+fab38abb27f2f92b9340cfc232eb5517434bf138
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2007-01-10 18:27:20 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+JXPATH-12
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/JXPATH-12
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.jxpath.ri.model.dom.DOMModelTest::testGetNode
+   --> java.lang.NullPointerException
+ - org.apache.commons.jxpath.ri.model.jdom.JDOMModelTest::testGetNode
+   --> java.lang.NullPointerException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.jxpath.ri.model.dom.DOMNodePointer
+ - org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.jxpath.ri.model.dom.DOMNodePointer ===
+diff --git a/src/java/org/apache/commons/jxpath/ri/model/dom/DOMNodePointer.java b/src/java/org/apache/commons/jxpath/ri/model/dom/DOMNodePointer.java
+index aef2de6..113b410 100644
+--- a/src/java/org/apache/commons/jxpath/ri/model/dom/DOMNodePointer.java
++++ b/src/java/org/apache/commons/jxpath/ri/model/dom/DOMNodePointer.java
+@@ -113,7 +113,8 @@ public class DOMNodePointer extends NodePointer {
+             int nodeType = node.getNodeType();
+             switch (((NodeTypeTest) test).getNodeType()) {
+                 case Compiler.NODE_TYPE_NODE :
+-                    return nodeType == Node.ELEMENT_NODE;
++                    return nodeType == Node.ELEMENT_NODE
++                            || nodeType == Node.DOCUMENT_NODE;
+                 case Compiler.NODE_TYPE_TEXT :
+                     return nodeType == Node.CDATA_SECTION_NODE
+                         || nodeType == Node.TEXT_NODE;
+
+=== MODIFIED SOURCE: org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer ===
+diff --git a/src/java/org/apache/commons/jxpath/ri/model/jdom/JDOMNodePointer.java b/src/java/org/apache/commons/jxpath/ri/model/jdom/JDOMNodePointer.java
+index d151bed..32ffc1a 100644
+--- a/src/java/org/apache/commons/jxpath/ri/model/jdom/JDOMNodePointer.java
++++ b/src/java/org/apache/commons/jxpath/ri/model/jdom/JDOMNodePointer.java
+@@ -373,7 +373,7 @@ public class JDOMNodePointer extends NodePointer {
+         else if (test instanceof NodeTypeTest) {
+             switch (((NodeTypeTest) test).getNodeType()) {
+                 case Compiler.NODE_TYPE_NODE :
+-                    return node instanceof Element;
++                    return (node instanceof Element) || (node instanceof Document);
+                 case Compiler.NODE_TYPE_TEXT :
+                     return (node instanceof Text) || (node instanceof CDATA);
+                 case Compiler.NODE_TYPE_COMMENT :
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testGetNode() {
+        assertXPathNodeType(context, "/", Document.class);
+        assertXPathNodeType(context, "/vendor/location", Element.class);
+        assertXPathNodeType(context, "//location/@name", Attr.class);
+        assertXPathNodeType(context, "//vendor", Element.class);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

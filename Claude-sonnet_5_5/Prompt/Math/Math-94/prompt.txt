@@ -1,0 +1,101 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-94
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+dabf3a5beb9ab697d570154b9961078a8586c787
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-01-16 23:06:32 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-238
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-238
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.util.MathUtilsTest::testGcd
+   --> junit.framework.AssertionFailedError: expected:<98304> but was:<3440640>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.util.MathUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.util.MathUtils ===
+diff --git a/src/java/org/apache/commons/math/util/MathUtils.java b/src/java/org/apache/commons/math/util/MathUtils.java
+index c5342aeb3..df714052f 100644
+--- a/src/java/org/apache/commons/math/util/MathUtils.java
++++ b/src/java/org/apache/commons/math/util/MathUtils.java
+@@ -409,7 +409,7 @@ public final class MathUtils {
+      * @since 1.1
+      */
+     public static int gcd(int u, int v) {
+-        if (u * v == 0) {
++        if ((u == 0) || (v == 0)) {
+             return (Math.abs(u) + Math.abs(v));
+         }
+         // keep u and v negative, as negative integers range down to
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testGcd() {
+        int a = 30;
+        int b = 50;
+        int c = 77;
+
+        assertEquals(0, MathUtils.gcd(0, 0));
+
+        assertEquals(b, MathUtils.gcd(0, b));
+        assertEquals(a, MathUtils.gcd(a, 0));
+        assertEquals(b, MathUtils.gcd(0, -b));
+        assertEquals(a, MathUtils.gcd(-a, 0));
+
+        assertEquals(10, MathUtils.gcd(a, b));
+        assertEquals(10, MathUtils.gcd(-a, b));
+        assertEquals(10, MathUtils.gcd(a, -b));
+        assertEquals(10, MathUtils.gcd(-a, -b));
+
+        assertEquals(1, MathUtils.gcd(a, c));
+        assertEquals(1, MathUtils.gcd(-a, c));
+        assertEquals(1, MathUtils.gcd(a, -c));
+        assertEquals(1, MathUtils.gcd(-a, -c));
+
+        assertEquals(3 * (1<<15), MathUtils.gcd(3 * (1<<20), 9 * (1<<15)));
+
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,122 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Collections
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Collections
+       Program: commons-collections
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/Collections.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-collections.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/active-bugs.csv
+Number of bugs: 28
+--------------------------------------------------------------------------------
+
+Summary for Bug: Collections-1
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+f8aa3e033c1fde4a434864f666315b433498d32c
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2006-07-18 22:03:00 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COLLECTIONS-217
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COLLECTIONS-217
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.collections.map.TestFlat3Map::testEntryIteratorSetValue2
+   --> junit.framework.AssertionFailedError: expected:<10> but was:<NewValue>
+ - org.apache.commons.collections.map.TestFlat3Map::testEntryIteratorSetValue3
+   --> junit.framework.AssertionFailedError: expected:<10> but was:<NewValue>
+ - org.apache.commons.collections.map.TestFlat3Map::testMapIteratorSetValue2
+   --> junit.framework.AssertionFailedError: expected:<10> but was:<NewValue>
+ - org.apache.commons.collections.map.TestFlat3Map::testMapIteratorSetValue3
+   --> junit.framework.AssertionFailedError: expected:<10> but was:<NewValue>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.collections.map.Flat3Map
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.collections.map.Flat3Map ===
+diff --git a/src/java/org/apache/commons/collections/map/Flat3Map.java b/src/java/org/apache/commons/collections/map/Flat3Map.java
+index 8acc0021..a5083d29 100644
+--- a/src/java/org/apache/commons/collections/map/Flat3Map.java
++++ b/src/java/org/apache/commons/collections/map/Flat3Map.java
+@@ -651,10 +651,13 @@ public class Flat3Map implements IterableMap, Serializable, Cloneable {
+             switch (nextIndex) {
+                 case 3: 
+                     parent.value3 = value;
++                    break;
+                 case 2:
+                     parent.value2 = value;
++                    break;
+                 case 1:
+                     parent.value1 = value;
++                    break;
+             }
+             return old;
+         }
+@@ -803,10 +806,13 @@ public class Flat3Map implements IterableMap, Serializable, Cloneable {
+             switch (nextIndex) {
+                 case 3: 
+                     parent.value3 = value;
++                    break;
+                 case 2:
+                     parent.value2 = value;
++                    break;
+                 case 1:
+                     parent.value1 = value;
++                    break;
+             }
+             return old;
+         }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testEntryIteratorSetValue2() throws Exception {
+        Flat3Map map = new Flat3Map();
+        map.put(ONE, TEN);
+        map.put(TWO, TWENTY);
+        map.put(THREE, THIRTY);
+        
+        Iterator it = map.entrySet().iterator();
+        it.next();
+        Map.Entry entry = (Map.Entry) it.next();
+        entry.setValue("NewValue");
+        assertEquals(3, map.size());
+        assertEquals(true, map.containsKey(ONE));
+        assertEquals(true, map.containsKey(TWO));
+        assertEquals(true, map.containsKey(THREE));
+        assertEquals(TEN, map.get(ONE));
+        assertEquals("NewValue", map.get(TWO));
+        assertEquals(THIRTY, map.get(THREE));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

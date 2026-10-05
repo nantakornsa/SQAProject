@@ -1,0 +1,84 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-76
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+02668f757c59f0c1a7ad8f3169faf061b4b787c1
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-12-03 15:49:58 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+825
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/825
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.parser.HtmlParserTest::preSkipsFirstNewline
+   --> junit.framework.AssertionFailedError: expected:<
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.parser.HtmlTreeBuilderState
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.parser.HtmlTreeBuilderState ===
+diff --git a/src/main/java/org/jsoup/parser/HtmlTreeBuilderState.java b/src/main/java/org/jsoup/parser/HtmlTreeBuilderState.java
+index 20820ee2..a2306772 100644
+--- a/src/main/java/org/jsoup/parser/HtmlTreeBuilderState.java
++++ b/src/main/java/org/jsoup/parser/HtmlTreeBuilderState.java
+@@ -379,6 +379,7 @@ enum HtmlTreeBuilderState {
+                             tb.processEndTag("p");
+                         }
+                         tb.insert(startTag);
++                        tb.reader.matchConsume("\n"); // ignore LF if next token
+                         tb.framesetOk(false);
+                     } else if (name.equals("form")) {
+                         if (tb.getFormElement() != null) {
+
+
+=== TRIGGERING TEST METHOD ===
+  @Test public void preSkipsFirstNewline() {
+        Document doc = Jsoup.parse("<pre>\n\nOne\nTwo\n</pre>");
+        Element pre = doc.selectFirst("pre");
+        assertEquals("One\nTwo", pre.text());
+        assertEquals("\nOne\nTwo\n", pre.wholeText());
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

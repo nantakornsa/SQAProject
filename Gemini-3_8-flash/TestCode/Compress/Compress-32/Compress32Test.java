@@ -1,0 +1,41 @@
+package org.apache.commons.compress.archivers.tar;
+
+import org.junit.Test;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+public class Compress32Test {
+
+    @Test
+    public void testBigGidAndUidInPaxHeader() throws Exception {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        TarArchiveOutputStream tos = new TarArchiveOutputStream(bos);
+        tos.setBigNumberMode(TarArchiveOutputStream.BIGNUMBER_POSIX);
+        
+        TarArchiveEntry entry = new TarArchiveEntry("name");
+        long bigId = 4294967294L; // > Integer.MAX_VALUE (2147483647)
+        entry.setGroupId(bigId);
+        entry.setUserId(bigId);
+        entry.setSize(1);
+        
+        tos.putArchiveEntry(entry);
+        tos.write(0);
+        tos.closeArchiveEntry();
+        tos.close();
+
+        byte[] data = bos.toByteArray();
+        ByteArrayInputStream bis = new ByteArrayInputStream(data);
+        TarArchiveInputStream tis = new TarArchiveInputStream(bis);
+        
+        TarArchiveEntry readEntry = tis.getNextTarEntry();
+        assertNotNull(readEntry);
+        assertEquals(bigId, readEntry.getLongGroupId());
+        assertEquals(bigId, readEntry.getLongUserId());
+        
+        tis.close();
+    }
+}

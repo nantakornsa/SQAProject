@@ -1,0 +1,39 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791141593-aRuCt1Z25QkXB1Ykjr3G","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing Jsoup Bug**\n\nI've identified the root cause of the Jsoup-17 bug. It stems from an incorrect initialization of `nullString` within `TreeBuilderState`. `String.valueOf(0x0000)` was producing `\"0\"` when it should have been `\"\\u0000\"`, a crucial distinction for parsing null characters.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.jsoup.parser;\n\nimport org.jsoup.Jsoup;\nimport org.jsoup."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"nodes.Document;\nimport org.junit.Test;\n\nimport static org.junit.Assert.assertEquals;\n\npublic"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" class ParserBugTest {\n\n    @Test\n    public void handles0CharacterAsText() {\n        Document doc = Jsoup"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".parse(\"0<p>0</p>\");\n        assertEquals(\"0\\n<p>0</p"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":">\", doc.body().html());\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":935,"output_tokens":365,"output_tokens_details":{"thinking_tokens":250},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00207,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00207,"upstream_inference_prompt_cost":0.00070125,"upstream_inference_completions_cost":0.00136875}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,35 @@
+package org.apache.commons.math3.distribution;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+/**
+ * Regression test for MATH-859: support bound inclusiveness of
+ * FDistribution and UniformRealDistribution.
+ */
+public class SupportBoundInclusivenessRegressionTest {
+
+    @Test
+    public void testFDistributionIsSupportLowerBoundInclusive() {
+        FDistribution dist = new FDistribution(5.0, 6.0);
+        Assert.assertFalse(dist.isSupportLowerBoundInclusive());
+    }
+
+    @Test
+    public void testFDistributionIsSupportUpperBoundInclusive() {
+        FDistribution dist = new FDistribution(5.0, 6.0);
+        Assert.assertFalse(dist.isSupportUpperBoundInclusive());
+    }
+
+    @Test
+    public void testUniformRealDistributionIsSupportUpperBoundInclusive() {
+        UniformRealDistribution dist = new UniformRealDistribution(0.0, 1.0);
+        Assert.assertTrue(dist.isSupportUpperBoundInclusive());
+    }
+
+    @Test
+    public void testUniformRealDistributionIsSupportLowerBoundInclusive() {
+        UniformRealDistribution dist = new UniformRealDistribution(0.0, 1.0);
+        Assert.assertTrue(dist.isSupportLowerBoundInclusive());
+    }
+}

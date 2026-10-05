@@ -1,0 +1,72 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791201082-5rIbi5dh6ACUd6n3BoFd","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1708,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" test below"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" re"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"produces the triggering case"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" from `TypeCheck"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Test::"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"testIssue669`. I"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" have"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" not comp"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"iled or run it against"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" the buggy and"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" fixed versions.\n\n`TypeCheckTest` extends `CompilerTypeTestCase` and provides the `testTypes(String)` helper. `testTypes` fails if there are unexpected warn"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ings. On the buggy version, `TypeInference` infers a record-type property for `results` and produces a spurious type-mismatch warning, so the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" test fails there. The fix replaces that logic with `type.matchConstraint(constraintObj)`, after which no warning is reported and the test passes.\n\nThe class below"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" is a self-contained regression test. It extends `TypeCheckTest` to reuse its `testTypes` helper, which is acc"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"essible from the same package. Because it inherits all of `TypeCheckTest`'s tests, those will run again under this class. It adds one"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" method, `testIssue669Regression`.\n\n```java\npackage com.google.javascript.jscomp;\n\npublic class TypeCheckIssue669Test extends TypeCheckTest {\n\n  public void testIssue669Regression() throws Exception {\n    testTypes(\n        \"/** @return {{prop"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"1: (Object|undefined)}} */\" +\n        \"function f(a) {\" +\n        \"  var results;\" +\n        \"  if (a) {\" +\n        \"    results = {};\" +\n        \"    results.prop1 = {a: 3};\" +\n        \"  } else {\" +\n        \"    results"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" = {prop2: 3};\" +\n        \"  }\" +\n        \"  return results;\" +\n        \"}\");\n  }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1708,"output_tokens":512,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.008536,"is_byok":false,"cost_details":{"upstream_inference_cost":0.008536,"upstream_inference_prompt_cost":0.003416,"upstream_inference_completions_cost":0.00512}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

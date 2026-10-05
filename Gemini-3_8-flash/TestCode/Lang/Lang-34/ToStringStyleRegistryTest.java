@@ -1,0 +1,10 @@
+package org.apache.commons.lang3.builder;
+
+import junit.framework.TestCase;
+
+public class ToStringStyleRegistryTest extends TestCase {
+
+    public void testGetRegistryReturnsNullWhenEmpty() {
+        assertNull(ToStringStyle.getRegistry());
+    }
+}

@@ -1,0 +1,26 @@
+```java
+package com.google.javascript.jscomp;
+
+/**
+ * Regression test for Closure issue 635: assigning a constructor to a
+ * variable typed with a different constructor must report a type mismatch.
+ * On the buggy version the mismatch is swallowed (registered silently), so
+ * no warning is emitted.
+ */
+public class TypeCheckIssue635Test extends TypeCheckTest {
+
+  public void testIssue635bRegression() throws Exception {
+    testTypes(
+        "/** @constructor */" +
+        "function F() {}" +
+        "/** @constructor */" +
+        "function G() {}" +
+        "/** @type {function(new:G)} */ var x = F;",
+        "initializing variable\n" +
+        "found   : function (new:F): undefined\n" +
+        "required: function (new:G): ?");
+  }
+}
+```
+
+I haven't compiled or run this. It assumes `testTypes(String, String)` in `TypeCheckTest` is package-private or protected, which I recalled from memory rather than checked. If it is private, the class won't compile. Because it extends `TypeCheckTest`, it also re-runs all of that class's inherited tests.

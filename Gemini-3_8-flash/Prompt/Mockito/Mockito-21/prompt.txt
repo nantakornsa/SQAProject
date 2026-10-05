@@ -1,0 +1,120 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Mockito
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Mockito
+       Program: mockito
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/Mockito.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/mockito.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/active-bugs.csv
+Number of bugs: 38
+--------------------------------------------------------------------------------
+
+Summary for Bug: Mockito-21
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+8912aa176ea8414c2fc57df0d9b030b918630e9f
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2014-11-17 00:42:03 +0100
+--------------------------------------------------------------------------------
+Bug report id:
+92
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/mockito/mockito/issues/92
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.mockito.internal.creation.instance.ConstructorInstantiatorTest::creates_instances_of_inner_classes
+   --> org.mockito.internal.creation.instance.InstantationException: Unable to create mock instance of 'SomeInnerClass'.
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.mockito.internal.creation.instance.ConstructorInstantiator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.mockito.internal.creation.instance.ConstructorInstantiator ===
+diff --git a/src/org/mockito/internal/creation/instance/ConstructorInstantiator.java b/src/org/mockito/internal/creation/instance/ConstructorInstantiator.java
+index 0cc8226d8..9f0201aa8 100644
+--- a/src/org/mockito/internal/creation/instance/ConstructorInstantiator.java
++++ b/src/org/mockito/internal/creation/instance/ConstructorInstantiator.java
+@@ -14,18 +14,23 @@ public class ConstructorInstantiator implements Instantiator {
+         if (outerClassInstance == null) {
+             return noArgConstructor(cls);
+         }
+-        return withOuterClass(cls);
++        return withParams(cls, outerClassInstance);
+     }
+ 
+-    private <T> T withOuterClass(Class<T> cls) {
++    private static <T> T withParams(Class<T> cls, Object... params) {
+         try {
+             //this is kind of overengineered because we don't need to support more params
+             //however, I know we will be needing it :)
+-            Constructor<T> c = cls.getDeclaredConstructor(outerClassInstance.getClass());
+-            return c.newInstance(outerClassInstance);
++            for (Constructor<?> constructor : cls.getDeclaredConstructors()) {
++                Class<?>[] types = constructor.getParameterTypes();
++                if (paramsMatch(types, params)) {
++                    return (T) constructor.newInstance(params);
++                }
++            }
+         } catch (Exception e) {
+             throw paramsException(cls, e);
+         }
++        throw paramsException(cls, null);
+     }
+ 
+     private static <T> InstantationException paramsException(Class<T> cls, Exception e) {
+@@ -33,6 +38,17 @@ public class ConstructorInstantiator implements Instantiator {
+                 + cls.getSimpleName() + "'.\nPlease ensure that the outer instance has correct type and that the target class has parameter-less constructor.", e);
+     }
+ 
++    private static boolean paramsMatch(Class<?>[] types, Object[] params) {
++        if (params.length != types.length) {
++            return false;
++        }
++        for (int i = 0; i < params.length; i++) {
++            if (!types[i].isInstance(params[i])) {
++                return false;
++            }
++        }
++        return true;
++    }
+ 
+     private static <T> T noArgConstructor(Class<T> cls) {
+         try {
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void creates_instances_of_inner_classes() {
+        assertEquals(new ConstructorInstantiator(this).newInstance(SomeInnerClass.class).getClass(), SomeInnerClass.class);
+        assertEquals(new ConstructorInstantiator(new ChildOfThis()).newInstance(SomeInnerClass.class).getClass(), SomeInnerClass.class);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

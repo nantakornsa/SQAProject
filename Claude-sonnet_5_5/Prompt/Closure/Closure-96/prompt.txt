@@ -1,0 +1,90 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-96
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+807aaf2569e9eb09761068c5aeb95654daea30d9
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-09-02 16:49:07 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+229
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-229.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.TypeCheckTest::testFunctionArguments16
+   --> junit.framework.AssertionFailedError: expected a warning
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.TypeCheck
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.TypeCheck ===
+diff --git a/src/com/google/javascript/jscomp/TypeCheck.java b/src/com/google/javascript/jscomp/TypeCheck.java
+index 8077e0d8c..b05fbc44c 100644
+--- a/src/com/google/javascript/jscomp/TypeCheck.java
++++ b/src/com/google/javascript/jscomp/TypeCheck.java
+@@ -1406,10 +1406,13 @@ public class TypeCheck implements NodeTraversal.Callback, CompilerPass {
+     Node parameter = null;
+     Node argument = null;
+     while (arguments.hasNext() &&
+-           parameters.hasNext()) {
++           (parameters.hasNext() ||
++            parameter != null && parameter.isVarArgs())) {
+       // If there are no parameters left in the list, then the while loop
+       // above implies that this must be a var_args function.
++      if (parameters.hasNext()) {
+         parameter = parameters.next();
++      }
+       argument = arguments.next();
+       ordinal++;
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testFunctionArguments16() throws Exception {
+    testTypes(
+        "/** @param {...number} var_args */" +
+        "function g(var_args) {} g(1, true);",
+        "actual parameter 2 of g does not match formal parameter\n" +
+        "found   : boolean\n" +
+        "required: (number|undefined)");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

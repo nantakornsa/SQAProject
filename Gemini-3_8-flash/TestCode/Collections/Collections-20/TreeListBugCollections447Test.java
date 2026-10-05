@@ -1,0 +1,28 @@
+package org.apache.commons.collections.list;
+
+import java.util.List;
+import java.util.ListIterator;
+import junit.framework.TestCase;
+
+public class TreeListBugCollections447Test extends TestCase {
+
+    public void testBugCollections447() {
+        final List<String> treeList = new TreeList<String>();
+        treeList.add("A");
+        treeList.add("B");
+        treeList.add("C");
+        treeList.add("D");
+
+        final ListIterator<String> li = treeList.listIterator();
+        assertEquals("A", li.next());
+        assertEquals("B", li.next());
+
+        assertEquals("B", li.previous());
+
+        li.remove(); // Deletes "B"
+
+        // previous() after remove() should move to
+        // the element before the one just removed
+        assertEquals("A", li.previous());
+    }
+}

@@ -1,0 +1,54 @@
+This is a standalone JUnit 3 test in the `com.google.javascript.jscomp` package. I haven't compiled or run it against either version. The Closure API calls it uses (`Compiler.init` with `JSSourceFile` arrays, the `TypeCheck` constructor and `processForTesting`) are written from memory of the 2011-era code, so signatures may need adjusting.
+
+It reproduces the triggering input, `/** @enum {number} */ keys = {A: 1,B: 2,C: 3};`. On the buggy version the object-literal keys count as typeable but are never typed, so the typed percentage comes out at 62.5. With the fix they are marked not typeable, so it should be 100.0.
+
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.Node;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test: object literal keys must not be counted as typeable
+ * when computing the typed percentage.
+ */
+public class TypeCheckObjectLitKeyTypedPercentTest extends TestCase {
+
+  private double getTypedPercent(String js) throws Exception {
+    Compiler compiler = new Compiler();
+    CompilerOptions options = new CompilerOptions();
+    options.checkTypes = true;
+
+    compiler.init(
+        new JSSourceFile[] { JSSourceFile.fromCode("externs", "") },
+        new JSSourceFile[] { JSSourceFile.fromCode("input", js) },
+        options);
+
+    Node root = compiler.parseInputs();
+    assertNotNull(root);
+    Node externsRoot = root.getFirstChild();
+    Node jsRoot = root.getLastChild();
+
+    TypeCheck check = new TypeCheck(
+        compiler,
+        new SemanticReverseAbstractInterpreter(
+            compiler.getCodingConvention(), compiler.getTypeRegistry()),
+        compiler.getTypeRegistry(),
+        CheckLevel.OFF,
+        CheckLevel.OFF);
+    check.processForTesting(externsRoot, jsRoot);
+    return check.getTypedPercent();
+  }
+
+  public void testEnumObjectLiteralKeysAreNotTypeable() throws Exception {
+    String js = "/** @enum {number} */ keys = {A: 1,B: 2,C: 3};";
+    assertEquals(100.0, getTypedPercent(js), 0.1);
+  }
+
+  public void testObjectLiteralKeysAreNotTypeableInEnum() throws Exception {
+    String js = "/** @enum {string} */ var e = {A: 'a', B: 'b'};";
+    assertEquals(100.0, getTypedPercent(js), 0.1);
+  }
+}
+```

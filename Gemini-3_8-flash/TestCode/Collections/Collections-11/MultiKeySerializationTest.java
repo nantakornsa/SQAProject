@@ -1,0 +1,37 @@
+package org.apache.commons.collections.keyvalue;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for COLLECTIONS-266 / Collections-11.
+ * Tests that MultiKey recalculates its hashCode upon deserialization.
+ */
+public class MultiKeySerializationTest extends TestCase {
+
+    public void testEqualsAfterSerialization() throws IOException, ClassNotFoundException {
+        MultiKey key = new MultiKey(new Object[] { "1", "2" });
+        Map map = new HashMap();
+        map.put(key, new Integer(2));
+
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(buffer);
+        out.writeObject(key);
+        out.close();
+
+        ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()));
+        Object key2 = in.readObject();
+        in.close();
+
+        assertEquals(key.hashCode(), key2.hashCode());
+        assertEquals(key, key2);
+        assertEquals(new Integer(2), map.get(key2));
+    }
+}

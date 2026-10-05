@@ -1,0 +1,42 @@
+package com.google.javascript.rhino.jstype;
+
+/**
+ * Regression test for recursive and long record types being printed
+ * incorrectly by {@code toAnnotationString()}.
+ */
+public class ClaudeRecordTypeTest extends BaseJSTypeTestCase {
+
+  public void testRecursiveRecord() {
+    ProxyObjectType loop = new ProxyObjectType(registry, NUMBER_TYPE);
+    JSType record = new RecordTypeBuilder(registry)
+        .addProperty("loop", loop, null)
+        .addProperty("number", NUMBER_TYPE, null)
+        .addProperty("string", STRING_TYPE, null)
+        .build();
+    assertEquals("{loop: number, number: number, string: string}",
+        record.toString());
+
+    loop.setReferencedType(record);
+    assertEquals("{loop: {...}, number: number, string: string}",
+        record.toString());
+    assertEquals("{loop: ?, number: number, string: string}",
+        record.toAnnotationString());
+  }
+
+  public void testLongToString() {
+    JSType record = new RecordTypeBuilder(registry)
+        .addProperty("a1", NUMBER_TYPE, null)
+        .addProperty("a2", NUMBER_TYPE, null)
+        .addProperty("a3", NUMBER_TYPE, null)
+        .addProperty("a4", NUMBER_TYPE, null)
+        .addProperty("a5", NUMBER_TYPE, null)
+        .addProperty("a6", NUMBER_TYPE, null)
+        .build();
+    assertEquals(
+        "{a1: number, a2: number, a3: number, a4: number, ...}",
+        record.toString());
+    assertEquals(
+        "{a1: number, a2: number, a3: number, a4: number, a5: number, a6: number}",
+        record.toAnnotationString());
+  }
+}

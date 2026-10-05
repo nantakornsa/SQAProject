@@ -1,0 +1,93 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-89
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+392e2c455c04985e9e55257ad04951307ffddb38
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-04-17 13:44:46 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-259
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-259
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.stat.FrequencyTest::testAddNonComparable
+   --> java.lang.ClassCastException: java.lang.Object cannot be cast to java.lang.Comparable
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.stat.Frequency
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.stat.Frequency ===
+diff --git a/src/java/org/apache/commons/math/stat/Frequency.java b/src/java/org/apache/commons/math/stat/Frequency.java
+index c8deca31a..70d622dda 100644
+--- a/src/java/org/apache/commons/math/stat/Frequency.java
++++ b/src/java/org/apache/commons/math/stat/Frequency.java
+@@ -107,7 +107,11 @@ public class Frequency implements Serializable {
+      */
+     @Deprecated
+     public void addValue(Object v) {
++        if (v instanceof Comparable<?>){
+             addValue((Comparable<?>) v);            
++        } else {
++            throw new IllegalArgumentException("Object must implement Comparable");
++        }
+     }
+     
+     /**
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testAddNonComparable(){
+        try {
+            f.addValue(new Object()); // This was previously OK
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException expected) {
+        }
+        f.clear();
+        f.addValue(1);
+        try {
+            f.addValue(new Object());
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException expected) {
+        }
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,123 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-98
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+d1df970451b5a18956448097b3afb43f3a82263d
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-06-10 20:12:38 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+174
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-174.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.InlineVariablesTest::testNoInlineAliasesInLoop
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.ReferenceCollectingCallback
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.ReferenceCollectingCallback ===
+diff --git a/src/com/google/javascript/jscomp/ReferenceCollectingCallback.java b/src/com/google/javascript/jscomp/ReferenceCollectingCallback.java
+index f053321d6..da4ed3e0a 100644
+--- a/src/com/google/javascript/jscomp/ReferenceCollectingCallback.java
++++ b/src/com/google/javascript/jscomp/ReferenceCollectingCallback.java
+@@ -358,6 +358,14 @@ class ReferenceCollectingCallback implements ScopedCallback, CompilerPass {
+       }
+ 
+       // Make sure this assignment is not in a loop.
++      for (BasicBlock block = ref.getBasicBlock();
++           block != null; block = block.getParent()) {
++        if (block.isFunction) {
++          break;
++        } else if (block.isLoop) {
++          return false;
++        }
++      }
+ 
+       return true;
+     }
+@@ -542,10 +550,12 @@ class ReferenceCollectingCallback implements ScopedCallback, CompilerPass {
+     /**
+      * Whether this block denotes a function scope.
+      */
++    private final boolean isFunction;
+ 
+     /**
+      * Whether this block denotes a loop.
+      */
++    private final boolean isLoop;
+ 
+     /**
+      * Creates a new block.
+@@ -558,7 +568,16 @@ class ReferenceCollectingCallback implements ScopedCallback, CompilerPass {
+       // only named functions may be hoisted.
+       this.isHoisted = NodeUtil.isHoistedFunctionDeclaration(root);
+ 
++      this.isFunction = root.getType() == Token.FUNCTION;
+ 
++      if (root.getParent() != null) {
++        int pType = root.getParent().getType();
++        this.isLoop = pType == Token.DO ||
++            pType == Token.WHILE ||
++            pType == Token.FOR;
++      } else {
++        this.isLoop = false;
++      }
+     }
+ 
+     BasicBlock getParent() {
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testNoInlineAliasesInLoop() {
+    testSame(
+        "function f() { " +
+        "  for (var i = 0; i < 5; i++) {" +
+        "    var x = extern();" +
+        "    (function() {" +
+        "       var y = x; window.setTimeout(function() { extern(y); }, 0);" +
+        "     })();" +
+        "  }" +
+        "}");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

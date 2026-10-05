@@ -1,0 +1,25 @@
+```java
+package org.apache.commons.compress.archivers;
+
+import java.io.ByteArrayOutputStream;
+import org.apache.commons.compress.archivers.zip.JarArchiveOutputStream;
+import org.junit.Assert;
+import org.junit.Test;
+
+public class COMPRESS306Test {
+
+    @Test
+    public void testJarArchiveOutputStreamRespectsFactoryEncoding() throws Exception {
+        final String expectedEncoding = "ISO-8859-1";
+        ArchiveStreamFactory factory = new ArchiveStreamFactory(expectedEncoding);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        JarArchiveOutputStream jaos = (JarArchiveOutputStream) factory.createArchiveOutputStream(
+                ArchiveStreamFactory.JAR, out);
+        try {
+            Assert.assertEquals(expectedEncoding, jaos.getEncoding());
+        } finally {
+            jaos.close();
+        }
+    }
+}
+```

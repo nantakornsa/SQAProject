@@ -1,0 +1,124 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Collections
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Collections
+       Program: commons-collections
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/Collections.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-collections.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/active-bugs.csv
+Number of bugs: 28
+--------------------------------------------------------------------------------
+
+Summary for Bug: Collections-18
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+b10fa43d3e29af6c6e79577c305fad99df01dff0
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-08-26 19:29:47 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COLLECTIONS-426
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COLLECTIONS-426
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.collections.set.ListOrderedSetTest::testRetainAllCollections426
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.collections.set.ListOrderedSet
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.collections.set.ListOrderedSet ===
+diff --git a/src/main/java/org/apache/commons/collections/set/ListOrderedSet.java b/src/main/java/org/apache/commons/collections/set/ListOrderedSet.java
+index ce6926fa..48cab8ef 100644
+--- a/src/main/java/org/apache/commons/collections/set/ListOrderedSet.java
++++ b/src/main/java/org/apache/commons/collections/set/ListOrderedSet.java
+@@ -226,20 +226,26 @@ public class ListOrderedSet<E>
+ 
+     @Override
+     public boolean retainAll(Collection<?> coll) {
+-        boolean result = collection.retainAll(coll);
+-        if (result == false) {
++        Set<Object> collectionRetainAll = new HashSet<Object>();
++        for (Iterator<?> it = coll.iterator(); it.hasNext();) {
++            Object next = it.next();
++            if (collection.contains(next)) {
++                collectionRetainAll.add(next);
++            }
++        }
++        if (collectionRetainAll.size() == collection.size()) {
+             return false;
+         }
+-        if (collection.size() == 0) {
+-            setOrder.clear();
++        if (collectionRetainAll.size() == 0) {
++            clear();
+         } else {
+-            for (Iterator<E> it = setOrder.iterator(); it.hasNext();) {
+-                if (!collection.contains(it.next())) {
++            for (Iterator<E> it = iterator(); it.hasNext();) {
++                if (!collectionRetainAll.contains(it.next())) {
+                     it.remove();
+                 }
+             }
+         }
+-        return result;
++        return true;
+     }
+ 
+     @Override
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testRetainAllCollections426() {
+        int size = 100000;
+        ListOrderedSet<Integer> set = new ListOrderedSet<Integer>();
+        for (int i = 0; i < size; i++) {
+            set.add(i);
+        }
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        for (int i = size; i < 2 * size; i++) {
+            list.add(i);
+        }
+
+        long start = System.currentTimeMillis();
+        set.retainAll(list);
+        long stop = System.currentTimeMillis();
+
+        // make sure retainAll completes under 5 seconds
+        // TODO if test is migrated to JUnit 4, add a Timeout rule.
+        // http://kentbeck.github.com/junit/javadoc/latest/org/junit/rules/Timeout.html
+        assertTrue((stop - start) < 5000);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

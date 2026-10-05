@@ -1,0 +1,100 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonCore
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonCore
+       Program: jackson-core
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonCore/JacksonCore.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-core.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonCore/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonCore-19
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+345cad5b2f4c06a1bcc6794311a31226e9f2bce7
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-08-31 21:09:22 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+317
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-core/issues/317
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.core.json.TestNumericValues::testLongerFloatingPoint
+   --> java.lang.ArrayIndexOutOfBoundsException: 200
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.core.json.ReaderBasedJsonParser
+ - com.fasterxml.jackson.core.json.UTF8StreamJsonParser
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.core.json.ReaderBasedJsonParser ===
+diff --git a/src/main/java/com/fasterxml/jackson/core/json/ReaderBasedJsonParser.java b/src/main/java/com/fasterxml/jackson/core/json/ReaderBasedJsonParser.java
+index 64c798dc..c0bad368 100644
+--- a/src/main/java/com/fasterxml/jackson/core/json/ReaderBasedJsonParser.java
++++ b/src/main/java/com/fasterxml/jackson/core/json/ReaderBasedJsonParser.java
+@@ -1415,6 +1415,10 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
+         int fractLen = 0;
+         // And then see if we get other parts
+         if (c == '.') { // yes, fraction
++            if (outPtr >= outBuf.length) {
++                outBuf = _textBuffer.finishCurrentSegment();
++                outPtr = 0;
++            }
+             outBuf[outPtr++] = c;
+ 
+             fract_loop:
+
+=== MODIFIED SOURCE: com.fasterxml.jackson.core.json.UTF8StreamJsonParser ===
+diff --git a/src/main/java/com/fasterxml/jackson/core/json/UTF8StreamJsonParser.java b/src/main/java/com/fasterxml/jackson/core/json/UTF8StreamJsonParser.java
+index 872ffce5..9296543e 100644
+--- a/src/main/java/com/fasterxml/jackson/core/json/UTF8StreamJsonParser.java
++++ b/src/main/java/com/fasterxml/jackson/core/json/UTF8StreamJsonParser.java
+@@ -1541,6 +1541,10 @@ public class UTF8StreamJsonParser
+ 
+         // And then see if we get other parts
+         if (c == INT_PERIOD) { // yes, fraction
++            if (outPtr >= outBuf.length) {
++                outBuf = _textBuffer.finishCurrentSegment();
++                outPtr = 0;
++            }
+             outBuf[outPtr++] = (char) c;
+ 
+             fract_loop:
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testLongerFloatingPoint() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

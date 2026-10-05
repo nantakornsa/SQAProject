@@ -1,0 +1,112 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-6
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+9f7a353385bf0b93cdaeaa56cc5b1450db790127
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-11-07 19:30:17 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+635
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-635.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.LooseTypeCheckTest::testTypeRedefinition
+   --> junit.framework.AssertionFailedError: expected:<2> but was:<1>
+ - com.google.javascript.jscomp.TypeCheckTest::testIssue635b
+   --> junit.framework.AssertionFailedError: expected a warning
+ - com.google.javascript.jscomp.TypeCheckTest::testTypeRedefinition
+   --> junit.framework.AssertionFailedError: unexpected warning(s) : JSC_DUP_VAR_DECLARATION. variable a.A redefined with type function (new:a.A): undefined, original definition at [testcode]:1 with type enum{a.A} at [testcode] line 1 : 61 expected:<2> but was:<1>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.TypeValidator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.TypeValidator ===
+diff --git a/src/com/google/javascript/jscomp/TypeValidator.java b/src/com/google/javascript/jscomp/TypeValidator.java
+index 8cdb02a41..12ce5b330 100644
+--- a/src/com/google/javascript/jscomp/TypeValidator.java
++++ b/src/com/google/javascript/jscomp/TypeValidator.java
+@@ -363,9 +363,6 @@ class TypeValidator {
+       JSType leftType, Node owner, String propName) {
+     // The NoType check is a hack to make typedefs work OK.
+     if (!leftType.isNoType() && !rightType.canAssignTo(leftType)) {
+-      if ((leftType.isConstructor() || leftType.isEnumType()) && (rightType.isConstructor() || rightType.isEnumType())) {
+-        registerMismatch(rightType, leftType, null);
+-      } else {
+       // Do not type-check interface methods, because we expect that
+       // they will have dummy implementations that do not match the type
+       // annotations.
+@@ -382,7 +379,6 @@ class TypeValidator {
+           "assignment to property " + propName + " of " +
+           getReadableJSTypeName(owner, true),
+           rightType, leftType);
+-      }
+       return false;
+     }
+     return true;
+@@ -402,11 +398,7 @@ class TypeValidator {
+   boolean expectCanAssignTo(NodeTraversal t, Node n, JSType rightType,
+       JSType leftType, String msg) {
+     if (!rightType.canAssignTo(leftType)) {
+-      if ((leftType.isConstructor() || leftType.isEnumType()) && (rightType.isConstructor() || rightType.isEnumType())) {
+-        registerMismatch(rightType, leftType, null);
+-      } else {
+       mismatch(t, n, msg, rightType, leftType);
+-      }
+       return false;
+     }
+     return true;
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testTypeRedefinition() throws Exception {
+    testClosureTypesMultipleWarnings(
+        "a={};/**@enum {string}*/ a.A = {ZOR:'b'};"
+        + "/** @constructor */ a.A = function() {}",
+        Lists.newArrayList(
+            "variable a.A redefined with type function (new:a.A): undefined, " +
+            "original definition at [testcode]:1 with type enum{a.A}",
+            "assignment to property A of a\n" +
+            "found   : function (new:a.A): undefined\n" +
+            "required: enum{a.A}"));
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

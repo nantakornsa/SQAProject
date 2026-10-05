@@ -1,0 +1,78 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791147874-sZrShEm5jCz2iDMcD3IH","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":2880,"output_tokens":8,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"```java\npackage org.apache"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".commons.math.ode"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".nonstiff;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\nimport org.apache.commons"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".math.ode.Der"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ivativeException;\nimport org"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".apache.commons.math"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".ode.FirstO"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"rderDifferentialE"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"quations;\nimport org.ap"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ache.commons.math."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ode.IntegratorException;\nimport org.apache.commons.math.ode.events.EventHandler;\nimport org.junit.Assert;\nimport org.junit.Test;\n\npublic class ClassicalRungeKuttaMissedEndEventTest {\n\n    @Test\n    public void testMissedEnd"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Event() throws IntegratorException, DerivativeException {\n        final double   t0     = 1878250320.0000029;\n        final double   tEvent = 1878250379.9999986;\n        final double[] k      = { 1.0e-4, 1.0e-5, 1.0e-6 };\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"FirstOrderDifferentialEquations ode = new FirstOrderDifferentialEquations() {\n\n            public int getDimension() {\n                return k.length;\n            }\n\n            public void computeDerivatives(double t, double[] y, double[] yDot) {\n                for (int i = 0; i < y."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"length; ++i) {\n                    yDot[i] = k[i] * y[i];\n                }\n            }\n        };\n\n        ClassicalRungeKuttaIntegrator integrator = new ClassicalRungeKuttaIntegrator(60.0);\n\n        double[] y0   = new double[k.length"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"];\n        for (int i = 0; i < y0.length; ++i) {\n            y0[i] = i + 1;\n        }\n        double[] y    = new double[k.length];\n\n        double finalT = integrator.integrate(ode, t0, y0, tEvent, y);\n        Assert.assertEquals"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"(tEvent, finalT, 5.0e-6);\n        for (int i = 0; i < y.length; ++i) {\n            Assert.assertEquals(y0[i] * Math.exp(k[i] * (finalT - t0)), y[i], 1.0e-9);\n        }\n\n        integr"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ator.addEventHandler(new EventHandler() {\n\n            public void resetState(double t, double[] y) {\n            }\n\n            public double g(double t, double[] y) {\n                return t - tEvent;\n            }\n\n            public int eventOccurred(double t, double[] y, boolean increasing) {\n                Ass"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ert.assertEquals(tEvent, t, 5.0e-6);\n                return CONTINUE;\n            }\n        }, Double.POSITIVE_INFINITY, 1.0e-20, 100);\n        finalT = integrator.integrate(ode, t0, y0, tEvent + "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"120, y);\n        Assert.assertEquals(tEvent + 120, finalT, 5.0e-6);\n        for (int i = 0; i < y.length; ++i) {\n            Assert.assertEquals(y0[i] * Math.exp(k[i] * (finalT - t0)), y"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"[i], 1.0e-9);\n        }\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2880,"output_tokens":972,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.01548,"is_byok":false,"cost_details":{"upstream_inference_cost":0.01548,"upstream_inference_prompt_cost":0.00576,"upstream_inference_completions_cost":0.00972}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,46 @@
+package org.apache.commons.math3.genetics;
+
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.commons.math3.exception.OutOfRangeException;
+import org.junit.Assert;
+import org.junit.Test;
+
+public class ClaudeElitisticListPopulationTest {
+
+    @Test(expected = OutOfRangeException.class)
+    public void testChromosomeListConstructorTooLow() {
+        final List<Chromosome> chromosomes = Collections.emptyList();
+        final double rate = -0.25;
+        new ElitisticListPopulation(chromosomes, 100, rate);
+    }
+
+    @Test(expected = OutOfRangeException.class)
+    public void testChromosomeListConstructorTooHigh() {
+        final List<Chromosome> chromosomes = Collections.emptyList();
+        final double rate = 1.25;
+        new ElitisticListPopulation(chromosomes, 100, rate);
+    }
+
+    @Test(expected = OutOfRangeException.class)
+    public void testConstructorTooLow() {
+        final double rate = -0.25;
+        new ElitisticListPopulation(100, rate);
+    }
+
+    @Test(expected = OutOfRangeException.class)
+    public void testConstructorTooHigh() {
+        final double rate = 1.25;
+        new ElitisticListPopulation(100, rate);
+    }
+
+    @Test
+    public void testConstructorsValidRate() {
+        final List<Chromosome> chromosomes = Collections.emptyList();
+        ElitisticListPopulation pop1 = new ElitisticListPopulation(chromosomes, 100, 0.25);
+        Assert.assertEquals(0.25, pop1.getElitismRate(), 0.0);
+        ElitisticListPopulation pop2 = new ElitisticListPopulation(100, 0.75);
+        Assert.assertEquals(0.75, pop2.getElitismRate(), 0.0);
+    }
+}

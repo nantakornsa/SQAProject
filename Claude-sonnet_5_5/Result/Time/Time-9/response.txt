@@ -1,0 +1,69 @@
+The fix makes `forOffsetHoursMinutes` reject hour values outside -23..23 and `forOffsetMillis` reject millis outside ±(86400000 - 1). On the buggy version, `forOffsetHoursMinutes(24, 0)` returns a zone with a 24-hour offset instead of throwing, so the test fails there. On the fixed version it throws `IllegalArgumentException`, so the test passes.
+
+The test follows the project's JUnit 3 style, extending `TestCase`. It calls `forOffsetHoursMinutes` with 24 and -24 hours and expects `IllegalArgumentException`. It also checks the boundary values 23:59 and -23:59, which must still work. The `forOffsetMillis` range checks are included as well.
+
+```java
+package org.joda.time;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+/**
+ * Regression test for DateTimeZone offset range validation.
+ */
+public class TestDateTimeZoneOffsetRangeRegression extends TestCase {
+
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
+
+    public static TestSuite suite() {
+        return new TestSuite(TestDateTimeZoneOffsetRangeRegression.class);
+    }
+
+    public TestDateTimeZoneOffsetRangeRegression(String name) {
+        super(name);
+    }
+
+    public void testForOffsetHoursMinutes_outOfRangeHours() {
+        try {
+            DateTimeZone.forOffsetHoursMinutes(24, 0);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+        try {
+            DateTimeZone.forOffsetHoursMinutes(-24, 0);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+        try {
+            DateTimeZone.forOffsetHoursMinutes(Integer.MAX_VALUE, 0);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+    }
+
+    public void testForOffsetHoursMinutes_boundaries() {
+        assertEquals(DateTimeZone.forID("+23:59"), DateTimeZone.forOffsetHoursMinutes(23, 59));
+        assertEquals(DateTimeZone.forID("-23:59"), DateTimeZone.forOffsetHoursMinutes(-23, 59));
+    }
+
+    public void testForOffsetMillis_outOfRange() {
+        try {
+            DateTimeZone.forOffsetMillis(86400 * 1000);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+        try {
+            DateTimeZone.forOffsetMillis(-86400 * 1000);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+    }
+}
+```

@@ -1,0 +1,37 @@
+```java
+package org.jsoup.nodes;
+
+import org.jsoup.Jsoup;
+import org.jsoup.select.Elements;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
+public class ElementRegressionTest {
+
+    @Test
+    public void testElementSiblingIndexSameContent() {
+        Document doc = Jsoup.parse("<div><p>One</p>...<p>One</p>...<p>One</p></div>");
+        Elements ps = doc.select("p");
+
+        assertEquals(0, ps.get(0).elementSiblingIndex());
+        assertEquals(1, ps.get(1).elementSiblingIndex());
+        assertEquals(2, ps.get(2).elementSiblingIndex());
+    }
+
+    @Test
+    public void testGetSiblingsWithDuplicateContent() {
+        Document doc = Jsoup.parse("<div><p>same</p><p>same</p><p>same</p></div>");
+        Elements ps = doc.select("p");
+
+        assertEquals(null, ps.get(0).previousElementSibling());
+        assertEquals(ps.get(1), ps.get(0).nextElementSibling());
+
+        assertEquals(ps.get(0), ps.get(1).previousElementSibling());
+        assertEquals(ps.get(2), ps.get(1).nextElementSibling());
+
+        assertEquals(ps.get(1), ps.get(2).previousElementSibling());
+        assertEquals(null, ps.get(2).nextElementSibling());
+    }
+}
+```

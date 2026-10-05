@@ -1,0 +1,18 @@
+package org.apache.commons.lang;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for LANG-365 / Lang-51:
+ * BooleanUtils.toBoolean(String) throws StringIndexOutOfBoundsException for 3-character
+ * strings not starting with 'y' or 'Y'.
+ */
+public class BooleanUtilsLang51RegressionTest extends TestCase {
+
+    public void testToBooleanThreeCharacterNonYesString() {
+        assertFalse(BooleanUtils.toBoolean("tru"));
+        assertFalse(BooleanUtils.toBoolean("off"));
+        assertFalse(BooleanUtils.toBoolean("oof"));
+        assertFalse(BooleanUtils.toBoolean("abc"));
+    }
+}

@@ -1,0 +1,60 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791185960-TPWAvZmEnL7SkdvlQyh7","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Jackson Bug**\n\nI'm currently delving into JacksonDatabind-70, specifically examining the `BeanPropertyMap.withoutProperties` and `remove` methods. My focus is on how `_caseInsensitive` affects the storage of keys in `_hashArea`, noting that it's lowercased when true.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".struct;\n\nimport com.fasterxml.jackson.annotation.JsonUnwrapped;\nimport com.fasterxml.jackson"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".databind.BaseMapTest;\nimport com.fasterxml.jackson.databind.MapperFeature;\nimport com.fasterxml.jackson.databind"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".ObjectMapper;\n\npublic class CaseInsensitiveUnwrapTest extends BaseMapTest {\n\n    static class Address {\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        public String street;\n        public String city;\n    }\n\n    static class Person {\n        public String"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" name;\n\n        @JsonUnwrapped\n        public Address businessAddress;\n    }\n\n    public void testCaseInsensitiveUn"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"wrap() throws Exception {\n        ObjectMapper mapper = jsonMapperBuilder()\n                .enable(MapperFeature.ACCEPT_CASE"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"_INSENSITIVE_PROPERTIES)\n                .build();\n\n        String json = aposToQuotes(\"{'name':'"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"John','street':'Main St','city':'Boston'}\");\n        Person person = mapper.readValue(json, Person.class);\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        assertNotNull(person);\n        assertEquals(\"John\", person.name);\n        assertNotNull(person.business"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Address);\n        assertEquals(\"Main St\", person.businessAddress.street);\n        assertEquals(\"Boston\", person."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"businessAddress.city);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1023,"output_tokens":743,"output_tokens_details":{"thinking_tokens":466},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.0035535,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0035535,"upstream_inference_prompt_cost":0.00076725,"upstream_inference_completions_cost":0.00278625}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

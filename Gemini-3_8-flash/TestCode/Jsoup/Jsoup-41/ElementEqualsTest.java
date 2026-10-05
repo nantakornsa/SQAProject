@@ -1,0 +1,27 @@
+package org.jsoup.nodes;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+
+public class ElementEqualsTest {
+
+    @Test
+    public void testElementEquals() {
+        String html = "<div id=1><p class=one>One</p><p class=one>One</p></div>";
+        Document doc = Jsoup.parse(html);
+        Elements ps = doc.select("p");
+
+        assertEquals(2, ps.size());
+        Element p0 = ps.get(0);
+        Element p1 = ps.get(1);
+
+        assertNotSame(p0, p1);
+        assertEquals(p0, p1);
+    }
+}

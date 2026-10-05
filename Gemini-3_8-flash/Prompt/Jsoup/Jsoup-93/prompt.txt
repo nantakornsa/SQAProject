@@ -1,0 +1,101 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-93
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+a9439f0c503ac8e0f009a0ec39f8bff1a6271d51
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2019-07-04 15:54:14 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1231
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/1231
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.nodes.FormElementTest::createsFormData
+   --> junit.framework.AssertionFailedError: expected:<6> but was:<7>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.nodes.FormElement
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.nodes.FormElement ===
+diff --git a/src/main/java/org/jsoup/nodes/FormElement.java b/src/main/java/org/jsoup/nodes/FormElement.java
+index 3949f22d..57702894 100644
+--- a/src/main/java/org/jsoup/nodes/FormElement.java
++++ b/src/main/java/org/jsoup/nodes/FormElement.java
+@@ -86,6 +86,7 @@ public class FormElement extends Element {
+             if (name.length() == 0) continue;
+             String type = el.attr("type");
+ 
++            if (type.equalsIgnoreCase("button")) continue; // browsers don't submit these
+ 
+             if ("select".equals(el.normalName())) {
+                 Elements options = el.select("option[selected]");
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void createsFormData() {
+        String html = "<form><input name='one' value='two'><select name='three'><option value='not'>" +
+                "<option value='four' selected><option value='five' selected><textarea name=six>seven</textarea>" +
+                "<input name='seven' type='radio' value='on' checked><input name='seven' type='radio' value='off'>" +
+                "<input name='eight' type='checkbox' checked><input name='nine' type='checkbox' value='unset'>" +
+                "<input name='ten' value='text' disabled>" +
+                "<input name='eleven' value='text' type='button'>" +
+                "</form>";
+        Document doc = Jsoup.parse(html);
+        FormElement form = (FormElement) doc.select("form").first();
+        List<Connection.KeyVal> data = form.formData();
+
+        assertEquals(6, data.size());
+        assertEquals("one=two", data.get(0).toString());
+        assertEquals("three=four", data.get(1).toString());
+        assertEquals("three=five", data.get(2).toString());
+        assertEquals("six=seven", data.get(3).toString());
+        assertEquals("seven=on", data.get(4).toString()); // set
+        assertEquals("eight=on", data.get(5).toString()); // default
+        // nine should not appear, not checked checkbox
+        // ten should not appear, disabled
+        // eleven should not appear, button
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

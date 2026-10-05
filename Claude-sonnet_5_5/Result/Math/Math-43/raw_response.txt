@@ -1,0 +1,81 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791146004-HPT8HYadRHwrgYdljxZR","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":2085,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" b"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ug: when a user sets a"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" `Mean`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":", `Variance`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" or `GeometricMean"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"` instance through"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" setters"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":", the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" old code ass"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"umed the default implementation was in use (`instanceof` check) and never incremented the user-supplied one. A user-supplied `Mean` is a fresh, empty object, so `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"getMean()` returned NaN. The fix compares against the internal default fields instead.\n\nThe test below covers all three overrides, using the same data as the triggering tests."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" It sits in its own class and relies on the JUnit 3 style (`TestCase`) used by the project.\n\n```java\npackage org.apache.commons.math.stat.descriptive;\n\nimport junit.fram"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ework.Assert;\nimport junit.framework.TestCase;\n\nimport org.apache.commons.math.stat.descriptive.moment.GeometricMean;\nimport org.apache.commons.math.stat.descriptive.moment.Mean;\nimport org.apache.commons.math.stat."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"descriptive.moment.Variance;\n\n/**\n * Regression test for MATH-691: overriding statistics with the default\n * math classes must still produce correct results.\n */\npublic class Summary"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"StatisticsOverrideRegressionTest extends TestCase {\n\n    private static final double[] SCORES = {1, 2, 3, 4};\n\n    public void testOverrideMeanWithMathClass() throws Exception {\n        SummaryStatistics stats = new S"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ummaryStatistics();\n        stats.setMeanImpl(new Mean());\n        for (double i : SCORES) {\n            stats.addValue(i);\n        }\n        Assert.assertEquals((new Mean()).evaluate(SCORES), stats.getMean(), 0);\n    }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n    public void testOverrideGeoMeanWithMathClass() throws Exception {\n        SummaryStatistics stats = new SummaryStatistics();\n        stats.setGeoMeanImpl(new GeometricMean());\n        for (double i : SCORES) {\n            stats.addValue("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"i);\n        }\n        Assert.assertEquals((new GeometricMean()).evaluate(SCORES),\n                stats.getGeometricMean(), 0);\n    }\n\n    public void testOverrideVarianceWithMathClass() throws Exception {\n        SummaryStatistics stats = new"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" SummaryStatistics();\n        stats.setVarianceImpl(new Variance());\n        for (double i : SCORES) {\n            stats.addValue(i);\n        }\n        Assert.assertEquals((new Variance()).evaluate(SCORES),\n                stats.getVariance(), 0"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":");\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2085,"output_tokens":842,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.01259,"is_byok":false,"cost_details":{"upstream_inference_cost":0.01259,"upstream_inference_prompt_cost":0.00417,"upstream_inference_completions_cost":0.00842}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

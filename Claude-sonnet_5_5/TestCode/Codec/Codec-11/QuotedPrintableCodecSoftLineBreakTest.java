@@ -1,0 +1,48 @@
+package org.apache.commons.codec.net;
+
+import junit.framework.TestCase;
+
+import org.apache.commons.codec.DecoderException;
+
+/**
+ * Regression test for CODEC-121: QuotedPrintableCodec soft line break handling.
+ */
+public class QuotedPrintableCodecSoftLineBreakTest extends TestCase {
+
+    public QuotedPrintableCodecSoftLineBreakTest(String name) {
+        super(name);
+    }
+
+    public void testSkipNotEncodedCRLF() throws Exception {
+        String qpdata = "CRLF in an\n encoded text should be=20=\r\n\rskipped in the\r decoding.";
+        String expected = "CRLF in an encoded text should be skipped in the decoding.";
+
+        QuotedPrintableCodec qpcodec = new QuotedPrintableCodec();
+        assertEquals(expected, qpcodec.decode(qpdata));
+
+        String encoded = qpcodec.encode(expected);
+        assertEquals(expected, qpcodec.decode(encoded));
+    }
+
+    public void testSoftLineBreakDecodeSimple() throws DecoderException {
+        QuotedPrintableCodec qpcodec = new QuotedPrintableCodec();
+        assertEquals("abcdef", qpcodec.decode("abc=\r\ndef"));
+    }
+
+    public void testSoftLineBreakEncodeLongInput() throws Exception {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 100; i++) {
+            sb.append('a');
+        }
+        String input = sb.toString();
+
+        QuotedPrintableCodec qpcodec = new QuotedPrintableCodec();
+        String encoded = qpcodec.encode(input);
+        assertTrue("Expected a soft line break in: " + encoded, encoded.indexOf("=\r\n") >= 0);
+        String[] lines = encoded.split("\r\n");
+        for (int i = 0; i < lines.length; i++) {
+            assertTrue("Line too long: " + lines[i].length(), lines[i].length() <= 76);
+        }
+        assertEquals(input, qpcodec.decode(encoded));
+    }
+}

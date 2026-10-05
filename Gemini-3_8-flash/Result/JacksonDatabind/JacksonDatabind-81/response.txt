@@ -1,0 +1,26 @@
+```java
+package com.fasterxml.jackson.databind.introspect;
+
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+public class TypeCoercion1592Test extends BaseMapTest
+{
+    static class Bean1592 {
+        @JsonSerialize(as = Integer.class)
+        @JsonDeserialize(as = Integer.class)
+        public int i = 3;
+    }
+
+    public void testTypeCoercion1592() throws Exception
+    {
+        ObjectMapper mapper = newObjectMapper();
+        String json = mapper.writeValueAsString(new Bean1592());
+        assertEquals("{\"i\":3}", json);
+        Bean1592 result = mapper.readValue(json, Bean1592.class);
+        assertEquals(3, result.i);
+    }
+}
+```

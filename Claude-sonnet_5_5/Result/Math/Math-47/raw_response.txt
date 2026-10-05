@@ -1,0 +1,75 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791146040-UA4k31JqUI1XXnTLeSMK","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1854,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"This"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" reg"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ression test targ"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ets the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" fixed behaviour of"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Complex.divide`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":", which"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" should"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" return `INF` for a n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"onzero num"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"erator divided by zero and `NaN` only for 0/0. I have not compiled or run it against either version.\n\nThe tests are JUnit 3 style, matching the triggering tests. They use `junit.framework.TestC"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ase` and `Assert`.\n\nOn the buggy version, `divide(Complex.ZERO)` and `divide(0.0)` return `NaN` for a nonzero numerator, so the `isInfinite()"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"` assertions fail. `testAtanI` fails on the buggy version for the same reason: `atan` of `I` divides by zero internally. On the fixed version all of these p"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ass.\n\n```java\npackage org.apache.commons.math.complex;\n\nimport org.junit.Assert;\nimport org.junit.Test;\n\npublic class ComplexDivideZeroRegressionTest {\n\n    @Test\n    public void testDivideZ"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ero() {\n        Complex x = new Complex(3.0, 4.0);\n        Complex result = x.divide(Complex.ZERO);\n        Assert.assertTrue(result.isInfinite());\n        Assert.assertFalse(result"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".isNaN());\n        Assert.assertEquals(Complex.INF, result);\n    }\n\n    @Test\n    public void testDivideZeroDouble() {\n        Complex x = new Complex(3.0, 4.0);\n        Complex result = x.divide(0.0);\n        Assert.assert"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"True(result.isInfinite());\n        Assert.assertFalse(result.isNaN());\n        Assert.assertEquals(Complex.INF, result);\n    }\n\n    @Test\n    public void testDivideZeroByZe"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"roIsNaN() {\n        Assert.assertTrue(Complex.ZERO.divide(Complex.ZERO).isNaN());\n        Assert.assertTrue(Complex.ZERO.divide(0.0).isNaN());\n    }\n\n    @Test\n    public void test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"AtanI() {\n        Assert.assertTrue(Complex.I.atan().isInfinite());\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1854,"output_tokens":683,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.010538,"is_byok":false,"cost_details":{"upstream_inference_cost":0.010538,"upstream_inference_prompt_cost":0.003708,"upstream_inference_completions_cost":0.00683}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

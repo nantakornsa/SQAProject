@@ -1,0 +1,109 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Collections
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Collections
+       Program: commons-collections
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/Collections.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-collections.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/active-bugs.csv
+Number of bugs: 28
+--------------------------------------------------------------------------------
+
+Summary for Bug: Collections-14
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+0725e476d4cc66e6331bdceb4e29a54a9ce7f462
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-11-04 03:58:37 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COLLECTIONS-294
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COLLECTIONS-294
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.collections.map.TestCaseInsensitiveMap::testLocaleIndependence
+   --> junit.framework.AssertionFailedError: en: 1 expected:<value> but was:<null>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.collections.map.CaseInsensitiveMap
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.collections.map.CaseInsensitiveMap ===
+diff --git a/src/java/org/apache/commons/collections/map/CaseInsensitiveMap.java b/src/java/org/apache/commons/collections/map/CaseInsensitiveMap.java
+index d0ebdb6a..032012cd 100644
+--- a/src/java/org/apache/commons/collections/map/CaseInsensitiveMap.java
++++ b/src/java/org/apache/commons/collections/map/CaseInsensitiveMap.java
+@@ -118,7 +118,11 @@ public class CaseInsensitiveMap extends AbstractHashedMap implements Serializabl
+      */
+     protected Object convertKey(Object key) {
+         if (key != null) {
+-            return key.toString().toLowerCase();
++            char[] chars = key.toString().toCharArray();
++            for (int i = chars.length - 1; i >= 0; i--) {
++                chars[i] = Character.toLowerCase(Character.toUpperCase(chars[i]));
++            }
++            return new String(chars);
+         } else {
+             return AbstractHashedMap.NULL;
+         }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testLocaleIndependence() {
+        Locale orig = Locale.getDefault();
+
+        Locale[] locales = { Locale.ENGLISH, new Locale("tr"), Locale.getDefault() };
+
+        String[][] data = { 
+            { "i", "I" },
+            { "\u03C2", "\u03C3" },
+            { "\u03A3", "\u03C2" },
+            { "\u03A3", "\u03C3" },
+        };
+
+        try {
+            for (int i = 0; i < locales.length; i++) {
+                Locale.setDefault(locales[i]);
+                for (int j = 0; j < data.length; j++) {
+                    assertTrue("Test data corrupt: " + j, data[j][0].equalsIgnoreCase(data[j][1]));
+                    CaseInsensitiveMap map = new CaseInsensitiveMap();
+                    map.put(data[j][0], "value");
+                    assertEquals(Locale.getDefault() + ": " + j, "value", map.get(data[j][1]));
+                }
+            }
+        } finally {
+            Locale.setDefault(orig);
+        }
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

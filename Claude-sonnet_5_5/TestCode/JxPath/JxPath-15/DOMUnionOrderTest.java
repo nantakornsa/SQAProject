@@ -1,0 +1,55 @@
+package org.apache.commons.jxpath.ri.model.dom;
+
+import java.io.ByteArrayInputStream;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.apache.commons.jxpath.JXPathContext;
+import org.w3c.dom.Document;
+
+/**
+ * Regression test for JXPATH-100: the union operator must return nodes
+ * in document order.
+ */
+public class DOMUnionOrderTest extends TestCase {
+
+    public DOMUnionOrderTest(String name) {
+        super(name);
+    }
+
+    public static Test suite() {
+        return new TestSuite(DOMUnionOrderTest.class);
+    }
+
+    private Document parse(String xml) throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        return builder.parse(new ByteArrayInputStream(xml.getBytes("UTF-8")));
+    }
+
+    public void testUnionReturnsNodesInDocumentOrder() throws Exception {
+        Document doc = parse(
+            "<vendor>"
+                + "<contact>John</contact>"
+                + "<contact>Jane</contact>"
+                + "<contact>Jim</contact>"
+                + "<contact>Jack Black</contact>"
+                + "</vendor>");
+
+        JXPathContext context = JXPathContext.newContext(doc);
+
+        // The first node in document order is contact[1], even though
+        // contact[4] is listed first in the union expression.
+        Object value =
+            context.getValue("/vendor[1]/contact[4] | /vendor[1]/contact[1]");
+        assertEquals(
+            "Evaluating </vendor[1]/contact[4] | /vendor[1]/contact[1]>",
+            "John",
+            value);
+    }
+}

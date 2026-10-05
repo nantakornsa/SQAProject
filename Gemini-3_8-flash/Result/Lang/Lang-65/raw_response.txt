@@ -1,0 +1,105 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791140934-49pMZUDfVmRAtBBlT85y","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing DST Bugs**\n\nI'm investigating the LANG-59/Lang-65 bug concerning Daylight Saving Time shifts. Specifically, I'm looking into how modifying `Calendar.SECOND` or `Calendar.MILLISECOND` in `DateUtils.truncate` and `DateUtils.round` causes unexpected recalculations within Java's Calendar.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.apache.commons.lang.time;\n\nimport java.text.DateFormat;\nimport java"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".text.SimpleDateFormat;\nimport java.util.Calendar;\nimport java.util.Date;\nimport java"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".util.TimeZone;\nimport junit.framework.TestCase;\n\n/**\n * Regression test for LANG-59: DateUtils"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".truncate/round issues during DST transition.\n */\npublic class DateUtilsLang59Test extends TestCase {\n\n    private TimeZone default"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"TimeZone;\n\n    protected void setUp() throws Exception {\n        super.setUp();\n        defaultTimeZone = TimeZone"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".getDefault();\n    }\n\n    protected void tearDown() throws Exception {\n        TimeZone.setDefault(defaultTimeZone"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":");\n        super.tearDown();\n    }\n\n    public void testTruncateDuringDaylightSavingTransition() throws Exception"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" {\n        // Set TimeZone to Mountain Time where DST ends on 2004-10-31\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"TimeZone MST_MDT = TimeZone.getTimeZone(\"MST7MDT\");\n        TimeZone.setDefault(MST"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"_MDT);\n        DateFormat format = new SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"SSS z\");\n        format.setTimeZone(MST_MDT);\n\n        Date oct31_01"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"MDT = new Date(1099206000000L);\n        Date oct31_"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"01_02MDT = new Date(oct31_01MDT.getTime() + 12"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"0000L);  // + 2 minutes\n        Date oct31_01_02"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"_03MDT = new Date(oct31_01_02MDT.getTime() +"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" 3000L); // + 3 seconds\n        Date oct31_01_02_0"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"3_04MDT = new Date(oct31_01_02_03MDT"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".getTime() + 4L); // + 4 ms\n\n        assertEquals(\"2004-10"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"-31 01:02:03.004 MDT\", format.format(oct"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"31_01_02_03_04MDT));\n\n        // In the buggy version"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":", modifying fields via Calendar causes daylight saving\n        // time to shift from MDT to MST unexpectedly, returning 01:0"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"2:03 MST instead of MDT.\n        Date truncated = DateUtils.truncate(oct31_0"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"1_02_03_04MDT, Calendar.SECOND);\n        assertEquals(\"Truncate Calendar"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".SECOND\", oct31_01_02_03MDT, truncated);\n\n        Date rounded"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" = DateUtils.round(oct31_01_02_03_04MDT, Calendar"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".SECOND);\n        assertEquals(\"Round Calendar.SECOND\", oct31_01_02_03M"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"DT, rounded);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2815,"output_tokens":803,"output_tokens_details":{"thinking_tokens":140},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.0051225,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0051225,"upstream_inference_prompt_cost":0.00211125,"upstream_inference_completions_cost":0.00301125}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

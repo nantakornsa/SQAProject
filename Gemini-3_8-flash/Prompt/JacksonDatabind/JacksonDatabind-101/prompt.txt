@@ -1,0 +1,89 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-101
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+644831ce403590db4dbeb8ee47adb3c393438fb2
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2018-08-28 21:59:18 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+2088
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/2088
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.struct.TestUnwrapped::testIssue2088UnwrappedFieldsAfterLastCreatorProp
+   --> junit.framework.AssertionFailedError: expected:<4> but was:<0>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.deser.BeanDeserializer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.deser.BeanDeserializer ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/deser/BeanDeserializer.java b/src/main/java/com/fasterxml/jackson/databind/deser/BeanDeserializer.java
+index 8cdccdeb6..88051e75d 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/deser/BeanDeserializer.java
++++ b/src/main/java/com/fasterxml/jackson/databind/deser/BeanDeserializer.java
+@@ -768,12 +768,16 @@ public class BeanDeserializer
+                     // if so, need to copy all remaining tokens into buffer
+                     while (t == JsonToken.FIELD_NAME) {
+                         // NOTE: do NOT skip name as it needs to be copied; `copyCurrentStructure` does that
+-                        p.nextToken();
+                         tokens.copyCurrentStructure(p);
+                         t = p.nextToken();
+                     }
+                     // 28-Aug-2018, tatu: Let's add sanity check here, easier to catch off-by-some
+                     //    problems if we maintain invariants
++                    if (t != JsonToken.END_OBJECT) {
++                        ctxt.reportWrongTokenException(this, JsonToken.END_OBJECT, 
++                                "Attempted to unwrap '%s' value",
++                                handledType().getName());
++                    }
+                     tokens.writeEndObject();
+                     if (bean.getClass() != _beanType.getRawClass()) {
+                         // !!! 08-Jul-2011, tatu: Could probably support; but for now
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testIssue2088UnwrappedFieldsAfterLastCreatorProp() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

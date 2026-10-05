@@ -1,0 +1,49 @@
+package org.apache.commons.lang.time;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
+import junit.framework.TestCase;
+
+/**
+ * Regression test for LANG-59: DateUtils.truncate/round issues during DST transition.
+ */
+public class DateUtilsLang59Test extends TestCase {
+
+    private TimeZone defaultTimeZone;
+
+    protected void setUp() throws Exception {
+        super.setUp();
+        defaultTimeZone = TimeZone.getDefault();
+    }
+
+    protected void tearDown() throws Exception {
+        TimeZone.setDefault(defaultTimeZone);
+        super.tearDown();
+    }
+
+    public void testTruncateDuringDaylightSavingTransition() throws Exception {
+        // Set TimeZone to Mountain Time where DST ends on 2004-10-31
+        TimeZone MST_MDT = TimeZone.getTimeZone("MST7MDT");
+        TimeZone.setDefault(MST_MDT);
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS z");
+        format.setTimeZone(MST_MDT);
+
+        Date oct31_01MDT = new Date(1099206000000L);
+        Date oct31_01_02MDT = new Date(oct31_01MDT.getTime() + 120000L);  // + 2 minutes
+        Date oct31_01_02_03MDT = new Date(oct31_01_02MDT.getTime() + 3000L); // + 3 seconds
+        Date oct31_01_02_03_04MDT = new Date(oct31_01_02_03MDT.getTime() + 4L); // + 4 ms
+
+        assertEquals("2004-10-31 01:02:03.004 MDT", format.format(oct31_01_02_03_04MDT));
+
+        // In the buggy version, modifying fields via Calendar causes daylight saving
+        // time to shift from MDT to MST unexpectedly, returning 01:02:03 MST instead of MDT.
+        Date truncated = DateUtils.truncate(oct31_01_02_03_04MDT, Calendar.SECOND);
+        assertEquals("Truncate Calendar.SECOND", oct31_01_02_03MDT, truncated);
+
+        Date rounded = DateUtils.round(oct31_01_02_03_04MDT, Calendar.SECOND);
+        assertEquals("Round Calendar.SECOND", oct31_01_02_03MDT, rounded);
+    }
+}

@@ -1,0 +1,210 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Cli
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Cli
+       Program: commons-cli
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/Cli.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-cli.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/active-bugs.csv
+Number of bugs: 39
+--------------------------------------------------------------------------------
+
+Summary for Bug: Cli-1
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+b0e1b80b6d4a10a9c9f46539bc4c7a3cce55886e
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2007-05-15 00:47:38 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CLI-13
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CLI-13
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.cli.bug.BugCLI13Test::testCLI13
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.cli.CommandLine
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.cli.CommandLine ===
+diff --git a/src/java/org/apache/commons/cli/CommandLine.java b/src/java/org/apache/commons/cli/CommandLine.java
+index af1118d..3c82942 100644
+--- a/src/java/org/apache/commons/cli/CommandLine.java
++++ b/src/java/org/apache/commons/cli/CommandLine.java
+@@ -16,11 +16,11 @@
+ package org.apache.commons.cli;
+ 
+ import java.util.Collection;
+-import java.util.HashMap;
+ import java.util.Iterator;
+ import java.util.LinkedList;
+ import java.util.List;
+-import java.util.Map;
++import java.util.Set;
++import java.util.HashSet;
+ 
+ /** 
+  * <p>Represents list of arguments parsed against
+@@ -43,12 +43,10 @@ public class CommandLine {
+     private List args = new LinkedList();
+ 
+     /** the processed options */
+-    private Map options = new HashMap();
+-    private Map names = new HashMap();
++    private Set options = new HashSet();
+ 
+     /** Map of unique options for ease to get complete list of options */
+ //    private Set allOptions = new HashSet();
+-    private Map hashcodeMap = new HashMap();
+ 
+     /**
+      * Creates a command line.
+@@ -66,7 +64,7 @@ public class CommandLine {
+      */
+     public boolean hasOption(String opt)
+     {
+-        return options.containsKey(opt);
++        return options.contains( resolveOption(opt));
+     }
+ 
+     /** 
+@@ -90,12 +88,13 @@ public class CommandLine {
+     {
+         String res = getOptionValue(opt);
+ 
+-        if (!options.containsKey(opt))
++        Option option = resolveOption(opt);
++        if (option == null)
+         {
+             return null;
+         }
+ 
+-        Object type = ((Option) options.get(opt)).getType();
++        Object type = option.getType();
+ 
+         return (res == null)        ? null : TypeHandler.createValue(res, type);
+     }
+@@ -146,16 +145,11 @@ public class CommandLine {
+      */
+     public String[] getOptionValues(String opt)
+     {
+-        opt = Util.stripLeadingHyphens(opt);
++        Option key = resolveOption( opt );
+ 
+-        String key = opt;
+-        if (names.containsKey(opt))
+-        {
+-            key = (String) names.get(opt);
+-        }
+-        if (options.containsKey(key))
++        if (options.contains(key))
+         {
+-            return ((Option) options.get(key)).getValues();
++            return key.getValues();
+         }
+ 
+         return null;
+@@ -166,7 +160,24 @@ public class CommandLine {
+      * @param opt short or long name of the option
+      * @return Canonicalized option
+      */
++    private Option resolveOption( String opt )
++    {
++        opt = Util.stripLeadingHyphens(opt);
++        for ( Iterator it = options.iterator(); it.hasNext(); )
++        {
++            Option option = (Option) it.next();
++            if (opt.equals(option.getOpt()))
++            {
++                return option;
++            }
++            if (opt.equals( option.getLongOpt()))
++            {
++                return option;
++        }
+ 
++        }
++        return null;
++    }
+ 
+     /** 
+      * Retrieves the array of values, if any, of an option.
+@@ -274,17 +285,7 @@ public class CommandLine {
+      */
+     void addOption(Option opt)
+     {
+-        hashcodeMap.put(new Integer(opt.hashCode()), opt);
+-        String key = opt.getKey();
+-        if (key == null)
+-        {
+-            key = opt.getLongOpt();
+-        }
+-        else
+-        {
+-            names.put(opt.getLongOpt(), key);
+-        }
+-        options.put(key, opt);
++        options.add(opt);
+     }
+ 
+     /**
+@@ -295,7 +296,7 @@ public class CommandLine {
+      */
+     public Iterator iterator()
+     {
+-        return hashcodeMap.values().iterator();
++        return options.iterator();
+     }
+ 
+     /**
+@@ -305,7 +306,7 @@ public class CommandLine {
+      */
+     public Option[] getOptions()
+     {
+-        Collection processed = options.values();
++        Collection processed = options;
+ 
+         // reinitialise array
+         Option[] optionsArray = new Option[processed.size()];
+@@ -313,4 +314,4 @@ public class CommandLine {
+         // return the array
+         return (Option[]) processed.toArray(optionsArray);
+     }
+-}
++}
+\ No newline at end of file
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testCLI13()
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

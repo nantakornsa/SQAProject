@@ -1,0 +1,38 @@
+The test below belongs in `PeepholeFoldConstantsTest`, which already has the `testSame` helper and the `setUp` and `getProcessor` configuration. It mirrors the project's JUnit 3 style (`extends CompilerTestCase`).
+
+I added a second case for the compound-assignment form (`[][0] += 1`) mentioned in the code comment. I did not check how the fixed version handles it: `[][0]` is also out of bounds, and `isAssignmentTarget` should return the node unchanged for it too. If you want the test to depend only on the triggering case, drop that line.
+
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.Node;
+
+public class PeepholeFoldConstantsTest extends CompilerTestCase {
+
+  public PeepholeFoldConstantsTest() {
+    super("");
+  }
+
+  @Override
+  public void setUp() throws Exception {
+    super.setUp();
+    enableLineNumberCheck(true);
+  }
+
+  @Override
+  public CompilerPass getProcessor(final Compiler compiler) {
+    CompilerPass peepholePass =
+        new PeepholeOptimizationsPass(compiler, new PeepholeFoldConstants());
+    return peepholePass;
+  }
+
+  public void testIssue522() {
+    testSame("[][1] = 1;");
+  }
+
+  public void testIssue522AssignmentTargets() {
+    testSame("[][1] = 1;");
+    testSame("[][0] += 1;");
+  }
+}
+```

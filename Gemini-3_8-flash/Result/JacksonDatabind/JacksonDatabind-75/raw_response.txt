@@ -1,0 +1,54 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791186002-bOffPVWIscioIGItWefD","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Jackson Bug**\n\nI'm currently examining `JacksonDatabind-75`, specifically within `EnumSerializer`. My focus is on the `createContextual` method, particularly how the `_isShapeWrittenUsingIndex` call behaves when property formats are `ANY` or null.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Refining Shape Serialization Logic**\n\nI'm digging into the serialization of enum shapes, particularly when `@JsonFormat(shape = Shape.NUMBER)` is applied at the enum class level but overridden or unset at the property level. The `_isShapeWrittenUsingIndex` method's handling of `Shape.ANY` and null formats is critical here, impacting whether serialization defaults to index or name.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"struct;\n\nimport com.fasterxml.jackson.annotation.JsonFormat;\nimport com.fasterxml.jackson.databind"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".BaseMapTest;\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\npublic class EnumFormatShape7"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"5Test extends BaseMapTest\n{\n    @JsonFormat(shape = JsonFormat.Shape.NUMBER)\n    enum Number"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Color {\n        RED,\n        YELLOW,\n        GREEN\n    }\n\n    static class ColorWrapper {\n        public"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" NumberColor color;\n\n        public ColorWrapper(NumberColor color) {\n            this.color = color;\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        }\n    }\n\n    private final ObjectMapper MAPPER = new ObjectMapper();\n\n    public void testEnumPropertyAsNumber() throws Exception {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        assertEquals(aposToQuotes(\"{'color':2}\"),\n                MAPPER.writeValueAsString(new ColorWrapper"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(NumberColor.GREEN)));\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1359,"output_tokens":696,"output_tokens_details":{"thinking_tokens":493},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.00362925,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00362925,"upstream_inference_prompt_cost":0.00101925,"upstream_inference_completions_cost":0.00261}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

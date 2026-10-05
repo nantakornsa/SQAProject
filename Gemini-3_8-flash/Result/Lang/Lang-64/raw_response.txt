@@ -1,0 +1,57 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791140927-SkLCOjtNDlVkrVAxEX4p","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing Comparison Logic**\n\nI'm currently dissecting a bug in `ValuedEnum.compareTo(Object other)`, specifically how it handles comparisons between instances of different subclasses, leading to potential issues with the subtraction logic.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.apache.commons.lang.enums;\n\nimport junit.framework.TestCase;\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"public class ValuedEnumCompareToRegressionTest extends TestCase {\n\n    private static class EnumA extends ValuedEnum {\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"private static final long serialVersionUID = 1L;\n        public static final EnumA ITEM_1 = new Enum"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"A(\"Item 1\", 1);\n\n        protected EnumA(String name, int value) {\n            super(name,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" value);\n        }\n    }\n\n    private static class EnumB extends ValuedEnum {\n        private static"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" final long serialVersionUID = 1L;\n        public static final EnumB ITEM_1 = new EnumB(\""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Item 1\", 1);\n\n        protected EnumB(String name, int value) {\n            super("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"name, value);\n        }\n    }\n\n    public void testCompareToDifferentEnumTypeThrowsClassCastException() {\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        try {\n            EnumA.ITEM_1.compareTo(EnumB.ITEM_1);\n            fail"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(\"Expected ClassCastException when comparing different ValuedEnum types\");\n        } catch (ClassCastException expected) {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n            // expected behavior\n        }\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1272,"output_tokens":461,"output_tokens_details":{"thinking_tokens":199},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.00268275,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00268275,"upstream_inference_prompt_cost":0.000954,"upstream_inference_completions_cost":0.00172875}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

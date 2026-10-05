@@ -1,0 +1,66 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791181252-hUfpwfRzVDULdOcOrULD","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing Empty Number Handling**\n\nI've identified a critical bug in JacksonDatabind-23. Specifically, `NumberSerializers` failed to implement the `isEmpty` method for primitive number wrappers. This oversight means `JsonInclude(JsonInclude.Include.NON_EMPTY)` is not correctly excluding these wrapper types when they are empty, leading to unexpected serialization. I'm focusing on implementing this missing functionality to ensure proper handling.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind.ser;\n\nimport com.fasterxml.jackson.annotation"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".JsonInclude;\nimport com.fasterxml.jackson.databind.BaseMapTest;\nimport com.fasterxml.jackson.databind"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".ObjectMapper;\n\npublic class TestJsonSerializeEmptyNumbers extends BaseMapTest\n{\n    @JsonInclude(JsonInclude.Include."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"NON_EMPTY)\n    static class EmptyInt {\n        public int value;\n\n        public EmptyInt(int v"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":") {\n            value = v;\n        }\n    }\n\n    @JsonInclude(JsonInclude.Include.NON_EMPTY)"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n    static class EmptyLong {\n        public long value;\n\n        public EmptyLong(long v) {\n            value = v;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        }\n    }\n\n    @JsonInclude(JsonInclude.Include.NON_EMPTY)\n    static"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" class EmptyDouble {\n        public double value;\n\n        public EmptyDouble(double v) {\n            value ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" v;\n        }\n    }\n\n    public void testEmptyInclusionScalars() throws Exception\n    {\n        ObjectMapper mapper = new"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" ObjectMapper();\n\n        assertEquals(\"{}\", mapper.writeValueAsString(new EmptyInt(0)));\n        assertEquals(\"{\\\"value"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\\\":1}\", mapper.writeValueAsString(new EmptyInt(1)));\n\n        assertEquals(\"{}\", mapper.writeValueAsString("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"new EmptyLong(0L)));\n        assertEquals(\"{\\\"value\\\":1}\", mapper.writeValueAsString(new EmptyLong(1L)));"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\n        assertEquals(\"{}\", mapper.writeValueAsString(new EmptyDouble(0.0)));\n        assertEquals(\"{\\\"value\\\":1.0"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"}\", mapper.writeValueAsString(new EmptyDouble(1.0)));\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1797,"output_tokens":530,"output_tokens_details":{"thinking_tokens":167},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00333525,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00333525,"upstream_inference_prompt_cost":0.00134775,"upstream_inference_completions_cost":0.0019875}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,107 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-24
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+350f726ce591004a795c3a241540887e79c3c7bc
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-09-05 14:22:44 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-855
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-855
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math3.optimization.univariate.BrentOptimizerTest::testMath855
+   --> junit.framework.AssertionFailedError: Best point not reported
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math3.optimization.univariate.BrentOptimizer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math3.optimization.univariate.BrentOptimizer ===
+diff --git a/src/main/java/org/apache/commons/math3/optimization/univariate/BrentOptimizer.java b/src/main/java/org/apache/commons/math3/optimization/univariate/BrentOptimizer.java
+index b6ce68ef3..cff5bfd33 100644
+--- a/src/main/java/org/apache/commons/math3/optimization/univariate/BrentOptimizer.java
++++ b/src/main/java/org/apache/commons/math3/optimization/univariate/BrentOptimizer.java
+@@ -227,7 +227,7 @@ public class BrentOptimizer extends BaseAbstractUnivariateOptimizer {
+ 
+                 if (checker != null) {
+                     if (checker.converged(iter, previous, current)) {
+-                        return current;
++                        return best(current, previous, isMinim);
+                     }
+                 }
+ 
+@@ -264,7 +264,7 @@ public class BrentOptimizer extends BaseAbstractUnivariateOptimizer {
+                     }
+                 }
+             } else { // Default termination (Brent's criterion).
+-                return current;
++                return best(current, previous, isMinim);
+             }
+             ++iter;
+         }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testMath855() {
+        final double minSin = 3 * Math.PI / 2;
+        final double offset = 1e-8;
+        final double delta = 1e-7;
+        final UnivariateFunction f1 = new Sin();
+        final UnivariateFunction f2 = new StepFunction(new double[] { minSin, minSin + offset, minSin + 5 * offset },
+                                                       new double[] { 0, -1, 0 });
+        final UnivariateFunction f = FunctionUtils.add(f1, f2);
+        final UnivariateOptimizer optimizer = new BrentOptimizer(1e-8, 1e-100);
+        final UnivariatePointValuePair result
+            = optimizer.optimize(200, f, GoalType.MINIMIZE, minSin - 6.789 * delta, minSin + 9.876 * delta);
+        final int numEval = optimizer.getEvaluations();
+
+        final double sol = result.getPoint();
+        final double expected = 4.712389027602411;
+
+        // System.out.println("min=" + (minSin + offset) + " f=" + f.value(minSin + offset));
+        // System.out.println("sol=" + sol + " f=" + f.value(sol));
+        // System.out.println("exp=" + expected + " f=" + f.value(expected));
+
+        Assert.assertTrue("Best point not reported", f.value(sol) <= f.value(expected));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,132 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-140
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+a70a7c599e53a7752cf4b9e6e82b4408c3c4c04b
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-03-23 05:51:47 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+126
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-126.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.CrossModuleCodeMotionTest::testEmptyModule
+   --> junit.framework.AssertionFailedError: compiler.reportCodeChange() was called even though nothing changed
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.Compiler
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.Compiler ===
+diff --git a/src/com/google/javascript/jscomp/Compiler.java b/src/com/google/javascript/jscomp/Compiler.java
+index d2524b4f6..448e2b56e 100644
+--- a/src/com/google/javascript/jscomp/Compiler.java
++++ b/src/com/google/javascript/jscomp/Compiler.java
+@@ -261,6 +261,7 @@ public class Compiler extends AbstractCompiler {
+     initOptions(options);
+ 
+     checkFirstModule(modules);
++    fillEmptyModules(modules);
+ 
+     this.externs = makeCompilerInput(externs, true);
+     this.modules = modules;
+@@ -325,6 +326,14 @@ public class Compiler extends AbstractCompiler {
+    * Fill any empty modules with a place holder file. It makes any cross module
+    * motion easier.
+    */
++  private void fillEmptyModules(JSModule[] modules) {
++    for (int i = 1; i < modules.length; i ++) {
++      JSModule module = modules[i];
++      if (module.getInputs().isEmpty()) {
++        module.add(JSSourceFile.fromCode("[" + module.getName() + "]", ""));
++      }
++    }
++  }
+   
+   static final DiagnosticType DUPLICATE_INPUT_IN_MODULES =
+       DiagnosticType.error("JSC_DUPLICATE_INPUT_IN_MODULES_ERROR",
+@@ -1579,12 +1588,6 @@ public class Compiler extends AbstractCompiler {
+     if (inputs.size() > 0) {
+       return inputs.get(0).getAstRoot(this);
+     }
+-    for (JSModule m : getModuleGraph().getTransitiveDepsDeepestFirst(module)) {
+-      inputs = m.getInputs();
+-      if (inputs.size() > 0) {
+-        return inputs.get(0).getAstRoot(this);
+-      }
+-    }
+     throw new IllegalStateException("Root module has no inputs");
+   }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testEmptyModule() {
+    // When the dest module is empty, it might try to move the code to the
+    // one of the modules that the empty module depends on. In some cases
+    // this might ended up to be the same module as the definition of the code.
+    // When that happens, CrossMooduleCodeMotion might report a code change
+    // while nothing is moved. This should not be a problem if we know all
+    // modules are non-empty.
+    JSModule m1 = new JSModule("m1");
+    m1.add(JSSourceFile.fromCode("m1", "function x() {}"));
+    
+    JSModule empty = new JSModule("empty");
+    empty.addDependency(m1);
+    
+    JSModule m2 = new JSModule("m2");
+    m2.add(JSSourceFile.fromCode("m2", "x()"));
+    m2.addDependency(empty);
+    
+    JSModule m3 = new JSModule("m3");
+    m3.add(JSSourceFile.fromCode("m3", "x()"));
+    m3.addDependency(empty);
+    
+    test(new JSModule[] {m1,empty,m2,m3},
+        new String[] {
+          "",
+          "function x() {}",
+          "x()",
+          "x()"
+    });
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

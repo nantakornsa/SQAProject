@@ -1,0 +1,95 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-7
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+bcccd3e82241db25a2f34ed655dab88395089f39
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2014-10-28 20:32:47 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+592
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/592
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.creators.TestCreatorsDelegating::testDelegateWithTokenBuffer
+   --> junit.framework.AssertionFailedError: Expected token START_OBJECT, current token FIELD_NAME
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.util.TokenBuffer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.util.TokenBuffer ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/util/TokenBuffer.java b/src/main/java/com/fasterxml/jackson/databind/util/TokenBuffer.java
+index 21a6b287b..58d3e086f 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/util/TokenBuffer.java
++++ b/src/main/java/com/fasterxml/jackson/databind/util/TokenBuffer.java
+@@ -402,11 +402,23 @@ public class TokenBuffer
+      */
+     public TokenBuffer deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException
+     {
++        if (jp.getCurrentTokenId() != JsonToken.FIELD_NAME.id()) {
+             copyCurrentStructure(jp);
++            return this;
++        }
+         /* 28-Oct-2014, tatu: As per #592, need to support a special case of starting from
+          *    FIELD_NAME, which is taken to mean that we are missing START_OBJECT, but need
+          *    to assume one did exist.
+          */
++        JsonToken t;
++        writeStartObject();
++        do {
++            copyCurrentStructure(jp);
++        } while ((t = jp.nextToken()) == JsonToken.FIELD_NAME);
++        if (t != JsonToken.END_OBJECT) {
++            throw ctxt.mappingException("Expected END_OBJECT after copying contents of a JsonParser into TokenBuffer, got "+t);
++        }
++        writeEndObject();
+         return this;
+     }
+     
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testDelegateWithTokenBuffer() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

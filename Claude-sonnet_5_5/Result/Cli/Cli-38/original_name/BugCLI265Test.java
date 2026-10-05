@@ -1,0 +1,54 @@
+package org.apache.commons.cli.bug;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.junit.Before;
+import org.junit.Test;
+
+public class BugCLI265Test
+{
+    private DefaultParser parser;
+    private Options options;
+
+    @Before
+    public void setUp() throws Exception
+    {
+        parser = new DefaultParser();
+
+        Option optionT1 = Option.builder("t1")
+                .hasArg()
+                .numberOfArgs(1)
+                .optionalArg(true)
+                .argName("t1_path")
+                .build();
+        Option optionA = Option.builder("a").hasArg(false).build();
+        Option optionB = Option.builder("b").hasArg(false).build();
+        Option optionLast = Option.builder("last").hasArg(false).build();
+
+        options = new Options()
+                .addOption(optionT1)
+                .addOption(optionA)
+                .addOption(optionB)
+                .addOption(optionLast);
+    }
+
+    @Test
+    public void shouldParseConcatenatedShortOptions() throws Exception
+    {
+        String[] concatenatedShortOptions = new String[] { "-t1", "-ab" };
+
+        final CommandLine commandLine = parser.parse(options, concatenatedShortOptions);
+
+        assertTrue(commandLine.hasOption("t1"));
+        assertNull(commandLine.getOptionValue("t1"));
+        assertTrue(commandLine.hasOption("a"));
+        assertTrue(commandLine.hasOption("b"));
+        assertFalse(commandLine.hasOption("last"));
+    }
+}

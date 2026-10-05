@@ -1,0 +1,39 @@
+The bug is in `StringUtils.equals(CharSequence, CharSequence)`. The buggy version compares over `Math.max(cs1.length(), cs2.length())`, so a shorter non-String `CharSequence` is read past its end. That throws `StringIndexOutOfBoundsException`. The fixed version checks the lengths first, so the call returns false.
+
+The project uses JUnit 4 (the existing tests use `org.junit.Assert`). The test below covers both argument orders with `StringBuilder`, and a mixed `String`/`StringBuilder` case. In the mixed case, `String` is a `CharSequence` but the `instanceof String` shortcut applies only when both arguments are Strings.
+
+```java
+package org.apache.commons.codec.binary;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+/**
+ * Regression test for CODEC-231: StringUtils.equals(CharSequence, CharSequence)
+ * throws StringIndexOutOfBoundsException when the CharSequences differ in length.
+ */
+public class StringUtilsEqualsRegressionTest {
+
+    @Test
+    public void testEqualsCharSequenceShorterFirst() {
+        Assert.assertFalse(StringUtils.equals(new StringBuilder("abc"), new StringBuilder("abcd")));
+    }
+
+    @Test
+    public void testEqualsCharSequenceLongerFirst() {
+        Assert.assertFalse(StringUtils.equals(new StringBuilder("abcd"), new StringBuilder("abc")));
+    }
+
+    @Test
+    public void testEqualsCharSequenceMixedTypesDifferentLength() {
+        Assert.assertFalse(StringUtils.equals("abc", new StringBuilder("abcd")));
+        Assert.assertFalse(StringUtils.equals(new StringBuilder("abcd"), "abc"));
+    }
+
+    @Test
+    public void testEqualsCharSequenceSameContent() {
+        Assert.assertTrue(StringUtils.equals(new StringBuilder("abc"), new StringBuilder("abc")));
+        Assert.assertFalse(StringUtils.equals(new StringBuilder("abc"), new StringBuilder("ABC")));
+    }
+}
+```

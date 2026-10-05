@@ -1,0 +1,27 @@
+```java
+package com.google.javascript.rhino;
+
+import junit.framework.TestCase;
+
+public class JSDocInfoBuilderBlockDescriptionTest extends TestCase {
+
+  public void testRecordBlockDescriptionMarksBuilderPopulatedWithoutDocParsing() {
+    // Documentation parsing is disabled, as for a plain compile.
+    JSDocInfoBuilder builder = new JSDocInfoBuilder(false);
+    assertFalse(builder.isPopulated());
+
+    builder.recordBlockDescription("This is a jsdoc comment");
+
+    // A JSDoc block comment must be treated as populated even when
+    // documentation is not retained. The buggy version leaves the builder
+    // unpopulated.
+    assertTrue(builder.isPopulated());
+  }
+}
+```
+
+I haven't compiled or run this against either version. It assumes `JSDocInfoBuilder` has a public `isPopulated()` method and a `JSDocInfoBuilder(boolean)` constructor.
+
+I tested the `JSDocInfoBuilder` change directly instead of adding a case to `CheckSideEffectsTest`. I was unsure how `ok` and `e` are defined in that class. On the buggy version, `recordBlockDescription` skips setting `populated` when `parseDocumentation` is false, so the assertion fails. The fixed version always sets it, so the assertion passes.
+
+This covers only the `JSDocInfoBuilder` half of the fix. It does not exercise the `GlobalNamespace` twin-reference change behind the `CollapsePropertiesTest` failures.

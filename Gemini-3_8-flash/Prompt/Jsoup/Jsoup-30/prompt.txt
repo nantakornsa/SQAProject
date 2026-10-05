@@ -1,0 +1,147 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-30
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+dfac9ce465ff9c988904d05014d2be2715aa1d2b
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-09-29 12:04:40 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+246
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/246
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.safety.CleanerTest::testIsValid
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.safety.Cleaner
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.safety.Cleaner ===
+diff --git a/src/main/java/org/jsoup/safety/Cleaner.java b/src/main/java/org/jsoup/safety/Cleaner.java
+index e4d45bd2..27af7a7b 100644
+--- a/src/main/java/org/jsoup/safety/Cleaner.java
++++ b/src/main/java/org/jsoup/safety/Cleaner.java
+@@ -3,6 +3,8 @@ package org.jsoup.safety;
+ import org.jsoup.helper.Validate;
+ import org.jsoup.nodes.*;
+ import org.jsoup.parser.Tag;
++import org.jsoup.select.NodeTraversor;
++import org.jsoup.select.NodeVisitor;
+ 
+ import java.util.List;
+ 
+@@ -67,11 +69,17 @@ public class Cleaner {
+     /**
+      Iterates the input and copies trusted nodes (tags, attributes, text) into the destination.
+      */
+-    private int copySafeNodes(Element root, Element destination) {
+-        List<Node> sourceChildren = root.childNodes();
+-        int numDiscarded = 0;
++    private final class CleaningVisitor implements NodeVisitor {
++        private int numDiscarded = 0;
++        private final Element root;
++        private Element destination; // current element to append nodes to
++
++        private CleaningVisitor(Element root, Element destination) {
++            this.root = root;
++            this.destination = destination;
++        }
+ 
+-        for (Node source : sourceChildren) {
++        public void head(Node source, int depth) {
+             if (source instanceof Element) {
+                 Element sourceEl = (Element) source;
+ 
+@@ -81,20 +89,31 @@ public class Cleaner {
+                     destination.appendChild(destChild);
+ 
+                     numDiscarded += meta.numAttribsDiscarded;
+-                    numDiscarded += copySafeNodes(sourceEl, destChild);
+-                } else {
++                    destination = destChild;
++                } else if (source != root) { // not a safe tag, so don't add. don't count root against discarded.
+                     numDiscarded++;
+-                    numDiscarded += copySafeNodes(sourceEl, destination);
+                 }
+             } else if (source instanceof TextNode) {
+                 TextNode sourceText = (TextNode) source;
+                 TextNode destText = new TextNode(sourceText.getWholeText(), source.baseUri());
+                 destination.appendChild(destText);
++            } else { // else, we don't care about comments, xml proc instructions, etc
++                numDiscarded++;
+             }
+         }
+-        return numDiscarded;
+ 
++        public void tail(Node source, int depth) {
++            if (source instanceof Element && whitelist.isSafeTag(source.nodeName())) {
++                destination = destination.parent(); // would have descended, so pop destination stack
++            }
++        }
++    }
+ 
++    private int copySafeNodes(Element source, Element dest) {
++        CleaningVisitor cleaningVisitor = new CleaningVisitor(source, dest);
++        NodeTraversor traversor = new NodeTraversor(cleaningVisitor);
++        traversor.traverse(source);
++        return cleaningVisitor.numDiscarded;
+     }
+ 
+     private ElementMeta createSafeElement(Element sourceEl) {
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void testIsValid() {
+        String ok = "<p>Test <b><a href='http://example.com/'>OK</a></b></p>";
+        String nok1 = "<p><script></script>Not <b>OK</b></p>";
+        String nok2 = "<p align=right>Test Not <b>OK</b></p>";
+        String nok3 = "<!-- comment --><p>Not OK</p>"; // comments and the like will be cleaned
+        assertTrue(Jsoup.isValid(ok, Whitelist.basic()));
+        assertFalse(Jsoup.isValid(nok1, Whitelist.basic()));
+        assertFalse(Jsoup.isValid(nok2, Whitelist.basic()));
+        assertFalse(Jsoup.isValid(nok3, Whitelist.basic()));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

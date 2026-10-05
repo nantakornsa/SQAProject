@@ -1,0 +1,101 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-81
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+e38dfd44829e13ee83fd62bfe937580f5a998c11
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2018-04-28 19:58:51 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1009
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/1009
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.helper.DataUtilTest::supportsXmlCharsetDeclaration
+   --> junit.framework.AssertionFailedError: expected:<Hell[ö Wö]rld!> but was:<Hell[� W�]rld!>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.helper.DataUtil
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.helper.DataUtil ===
+diff --git a/src/main/java/org/jsoup/helper/DataUtil.java b/src/main/java/org/jsoup/helper/DataUtil.java
+index 0d52d389..3aaa0ed3 100644
+--- a/src/main/java/org/jsoup/helper/DataUtil.java
++++ b/src/main/java/org/jsoup/helper/DataUtil.java
+@@ -2,6 +2,7 @@ package org.jsoup.helper;
+ 
+ import org.jsoup.UncheckedIOException;
+ import org.jsoup.internal.ConstrainableInputStream;
++import org.jsoup.nodes.Comment;
+ import org.jsoup.nodes.Document;
+ import org.jsoup.nodes.Element;
+ import org.jsoup.nodes.Node;
+@@ -133,6 +134,11 @@ public final class DataUtil {
+                 XmlDeclaration decl = null;
+                 if (first instanceof XmlDeclaration)
+                     decl = (XmlDeclaration) first;
++                else if (first instanceof Comment) {
++                    Comment comment = (Comment) first;
++                    if (comment.isXmlDeclaration())
++                        decl = comment.asXmlDeclaration();
++                }
+                 if (decl != null) {
+                     if (decl.name().equalsIgnoreCase("xml"))
+                         foundCharset = decl.attr("encoding");
+
+
+=== TRIGGERING TEST METHOD ===
+    public void supportsXmlCharsetDeclaration() throws IOException {
+        String encoding = "iso-8859-1";
+        InputStream soup = new ByteArrayInputStream((
+            "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>" +
+                "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" +
+                "<html xmlns=\"http://www.w3.org/1999/xhtml\" lang=\"en\" xml:lang=\"en\">Hellö Wörld!</html>"
+        ).getBytes(encoding));
+
+        Document doc = Jsoup.parse(soup, null, "");
+        assertEquals("Hellö Wörld!", doc.body().text());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

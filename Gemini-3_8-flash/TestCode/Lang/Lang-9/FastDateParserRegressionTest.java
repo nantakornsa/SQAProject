@@ -1,0 +1,27 @@
+package org.apache.commons.lang3.time;
+
+import static org.junit.Assert.fail;
+
+import java.util.Locale;
+import java.util.TimeZone;
+import org.junit.Test;
+
+public class FastDateParserRegressionTest {
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testUnterminatedQuoteInPatternThrowsIllegalArgumentException() {
+        // Unterminated quote at the end of the pattern should cause an IllegalArgumentException
+        // On the buggy version, unparsed characters at the end of pattern are silently ignored.
+        new FastDateParser("d'", TimeZone.getDefault(), Locale.getDefault());
+    }
+
+    @Test
+    public void testIncompletePatternThrowsIllegalArgumentException() {
+        try {
+            new FastDateParser("'d'd'", TimeZone.getDefault(), Locale.getDefault());
+            fail("Expected IllegalArgumentException for unterminated quote pattern");
+        } catch (IllegalArgumentException expected) {
+            // Expected
+        }
+    }
+}

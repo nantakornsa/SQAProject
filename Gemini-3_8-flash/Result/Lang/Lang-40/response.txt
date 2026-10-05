@@ -1,0 +1,20 @@
+```java
+package org.apache.commons.lang;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for LANG-432 / Lang-40.
+ * Tests that StringUtils.containsIgnoreCase does not expand characters like German eszett (\u00DF to SS)
+ * due to locale-sensitive toUpperCase() conversions.
+ */
+public class StringUtilsContainsIgnoreCaseRegressionTest extends TestCase {
+
+    public void testContainsIgnoreCase_GermanEszett() {
+        // In the buggy version, containsIgnoreCase uses str.toUpperCase() and searchStr.toUpperCase().
+        // "\u00DF".toUpperCase() results in "SS", causing containsIgnoreCase("\u00DF", "SS") to return true.
+        // In the fixed version using regionMatches, this returns false.
+        assertFalse(StringUtils.containsIgnoreCase("\u00DF", "SS"));
+    }
+}
+```

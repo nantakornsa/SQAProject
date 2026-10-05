@@ -1,0 +1,38 @@
+```java
+package com.fasterxml.jackson.databind.type;
+
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class RecursiveType86Test extends BaseMapTest {
+
+    static class Base {
+        public int base = 1;
+        public Sub sub;
+    }
+
+    static class Sub extends Base {
+        public int sub = 2;
+    }
+
+    public void testSuperClassWithReferencedJavaType() {
+        TypeFactory tf = newTypeFactory();
+        tf.constructType(Base.class);
+        JavaType subType = tf.constructType(Sub.class);
+        JavaType baseTypeFromSub = subType.getSuperClass();
+        assertNotNull(baseTypeFromSub);
+        assertNotNull("Super class of ResolvedRecursiveType should not be null", baseTypeFromSub.getSuperClass());
+        assertEquals(Object.class, baseTypeFromSub.getSuperClass().getRawClass());
+    }
+
+    public void testBasePropertiesIncludedWhenSerializingSubWhenSubTypeLoadedAfterBaseType() throws Exception {
+        ObjectMapper mapper = newObjectMapper();
+        mapper.constructType(Base.class);
+        Sub sub = new Sub();
+        String json = mapper.writeValueAsString(sub);
+        assertTrue("JSON should contain 'base' property: " + json, json.contains("\"base\":1"));
+        assertTrue("JSON should contain 'sub' property: " + json, json.contains("\"sub\":2"));
+    }
+}
+```

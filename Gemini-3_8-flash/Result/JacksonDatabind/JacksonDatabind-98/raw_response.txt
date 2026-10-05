@@ -1,0 +1,96 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791189403-uABZycd1mMCFEog1Uj8P","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind.jsontype.ext;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\nimport com.fasterxml.jackson.annotation.JsonCreator;\nimport com.fasterxml.jackson.annotation.JsonProperty;\nimport com."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"fasterxml.jackson.annotation.JsonSubTypes;\nimport com.fasterxml.jackson.annotation.JsonTypeInfo;\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" com.fasterxml.jackson.core.type.TypeReference;\nimport com.fasterxml.jackson.databind.Base"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"MapTest;\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\nimport java.util.Arrays;\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" java.util.List;\n\n/**\n * Test case for [databind#1328]: external type id with"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" non-String type (such as Enum)\n * passed to creator parameter.\n */\npublic class ExternalTypeIdWithEnum13"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"28Test extends BaseMapTest {\n\n    public enum AnimalType {\n        Dog\n    }\n\n    public"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" static class AnimalAndType {\n        private final AnimalType type;\n        private final Animal animal;\n\n        @Json"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Creator\n        public AnimalAndType(\n                @JsonProperty(\"type\") AnimalType type,\n                @JsonProperty(\""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"animal\") Animal animal) {\n            this.type = type;\n            this.animal = animal;\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"}\n\n        public AnimalType getType() {\n            return type;\n        }\n\n        @JsonTypeInfo("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXTERNAL_PROPERTY, property = \"type\")\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"@JsonSubTypes({\n                @JsonSubTypes.Type(value = Dog.class, name = \"Dog\")\n        })\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"        public Animal getAnimal() {\n            return animal;\n        }\n    }\n\n    public interface Animal {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n    }\n\n    public static class Dog implements Animal {\n        public String name = \"Spot\";\n\n        public Dog"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"() { }\n        public Dog(String name) {\n            this.name = name;\n        }\n    }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n    public void testExternalTypeIdWithEnumInCreator() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n\n        String json ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" mapper.writerWithDefaultPrettyPrinter()\n                .writeValueAsString(Arrays.asList(new AnimalAndType(Animal"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Type.Dog, new Dog())));\n\n        List<AnimalAndType> list = mapper.readerFor(new Type"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Reference<List<AnimalAndType>>() { })\n                .readValue(json);\n\n        assertNotNull(list);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n        assertEquals(1, list.size());\n        assertEquals(AnimalType.Dog, list.get(0"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":").getType());\n        assertTrue(list.get(0).getAnimal() instanceof Dog);\n    }\n}"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n```"}}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"signature_delta","signature":"AY89a1+wqcAn8XPX1V8X7LQZ4uipnu/FJnPc06mRrYQstVUDlV+QNjx+ilB/mzlujH2dzHV0qMbiDCb6czVjXbJMGKHlZ7QUgditF1waVM1FCuc5gv94"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1236,"output_tokens":578,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.0030945,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0030945,"upstream_inference_prompt_cost":0.000927,"upstream_inference_completions_cost":0.0021675}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

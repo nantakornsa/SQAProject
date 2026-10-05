@@ -1,0 +1,84 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-59
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+9b0b19a9162ae8d217b06716962b982703ab4d1b
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2006-12-12 22:34:39 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-299
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-299
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang.text.StrBuilderAppendInsertTest::testLang299
+   --> java.lang.ArrayIndexOutOfBoundsException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang.text.StrBuilder
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang.text.StrBuilder ===
+diff --git a/src/java/org/apache/commons/lang/text/StrBuilder.java b/src/java/org/apache/commons/lang/text/StrBuilder.java
+index 886d424ea..4c1450995 100644
+--- a/src/java/org/apache/commons/lang/text/StrBuilder.java
++++ b/src/java/org/apache/commons/lang/text/StrBuilder.java
+@@ -881,7 +881,7 @@ public class StrBuilder implements Cloneable {
+             String str = (obj == null ? getNullText() : obj.toString());
+             int strLen = str.length();
+             if (strLen >= width) {
+-                str.getChars(0, strLen, buffer, size);
++                str.getChars(0, width, buffer, size);
+             } else {
+                 int padLen = width - strLen;
+                 str.getChars(0, strLen, buffer, size);
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testLang299() {
+        StrBuilder sb = new StrBuilder(1);
+        sb.appendFixedWidthPadRight("foo", 1, '-');
+        assertEquals("f", sb.toString());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

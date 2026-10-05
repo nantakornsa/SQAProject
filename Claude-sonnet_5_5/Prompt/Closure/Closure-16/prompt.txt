@@ -1,0 +1,127 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-16
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+3b97e5e4212c769daa22a96094ed19b4658c8760
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-07-09 16:18:36 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+772
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-772.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.IntegrationTest::testIssue772
+   --> junit.framework.AssertionFailedError: Expected no warnings or errors
+ - com.google.javascript.jscomp.ScopedAliasesTest::testIssue772
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: Node tree inequality:
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.ScopedAliases
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.ScopedAliases ===
+diff --git a/src/com/google/javascript/jscomp/ScopedAliases.java b/src/com/google/javascript/jscomp/ScopedAliases.java
+index 26fb23071..e2f053879 100644
+--- a/src/com/google/javascript/jscomp/ScopedAliases.java
++++ b/src/com/google/javascript/jscomp/ScopedAliases.java
+@@ -167,17 +167,23 @@ class ScopedAliases implements HotSwapCompilerPass {
+ 
+   private class AliasedTypeNode implements AliasUsage {
+     private final Node typeReference;
++    private final Node aliasDefinition;
+     private final String aliasName;
+ 
+-    AliasedTypeNode(Node typeReference,
++    AliasedTypeNode(Node typeReference, Node aliasDefinition,
+         String aliasName) {
+       this.typeReference = typeReference;
++      this.aliasDefinition = aliasDefinition;
+       this.aliasName = aliasName;
+     }
+ 
+     @Override
+     public void applyAlias() {
+-      typeReference.setString(aliasName);
++      String typeName = typeReference.getString();
++      String aliasExpanded =
++          Preconditions.checkNotNull(aliasDefinition.getQualifiedName());
++      Preconditions.checkState(typeName.startsWith(aliasName));
++      typeReference.setString(typeName.replaceFirst(aliasName, aliasExpanded));
+     }
+   }
+ 
+@@ -465,7 +471,7 @@ class ScopedAliases implements HotSwapCompilerPass {
+         Var aliasVar = aliases.get(baseName);
+         if (aliasVar != null) {
+           Node aliasedNode = aliasVar.getInitialValue();
+-          aliasUsages.add(new AliasedTypeNode(typeNode, aliasedNode.getQualifiedName() + name.substring(endIndex)));
++          aliasUsages.add(new AliasedTypeNode(typeNode, aliasedNode, baseName));
+         }
+       }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue772() throws Exception {
+    CompilerOptions options = createCompilerOptions();
+    options.closurePass = true;
+    options.checkTypes = true;
+    test(
+        options,
+        "/** @const */ var a = {};" +
+        "/** @const */ a.b = {};" +
+        "/** @const */ a.b.c = {};" +
+        "goog.scope(function() {" +
+        "  var b = a.b;" +
+        "  var c = b.c;" +
+        "  /** @typedef {string} */" +
+        "  c.MyType;" +
+        "  /** @param {c.MyType} x The variable. */" +
+        "  c.myFunc = function(x) {};" +
+        "});",
+        "/** @const */ var a = {};" +
+        "/** @const */ a.b = {};" +
+        "/** @const */ a.b.c = {};" +
+        "a.b.c.MyType;" +
+        "a.b.c.myFunc = function(x) {};");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

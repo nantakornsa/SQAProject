@@ -1,0 +1,24 @@
+package org.mockitousage.spies;
+
+import static org.mockito.Mockito.*;
+
+import java.util.List;
+import org.junit.Test;
+import org.mockito.exceptions.base.MockitoException;
+import org.mockitoutil.TestBase;
+
+public class GeminiSpyingOnInterfacesTest extends TestBase {
+
+    @Test
+    public void shouldFailInRuntimeWhenCallingRealMethodOnInterface() {
+        List<?> list = mock(List.class);
+        when(list.get(0)).thenCallRealMethod();
+
+        try {
+            list.get(0);
+            fail();
+        } catch (MockitoException e) {
+            // expected
+        }
+    }
+}

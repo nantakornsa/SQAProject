@@ -1,0 +1,79 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-96
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+94cf29c4e3b6a7f37ad9d85ba572409691ed7f23
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-08-29 15:46:22 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-221
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-221
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.complex.ComplexTest::testMath221
+   --> junit.framework.AssertionFailedError: expected:<org.apache.commons.math.complex.Complex@98b00000> but was:<org.apache.commons.math.complex.Complex@18b00000>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.complex.Complex
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.complex.Complex ===
+diff --git a/src/java/org/apache/commons/math/complex/Complex.java b/src/java/org/apache/commons/math/complex/Complex.java
+index 3571567f8..8b622cb29 100644
+--- a/src/java/org/apache/commons/math/complex/Complex.java
++++ b/src/java/org/apache/commons/math/complex/Complex.java
+@@ -255,7 +255,7 @@ public class Complex implements Serializable  {
+                 if (rhs.isNaN()) {
+                     ret = this.isNaN();
+                 } else {
+-                    ret = (Double.doubleToRawLongBits(real) == Double.doubleToRawLongBits(rhs.getReal())) && (Double.doubleToRawLongBits(imaginary) == Double.doubleToRawLongBits(rhs.getImaginary())); 
++                    ret = (real == rhs.real) && (imaginary == rhs.imaginary); 
+                 }
+             } catch (ClassCastException ex) {
+                 // ignore exception
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testMath221() {
+        assertEquals(new Complex(0,-1), new Complex(0,1).multiply(new Complex(-1,0)));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

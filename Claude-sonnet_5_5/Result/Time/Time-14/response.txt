@@ -1,0 +1,53 @@
+```java
+package org.joda.time;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.joda.time.chrono.ISOChronology;
+
+/**
+ * Regression test for MonthDay arithmetic starting from a leap day (Feb 29).
+ */
+public class TestMonthDayLeapRegression extends TestCase {
+
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
+
+    public static TestSuite suite() {
+        return new TestSuite(TestMonthDayLeapRegression.class);
+    }
+
+    public TestMonthDayLeapRegression(String name) {
+        super(name);
+    }
+
+    public void testPlusMonths_int_negativeFromLeap() {
+        MonthDay test = new MonthDay(2, 29, ISOChronology.getInstanceUTC());
+        MonthDay result = test.plusMonths(-1);
+        MonthDay expected = new MonthDay(1, 29, ISOChronology.getInstance());
+        assertEquals(expected, result);
+    }
+
+    public void testPlusMonths_int_fromLeap() {
+        MonthDay test = new MonthDay(2, 29, ISOChronology.getInstanceUTC());
+        MonthDay result = test.plusMonths(1);
+        MonthDay expected = new MonthDay(3, 29, ISOChronology.getInstance());
+        assertEquals(expected, result);
+    }
+
+    public void testMinusMonths_int_fromLeap() {
+        MonthDay test = new MonthDay(2, 29, ISOChronology.getInstanceUTC());
+        MonthDay result = test.minusMonths(1);
+        MonthDay expected = new MonthDay(1, 29, ISOChronology.getInstance());
+        assertEquals(expected, result);
+    }
+
+    public void testPlusMonths_int_wrapKeepsLeapDay() {
+        MonthDay test = new MonthDay(2, 29, ISOChronology.getInstanceUTC());
+        MonthDay result = test.plusMonths(12);
+        assertEquals(new MonthDay(2, 29, ISOChronology.getInstance()), result);
+    }
+}
+```

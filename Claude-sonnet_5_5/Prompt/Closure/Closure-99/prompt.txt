@@ -1,0 +1,102 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-99
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+8aa879a4eeb18cfc8d13e6c843a32b7f41ccd516
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-06-04 18:47:05 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+125
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-125.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.CheckGlobalThisTest::testPropertyOfMethod
+   --> junit.framework.AssertionFailedError: There should be one error.  expected:<1> but was:<0>
+ - com.google.javascript.jscomp.CheckGlobalThisTest::testMethod4
+   --> junit.framework.AssertionFailedError: Unexpected error(s): JSC_USED_GLOBAL_THIS. dangerous use of the global this object at testcode line 1 : 39 expected:<0> but was:<1>
+ - com.google.javascript.jscomp.CheckGlobalThisTest::testInterface1
+   --> junit.framework.AssertionFailedError: Unexpected error(s): JSC_USED_GLOBAL_THIS. dangerous use of the global this object at testcode line 1 : 54 expected:<0> but was:<1>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.CheckGlobalThis
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.CheckGlobalThis ===
+diff --git a/src/com/google/javascript/jscomp/CheckGlobalThis.java b/src/com/google/javascript/jscomp/CheckGlobalThis.java
+index 25327afe3..5108686ed 100644
+--- a/src/com/google/javascript/jscomp/CheckGlobalThis.java
++++ b/src/com/google/javascript/jscomp/CheckGlobalThis.java
+@@ -89,6 +89,7 @@ final class CheckGlobalThis implements Callback {
+       JSDocInfo jsDoc = getFunctionJsDocInfo(n);
+       if (jsDoc != null &&
+           (jsDoc.isConstructor() ||
++           jsDoc.isInterface() ||
+            jsDoc.hasThisType() ||
+            jsDoc.isOverride())) {
+         return false;
+@@ -122,13 +123,17 @@ final class CheckGlobalThis implements Callback {
+       } else {
+         // Only traverse the right side if it's not an assignment to a prototype
+         // property or subproperty.
++        if (NodeUtil.isGet(lhs)) {
+           if (lhs.getType() == Token.GETPROP &&
+               lhs.getLastChild().getString().equals("prototype")) {
+             return false;
+           }
+-          if (lhs.getQualifiedName() != null && lhs.getQualifiedName().contains(".prototype.")) {
++          Node llhs = lhs.getFirstChild();
++          if (llhs.getType() == Token.GETPROP &&
++              llhs.getLastChild().getString().equals("prototype")) {
+             return false;
+           }
++        }
+       }
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testPropertyOfMethod() {
+    testFailure("a.protoype.b = {}; " +
+        "a.prototype.b.c = function() { this.foo = 3; };");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

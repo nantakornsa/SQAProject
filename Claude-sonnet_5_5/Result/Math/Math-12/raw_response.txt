@@ -1,0 +1,96 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791145709-J6IZMOBVJ2zpjcL2EVlV","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":7542,"output_tokens":4,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I need"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" a regression test that fails on the buggy version where BitsStreamGenerator isn't Serializable. I'm thinking about serializing a Well19937c instance, since AbstractWell extends BitsStreamG"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"enerator and implements RandomGenerator, Serializable, to check whether the bug breaks that chain."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"The iss"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ue is that superclass fields like nextGaussian get reset to defaults after deserialization since the parent class's state isn't captured. So I'll write a test that seeds a Well19937c, calls nextGaussian() to cache a"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" value, serializes and deserializes a copy, then compares the cached nextGaussian between original and copy -- in the buggy version they'd differ, in the fixed version they'd match. I'll use plain ObjectOutputStream/ObjectInputStream for serialization in a"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" JUnit4 test under the org.apache.commons.math3.random package."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1zb25uZXQtNS41LTIwMjYwOTI4fGNsYXVkZS1vbi1hd3MifQ"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"The test below targets the root cause in `BitsStreamGenerator`, not the distribution clone tests that failed in"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" Defects4J.\n\n- **Root cause:** In the buggy version, `BitsStreamGenerator` is not `Serializable`, so its cached `nextGaussian` field is not serialized. After deserialization the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" field is reset to `NaN`, and the copy no longer matches the original.\n- **What the test does:** It seeds a `Well19937c`, calls `nextGaussian()` once so"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" the second Box-Muller value is cached, then serializes and deserializes the generator. It asserts that the original and the copy return identical values from the next `nextGaussian()` call"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":", and from a further run of draws.\n- **Expected result:** On the buggy version the original returns the cached value while the copy generates a new one, so the first"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" assertion fails. On the fixed version both return the same value, so it passes.\n- **Not run:** I have not run this against either version.\n\n```java\npackage org.apache.commons.math3.random;\n\nimport java.io.ByteArray"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"InputStream;\nimport java.io.ByteArrayOutputStream;\nimport java.io.ObjectInputStream;\nimport java.io.ObjectOutputStream;\n\nimport org.junit.Assert;\nimport org.junit.Test;\n\n/**\n * Regression test for M"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ATH-927: the state of {@link BitsStreamGenerator}\n * (cached gaussian value) must be preserved by serialization.\n */\npublic class BitsStreamGeneratorSerializationTest {\n\n    @Test\n    public void testSerializationPreservesNextGaussian() throws"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" Exception {\n        final Well19937c original = new Well19937c(123456789L);\n\n        // Generates two gaussian values, caching the second one.\n        original.nextGaussian();\n\n        // Serialize and deserialize.\n        final "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ByteArrayOutputStream bytes = new ByteArrayOutputStream();\n        final ObjectOutputStream oos = new ObjectOutputStream(bytes);\n        oos.writeObject(original);\n        oos.close();\n\n        final ObjectInputStream "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ois =\n            new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()));\n        final Well19937c copy = (Well19937c) ois.readObject();\n        ois.close();\n\n        Assert.assertTrue("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"original instanceof java.io.Serializable);\n        Assert.assertTrue(BitsStreamGenerator.class.isAssignableFrom(copy.getClass()));\n        Assert.assertTrue(java.io.Serializ"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"able.class.isAssignableFrom(BitsStreamGenerator.class));\n\n        // The cached gaussian must be identical in both generators.\n        Assert.assertEquals(original.nextGaussian(), copy.nextGaussian(), "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"0d);\n\n        // And subsequent values must remain identical.\n        for (int i = 0; i < 10; i++) {\n            Assert.assertEquals(original.nextGaussian(), copy.nextGaussian(), 0d);\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"}\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":7542,"output_tokens":1589,"output_tokens_details":{"thinking_tokens":593},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.030974,"is_byok":false,"cost_details":{"upstream_inference_cost":0.030974,"upstream_inference_prompt_cost":0.015084,"upstream_inference_completions_cost":0.01589}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,34 @@
+The buggy `add` computes `real + rhs.real` and `imaginary + rhs.imaginary` without checking for NaN. When `rhs` is `new Complex(1, NaN)`, the result is `(4, NaN)`, so its real part is not NaN. The fix returns `Complex.NaN` whenever either operand is NaN, so both parts become NaN. The test therefore checks that both parts are NaN, and also that NaN on the left-hand side propagates. This uses JUnit 4 `Assert`, matching the project's existing tests.
+
+```java
+package org.apache.commons.math.complex;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+public class ComplexAddNaNRegressionTest {
+
+    private final double nan = Double.NaN;
+
+    @Test
+    public void testAddNaN() {
+        Complex x = new Complex(3.0, 4.0);
+        Complex z = x.add(Complex.NaN);
+        Assert.assertTrue(z.isNaN());
+        z = new Complex(1, nan);
+        Complex w = x.add(z);
+        Assert.assertTrue(Double.isNaN(w.getReal()));
+        Assert.assertTrue(Double.isNaN(w.getImaginary()));
+    }
+
+    @Test
+    public void testAddToNaNComplex() {
+        Complex x = new Complex(1, nan);
+        Complex y = new Complex(3.0, 4.0);
+        Complex w = x.add(y);
+        Assert.assertTrue(Double.isNaN(w.getReal()));
+        Assert.assertTrue(Double.isNaN(w.getImaginary()));
+        Assert.assertTrue(w.isNaN());
+    }
+}
+```

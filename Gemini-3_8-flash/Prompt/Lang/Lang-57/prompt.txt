@@ -1,0 +1,111 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-57
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+cf20d13c64da51becd1351befe02a06144fd6fc1
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2006-12-22 20:34:37 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-304
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-304
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang.LocaleUtilsTest::testAvailableLocaleSet
+   --> java.lang.NullPointerException
+ - org.apache.commons.lang.LocaleUtilsTest::testIsAvailableLocale
+   --> java.lang.NullPointerException
+ - org.apache.commons.lang.LocaleUtilsTest::testAvailableLocaleList
+   --> java.lang.NullPointerException
+ - org.apache.commons.lang.LocaleUtilsTest::testCountriesByLanguage
+   --> java.lang.NullPointerException
+ - org.apache.commons.lang.LocaleUtilsTest::testLocaleLookupList_LocaleLocale
+   --> java.lang.NullPointerException
+ - org.apache.commons.lang.LocaleUtilsTest::testLanguagesByCountry
+   --> java.lang.NullPointerException
+ - org.apache.commons.lang.LocaleUtilsTest::testToLocale_1Part
+   --> java.lang.NullPointerException
+ - org.apache.commons.lang.LocaleUtilsTest::testToLocale_2Part
+   --> java.lang.NullPointerException
+ - org.apache.commons.lang.LocaleUtilsTest::testToLocale_3Part
+   --> java.lang.NullPointerException
+ - org.apache.commons.lang.LocaleUtilsTest::testLocaleLookupList_Locale
+   --> java.lang.NullPointerException
+ - org.apache.commons.lang.LocaleUtilsTest::testConstructor
+   --> java.lang.NullPointerException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang.LocaleUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang.LocaleUtils ===
+diff --git a/src/java/org/apache/commons/lang/LocaleUtils.java b/src/java/org/apache/commons/lang/LocaleUtils.java
+index ceb886e89..139d9a7f6 100644
+--- a/src/java/org/apache/commons/lang/LocaleUtils.java
++++ b/src/java/org/apache/commons/lang/LocaleUtils.java
+@@ -220,7 +220,7 @@ public class LocaleUtils {
+      * @return true if the locale is a known locale
+      */
+     public static boolean isAvailableLocale(Locale locale) {
+-        return cAvailableLocaleSet.contains(locale);
++        return availableLocaleList().contains(locale);
+     }
+ 
+     //-----------------------------------------------------------------------
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testAvailableLocaleSet() {
+        Set set = LocaleUtils.availableLocaleSet();
+        Set set2 = LocaleUtils.availableLocaleSet();
+        assertNotNull(set);
+        assertSame(set, set2);
+        assertUnmodifiableCollection(set);
+        
+        Locale[] jdkLocaleArray = Locale.getAvailableLocales();
+        List jdkLocaleList = Arrays.asList(jdkLocaleArray);
+        Set jdkLocaleSet = new HashSet(jdkLocaleList);
+        assertEquals(jdkLocaleSet, set);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

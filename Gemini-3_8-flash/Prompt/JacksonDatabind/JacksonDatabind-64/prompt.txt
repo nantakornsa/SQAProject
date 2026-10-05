@@ -1,0 +1,96 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-64
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+ea30c7b4d7c4621f777aed4cb4552a2c1e2270a4
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-10-16 10:54:38 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1417
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1417
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.filter.JsonIncludeTest::testIssue1351
+   --> junit.framework.ComparisonFailure: expected:<{[]}> but was:<{["str":null]}>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.ser.PropertyBuilder
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.ser.PropertyBuilder ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/ser/PropertyBuilder.java b/src/main/java/com/fasterxml/jackson/databind/ser/PropertyBuilder.java
+index 2bd24051f..6363421ef 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/ser/PropertyBuilder.java
++++ b/src/main/java/com/fasterxml/jackson/databind/ser/PropertyBuilder.java
+@@ -149,17 +149,22 @@ public class PropertyBuilder
+             //    whereas for global defaults OR per-property overrides, we have more
+             //    static definition. Sigh.
+             // First: case of class/type specifying it; try to find POJO property defaults
++            Object defaultBean;
+ 
+             // 16-Oct-2016, tatu: Note: if we can not for some reason create "default instance",
+             //    revert logic to the case of general/per-property handling, so both
+             //    type-default AND null are to be excluded.
+             //    (as per [databind#1417]
+-            if (_useRealPropertyDefaults) {
++            if (_useRealPropertyDefaults && (defaultBean = getDefaultBean()) != null) {
+                 // 07-Sep-2016, tatu: may also need to front-load access forcing now
+                 if (prov.isEnabled(MapperFeature.CAN_OVERRIDE_ACCESS_MODIFIERS)) {
+                     am.fixAccess(_config.isEnabled(MapperFeature.OVERRIDE_PUBLIC_ACCESS_MODIFIERS));
+                 }
+-                valueToSuppress = getPropertyDefaultValue(propDef.getName(), am, actualType);
++                try {
++                    valueToSuppress = am.getValue(defaultBean);
++                } catch (Exception e) {
++                    _throwWrapped(e, propDef.getName(), defaultBean);
++                }
+             } else {
+                 valueToSuppress = getDefaultValue(actualType);
+                 suppressNulls = true;
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testIssue1351() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

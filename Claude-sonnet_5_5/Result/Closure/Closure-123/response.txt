@@ -1,0 +1,17 @@
+```java
+package com.google.javascript.jscomp;
+
+public class CodePrinterHookInOperatorRegressionTest extends CodePrinterTestBase {
+
+  public void testPrintInOperatorInHookInForLoopInit() {
+    // The 'in' operator inside the "then" branch of a hook within a
+    // for-loop initializer must stay parenthesized.
+    assertPrintSame("for(a=c?0:(0 in d);;)foo()");
+    assertPrintSame("for(a=c?(0 in d):0;;)foo()");
+  }
+}
+```
+
+I haven't compiled or run this. It assumes `CodePrinterTestBase` exists at this revision and provides `assertPrintSame`, which I believe it does but haven't verified.
+
+On the buggy version the first assertion should fail with the output from the bug report: `for(a=c?0:[0 in d];;)foo()` instead of `for(a=c?0:[(0 in d)];;)foo()`. On the fixed version, `getContextForNoInOperator(context)` keeps the for-init context for the hook's branches, so both assertions should pass.

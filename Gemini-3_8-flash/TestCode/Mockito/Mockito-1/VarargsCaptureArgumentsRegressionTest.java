@@ -1,0 +1,26 @@
+package org.mockitousage.bugs;
+
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class VarargsCaptureArgumentsRegressionTest {
+
+    interface IMethods {
+        String varargs(String... args);
+    }
+
+    @Test
+    public void should_stub_and_verify_varargs() {
+        IMethods mock = mock(IMethods.class);
+
+        when(mock.varargs("a", "b")).thenReturn("result");
+
+        assertEquals("result", mock.varargs("a", "b"));
+        verify(mock).varargs("a", "b");
+    }
+}

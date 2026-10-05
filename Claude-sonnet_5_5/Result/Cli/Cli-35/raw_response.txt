@@ -1,0 +1,75 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791086777-49vUNZC4zQyJpOqPWEsa","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1354,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" below"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" targ"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ets C"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"LI-252."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" In"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" the buggy version, `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Options.getMatchingO"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ptions` does"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" not return early"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" when the given name exactly matches a long option. Parsing `--prefix` therefore throws `AmbiguousOptionException`, because `prefixplusplus` also starts with `prefix`. The fix"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ed version returns only the exact match.\n\nI used JUnit 3 style (`TestCase`), which matches the triggering test's `public void testXxx()` form and"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" the project's older tests. I did not compile or run it. It uses `getMatchingOptions` directly and also checks the parsed result.\n\n```java\npackage org.apache.commons."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"cli.bug;\n\nimport java.util.List;\n\nimport junit.framework.TestCase;\n\nimport org.apache.commons.cli.CommandLine;\nimport org.apache.commons.cli.DefaultParser;\nimport org.apache.commons.cli.Option;\nimport org.apache.commons.cli."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Options;\nimport org.apache.commons.cli.ParseException;\n\npublic class BugCLI252RegressionTest extends TestCase\n{\n    private Options getOptions()\n    {\n        Options options = new Options();\n        options.addOption(Option.builder().longOpt(\"prefix\").build());\n        options."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"addOption(Option.builder().longOpt(\"prefixplusplus\").build());\n        return options;\n    }\n\n    public void testExactOptionNameMatchDoesNotThrowAmbiguous() throws ParseException\n    {\n        CommandLine cmd = new DefaultPar"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ser().parse(getOptions(), new String[]{\"--prefix\"});\n        assertTrue(cmd.hasOption(\"prefix\"));\n        assertFalse(cmd.hasOption(\"prefixplusplus\"));\n    }\n\n    public void testGetMatchingOptionsExactMatch()"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n    {\n        List<String> matches = getOptions().getMatchingOptions(\"prefix\");\n        assertEquals(1, matches.size());\n        assertEquals(\"prefix\", matches.get(0));\n    }\n\n    public void testGetMatchingOptionsPartialMatchStillReturnsA"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ll()\n    {\n        List<String> matches = getOptions().getMatchingOptions(\"pre\");\n        assertEquals(2, matches.size());\n        assertTrue(matches.contains(\"prefix\"));\n        assertTrue(matches.contains(\"prefixplusplus\"));\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1354,"output_tokens":769,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.010398,"is_byok":false,"cost_details":{"upstream_inference_cost":0.010398,"upstream_inference_prompt_cost":0.002708,"upstream_inference_completions_cost":0.00769}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

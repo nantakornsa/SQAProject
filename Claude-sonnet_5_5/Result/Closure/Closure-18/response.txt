@@ -1,0 +1,43 @@
+```java
+package com.google.javascript.jscomp;
+
+/**
+ * Regression test: dependency sorting must work even when the closure pass
+ * is not enabled.
+ */
+public class DependencySortingWithoutClosurePassTest extends IntegrationTestCase {
+
+  @Override
+  protected CompilerOptions createCompilerOptions() {
+    CompilerOptions options = new CompilerOptions();
+    options.yieldSupported = true;
+    return options;
+  }
+
+  public void testDependencySortingWithoutClosurePass() throws Exception {
+    CompilerOptions options = createCompilerOptions();
+    options.closurePass = false;
+    options.setDependencyOptions(
+        new DependencyOptions()
+        .setDependencySorting(true));
+    test(
+        options,
+        new String[] {
+          "goog.require('x');",
+          "goog.provide('x');",
+        },
+        new String[] {
+          "goog.provide('x');",
+          "goog.require('x');",
+
+          // For complicated reasons involving modules,
+          // the compiler creates a synthetic source file.
+          "",
+        });
+  }
+}
+```
+
+I couldn't run this against either version. It extends `IntegrationTestCase` and assumes that class exists in this revision and exposes `test(options, String[], String[])`, as `IntegrationTest` uses it. It sets `closurePass = false` explicitly.
+
+On the buggy version, `Compiler` skips dependency management unless `closurePass` is on, so the inputs keep their original order (`require` before `provide`) and the assertion fails. On the fixed version, the sources are re-sorted so `goog.provide('x')` comes first. The expected output matches the original `testDependencySorting`, including the trailing empty synthetic source.

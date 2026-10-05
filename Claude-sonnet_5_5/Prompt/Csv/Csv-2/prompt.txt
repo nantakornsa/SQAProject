@@ -1,0 +1,86 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Csv
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Csv
+       Program: commons-csv
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Csv/Csv.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-csv.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Csv/active-bugs.csv
+Number of bugs: 16
+--------------------------------------------------------------------------------
+
+Summary for Bug: Csv-2
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+a0d975933d6fe9eb5f359088de43508c1d3109bf
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-04-08 19:34:38 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CSV-96
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CSV-96
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.csv.CSVRecordTest::testGetStringInconsistentRecord
+   --> java.lang.Exception: Unexpected exception, expected<java.lang.IllegalArgumentException> but was<java.lang.ArrayIndexOutOfBoundsException>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.csv.CSVRecord
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.csv.CSVRecord ===
+diff --git a/src/main/java/org/apache/commons/csv/CSVRecord.java b/src/main/java/org/apache/commons/csv/CSVRecord.java
+index dc52017c..fd633c2c 100644
+--- a/src/main/java/org/apache/commons/csv/CSVRecord.java
++++ b/src/main/java/org/apache/commons/csv/CSVRecord.java
+@@ -82,7 +82,14 @@ public class CSVRecord implements Serializable, Iterable<String> {
+                     "No header mapping was specified, the record values can't be accessed by name");
+         }
+         final Integer index = mapping.get(name);
++        try {
+             return index != null ? values[index.intValue()] : null;
++        } catch (ArrayIndexOutOfBoundsException e) {
++            throw new IllegalArgumentException(
++                    String.format(
++                            "Index for header '%s' is %d but CSVRecord only has %d values!",
++                            name, index.intValue(), values.length));
++        }
+     }
+ 
+     /**
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testGetStringInconsistentRecord() {
+        header.put("fourth", Integer.valueOf(4));
+        recordWithHeader.get("fourth");
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

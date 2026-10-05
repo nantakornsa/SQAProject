@@ -1,0 +1,135 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-36
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+26bc3fe010d5154d3ccac526ec22c429fc3af499
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-12-22 06:52:42 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-521
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-521
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang3.math.NumberUtilsTest::testCreateNumber
+   --> java.lang.NumberFormatException: 2. is not a valid number.
+ - org.apache.commons.lang3.math.NumberUtilsTest::testIsNumber
+   --> junit.framework.AssertionFailedError: isNumber(String) LANG-521 failed
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang3.math.NumberUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang3.math.NumberUtils ===
+diff --git a/src/java/org/apache/commons/lang3/math/NumberUtils.java b/src/java/org/apache/commons/lang3/math/NumberUtils.java
+index d3054f3fb..0d30b2219 100644
+--- a/src/java/org/apache/commons/lang3/math/NumberUtils.java
++++ b/src/java/org/apache/commons/lang3/math/NumberUtils.java
+@@ -488,7 +488,7 @@ public class NumberUtils {
+             }
+             dec = null;
+         }
+-        if (!Character.isDigit(lastChar)) {
++        if (!Character.isDigit(lastChar) && lastChar != '.') {
+             if (expPos > -1 && expPos < str.length() - 1) {
+                 exp = str.substring(expPos + 1, str.length() - 1);
+             } else {
+@@ -1385,6 +1385,14 @@ public class NumberUtils {
+                 // can't have an E at the last byte
+                 return false;
+             }
++            if (chars[i] == '.') {
++                if (hasDecPoint || hasExp) {
++                    // two decimal points or dec in exponent
++                    return false;
++                }
++                // single trailing decimal point after non-exponent is ok
++                return foundDigit;
++            }
+             if (!allowSigns
+                 && (chars[i] == 'd'
+                     || chars[i] == 'D'
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testCreateNumber() {
+        // a lot of things can go wrong
+        assertEquals("createNumber(String) 1 failed", new Float("1234.5"), NumberUtils.createNumber("1234.5"));
+        assertEquals("createNumber(String) 2 failed", new Integer("12345"), NumberUtils.createNumber("12345"));
+        assertEquals("createNumber(String) 3 failed", new Double("1234.5"), NumberUtils.createNumber("1234.5D"));
+        assertEquals("createNumber(String) 3 failed", new Double("1234.5"), NumberUtils.createNumber("1234.5d"));
+        assertEquals("createNumber(String) 4 failed", new Float("1234.5"), NumberUtils.createNumber("1234.5F"));
+        assertEquals("createNumber(String) 4 failed", new Float("1234.5"), NumberUtils.createNumber("1234.5f"));
+        assertEquals("createNumber(String) 5 failed", new Long(Integer.MAX_VALUE + 1L), NumberUtils.createNumber(""
+            + (Integer.MAX_VALUE + 1L)));
+        assertEquals("createNumber(String) 6 failed", new Long(12345), NumberUtils.createNumber("12345L"));
+        assertEquals("createNumber(String) 6 failed", new Long(12345), NumberUtils.createNumber("12345l"));
+        assertEquals("createNumber(String) 7 failed", new Float("-1234.5"), NumberUtils.createNumber("-1234.5"));
+        assertEquals("createNumber(String) 8 failed", new Integer("-12345"), NumberUtils.createNumber("-12345"));
+        assertTrue("createNumber(String) 9 failed", 0xFADE == NumberUtils.createNumber("0xFADE").intValue());
+        assertTrue("createNumber(String) 10 failed", -0xFADE == NumberUtils.createNumber("-0xFADE").intValue());
+        assertEquals("createNumber(String) 11 failed", new Double("1.1E200"), NumberUtils.createNumber("1.1E200"));
+        assertEquals("createNumber(String) 12 failed", new Float("1.1E20"), NumberUtils.createNumber("1.1E20"));
+        assertEquals("createNumber(String) 13 failed", new Double("-1.1E200"), NumberUtils.createNumber("-1.1E200"));
+        assertEquals("createNumber(String) 14 failed", new Double("1.1E-200"), NumberUtils.createNumber("1.1E-200"));
+        assertEquals("createNumber(null) failed", null, NumberUtils.createNumber(null));
+        assertEquals("createNumber(String) failed", new BigInteger("12345678901234567890"), NumberUtils
+                .createNumber("12345678901234567890L"));
+
+        // jdk 1.2 doesn't support this. unsure about jdk 1.2.2
+        if (SystemUtils.isJavaVersionAtLeast(1.3f)) {
+            assertEquals("createNumber(String) 15 failed", new BigDecimal("1.1E-700"), NumberUtils
+                    .createNumber("1.1E-700F"));
+        }
+        assertEquals("createNumber(String) 16 failed", new Long("10" + Integer.MAX_VALUE), NumberUtils
+                .createNumber("10" + Integer.MAX_VALUE + "L"));
+        assertEquals("createNumber(String) 17 failed", new Long("10" + Integer.MAX_VALUE), NumberUtils
+                .createNumber("10" + Integer.MAX_VALUE));
+        assertEquals("createNumber(String) 18 failed", new BigInteger("10" + Long.MAX_VALUE), NumberUtils
+                .createNumber("10" + Long.MAX_VALUE));
+
+        // LANG-521
+        assertEquals("createNumber(String) LANG-521 failed", new Float("2."), NumberUtils.createNumber("2."));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

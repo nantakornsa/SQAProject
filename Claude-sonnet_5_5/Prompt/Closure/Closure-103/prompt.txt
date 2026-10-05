@@ -1,0 +1,107 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-103
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+2f5cb1622371de540fe20dcbe0411651ec89f952
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-02-23 01:07:42 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+113
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-113.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.CheckUnreachableCodeTest::testInstanceOfThrowsException
+   --> junit.framework.AssertionFailedError: Unexpected error(s): JSC_UNREACHABLE_CODE. unreachable code at testcode line 1 expected:<0> but was:<1>
+ - com.google.javascript.jscomp.ControlFlowAnalysisTest::testInstanceOf
+   --> junit.framework.AssertionFailedError: No cross edges found
+ - com.google.javascript.jscomp.DisambiguatePropertiesTest::testSupertypeReferenceOfSubtypeProperty
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.ControlFlowAnalysis
+ - com.google.javascript.jscomp.DisambiguateProperties
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.ControlFlowAnalysis ===
+diff --git a/src/com/google/javascript/jscomp/ControlFlowAnalysis.java b/src/com/google/javascript/jscomp/ControlFlowAnalysis.java
+index 3b67af32f..6ef254838 100644
+--- a/src/com/google/javascript/jscomp/ControlFlowAnalysis.java
++++ b/src/com/google/javascript/jscomp/ControlFlowAnalysis.java
+@@ -891,6 +891,7 @@ final class ControlFlowAnalysis implements Callback, CompilerPass {
+       case Token.ASSIGN:
+       case Token.INC:
+       case Token.DEC:
++      case Token.INSTANCEOF:
+         return true;
+       case Token.FUNCTION:
+         return false;
+
+=== MODIFIED SOURCE: com.google.javascript.jscomp.DisambiguateProperties ===
+diff --git a/src/com/google/javascript/jscomp/DisambiguateProperties.java b/src/com/google/javascript/jscomp/DisambiguateProperties.java
+index 493787935..ca5edbd6e 100644
+--- a/src/com/google/javascript/jscomp/DisambiguateProperties.java
++++ b/src/com/google/javascript/jscomp/DisambiguateProperties.java
+@@ -760,9 +760,16 @@ class DisambiguateProperties<T> implements CompilerPass {
+       }
+       // If the property does not exist on the referenced type but the original
+       // type is an object type, see if any subtype has the property.
++      if (foundType == null) {
++        ObjectType maybeType = ObjectType.cast(
++            registry.getGreatestSubtypeWithProperty(type, field));
+         // getGreatestSubtypeWithProperty does not guarantee that the property
+         // is defined on the returned type, it just indicates that it might be,
+         // so we have to double check.
++        if (maybeType != null && maybeType.hasOwnProperty(field)) {
++          foundType = maybeType;
++        }
++      }
+       return foundType;
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testInstanceOfThrowsException() {
+    testSame("function f() {try { if (value instanceof type) return true; } " +
+             "catch (e) { }}");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

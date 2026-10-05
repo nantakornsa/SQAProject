@@ -1,0 +1,81 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791143580-ptiAxrvWMqXw5Y0m5wFH","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing Jsoup Bug**\n\nI've identified that the issue in Jsoup-92 stems from how duplicate attributes are handled. Specifically, in `Token.java`, `attributes.put()` is overwriting, rather than discarding, subsequent identical attributes.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Refining Attribute Deduplication**\n\nI'm now considering how case sensitivity impacts attribute deduplication, as HTML specs dictate the first encountered attribute is retained. My focus is on ensuring the parser respects these nuances correctly.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".jsoup.parser;\n\nimport org.jsoup.Jsoup;\nimport org.jsoup.nodes.Document;\nimport org."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"jsoup.nodes.Element;\nimport org.junit.Test;\n\nimport static org.junit.Assert.assertEquals"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\n\npublic class DuplicateAttributeRegressionTest {\n\n    @Test\n    public void dropsDuplicateAttributesHtmlDefault() {\n        //"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" According to HTML spec, the first attribute seen should be preserved, later duplicates dropped.\n        // In the buggy version"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":", Attributes.put replaced earlier values with later values and didn't deduplicate properly.\n        String html = \"<p One=One ONE"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"=Two One=Three one=Four two=Five TWO=Six>Text</p>\";\n        Parser parser = Parser.html"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Parser().setTrackErrors(10);\n        Document doc = parser.parseInput(html, \"\");\n\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Element p = doc.selectFirst(\"p\");\n        assertEquals(\"<p one=\\\"One\\\" two=\\\"Five\\\">Text</"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"p>\", p.outerHtml());\n        assertEquals(4, parser.getErrors().size());\n        assertEquals(\""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Duplicate attribute\", parser.getErrors().get(0).getErrorMessage());\n    }\n\n    @Test\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"public void retainsAttributesOfDifferentCaseIfSensitive() {\n        // When case sensitivity is preserved, attributes differing only by"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" case should be retained,\n        // but duplicate attributes with the same case should retain the first value.\n        String html ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" \"<p One=One One=Two one=Three two=Four two=Five Two=Six>Text</p"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":">\";\n        Parser parser = Parser.htmlParser().settings(ParseSettings.preserveCase);\n        Document doc ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" parser.parseInput(html, \"\");\n        assertEquals(\"<p One=\\\"One\\\" one=\\\"Three\\\" two=\\\"Four"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\\\" Two=\\\"Six\\\">Text</p>\", doc.selectFirst(\"p\").outerHtml());\n    }\n}"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2645,"output_tokens":805,"output_tokens_details":{"thinking_tokens":396},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.0050025,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0050025,"upstream_inference_prompt_cost":0.00198375,"upstream_inference_completions_cost":0.00301875}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,87 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Compress
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Compress
+       Program: commons-compress
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/Compress.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-compress.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/active-bugs.csv
+Number of bugs: 47
+--------------------------------------------------------------------------------
+
+Summary for Bug: Compress-19
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+e860d2f3eb16d84e146a8a700d9dbd3af01df4ba
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-05-26 17:36:35 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COMPRESS-228
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COMPRESS-228
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.compress.archivers.zip.ZipFileTest::testExcessDataInZip64ExtraField
+   --> java.util.zip.ZipException: central directory zip64 extended information extra field's length doesn't match central directory data.  Expected length 16 but is 28
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.compress.archivers.zip.Zip64ExtendedInformationExtraField
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.compress.archivers.zip.Zip64ExtendedInformationExtraField ===
+diff --git a/src/main/java/org/apache/commons/compress/archivers/zip/Zip64ExtendedInformationExtraField.java b/src/main/java/org/apache/commons/compress/archivers/zip/Zip64ExtendedInformationExtraField.java
+index 134871be..fbcec484 100644
+--- a/src/main/java/org/apache/commons/compress/archivers/zip/Zip64ExtendedInformationExtraField.java
++++ b/src/main/java/org/apache/commons/compress/archivers/zip/Zip64ExtendedInformationExtraField.java
+@@ -256,7 +256,7 @@ public class Zip64ExtendedInformationExtraField implements ZipExtraField {
+                 + (hasCompressedSize ? DWORD : 0)
+                 + (hasRelativeHeaderOffset ? DWORD : 0)
+                 + (hasDiskStart ? WORD : 0);
+-            if (rawCentralDirectoryData.length != expectedLength) {
++            if (rawCentralDirectoryData.length < expectedLength) {
+                 throw new ZipException("central directory zip64 extended"
+                                        + " information extra field's length"
+                                        + " doesn't match central directory"
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testExcessDataInZip64ExtraField() throws Exception {
+        File archive = getFile("COMPRESS-228.zip");
+        zf = new ZipFile(archive);
+        // actually, if we get here, the test already has passed
+
+        ZipArchiveEntry ze = zf.getEntry("src/main/java/org/apache/commons/compress/archivers/zip/ZipFile.java");
+        assertEquals(26101, ze.getSize());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

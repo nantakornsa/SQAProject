@@ -1,0 +1,86 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-5
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+59eec92e364b2ec2cec9dd63449f5c0134983f18
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-11-20 22:15:38 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+851
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-851.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.InlineObjectLiteralsTest::testNoInlineDeletedProperties
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.InlineObjectLiterals
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.InlineObjectLiterals ===
+diff --git a/src/com/google/javascript/jscomp/InlineObjectLiterals.java b/src/com/google/javascript/jscomp/InlineObjectLiterals.java
+index 2b85d84f0..d03988cfb 100644
+--- a/src/com/google/javascript/jscomp/InlineObjectLiterals.java
++++ b/src/com/google/javascript/jscomp/InlineObjectLiterals.java
+@@ -173,6 +173,9 @@ class InlineObjectLiterals implements CompilerPass {
+ 
+           // Deleting a property has different semantics from deleting
+           // a variable, so deleted properties should not be inlined.
++          if (gramps.isDelProp()) {
++            return false;
++          }
+ 
+           // NOTE(nicksantos): This pass's object-splitting algorithm has
+           // a blind spot. It assumes that if a property isn't defined on an
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testNoInlineDeletedProperties() {
+    testSameLocal(
+        "var foo = {bar:1};" +
+        "delete foo.bar;" +
+        "return foo.bar;");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

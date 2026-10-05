@@ -1,0 +1,108 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-36
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+8a83581eaf0fb46000ffe3093b8b4152dcc18b91
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-02-14 13:16:57 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-744
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-744
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.fraction.BigFractionTest::testFloatValueForLargeNumeratorAndDenominator
+   --> junit.framework.AssertionFailedError: expected:<5.0> but was:<NaN>
+ - org.apache.commons.math.fraction.BigFractionTest::testDoubleValueForLargeNumeratorAndDenominator
+   --> junit.framework.AssertionFailedError: expected:<5.0> but was:<NaN>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.fraction.BigFraction
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.fraction.BigFraction ===
+diff --git a/src/main/java/org/apache/commons/math/fraction/BigFraction.java b/src/main/java/org/apache/commons/math/fraction/BigFraction.java
+index 6181ec329..a6672e426 100644
+--- a/src/main/java/org/apache/commons/math/fraction/BigFraction.java
++++ b/src/main/java/org/apache/commons/math/fraction/BigFraction.java
+@@ -683,8 +683,14 @@ public class BigFraction
+     @Override
+     public double doubleValue() {
+         double result = numerator.doubleValue() / denominator.doubleValue();
++        if (Double.isNaN(result)) {
+             // Numerator and/or denominator must be out of range:
+             // Calculate how far to shift them to put them in range.
++            int shift = Math.max(numerator.bitLength(),
++                                 denominator.bitLength()) - Double.MAX_EXPONENT;
++            result = numerator.shiftRight(shift).doubleValue() /
++                denominator.shiftRight(shift).doubleValue();
++        }
+         return result;
+     }
+ 
+@@ -730,8 +736,14 @@ public class BigFraction
+     @Override
+     public float floatValue() {
+         float result = numerator.floatValue() / denominator.floatValue();
++        if (Double.isNaN(result)) {
+             // Numerator and/or denominator must be out of range:
+             // Calculate how far to shift them to put them in range.
++            int shift = Math.max(numerator.bitLength(),
++                                 denominator.bitLength()) - Float.MAX_EXPONENT;
++            result = numerator.shiftRight(shift).floatValue() /
++                denominator.shiftRight(shift).floatValue();
++        }
+         return result;
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testFloatValueForLargeNumeratorAndDenominator() {
+        final BigInteger pow400 = BigInteger.TEN.pow(400);
+        final BigInteger pow401 = BigInteger.TEN.pow(401);
+        final BigInteger two = new BigInteger("2");
+        final BigFraction large = new BigFraction(pow401.add(BigInteger.ONE),
+                                                  pow400.multiply(two));
+
+        Assert.assertEquals(5, large.floatValue(), 1e-15);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

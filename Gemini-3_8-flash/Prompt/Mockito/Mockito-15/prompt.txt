@@ -1,0 +1,91 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Mockito
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Mockito
+       Program: mockito
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/Mockito.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/mockito.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/active-bugs.csv
+Number of bugs: 38
+--------------------------------------------------------------------------------
+
+Summary for Bug: Mockito-15
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+81a380951402d2a158af115ed616ab36e94793b8
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-11-03 12:36:41 +0100
+--------------------------------------------------------------------------------
+Bug report id:
+211
+--------------------------------------------------------------------------------
+Bug report url:
+https://code.google.com/archive/p/mockito/issues/211
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.mockitousage.bugs.InjectMocksShouldTryPropertySettersFirstBeforeFieldAccessTest::shouldInjectUsingPropertySetterIfAvailable
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.mockito.internal.configuration.injection.FinalMockCandidateFilter
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.mockito.internal.configuration.injection.FinalMockCandidateFilter ===
+diff --git a/src/org/mockito/internal/configuration/injection/FinalMockCandidateFilter.java b/src/org/mockito/internal/configuration/injection/FinalMockCandidateFilter.java
+index 637c450eb..673de911f 100644
+--- a/src/org/mockito/internal/configuration/injection/FinalMockCandidateFilter.java
++++ b/src/org/mockito/internal/configuration/injection/FinalMockCandidateFilter.java
+@@ -1,6 +1,7 @@
+ package org.mockito.internal.configuration.injection;
+ 
+ import org.mockito.exceptions.base.MockitoException;
++import org.mockito.internal.util.reflection.BeanPropertySetter;
+ import org.mockito.internal.util.reflection.FieldSetter;
+ 
+ import java.lang.reflect.Field;
+@@ -22,7 +23,9 @@ public class FinalMockCandidateFilter implements MockCandidateFilter {
+             return new OngoingInjecter() {
+                 public boolean thenInject() {
+                     try {
++                        if (!new BeanPropertySetter(fieldInstance, field).set(matchingMock)) {
+                             new FieldSetter(fieldInstance, field).set(matchingMock);
++                        }
+                     } catch (Exception e) {
+                         throw new MockitoException("Problems injecting dependency in " + field.getName(), e);
+                     }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void shouldInjectUsingPropertySetterIfAvailable() {
+        assertTrue(awaitingInjection.propertySetterUsed);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

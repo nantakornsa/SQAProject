@@ -1,0 +1,60 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791143509-ga944bWkpiVJrcDtkrFg","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Jsoup Bug**\n\nI'm currently examining Jsoup-84, specifically the `DOMException: NAMESPACE_ERR` encountered during Jsoup Document to W3C Document conversion. This error arises with undeclared namespace prefixes, such as `fb:like`, when `createElementNS` is called with a null namespace.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.jsoup.helper;\n\nimport org.jsoup.Jsoup;\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" org.junit.Test;\nimport org.w3c.dom.Document;\nimport org.w3"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"c.dom.Node;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Assert.assertNull;\n\npublic class W3CDomNamespaceTest {\n\n    @Test\n    public void treatsU"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ndeclaredNamespaceAsLocalName() {\n        String html = \"<fb:like>One</fb:like"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":">\";\n        org.jsoup.nodes.Document doc = Jsoup.parse(html);\n\n        Document w3"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Doc = new W3CDom().fromJsoup(doc);\n        Node htmlEl = w3Doc."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"getFirstChild();\n\n        assertNull(htmlEl.getNamespaceURI());\n        assertEquals(\"html\", htmlEl."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"getLocalName());\n        assertEquals(\"html\", htmlEl.getNodeName());\n\n        Node fb = htmlEl.getFirst"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Child().getNextSibling().getFirstChild();\n        assertNull(fb.getNamespaceURI());\n        assertEquals(\"like"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\", fb.getLocalName());\n        assertEquals(\"fb:like\", fb.getNodeName());\n    }\n}"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1133,"output_tokens":490,"output_tokens_details":{"thinking_tokens":226},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.00268725,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00268725,"upstream_inference_prompt_cost":0.00084975,"upstream_inference_completions_cost":0.0018375}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

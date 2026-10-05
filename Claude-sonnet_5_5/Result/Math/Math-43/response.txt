@@ -1,0 +1,52 @@
+The bug: when a user sets a `Mean`, `Variance` or `GeometricMean` instance through the setters, the old code assumed the default implementation was in use (`instanceof` check) and never incremented the user-supplied one. A user-supplied `Mean` is a fresh, empty object, so `getMean()` returned NaN. The fix compares against the internal default fields instead.
+
+The test below covers all three overrides, using the same data as the triggering tests. It sits in its own class and relies on the JUnit 3 style (`TestCase`) used by the project.
+
+```java
+package org.apache.commons.math.stat.descriptive;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
+
+import org.apache.commons.math.stat.descriptive.moment.GeometricMean;
+import org.apache.commons.math.stat.descriptive.moment.Mean;
+import org.apache.commons.math.stat.descriptive.moment.Variance;
+
+/**
+ * Regression test for MATH-691: overriding statistics with the default
+ * math classes must still produce correct results.
+ */
+public class SummaryStatisticsOverrideRegressionTest extends TestCase {
+
+    private static final double[] SCORES = {1, 2, 3, 4};
+
+    public void testOverrideMeanWithMathClass() throws Exception {
+        SummaryStatistics stats = new SummaryStatistics();
+        stats.setMeanImpl(new Mean());
+        for (double i : SCORES) {
+            stats.addValue(i);
+        }
+        Assert.assertEquals((new Mean()).evaluate(SCORES), stats.getMean(), 0);
+    }
+
+    public void testOverrideGeoMeanWithMathClass() throws Exception {
+        SummaryStatistics stats = new SummaryStatistics();
+        stats.setGeoMeanImpl(new GeometricMean());
+        for (double i : SCORES) {
+            stats.addValue(i);
+        }
+        Assert.assertEquals((new GeometricMean()).evaluate(SCORES),
+                stats.getGeometricMean(), 0);
+    }
+
+    public void testOverrideVarianceWithMathClass() throws Exception {
+        SummaryStatistics stats = new SummaryStatistics();
+        stats.setVarianceImpl(new Variance());
+        for (double i : SCORES) {
+            stats.addValue(i);
+        }
+        Assert.assertEquals((new Variance()).evaluate(SCORES),
+                stats.getVariance(), 0);
+    }
+}
+```

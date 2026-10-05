@@ -1,0 +1,56 @@
+The test below targets the root cause in `BitsStreamGenerator`, not the distribution clone tests that failed in Defects4J.
+
+- **Root cause:** In the buggy version, `BitsStreamGenerator` is not `Serializable`, so its cached `nextGaussian` field is not serialized. After deserialization the field is reset to `NaN`, and the copy no longer matches the original.
+- **What the test does:** It seeds a `Well19937c`, calls `nextGaussian()` once so the second Box-Muller value is cached, then serializes and deserializes the generator. It asserts that the original and the copy return identical values from the next `nextGaussian()` call, and from a further run of draws.
+- **Expected result:** On the buggy version the original returns the cached value while the copy generates a new one, so the first assertion fails. On the fixed version both return the same value, so it passes.
+- **Not run:** I have not run this against either version.
+
+```java
+package org.apache.commons.math3.random;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+/**
+ * Regression test for MATH-927: the state of {@link BitsStreamGenerator}
+ * (cached gaussian value) must be preserved by serialization.
+ */
+public class BitsStreamGeneratorSerializationTest {
+
+    @Test
+    public void testSerializationPreservesNextGaussian() throws Exception {
+        final Well19937c original = new Well19937c(123456789L);
+
+        // Generates two gaussian values, caching the second one.
+        original.nextGaussian();
+
+        // Serialize and deserialize.
+        final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        final ObjectOutputStream oos = new ObjectOutputStream(bytes);
+        oos.writeObject(original);
+        oos.close();
+
+        final ObjectInputStream ois =
+            new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()));
+        final Well19937c copy = (Well19937c) ois.readObject();
+        ois.close();
+
+        Assert.assertTrue(original instanceof java.io.Serializable);
+        Assert.assertTrue(BitsStreamGenerator.class.isAssignableFrom(copy.getClass()));
+        Assert.assertTrue(java.io.Serializable.class.isAssignableFrom(BitsStreamGenerator.class));
+
+        // The cached gaussian must be identical in both generators.
+        Assert.assertEquals(original.nextGaussian(), copy.nextGaussian(), 0d);
+
+        // And subsequent values must remain identical.
+        for (int i = 0; i < 10; i++) {
+            Assert.assertEquals(original.nextGaussian(), copy.nextGaussian(), 0d);
+        }
+    }
+}
+```

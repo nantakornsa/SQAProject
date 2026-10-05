@@ -1,0 +1,45 @@
+package com.fasterxml.jackson.databind.jsontype;
+
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class ExternalTypeIdNullRegressionTest extends BaseMapTest {
+
+    static class ValueBean {
+        public int x;
+
+        public ValueBean() { }
+        public ValueBean(int x) { this.x = x; }
+    }
+
+    static class ExternalBean {
+        @JsonTypeInfo(use = Id.NAME, include = As.EXTERNAL_PROPERTY, property = "type")
+        @JsonSubTypes({
+            @JsonSubTypes.Type(value = ValueBean.class, name = "v")
+        })
+        public ValueBean value;
+
+        public ExternalBean() { }
+        public ExternalBean(ValueBean v) { value = v; }
+    }
+
+    public void testExternalTypeIdWithNull() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+
+        // Test with type property first, value as null
+        String json1 = "{\"type\":\"v\",\"value\":null}";
+        ExternalBean result1 = mapper.readValue(json1, ExternalBean.class);
+        assertNotNull(result1);
+        assertNull(result1.value);
+
+        // Test with value as null first, then type property
+        String json2 = "{\"value\":null,\"type\":\"v\"}";
+        ExternalBean result2 = mapper.readValue(json2, ExternalBean.class);
+        assertNotNull(result2);
+        assertNull(result2.value);
+    }
+}

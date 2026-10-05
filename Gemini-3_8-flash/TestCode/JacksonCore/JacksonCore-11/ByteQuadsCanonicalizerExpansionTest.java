@@ -1,0 +1,32 @@
+package com.fasterxml.jackson.core.sym;
+
+import com.fasterxml.jackson.core.BaseTest;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+
+public class ByteQuadsCanonicalizerExpansionTest extends BaseTest {
+
+    public void testSymbolTableExpansionBytes() throws Exception {
+        final int COUNT = 800;
+        StringBuilder sb = new StringBuilder(COUNT * 12 + 10);
+        sb.append('{');
+        for (int i = 0; i < COUNT; ++i) {
+            if (i > 0) {
+                sb.append(',');
+            }
+            sb.append("\"prop").append(i).append("\":").append(i);
+        }
+        sb.append('}');
+        byte[] doc = sb.toString().getBytes("UTF-8");
+
+        JsonFactory f = new JsonFactory();
+        // Multiple parses share and expand the root ByteQuadsCanonicalizer
+        for (int i = 0; i < 5; ++i) {
+            JsonParser p = f.createParser(doc);
+            while (p.nextToken() != null) {
+                // consume tokens to process all field names
+            }
+            p.close();
+        }
+    }
+}

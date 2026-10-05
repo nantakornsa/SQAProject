@@ -1,0 +1,33 @@
+```java
+package com.fasterxml.jackson.databind.ser.jdk;
+
+import java.math.BigDecimal;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class BigDecimalPlain2230Test extends BaseMapTest
+{
+    static class BigDecimalPojo {
+        @JsonFormat(shape = JsonFormat.Shape.STRING)
+        public BigDecimal value;
+
+        public BigDecimalPojo(BigDecimal value) {
+            this.value = value;
+        }
+    }
+
+    public void testBigIntegerAsPlainTest() throws Exception
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN);
+
+        BigDecimal bigDecimal = new BigDecimal("0.0000000005");
+        String json = mapper.writeValueAsString(new BigDecimalPojo(bigDecimal));
+
+        assertEquals("{\"value\":\"0.0000000005\"}", json);
+    }
+}
+```

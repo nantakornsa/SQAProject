@@ -1,0 +1,57 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791141550-J2x84rygPavg3VENmgT2","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Jsoup Bug**\n\nI'm currently focused on a bug within Jsoup version 13. It appears `Node.hasAttr(String attributeKey)` fails to recognize the `\"abs:\"` prefix, leading to incorrect results when checking for absolute URLs. This is impacting how absolute attributes are identified.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.jsoup.nodes;\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"import org.jsoup.Jsoup;\nimport org.jsoup.nodes.Document;\nimport org.jsoup.nodes.Element"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\nimport org.junit.Test;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".assertFalse;\nimport static org.junit.Assert.assertTrue;\n\npublic class NodeRegressionTest {\n\n    @Test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n    public void testHandlesAbsPrefixOnHasAttr() {\n        Document doc = Jsoup.parse(\"<a id=1 href"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"='/foo'>One</a> <a id=2 href='http://jsoup.org/'>Two</a>\");\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Element one = doc.select(\"#1\").first();\n        Element two = doc.select(\"#2\").first();"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\n        assertFalse(one.hasAttr(\"abs:href\"));\n        assertTrue(one.hasAttr(\"href\"));\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"assertEquals(\"\", one.absUrl(\"href\"));\n\n        assertTrue(two.hasAttr(\"abs:href\"));\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"assertTrue(two.hasAttr(\"href\"));\n        assertEquals(\"http://jsoup.org/\", two.absUrl(\""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"href\"));\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1159,"output_tokens":441,"output_tokens_details":{"thinking_tokens":189},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.002523,"is_byok":false,"cost_details":{"upstream_inference_cost":0.002523,"upstream_inference_prompt_cost":0.00086925,"upstream_inference_completions_cost":0.00165375}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

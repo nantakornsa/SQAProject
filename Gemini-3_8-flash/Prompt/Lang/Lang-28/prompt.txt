@@ -1,0 +1,92 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-28
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+bef3eb6ed060d5ae14da6ce5a1909675b8cf5650
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-06-22 06:34:18 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-617
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-617
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang3.text.translate.NumericEntityUnescaperTest::testSupplementaryUnescaping
+   --> junit.framework.ComparisonFailure: Failed to unescape numeric entities supplementary characters expected:<[𐰢]> but was:<[ఢ]>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang3.text.translate.NumericEntityUnescaper
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang3.text.translate.NumericEntityUnescaper ===
+diff --git a/src/main/java/org/apache/commons/lang3/text/translate/NumericEntityUnescaper.java b/src/main/java/org/apache/commons/lang3/text/translate/NumericEntityUnescaper.java
+index c3cb8695f..a21671a78 100644
+--- a/src/main/java/org/apache/commons/lang3/text/translate/NumericEntityUnescaper.java
++++ b/src/main/java/org/apache/commons/lang3/text/translate/NumericEntityUnescaper.java
+@@ -60,7 +60,13 @@ public class NumericEntityUnescaper extends CharSequenceTranslator {
+                 return 0;
+             }
+ 
++            if(entityValue > 0xFFFF) {
++                char[] chrs = Character.toChars(entityValue);
++                out.write(chrs[0]);
++                out.write(chrs[1]);
++            } else {
+                 out.write(entityValue);
++            }
+             return 2 + (end - start) + (isHex ? 1 : 0) + 1;
+         }
+         return 0;
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testSupplementaryUnescaping() {
+        NumericEntityUnescaper neu = new NumericEntityUnescaper();
+        String input = "&#68642;";
+        String expected = "\uD803\uDC22";
+
+        String result = neu.translate(input);
+        assertEquals("Failed to unescape numeric entities supplementary characters", expected, result);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

@@ -1,0 +1,39 @@
+```java
+package org.joda.time;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for Joda-Time bug 90 (Time-25).
+ * During a DST overlap, DateTimeZone.getOffsetFromLocal must return the
+ * offset of the earlier instant (summer time), here Europe/Moscow autumn 2007.
+ */
+public class TestDateTimeZoneCutoverRegression extends TestCase {
+
+    private static final DateTimeZone ZONE_MOSCOW = DateTimeZone.forID("Europe/Moscow");
+
+    public void test_DateTime_constructor_Moscow_Autumn_overlap() {
+        DateTime dt = new DateTime(2007, 10, 28, 2, 30, 0, 0, ZONE_MOSCOW);
+        assertEquals("2007-10-28T02:30:00.000+04:00", dt.toString());
+    }
+
+    public void test_getOffsetFromLocal_Moscow_Autumn_overlap() {
+        doTest(10, 28, 2, 0, "2007-10-28T02:00:00.000+04:00");
+        doTest(10, 28, 2, 30, "2007-10-28T02:30:00.000+04:00");
+    }
+
+    public void test_getOffsetFromLocal_Moscow_Autumn_outsideOverlap() {
+        doTest(10, 28, 0, 0, "2007-10-28T00:00:00.000+04:00");
+        doTest(10, 28, 1, 30, "2007-10-28T01:30:00.000+04:00");
+        doTest(10, 28, 3, 0, "2007-10-28T03:00:00.000+03:00");
+        doTest(10, 28, 4, 0, "2007-10-28T04:00:00.000+03:00");
+    }
+
+    private void doTest(int month, int day, int hour, int min, String expected) {
+        DateTime dt = new DateTime(2007, month, day, hour, min, 0, 0, DateTimeZone.UTC);
+        int offset = ZONE_MOSCOW.getOffsetFromLocal(dt.getMillis());
+        DateTime res = new DateTime(dt.getMillis() - offset, ZONE_MOSCOW);
+        assertEquals(res.toString(), expected, res.toString());
+    }
+}
+```

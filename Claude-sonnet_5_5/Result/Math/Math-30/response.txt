@@ -1,0 +1,29 @@
+```java
+package org.apache.commons.math3.stat.inference;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+/**
+ * Regression test for MATH-790: integer overflow in the normal approximation
+ * of the Mann-Whitney U test when the sample sizes are large.
+ */
+public class MannWhitneyUTestBigDataSetTest {
+
+    private final MannWhitneyUTest testStatistic = new MannWhitneyUTest();
+
+    @Test
+    public void testBigDataSet() throws Exception {
+        double[] d1 = new double[1500];
+        double[] d2 = new double[1500];
+        for (int i = 0; i < 1500; i++) {
+            d1[i] = 2 * i;
+            d2[i] = 2 * i + 1;
+        }
+        double result = testStatistic.mannWhitneyUTest(d1, d2);
+        Assert.assertTrue(result > 0.1);
+    }
+}
+```
+
+The overflow happens in the variance term. `n1n2prod * (n1 + n2 + 1)` is 2,250,000 × 3001, about 6.75e9, which exceeds the int range when `n1n2prod` is an `int`. Declaring `n1n2prod` as `double`, as the fix does, avoids it. I have not run this against the buggy and fixed versions; the expectation that it fails before the fix and passes after comes from the bug report's triggering test, which this reuses unchanged.

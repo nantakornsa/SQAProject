@@ -1,0 +1,78 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791144959-pAUK9eABlFcvBEMUfgs8","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1533,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" b"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ug is an"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" integer overflow in `get"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"NumericalMean()`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":". `get"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"SampleSize() * get"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"NumberOfSucc"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"esses()` is computed in"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" `int`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" arithmetic, so "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"50 * 42976365 overflows. The fix multiplies in double precision.\n\nA direct regression test can check the mean without relying on random sampling. With the parameters from the bug report"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":", the expected mean is 50 * (42976365 / 43130568) ≈ 49.82.\n\n- **Buggy version:** 50 * 42976365 = 2,148,818,250, which ex"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ceeds Integer.MAX_VALUE (2,147,483,647). It wraps to 2,148,818,250 − 4,294,967,296 = −2,146,149,046."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Dividing by 43130568 gives about −49.76, which differs from the expected value.\n- **Fixed version:** the result is about 49.82.\n\nThe test also includes the sampling check from the original triggering test.\n\n```"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"java\npackage org.apache.commons.math3.distribution;\n\nimport org.junit.Assert;\nimport org.junit.Test;\n\n/**\n * Regression test for MATH-1021: integer overflow in\n * HypergeometricDistribution#getNumericalMean."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n */\npublic class HypergeometricDistributionOverflowRegressionTest {\n\n    @Test\n    public void testMath1021Mean() {\n        final int N = 43130568;\n        final int m = 42976"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"365;\n        final int n = 50;\n        final HypergeometricDistribution dist = new HypergeometricDistribution(N, m, n);\n\n        final double expected = n * ((double) m / (double) N);\n        final double mean = dist.getNumericalMean();\n\n        Assert.assertTrue"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"(\"mean=\" + mean, mean > 0);\n        Assert.assertEquals(expected, mean, 1e-9);\n    }\n\n    @Test\n    public void testMath1021Sample() {\n        final int N = 43130568;\n        final int m = 42976365;\n        final int n = 50;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n        final HypergeometricDistribution dist = new HypergeometricDistribution(N, m, n);\n\n        for (int i = 0; i < 100; i++) {\n            final int sample = dist.sample();\n            Assert.assertTrue(\"sample=\" + sample, 0 <= sample);\n            "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Assert.assertTrue(\"sample=\" + sample, sample <= n);\n        }\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1533,"output_tokens":770,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.010766,"is_byok":false,"cost_details":{"upstream_inference_cost":0.010766,"upstream_inference_prompt_cost":0.003066,"upstream_inference_completions_cost":0.0077}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

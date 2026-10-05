@@ -1,0 +1,168 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-23
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+6172d7561007a941b01f960dd44d94a92f3ad763
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-07-01 12:29:21 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+849
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/849
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.ser.TestJsonSerialize2::testEmptyInclusionScalars
+   --> junit.framework.ComparisonFailure: expected:<{[]}> but was:<{["value":0]}>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.ser.std.NumberSerializers
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.ser.std.NumberSerializers ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/ser/std/NumberSerializers.java b/src/main/java/com/fasterxml/jackson/databind/ser/std/NumberSerializers.java
+index c11155e6c..05f7b78e9 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/ser/std/NumberSerializers.java
++++ b/src/main/java/com/fasterxml/jackson/databind/ser/std/NumberSerializers.java
+@@ -51,6 +51,7 @@ public class NumberSerializers
+     protected abstract static class Base<T> extends StdScalarSerializer<T>
+         implements ContextualSerializer
+     {
++        protected final static Integer EMPTY_INTEGER = Integer.valueOf(0);
+ 
+         protected final JsonParser.NumberType _numberType;
+         protected final String _schemaType;
+@@ -117,10 +118,15 @@ public class NumberSerializers
+     @JacksonStdImpl
+     public final static class ShortSerializer extends Base<Short>
+     {
++        private final static Short EMPTY = (short) 0;
+         final static ShortSerializer instance = new ShortSerializer();
+ 
+         public ShortSerializer() { super(Short.class, JsonParser.NumberType.INT, "number"); }
+ 
++        @Override
++        public boolean isEmpty(SerializerProvider prov, Short value) {
++            return EMPTY.equals(value);
++        }
+ 
+         @Override
+         public void serialize(Short value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+@@ -156,6 +162,10 @@ public class NumberSerializers
+             serialize(value, gen, provider);            
+         }
+ 
++        @Override
++        public boolean isEmpty(SerializerProvider prov, Object value) {
++            return EMPTY_INTEGER.equals(value);
++        }
+     }
+ 
+     /**
+@@ -172,6 +182,10 @@ public class NumberSerializers
+             super(Number.class, JsonParser.NumberType.INT, "integer");
+         }
+ 
++        @Override
++        public boolean isEmpty(SerializerProvider prov, Number value) {
++            return value.intValue() == 0;
++        }
+ 
+         @Override
+         public void serialize(Number value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+@@ -182,11 +196,16 @@ public class NumberSerializers
+     @JacksonStdImpl
+     public final static class LongSerializer extends Base<Object>
+     {
++        private final static Long EMPTY = 0L;
+ 
+         final static LongSerializer instance = new LongSerializer();
+     
+         public LongSerializer() { super(Long.class, JsonParser.NumberType.LONG, "number"); }
+ 
++        @Override
++        public boolean isEmpty(SerializerProvider prov, Object value) {
++            return EMPTY.equals(value);
++        }
+ 
+         @Override
+         public void serialize(Object value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+@@ -197,11 +216,16 @@ public class NumberSerializers
+     @JacksonStdImpl
+     public final static class FloatSerializer extends Base<Object>
+     {
++        private final static Float EMPTY = 0f;
+ 
+         final static FloatSerializer instance = new FloatSerializer();
+ 
+         public FloatSerializer() { super(Float.class, JsonParser.NumberType.FLOAT, "number"); }
+ 
++        @Override
++        public boolean isEmpty(SerializerProvider prov, Object value) {
++            return EMPTY.equals(value);
++        }
+ 
+         @Override
+         public void serialize(Object value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+@@ -219,11 +243,16 @@ public class NumberSerializers
+     @JacksonStdImpl
+     public final static class DoubleSerializer extends Base<Object>
+     {
++        private final static Double EMPTY = 0d;
+ 
+         final static DoubleSerializer instance = new DoubleSerializer();
+     
+         public DoubleSerializer() { super(Double.class, JsonParser.NumberType.DOUBLE, "number"); }
+ 
++        @Override
++        public boolean isEmpty(SerializerProvider prov, Object value) {
++            return EMPTY.equals(value);
++        }
+ 
+         @Override
+         public void serialize(Object value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testEmptyInclusionScalars() throws IOException
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

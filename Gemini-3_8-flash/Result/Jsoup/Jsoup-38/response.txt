@@ -1,0 +1,20 @@
+```java
+package org.jsoup.parser;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
+public class ImageInSvgRegressionTest {
+
+    @Test
+    public void testImageInsideSvgNotConvertedToImg() {
+        // <image> tags should be converted to <img> in HTML context, but kept as <image> within <svg>
+        String html = "<body><image><svg><image /></svg></body>";
+        Document doc = Jsoup.parse(html);
+        assertEquals("<img />\n<svg>\n <image />\n</svg>", doc.body().html());
+    }
+}
+```

@@ -1,0 +1,40 @@
+```java
+package com.fasterxml.jackson.databind.deser;
+
+import java.io.IOException;
+import java.util.Map;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+public class CustomMapDeserializer735Test extends BaseMapTest {
+
+    static class CustomIntegerDeserializer extends JsonDeserializer<Integer> {
+        @Override
+        public Integer deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+            return jp.getIntValue() * 100;
+        }
+    }
+
+    static class TestMapBean735 {
+        @JsonDeserialize(contentUsing = CustomIntegerDeserializer.class)
+        public Map<String, Integer> map1;
+        public Map<String, Integer> map2;
+    }
+
+    public void testCustomMapValueDeser735() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        String json = "{\"map1\":{\"a\":1},\"map2\":{\"a\":1}}";
+        TestMapBean735 bean = mapper.readValue(json, TestMapBean735.class);
+
+        assertNotNull(bean.map1);
+        assertNotNull(bean.map2);
+        assertEquals(100, bean.map1.get("a").intValue());
+        assertEquals(1, bean.map2.get("a").intValue());
+    }
+}
+```

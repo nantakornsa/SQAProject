@@ -1,0 +1,87 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791114512-7FFltDvcBnbkAImQWe10","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Mockito Bug**\n\nI'm currently diving into Mockito bug 23, specifically how `ReturnsDeepStubs` handles serializable mock serialization. The issue seems to stem from `recordDeepStubMock` introducing an unserializable `Answer<Object>`, alongside the `mockitoCore` and `delegate` fields not being transient or handled as expected. I'm examining the `DeepStubsSerializableTest` as the primary trigger for this.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.mockitousage.stubbing;\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"import org.junit.Test;\nimport org.mockito.Mockito;\n\nimport java.io.ByteArrayInputStream;\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" java.io.ByteArrayOutputStream;\nimport java.io.ObjectInputStream;\nimport java.io.ObjectOutputStream"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\nimport java.io.Serializable;\n\nimport static org.junit.Assert.assertEquals;\nimport static org.junit"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".Assert.assertNotNull;\nimport static org.mockito.Mockito.mock;\nimport static org.mockito.Mockito.when"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\nimport static org.mockito.Mockito.withSettings;\n\npublic class DeepStubsSerializableTest {\n\n    @Test\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    public void should_serialize_and_deserialize_mock_created_by_deep_stubs() throws Exception"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" {\n        SampleClass sampleClass = mock(\n                SampleClass.class,\n                withSettings().defaultAnswer"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(Mockito.RETURNS_DEEP_STUBS).serializable()\n        );\n\n        when(sampleClass."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"getSample().isSth()).thenReturn(true);\n        when(sampleClass.getSample().getNumber()).thenReturn"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(42);\n\n        // Serialization\n        ByteArrayOutputStream baos = new ByteArrayOutputStream();\n        ObjectOutputStream oos = new"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" ObjectOutputStream(baos);\n        oos.writeObject(sampleClass);\n        oos.close();\n\n        //"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" Deserialization\n        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());\n        ObjectInputStream o"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"is = new ObjectInputStream(bais);\n        Object deserialized = ois.readObject();\n        ois.close();\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        assertNotNull(deserialized);\n        SampleClass deserializedSample = (SampleClass) deserialized;\n        assertEquals"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(true, deserializedSample.getSample().isSth());\n        assertEquals(42, deserializedSample"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".getSample().getNumber());\n    }\n\n    public static class SampleClass implements Serializable {\n        private static final long serialVersionUID ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" 1L;\n        Sample2 sample;\n\n        public Sample2 getSample() {\n            return sample;\n        }\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    }\n\n    public static class Sample2 implements Serializable {\n        private static final long serialVersionUID = 1L"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\n\n        public boolean isSth() {\n            return false;\n        }\n\n        public int getNumber"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"() {\n            return 0;\n        }\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1725,"output_tokens":767,"output_tokens_details":{"thinking_tokens":253},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.00417,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00417,"upstream_inference_prompt_cost":0.00129375,"upstream_inference_completions_cost":0.00287625}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,16 @@
+package org.apache.commons.lang;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for LANG-363: StringEscapeUtils.escapeJavaScript should escape forward slashes.
+ */
+public class StringEscapeUtilsRegressionTest extends TestCase {
+
+    public void testEscapeJavaScriptForwardSlash() {
+        String input = "</script>";
+        String expected = "<\\/script>";
+        String actual = StringEscapeUtils.escapeJavaScript(input);
+        assertEquals(expected, actual);
+    }
+}

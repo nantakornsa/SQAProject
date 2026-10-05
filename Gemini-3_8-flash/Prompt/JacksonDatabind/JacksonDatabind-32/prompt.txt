@@ -1,0 +1,90 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-32
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+d5a25f4300a93f4c411a7b8364d34122bc0a1b62
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-10-28 17:22:05 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+989
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/989
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.deser.TestUntypedDeserialization::testNestedUntyped989
+   --> com.fasterxml.jackson.databind.JsonMappingException: Can not deserialize instance of java.lang.Object out of END_OBJECT token
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.deser.std.UntypedObjectDeserializer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.deser.std.UntypedObjectDeserializer ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/deser/std/UntypedObjectDeserializer.java b/src/main/java/com/fasterxml/jackson/databind/deser/std/UntypedObjectDeserializer.java
+index 76754bd37..c96221412 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/deser/std/UntypedObjectDeserializer.java
++++ b/src/main/java/com/fasterxml/jackson/databind/deser/std/UntypedObjectDeserializer.java
+@@ -218,6 +218,7 @@ public class UntypedObjectDeserializer
+         case JsonTokenId.ID_FIELD_NAME:
+             // 28-Oct-2015, tatu: [databind#989] We may also be given END_OBJECT (similar to FIELD_NAME),
+             //    if caller has advanced to the first token of Object, but for empty Object
++        case JsonTokenId.ID_END_OBJECT:
+             if (_mapDeserializer != null) {
+                 return _mapDeserializer.deserialize(p, ctxt);
+             }
+@@ -532,8 +533,10 @@ public class UntypedObjectDeserializer
+             case JsonTokenId.ID_NULL: // should not get this but...
+                 return null;
+ 
++            case JsonTokenId.ID_END_OBJECT:
+                 // 28-Oct-2015, tatu: [databind#989] We may also be given END_OBJECT (similar to FIELD_NAME),
+                 //    if caller has advanced to the first token of Object, but for empty Object
++                return new LinkedHashMap<String,Object>(2);
+ 
+             //case JsonTokenId.ID_END_ARRAY: // invalid
+             default:
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testNestedUntyped989() throws IOException
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

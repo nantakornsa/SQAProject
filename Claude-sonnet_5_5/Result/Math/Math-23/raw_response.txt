@@ -1,0 +1,81 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791145818-j5JUObP5X8LSdNyJB72F","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":2253,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" test below"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" re"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"produces the triggering test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" from the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" bug report. I"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" have"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" not comp"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"iled or run it against"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" the buggy and fixed"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" versions.\n\nIt"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" targets `org.apache.commons.math3.optimization.univariate.BrentOptimizer`. The function is `Sin` plus a `StepFunction` that dips to -"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"1 in a narrow window around the minimum of the sine. The initial guess sits inside that window, so it is the best point. With a tight relative tolerance of 1e-8, the buggy optimizer can"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" return a point worse than the initial guess. The fixed version tracks the best point seen so far and returns it.\n\nThe imports assume `Sin` and `StepFunction` come from `org.apache.commons.math3.analysis"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".function` and `FunctionUtils` from `org.apache.commons.math3.analysis`.\n\n```java\npackage org.apache.commons.math3.optimization.univariate;\n\nimport org.apache.commons.math3.analysis.FunctionUtils;\nimport org.apache.commons.math3.analysis"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".UnivariateFunction;\nimport org.apache.commons.math3.analysis.function.Sin;\nimport org.apache.commons.math3.analysis.function.StepFunction;\nimport org.apache.commons.math3.optimization.GoalType;\nimport org.junit.Assert;\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" org.junit.Test;\n\npublic class BrentOptimizerKeepInitIfBestTest {\n\n    @Test\n    public void testKeepInitIfBest() {\n        final double minSin = 3 * Math.PI / 2;\n        final double offset = 1e-8"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":";\n        final double delta = 1e-7;\n        final UnivariateFunction f1 = new Sin();\n        final UnivariateFunction f2 = new StepFunction(new double[] { minSin, minSin + offset, minSin + 2 * offset},\n                                                       new double["}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"] { 0, -1, 0 });\n        final UnivariateFunction f = FunctionUtils.add(f1, f2);\n        // A slightly less stringent tolerance would make the test pass\n        // even with the previous implementation.\n        final double relTol = 1e-8;\n        final Univariate"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Optimizer optimizer = new BrentOptimizer(relTol, 1e-100);\n        final double init = minSin + 1.5 * offset;\n        final UnivariatePointValuePair result\n            = optimizer.optimize(200, f, GoalType.MINIMIZE,\n                                "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" minSin - 6.789 * delta,\n                                 minSin + 9.876 * delta,\n                                 init);\n\n        final double sol = result.getPoint();\n        final double expected = init;\n\n        Assert.assertTrue(\"Best point not reported\", f.value(sol) <= f.value(expected));"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2253,"output_tokens":888,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.013386,"is_byok":false,"cost_details":{"upstream_inference_cost":0.013386,"upstream_inference_prompt_cost":0.004506,"upstream_inference_completions_cost":0.00888}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

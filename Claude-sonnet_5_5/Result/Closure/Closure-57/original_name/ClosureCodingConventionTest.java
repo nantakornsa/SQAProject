@@ -1,0 +1,39 @@
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.Node;
+
+import junit.framework.TestCase;
+
+public class ClosureCodingConventionTest extends TestCase {
+
+  private final ClosureCodingConvention conv = new ClosureCodingConvention();
+
+  public void testRequire() {
+    assertRequire("goog.require('foo')");
+    assertNotRequire("goog.require(foo)");
+    assertNotRequire("goog.require()");
+    assertNotRequire("foo()");
+  }
+
+  public void testRequireWithNonStringArgument() {
+    assertNotRequire("goog.require(foo)");
+    assertNotRequire("goog.require(foo.bar)");
+    assertNotRequire("goog.require(1)");
+  }
+
+  private void assertRequire(String js) {
+    assertEquals("foo", extractRequire(js));
+  }
+
+  private void assertNotRequire(String js) {
+    assertNull(extractRequire(js));
+  }
+
+  private String extractRequire(String js) {
+    Compiler compiler = new Compiler();
+    Node script = compiler.parseTestCode(js);
+    Node exprResult = script.getFirstChild();
+    Node call = exprResult.getFirstChild();
+    return conv.extractClassNameIfRequire(call, exprResult);
+  }
+}

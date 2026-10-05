@@ -1,0 +1,83 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Cli
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Cli
+       Program: commons-cli
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/Cli.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-cli.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/active-bugs.csv
+Number of bugs: 39
+--------------------------------------------------------------------------------
+
+Summary for Bug: Cli-32
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+777cb81088d47472df21a452edd5ba568d4b3fdf
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-07-07 13:48:12 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CLI-193
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CLI-193
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.cli.HelpFormatterTest::testRenderWrappedTextWordCut
+   --> java.lang.StringIndexOutOfBoundsException: String index out of range: 12
+ - org.apache.commons.cli.HelpFormatterTest::testFindWrapPos
+   --> junit.framework.AssertionFailedError: wrap position 3 expected:<3> but was:<4>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.cli.HelpFormatter
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.cli.HelpFormatter ===
+diff --git a/src/main/java/org/apache/commons/cli/HelpFormatter.java b/src/main/java/org/apache/commons/cli/HelpFormatter.java
+index 6b74e4e..7d8a901 100644
+--- a/src/main/java/org/apache/commons/cli/HelpFormatter.java
++++ b/src/main/java/org/apache/commons/cli/HelpFormatter.java
+@@ -934,11 +934,7 @@ public class HelpFormatter
+         
+         // if we didn't find one, simply chop at startPos+width
+         pos = startPos + width;
+-        while ((pos <= text.length()) && ((c = text.charAt(pos)) != ' ')
+-               && (c != '\n') && (c != '\r'))
+-        {
+-            ++pos;
+-        }        
++        
+         return pos == text.length() ? -1 : pos;
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testRenderWrappedTextWordCut()
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

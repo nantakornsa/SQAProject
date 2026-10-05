@@ -1,0 +1,30 @@
+```java
+package org.apache.commons.compress.utils;
+
+import java.io.ByteArrayInputStream;
+import java.util.zip.CRC32;
+import org.junit.Test;
+
+/**
+ * Regression test for COMPRESS-412 (Compress-44).
+ * Ensures ChecksumCalculatingInputStream validates parameters and throws NullPointerException
+ * if either checksum or inputStream is null.
+ */
+public class ChecksumCalculatingInputStreamRegressionTest {
+
+    @Test(expected = NullPointerException.class)
+    public void testConstructorWithBothParametersNullThrowsNullPointerException() {
+        new ChecksumCalculatingInputStream(null, null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testConstructorWithNullChecksumThrowsNullPointerException() {
+        new ChecksumCalculatingInputStream(null, new ByteArrayInputStream(new byte[0]));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testConstructorWithNullInputStreamThrowsNullPointerException() {
+        new ChecksumCalculatingInputStream(new CRC32(), null);
+    }
+}
+```

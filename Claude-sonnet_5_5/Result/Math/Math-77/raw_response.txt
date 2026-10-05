@@ -1,0 +1,90 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791147934-2kcCPxxzQKxV9jJrRfPD","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":4880,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" b"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ug is in"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" `getLInfNorm"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"()`."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ArrayRealVector"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"` acc"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"umulated"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" with `max +="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Math.max(..."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":")` instead of ass"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"igning."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" `OpenMapRealVector` summed raw values instead of taking the maximum absolute value. The test uses a vector with negative entries so that both defects give wrong results, and it chec"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ks `getLInfNorm()` on both classes.\n\nFor `[-4, 0, 3, 1, -6, 3]`, the expected norm is 6.\n\n- **Buggy `ArrayRealVector`:** the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" running value goes 0, 4, 4+4=8, 8+4=12, and so on, so it ends at 128 "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"as in the report.\n- **Buggy `OpenMapRealVector`:** it sums the values to -3, which is wrong.\n- **Fixed versions:** both return 6.\n\nThe `OpenMapRealVector("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"double[])` constructor exists in this version. After the fix, `OpenMapRealVector` inherits `getLInfNorm()` from `AbstractRealVector`, which computes the max of `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Math.abs(getEntry(i))` over the entries, or similar. That also gives 6.\n\nThe test uses JUnit 3 style (`TestCase`), matching the project.\n\n```java\npackage org"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".apache.commons.math.linear;\n\nimport junit.framework.TestCase;\n\npublic class LInfNormRegressionTest extends TestCase {\n\n    private final double[] vec = { -4d, 0d, 3d, 1d, -6d"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":", 3d };\n\n    public void testArrayRealVectorLInfNorm() {\n        ArrayRealVector v = new ArrayRealVector(vec);\n        assertEquals(\"compare values  \", 6.0, v.getLInfNorm(), 1.0e-12);\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"}\n\n    public void testArrayRealVectorLInfNormAllNegative() {\n        ArrayRealVector v = new ArrayRealVector(new double[] { -1d, -2d, -3d });\n        assertEquals(\"compare values  \", 3.0, v.getLInfNorm(),"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" 1.0e-12);\n    }\n\n    public void testOpenMapRealVectorLInfNorm() {\n        OpenMapRealVector v = new OpenMapRealVector(vec);\n        assertEquals(\"compare values  \", 6.0, v.getLInfNorm(), 1.0e"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"-12);\n    }\n\n    public void testOpenMapRealVectorLInfNormAllNegative() {\n        OpenMapRealVector v = new OpenMapRealVector(new double[] { -1d, -2d, -3d });\n        assertEquals(\"compare values  \", 3.0, v."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"getLInfNorm(), 1.0e-12);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":4880,"output_tokens":881,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.01857,"is_byok":false,"cost_details":{"upstream_inference_cost":0.01857,"upstream_inference_prompt_cost":0.00976,"upstream_inference_completions_cost":0.00881}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

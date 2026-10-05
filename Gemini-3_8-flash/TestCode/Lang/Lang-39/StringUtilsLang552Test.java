@@ -1,0 +1,15 @@
+package org.apache.commons.lang3;
+
+import junit.framework.TestCase;
+
+public class StringUtilsLang552Test extends TestCase {
+
+    /**
+     * Tests LANG-552: NullPointerException in StringUtils.replaceEach when replacementList contains null elements.
+     */
+    public void testReplaceEachWithNullElements() {
+        assertEquals("aba", StringUtils.replaceEach("aba", new String[]{"a"}, new String[]{null}));
+        assertEquals("cbc", StringUtils.replaceEach("aba", new String[]{"a", "b"}, new String[]{"c", null}));
+        assertEquals("aba", StringUtils.replaceEach("aba", new String[]{null}, new String[]{"a"}));
+    }
+}

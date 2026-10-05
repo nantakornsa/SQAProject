@@ -1,0 +1,36 @@
+The bug is in `FastMath.max(float, float)`. When `a > b` and neither value is NaN, the buggy code returns `b` instead of `a`. So `max(50.0f, -50.0f)` returns `-50.0f`, which the new test catches.
+
+The test follows the project's JUnit 4 style, using `Assert` and `MathUtils.EPSILON` like the triggering test. It includes the following cases:
+
+- `max(50, -50)`, the direct failing case.
+- `max(-50, 50)`, which passes on both versions.
+- Positive infinity, which makes `a > b` and goes through the buggy branch.
+- NaN, which should still propagate.
+
+I have not compiled or run it against either version.
+
+```java
+package org.apache.commons.math.util;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+public class FastMathMaxFloatRegressionTest {
+
+    @Test
+    public void testMaxFloatFirstArgumentLarger() {
+        Assert.assertEquals("max(50.0, -50.0)", 50.0f,
+                            FastMath.max(50.0f, -50.0f), MathUtils.EPSILON);
+        Assert.assertEquals("max(-50.0, 50.0)", 50.0f,
+                            FastMath.max(-50.0f, 50.0f), MathUtils.EPSILON);
+        Assert.assertEquals("max(3.0, 1.0)", 3.0f,
+                            FastMath.max(3.0f, 1.0f), MathUtils.EPSILON);
+        Assert.assertEquals("max(+inf, 1.0)", Float.POSITIVE_INFINITY,
+                            FastMath.max(Float.POSITIVE_INFINITY, 1.0f), MathUtils.EPSILON);
+        Assert.assertEquals("max(1.0, -inf)", 1.0f,
+                            FastMath.max(1.0f, Float.NEGATIVE_INFINITY), MathUtils.EPSILON);
+        Assert.assertTrue("max(NaN, 1.0)", Float.isNaN(FastMath.max(Float.NaN, 1.0f)));
+        Assert.assertTrue("max(1.0, NaN)", Float.isNaN(FastMath.max(1.0f, Float.NaN)));
+    }
+}
+```

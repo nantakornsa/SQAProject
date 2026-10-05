@@ -1,0 +1,127 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-67
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+d4b02f6a3a90cb468731d6156d571d284bd070b1
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-07-25 12:29:43 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-393
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-393
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.optimization.MultiStartUnivariateRealOptimizerTest::testQuinticMin
+   --> junit.framework.AssertionFailedError: expected:<-0.27195612846834> but was:<-0.27194301946870036>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.optimization.MultiStartUnivariateRealOptimizer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.optimization.MultiStartUnivariateRealOptimizer ===
+diff --git a/src/main/java/org/apache/commons/math/optimization/MultiStartUnivariateRealOptimizer.java b/src/main/java/org/apache/commons/math/optimization/MultiStartUnivariateRealOptimizer.java
+index d0dada317..26fd5e0ac 100644
+--- a/src/main/java/org/apache/commons/math/optimization/MultiStartUnivariateRealOptimizer.java
++++ b/src/main/java/org/apache/commons/math/optimization/MultiStartUnivariateRealOptimizer.java
+@@ -89,12 +89,12 @@ public class MultiStartUnivariateRealOptimizer implements UnivariateRealOptimize
+ 
+     /** {@inheritDoc} */
+     public double getFunctionValue() {
+-        return optimizer.getFunctionValue();
++        return optimaValues[0];
+     }
+ 
+     /** {@inheritDoc} */
+     public double getResult() {
+-        return optimizer.getResult();
++        return optima[0];
+     }
+ 
+     /** {@inheritDoc} */
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testQuinticMin() throws MathException {
+        // The quintic function has zeros at 0, +-0.5 and +-1.
+        // The function has extrema (first derivative is zero) at 0.27195613 and 0.82221643,
+        UnivariateRealFunction f = new QuinticFunction();
+        UnivariateRealOptimizer underlying = new BrentOptimizer();
+        JDKRandomGenerator g = new JDKRandomGenerator();
+        g.setSeed(4312000053l);
+        MultiStartUnivariateRealOptimizer minimizer =
+            new MultiStartUnivariateRealOptimizer(underlying, 5, g);
+        minimizer.setAbsoluteAccuracy(10 * minimizer.getAbsoluteAccuracy());
+        minimizer.setRelativeAccuracy(10 * minimizer.getRelativeAccuracy());
+
+        try {
+            minimizer.getOptima();
+            fail("an exception should have been thrown");
+        } catch (IllegalStateException ise) {
+            // expected
+        } catch (Exception e) {
+            fail("wrong exception caught");
+        }
+        try {
+            minimizer.getOptimaValues();
+            fail("an exception should have been thrown");
+        } catch (IllegalStateException ise) {
+            // expected
+        } catch (Exception e) {
+            fail("wrong exception caught");
+        }
+
+        assertEquals(-0.27195612846834, minimizer.optimize(f, GoalType.MINIMIZE, -0.3, -0.2), 1.0e-13);
+        assertEquals(-0.27195612846834, minimizer.getResult(), 1.0e-13);
+        assertEquals(-0.04433426954946, minimizer.getFunctionValue(), 1.0e-13);
+
+        double[] optima = minimizer.getOptima();
+        double[] optimaValues = minimizer.getOptimaValues();
+        for (int i = 0; i < optima.length; ++i) {
+            assertEquals(f.value(optima[i]), optimaValues[i], 1.0e-10);
+        }
+
+        assertTrue(minimizer.getEvaluations()    >= 510);
+        assertTrue(minimizer.getEvaluations()    <= 530);
+        assertTrue(minimizer.getIterationCount() >= 150);
+        assertTrue(minimizer.getIterationCount() <= 170);
+
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

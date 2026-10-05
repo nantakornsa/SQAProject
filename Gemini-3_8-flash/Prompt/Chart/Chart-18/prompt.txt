@@ -1,0 +1,124 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Chart
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Chart
+       Program: jfreechart
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Chart/Chart.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Svn
+    Repository: file:///Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jfreechart/trunk
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Chart/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Chart-18
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+621
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2007-11-22 01:46:16 -0800 
+--------------------------------------------------------------------------------
+Bug report id:
+UNKNOWN
+--------------------------------------------------------------------------------
+Bug report url:
+UNKNOWN
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jfree.data.category.junit.DefaultCategoryDatasetTests::testBug1835955
+   --> java.lang.IndexOutOfBoundsException: Index: 0, Size: 0
+ - org.jfree.data.junit.DefaultKeyedValues2DTests::testRemoveColumnByKey
+   --> java.lang.IndexOutOfBoundsException: Index: 0, Size: 0
+ - org.jfree.data.junit.DefaultKeyedValuesTests::testRemoveValue
+   --> junit.framework.AssertionFailedError
+ - org.jfree.data.junit.DefaultKeyedValuesTests::testGetIndex2
+   --> junit.framework.AssertionFailedError: expected:<-1> but was:<0>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jfree.data.DefaultKeyedValues
+ - org.jfree.data.DefaultKeyedValues2D
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jfree.data.DefaultKeyedValues ===
+diff --git a/source/org/jfree/data/DefaultKeyedValues.java b/source/org/jfree/data/DefaultKeyedValues.java
+index 707eb0a..5569198 100644
+--- a/source/org/jfree/data/DefaultKeyedValues.java
++++ b/source/org/jfree/data/DefaultKeyedValues.java
+@@ -315,9 +315,7 @@ public class DefaultKeyedValues implements KeyedValues,
+     public void removeValue(int index) {
+         this.keys.remove(index);
+         this.values.remove(index);
+-        if (index < this.keys.size()) {
+         rebuildIndex();
+-        }
+     }
+ 
+     /**
+@@ -332,7 +330,8 @@ public class DefaultKeyedValues implements KeyedValues,
+     public void removeValue(Comparable key) {
+         int index = getIndex(key);
+         if (index < 0) {
+-			return;
++            throw new UnknownKeyException("The key (" + key 
++                    + ") is not recognised.");
+         }
+         removeValue(index);
+     }
+
+=== MODIFIED SOURCE: org.jfree.data.DefaultKeyedValues2D ===
+diff --git a/source/org/jfree/data/DefaultKeyedValues2D.java b/source/org/jfree/data/DefaultKeyedValues2D.java
+index 798d5d0..cb81694 100644
+--- a/source/org/jfree/data/DefaultKeyedValues2D.java
++++ b/source/org/jfree/data/DefaultKeyedValues2D.java
+@@ -452,10 +452,19 @@ public class DefaultKeyedValues2D implements KeyedValues2D,
+      * @see #removeRow(Comparable)
+      */
+     public void removeColumn(Comparable columnKey) {
++    	if (columnKey == null) {
++    		throw new IllegalArgumentException("Null 'columnKey' argument.");
++    	}
++    	if (!this.columnKeys.contains(columnKey)) {
++    		throw new UnknownKeyException("Unknown key: " + columnKey);
++    	}
+         Iterator iterator = this.rows.iterator();
+         while (iterator.hasNext()) {
+             DefaultKeyedValues rowData = (DefaultKeyedValues) iterator.next();
++            int index = rowData.getIndex(columnKey);
++            if (index >= 0) {
+                 rowData.removeValue(columnKey);
++            }
+         }
+         this.columnKeys.remove(columnKey);
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+ * 21-Nov-2007 : Added testBug1835955() method (DG);
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

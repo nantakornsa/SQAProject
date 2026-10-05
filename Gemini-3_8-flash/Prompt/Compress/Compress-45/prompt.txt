@@ -1,0 +1,84 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Compress
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Compress
+       Program: commons-compress
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/Compress.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-compress.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/active-bugs.csv
+Number of bugs: 47
+--------------------------------------------------------------------------------
+
+Summary for Bug: Compress-45
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+02735ad7e6313515a846bc15bcc89cf254f8161f
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-06-17 21:47:10 +0200
+--------------------------------------------------------------------------------
+Bug report id:
+COMPRESS-411
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COMPRESS-411
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.compress.archivers.tar.TarUtilsTest::testRoundTripOctalOrBinary8
+   --> java.lang.IllegalArgumentException: Value -72057594037927935 is too large for 8 byte field.
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.compress.archivers.tar.TarUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.compress.archivers.tar.TarUtils ===
+diff --git a/src/main/java/org/apache/commons/compress/archivers/tar/TarUtils.java b/src/main/java/org/apache/commons/compress/archivers/tar/TarUtils.java
+index 39ce5c1a..d132d9d0 100644
+--- a/src/main/java/org/apache/commons/compress/archivers/tar/TarUtils.java
++++ b/src/main/java/org/apache/commons/compress/archivers/tar/TarUtils.java
+@@ -484,8 +484,9 @@ public static int formatLongOctalOrBinaryBytes(
+ 
+         if (length < 9) {
+             formatLongBinary(value, buf, offset, length, negative);
++        } else {
++            formatBigIntegerBinary(value, buf, offset, length, negative);
+         }
+-        formatBigIntegerBinary(value, buf, offset, length, negative);
+ 
+         buf[offset] = (byte) (negative ? 0xff : 0x80);
+         return offset + length;
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testRoundTripOctalOrBinary8() {
+        testRoundTripOctalOrBinary(8);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

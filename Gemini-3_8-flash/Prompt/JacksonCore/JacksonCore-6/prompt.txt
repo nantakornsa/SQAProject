@@ -1,0 +1,89 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonCore
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonCore
+       Program: jackson-core
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonCore/JacksonCore.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-core.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonCore/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonCore-6
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+d99951470163764b3e01a119dab2822e5fd98204
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2014-12-30 17:09:51 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+176
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-core/issues/176
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.core.TestJsonPointer::testIZeroIndex
+   --> junit.framework.AssertionFailedError: expected:<-1> but was:<0>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.core.JsonPointer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.core.JsonPointer ===
+diff --git a/src/main/java/com/fasterxml/jackson/core/JsonPointer.java b/src/main/java/com/fasterxml/jackson/core/JsonPointer.java
+index ab37c3b5..ff84f5ed 100644
+--- a/src/main/java/com/fasterxml/jackson/core/JsonPointer.java
++++ b/src/main/java/com/fasterxml/jackson/core/JsonPointer.java
+@@ -190,8 +190,15 @@ public class JsonPointer
+             return -1;
+         }
+         // [core#176]: no leading zeroes allowed
+-        for (int i = 0; i < len; ++i) {
+-            char c = str.charAt(i);
++        char c = str.charAt(0);
++        if (c <= '0') {
++            return (len == 1 && c == '0') ? 0 : -1;
++        }
++        if (c > '9') {
++            return -1;
++        }
++        for (int i = 1; i < len; ++i) {
++            c = str.charAt(i);
+             if (c > '9' || c < '0') {
+                 return -1;
+             }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testIZeroIndex() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

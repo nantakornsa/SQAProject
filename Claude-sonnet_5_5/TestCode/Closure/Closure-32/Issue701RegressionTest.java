@@ -1,0 +1,35 @@
+package com.google.javascript.jscomp;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for issue 701: whitespace (ASCII art) in @preserve /
+ * license comments must be preserved in the compiler output.
+ */
+public class Issue701RegressionTest extends TestCase {
+
+  public void testIssue701() {
+    // Check ASCII art in license comments.
+    String ascii = "/**\n" +
+        " * @preserve\n" +
+        "   This\n" +
+        "     is\n" +
+        "       ASCII    ART\n" +
+        "*/";
+    String expected = "/*\n\n" +
+        "   This\n" +
+        "     is\n" +
+        "       ASCII    ART\n" +
+        "*/\n";
+
+    CompilerOptions options = new CompilerOptions();
+    Compiler compiler = new Compiler();
+    Result result = compiler.compile(
+        JSSourceFile.fromCode("externs.js", ""),
+        JSSourceFile.fromCode("input.js", ascii),
+        options);
+
+    assertTrue(result.success);
+    assertEquals(expected, compiler.toSource());
+  }
+}

@@ -1,0 +1,139 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Compress
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Compress
+       Program: commons-compress
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/Compress.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-compress.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/active-bugs.csv
+Number of bugs: 47
+--------------------------------------------------------------------------------
+
+Summary for Bug: Compress-33
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+b72b5c716ac18150396d05988d9eab745bea02b9
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-05-23 15:05:43 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COMPRESS-316
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COMPRESS-316
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.compress.compressors.DetectCompressorTestCase::testDetection
+   --> org.apache.commons.compress.compressors.CompressorException: No Compressor found for the stream signature.
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.compress.compressors.CompressorStreamFactory
+ - org.apache.commons.compress.compressors.deflate.DeflateCompressorInputStream
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.compress.compressors.CompressorStreamFactory ===
+diff --git a/src/main/java/org/apache/commons/compress/compressors/CompressorStreamFactory.java b/src/main/java/org/apache/commons/compress/compressors/CompressorStreamFactory.java
+index 935283aa..8dc3c525 100644
+--- a/src/main/java/org/apache/commons/compress/compressors/CompressorStreamFactory.java
++++ b/src/main/java/org/apache/commons/compress/compressors/CompressorStreamFactory.java
+@@ -237,6 +237,9 @@ public class CompressorStreamFactory {
+                 return new ZCompressorInputStream(in);
+             }
+ 
++            if (DeflateCompressorInputStream.matches(signature, signatureLength)) {
++                return new DeflateCompressorInputStream(in);
++            }
+ 
+             if (XZUtils.matches(signature, signatureLength) &&
+                 XZUtils.isXZCompressionAvailable()) {
+
+=== MODIFIED SOURCE: org.apache.commons.compress.compressors.deflate.DeflateCompressorInputStream ===
+diff --git a/src/main/java/org/apache/commons/compress/compressors/deflate/DeflateCompressorInputStream.java b/src/main/java/org/apache/commons/compress/compressors/deflate/DeflateCompressorInputStream.java
+index 98d8ec12..b8ed1981 100644
+--- a/src/main/java/org/apache/commons/compress/compressors/deflate/DeflateCompressorInputStream.java
++++ b/src/main/java/org/apache/commons/compress/compressors/deflate/DeflateCompressorInputStream.java
+@@ -30,6 +30,11 @@ import org.apache.commons.compress.compressors.CompressorInputStream;
+  * @since 1.9
+  */
+ public class DeflateCompressorInputStream extends CompressorInputStream {
++    private static final int MAGIC_1 = 0x78;
++    private static final int MAGIC_2a = 0x01;
++    private static final int MAGIC_2b = 0x5e;
++    private static final int MAGIC_2c = 0x9c;
++    private static final int MAGIC_2d = 0xda;
+     
+     private final InputStream in;
+ 
+@@ -103,4 +108,11 @@ public class DeflateCompressorInputStream extends CompressorInputStream {
+      * 
+      * @since 1.9
+      */
++    public static boolean matches(byte[] signature, int length) {
++        return length > 3 && signature[0] == MAGIC_1 && (
++                signature[1] == (byte) MAGIC_2a ||
++                signature[1] == (byte) MAGIC_2b ||
++                signature[1] == (byte) MAGIC_2c ||
++                signature[1] == (byte) MAGIC_2d);
++    }
+ }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testDetection() throws Exception {
+        CompressorInputStream bzip2 = getStreamFor("bla.txt.bz2"); 
+        assertNotNull(bzip2);
+        assertTrue(bzip2 instanceof BZip2CompressorInputStream);
+
+        CompressorInputStream gzip = getStreamFor("bla.tgz");
+        assertNotNull(gzip);
+        assertTrue(gzip instanceof GzipCompressorInputStream);
+        
+        CompressorInputStream pack200 = getStreamFor("bla.pack");
+        assertNotNull(pack200);
+        assertTrue(pack200 instanceof Pack200CompressorInputStream);
+
+        CompressorInputStream xz = getStreamFor("bla.tar.xz");
+        assertNotNull(xz);
+        assertTrue(xz instanceof XZCompressorInputStream);
+
+        CompressorInputStream zlib = getStreamFor("bla.tar.deflatez");
+        assertNotNull(zlib);
+        assertTrue(zlib instanceof DeflateCompressorInputStream);
+
+        try {
+            factory.createCompressorInputStream(new ByteArrayInputStream(new byte[0]));
+            fail("No exception thrown for an empty input stream");
+        } catch (CompressorException e) {
+            // expected
+        }
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

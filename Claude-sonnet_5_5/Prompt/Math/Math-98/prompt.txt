@@ -1,0 +1,106 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-98
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+6f4e48d42aa880e7ba49ff651aa701313e1aec31
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-06-17 19:09:36 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-209
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-209
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.linear.BigMatrixImplTest::testMath209
+   --> java.lang.ArrayIndexOutOfBoundsException: 2
+ - org.apache.commons.math.linear.RealMatrixImplTest::testMath209
+   --> java.lang.ArrayIndexOutOfBoundsException: 2
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.linear.BigMatrixImpl
+ - org.apache.commons.math.linear.RealMatrixImpl
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.linear.BigMatrixImpl ===
+diff --git a/src/java/org/apache/commons/math/linear/BigMatrixImpl.java b/src/java/org/apache/commons/math/linear/BigMatrixImpl.java
+index 7cd61cb2c..919a5bab1 100644
+--- a/src/java/org/apache/commons/math/linear/BigMatrixImpl.java
++++ b/src/java/org/apache/commons/math/linear/BigMatrixImpl.java
+@@ -988,7 +988,7 @@ public class BigMatrixImpl implements BigMatrix, Serializable {
+         }
+         final int nRows = this.getRowDimension();
+         final int nCols = this.getColumnDimension();
+-        final BigDecimal[] out = new BigDecimal[v.length];
++        final BigDecimal[] out = new BigDecimal[nRows];
+         for (int row = 0; row < nRows; row++) {
+             BigDecimal sum = ZERO;
+             for (int i = 0; i < nCols; i++) {
+
+=== MODIFIED SOURCE: org.apache.commons.math.linear.RealMatrixImpl ===
+diff --git a/src/java/org/apache/commons/math/linear/RealMatrixImpl.java b/src/java/org/apache/commons/math/linear/RealMatrixImpl.java
+index 791064425..3a717ff83 100644
+--- a/src/java/org/apache/commons/math/linear/RealMatrixImpl.java
++++ b/src/java/org/apache/commons/math/linear/RealMatrixImpl.java
+@@ -776,7 +776,7 @@ public class RealMatrixImpl implements RealMatrix, Serializable {
+         if (v.length != nCols) {
+             throw new IllegalArgumentException("vector has wrong length");
+         }
+-        final double[] out = new double[v.length];
++        final double[] out = new double[nRows];
+         for (int row = 0; row < nRows; row++) {
+             final double[] dataRow = data[row];
+             double sum = 0;
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testMath209() {
+        BigMatrix a = new BigMatrixImpl(new BigDecimal[][] {
+                { new BigDecimal(1), new BigDecimal(2) },
+                { new BigDecimal(3), new BigDecimal(4) },
+                { new BigDecimal(5), new BigDecimal(6) }
+        }, false);
+        BigDecimal[] b = a.operate(new BigDecimal[] { new BigDecimal(1), new BigDecimal(1) });
+        assertEquals(a.getRowDimension(), b.length);
+        assertEquals( 3.0, b[0].doubleValue(), 1.0e-12);
+        assertEquals( 7.0, b[1].doubleValue(), 1.0e-12);
+        assertEquals(11.0, b[2].doubleValue(), 1.0e-12);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,83 @@
+The test below compiles the `testIssue537a` snippet directly with `Compiler` and type checking enabled, so it does not depend on `TypeCheckTest`'s private helpers. I have not compiled or run it against either version, so three things are assumptions about the 2011-era API:
+- `JSSourceFile.fromCode` and the array overload of `compile` exist.
+- `JSError.description` is public.
+- The minimal externs I wrote supply `Function.prototype.call`, so no unrelated warning interferes.
+
+On the buggy version the compiler reports "Property baz never defined on Bar" instead of the expected arity warning, so the assertion fails. On the fixed version the arity warning for `Foo.prototype.method` is reported and the test passes.
+
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.jscomp.CheckLevel;
+import com.google.javascript.jscomp.CompilerOptions;
+import com.google.javascript.jscomp.DiagnosticGroups;
+import com.google.javascript.jscomp.JSSourceFile;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for issue 537: properties defined on an object-literal
+ * prototype of a subclass must be visible, and inherited prototype
+ * methods must be resolved through the declared superclass.
+ */
+public class Issue537RegressionTest extends TestCase {
+
+  private static final String EXTERNS =
+      "/** @constructor */ function Object() {}\n" +
+      "/** @constructor */ function Function() {}\n" +
+      "/**\n" +
+      " * @param {...*} var_args\n" +
+      " * @return {*}\n" +
+      " */\n" +
+      "Function.prototype.call = function(var_args) {};\n";
+
+  private static boolean hasWarning(Compiler compiler, String description) {
+    for (JSError warning : compiler.getWarnings()) {
+      if (description.equals(warning.description)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public void testIssue537a() throws Exception {
+    String js =
+        "/** @constructor */ function Foo() {}" +
+        "Foo.prototype = {method: function() {}};" +
+        "/**\n" +
+        " * @constructor\n" +
+        " * @extends {Foo}\n" +
+        " */\n" +
+        "function Bar() {" +
+        "  Foo.call(this);" +
+        "  if (this.baz()) this.method(1);" +
+        "}" +
+        "Bar.prototype = {" +
+        "  baz: function() {" +
+        "    return true;" +
+        "  }" +
+        "};" +
+        "Bar.prototype.__proto__ = Foo.prototype;";
+
+    String expected =
+        "Function Foo.prototype.method: called with 1 argument(s). " +
+        "Function requires at least 0 argument(s) " +
+        "and no more than 0 argument(s).";
+
+    CompilerOptions options = new CompilerOptions();
+    options.checkTypes = true;
+    options.setWarningLevel(DiagnosticGroups.CHECK_TYPES, CheckLevel.WARNING);
+
+    Compiler compiler = new Compiler();
+    compiler.compile(
+        new JSSourceFile[] { JSSourceFile.fromCode("externs", EXTERNS) },
+        new JSSourceFile[] { JSSourceFile.fromCode("input", js) },
+        options);
+
+    assertTrue("Expected warning not found: " + expected,
+        hasWarning(compiler, expected));
+    assertFalse("Property baz should be defined on Bar",
+        hasWarning(compiler, "Property baz never defined on Bar"));
+  }
+}
+```

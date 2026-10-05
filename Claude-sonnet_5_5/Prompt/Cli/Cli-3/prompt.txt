@@ -1,0 +1,87 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Cli
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Cli
+       Program: commons-cli
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/Cli.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-cli.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/active-bugs.csv
+Number of bugs: 39
+--------------------------------------------------------------------------------
+
+Summary for Bug: Cli-3
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+d35f2fa7a06457469a617677eeb4c1dc21484006
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2007-05-28 07:54:52 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+cli-1
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CLI-1
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.cli.PatternOptionBuilderTest::testSimplePattern
+   --> junit.framework.AssertionFailedError: number flag n expected:<4.5> but was:<4.5>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.cli.TypeHandler
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.cli.TypeHandler ===
+diff --git a/src/java/org/apache/commons/cli/TypeHandler.java b/src/java/org/apache/commons/cli/TypeHandler.java
+index addf90b..0a0aa72 100644
+--- a/src/java/org/apache/commons/cli/TypeHandler.java
++++ b/src/java/org/apache/commons/cli/TypeHandler.java
+@@ -158,7 +158,17 @@ public class TypeHandler {
+     {
+         try
+         {
+-            return org.apache.commons.lang.math.NumberUtils.createNumber(str);
++            if( str != null )
++            {
++                if( str.indexOf('.') != -1 )
++                {
++                    return Double.valueOf(str);
++                }
++                else
++                {
++                    return Long.valueOf(str);
++                }
++            }
+         }
+         catch (NumberFormatException nfe)
+         {
+
+
+=== TRIGGERING TEST METHOD ===
+   public void testSimplePattern()
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,45 @@
+```java
+package org.jfree.data.xy.junit;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.jfree.data.xy.XYSeries;
+
+/**
+ * Tests for the {@link XYSeries} class.
+ */
+public class XYSeriesBug1955483Test extends TestCase {
+
+    /**
+     * Returns the tests as a test suite.
+     *
+     * @return The test suite.
+     */
+    public static Test suite() {
+        return new TestSuite(XYSeriesBug1955483Test.class);
+    }
+
+    /**
+     * Constructs a new set of tests.
+     *
+     * @param name  the name of the tests.
+     */
+    public XYSeriesBug1955483Test(String name) {
+        super(name);
+    }
+
+    /**
+     * Test for bug 1955483: calling addOrUpdate on an XYSeries that allows
+     * duplicate X values and is sorted throws IndexOutOfBoundsException.
+     */
+    public void testBug1955483() {
+        XYSeries series = new XYSeries("Test", true, true);
+        series.addOrUpdate(new Double(1.0), new Double(1.0));
+        series.addOrUpdate(new Double(1.0), new Double(2.0));
+        assertEquals(2, series.getItemCount());
+        assertEquals(new Double(1.0), series.getY(0));
+        assertEquals(new Double(2.0), series.getY(1));
+    }
+}
+```

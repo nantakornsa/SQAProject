@@ -1,0 +1,60 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791053766-LgIHEy6jkH2G7LJc0G8k","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1504,"output_tokens":8,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"```java\npackage org.apache"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".commons.csv;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\nimport static org.junit."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Assert.assertEquals"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":";\n\nimport java.io.I"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"OException;\nimport java.io"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".StringWriter;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\nimport org.junit.Test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":";\n\npublic class CSVP"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"rinterHeaderR"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"egressionTest {\n\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"@Test\n    public void testHeaderIsPrintedOnCreation() throws IOException {\n        final StringWriter sw = new StringWriter();\n        final CSVPrinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT.withQ"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"uoteChar(null)\n                .withHeader(\"C1\", \"C2\", \"C3\"));\n        printer.printRecord(\"a\", \"b\", \"c\");\n        printer.printRecord(\"x\", \"y\", \"z\");\n        assertEquals(\"C1,C2,C3\\r\\na,b,c\\r\\nx,y,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"z\\r\\n\", sw.toString());\n        printer.close();\n    }\n\n    @Test\n    public void testHeaderOnlyIsPrintedWhenNoRecords() throws IOException {\n        final StringWriter sw = new StringWriter();\n        final CSVP"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"rinter printer = new CSVPrinter(sw, CSVFormat.DEFAULT.withHeader(\"H1\", \"H2\"));\n        assertEquals(\"H1,H2\\r\\n\", sw.toString());\n        printer.close();\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1504,"output_tokens":444,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.007448,"is_byok":false,"cost_details":{"upstream_inference_cost":0.007448,"upstream_inference_prompt_cost":0.003008,"upstream_inference_completions_cost":0.00444}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

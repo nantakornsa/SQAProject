@@ -1,0 +1,35 @@
+package com.fasterxml.jackson.databind.convert;
+
+import java.io.IOException;
+
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class Issue744Test extends BaseMapTest
+{
+    static class DataA {
+        public int i = 1;
+        public int j = 2;
+    }
+
+    static class DataB {
+        public DataA da = new DataA();
+        public int k = 3;
+    }
+
+    public void testIssue744() throws IOException
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        DataB db = new DataB();
+        db.da.i = 4;
+
+        // Calling readTree on an updating reader should deserialize as JsonNode,
+        // not attempt to deserialize using the target object's deserializer.
+        JsonNode tree = mapper.readerForUpdating(db).readTree("{\"i\": 1, \"j\": 2}");
+        assertNotNull(tree);
+        assertTrue(tree.isObject());
+        assertEquals(1, tree.get("i").asInt());
+        assertEquals(2, tree.get("j").asInt());
+    }
+}

@@ -1,0 +1,80 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Csv
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Csv
+       Program: commons-csv
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Csv/Csv.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-csv.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Csv/active-bugs.csv
+Number of bugs: 16
+--------------------------------------------------------------------------------
+
+Summary for Bug: Csv-11
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+b67524da7fd146634c7112b23e95d1d45c398b82
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2014-07-11 18:42:48 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CSV-122
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CSV-122
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.csv.CSVParserTest::testHeaderMissingWithNull
+   --> java.lang.NullPointerException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.csv.CSVParser
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.csv.CSVParser ===
+diff --git a/src/main/java/org/apache/commons/csv/CSVParser.java b/src/main/java/org/apache/commons/csv/CSVParser.java
+index b6867a40..b7ca3fa9 100644
+--- a/src/main/java/org/apache/commons/csv/CSVParser.java
++++ b/src/main/java/org/apache/commons/csv/CSVParser.java
+@@ -381,7 +381,7 @@ public final class CSVParser implements Iterable<CSVRecord>, Closeable {
+                 for (int i = 0; i < headerRecord.length; i++) {
+                     final String header = headerRecord[i];
+                     final boolean containsHeader = hdrMap.containsKey(header);
+-                    final boolean emptyHeader = header.trim().isEmpty();
++                    final boolean emptyHeader = header == null || header.trim().isEmpty();
+                     if (containsHeader && (!emptyHeader || (emptyHeader && !this.format.getIgnoreEmptyHeaders()))) {
+                         throw new IllegalArgumentException("The header contains a duplicate name: \"" + header +
+                                 "\" in " + Arrays.toString(headerRecord));
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testHeaderMissingWithNull() throws Exception {
+        final Reader in = new StringReader("a,,c,,d\n1,2,3,4\nx,y,z,zz");
+        CSVFormat.DEFAULT.withHeader().withNullString("").withIgnoreEmptyHeaders(true).parse(in).iterator();
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

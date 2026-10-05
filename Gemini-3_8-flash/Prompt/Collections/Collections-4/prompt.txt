@@ -1,0 +1,130 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Collections
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Collections
+       Program: commons-collections
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/Collections.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-collections.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/active-bugs.csv
+Number of bugs: 28
+--------------------------------------------------------------------------------
+
+Summary for Bug: Collections-4
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+5e313d14b2a10ce0aea529ac4db50e183f0b1e49
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2006-10-28 12:27:01 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COLLECTIONS-228
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COLLECTIONS-228
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.collections.map.TestMultiValueMap::testPutWithList
+   --> junit.framework.AssertionFailedError: expected:<a> but was:<null>
+ - org.apache.commons.collections.map.TestMultiValueMap::testPutAll_KeyCollection
+   --> junit.framework.AssertionFailedError: expected:<true> but was:<false>
+ - org.apache.commons.collections.map.TestMultiValueMap::testPutWithSet
+   --> junit.framework.AssertionFailedError: expected:<a> but was:<null>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.collections.map.MultiValueMap
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.collections.map.MultiValueMap ===
+diff --git a/src/java/org/apache/commons/collections/map/MultiValueMap.java b/src/java/org/apache/commons/collections/map/MultiValueMap.java
+index aa0f2f92..8bddee9f 100644
+--- a/src/java/org/apache/commons/collections/map/MultiValueMap.java
++++ b/src/java/org/apache/commons/collections/map/MultiValueMap.java
+@@ -152,7 +152,7 @@ public class MultiValueMap extends AbstractMapDecorator implements MultiMap {
+      * @param value the value to remove
+      * @return the value removed (which was passed in), null if nothing removed
+      */
+-    public Object removeMapping(Object key, Object value) {
++    public Object remove(Object key, Object value) {
+         Collection valuesForKey = getCollection(key);
+         if (valuesForKey == null) {
+             return null;
+@@ -206,11 +206,11 @@ public class MultiValueMap extends AbstractMapDecorator implements MultiMap {
+         Collection coll = getCollection(key);
+         if (coll == null) {
+             coll = createCollection(1);  // might produce a non-empty collection
+-            result = coll.add(value);
++            coll.add(value);
+             if (coll.size() > 0) {
+                 // only add if non-zero size to maintain class state
+                 getMap().put(key, coll);
+-                result = false;
++                result = true;  // map definitely changed
+             }
+         } else {
+             result = coll.add(value);
+@@ -307,19 +307,20 @@ public class MultiValueMap extends AbstractMapDecorator implements MultiMap {
+         if (values == null || values.size() == 0) {
+             return false;
+         }
++        boolean result = false;
+         Collection coll = getCollection(key);
+         if (coll == null) {
+             coll = createCollection(values.size());  // might produce a non-empty collection
+-            boolean result = coll.addAll(values);
++            coll.addAll(values);
+             if (coll.size() > 0) {
+                 // only add if non-zero size to maintain class state
+                 getMap().put(key, coll);
+-                result = false;
++                result = true;  // map definitely changed
+             }
+-            return result;
+         } else {
+-            return coll.addAll(values);
++            result = coll.addAll(values);
+         }
++        return result;
+     }
+ 
+     /**
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testPutWithList() {
+        MultiValueMap test = MultiValueMap.decorate(new HashMap(), ArrayList.class);
+        assertEquals("a", test.put("A", "a"));
+        assertEquals("b", test.put("A", "b"));
+        assertEquals(1, test.size());
+        assertEquals(2, test.size("A"));
+        assertEquals(2, test.totalSize());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

@@ -1,0 +1,112 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-145
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+dff6e0114f19c20aeb63393d67aa0880ff5745b5
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-06-25 23:56:52 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+190
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-190.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.CodePrinterTest::testFunctionSafariCompatiblity
+   --> junit.framework.ComparisonFailure: expected:<if(e1)[{A:function goo(){return true}]}> but was:<if(e1)[A:function goo(){return true]}>
+ - com.google.javascript.jscomp.CodePrinterTest::testDoLoopIECompatiblity
+   --> junit.framework.ComparisonFailure: expected:<if(x)[{A:do foo();while(y)}]> but was:<if(x)[A:do foo();while(y)]>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.CodeGenerator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.CodeGenerator ===
+diff --git a/src/com/google/javascript/jscomp/CodeGenerator.java b/src/com/google/javascript/jscomp/CodeGenerator.java
+index 42c9ab388..cce82f483 100644
+--- a/src/com/google/javascript/jscomp/CodeGenerator.java
++++ b/src/com/google/javascript/jscomp/CodeGenerator.java
+@@ -706,12 +706,25 @@ class CodeGenerator {
+    * labels).
+    */
+   private boolean isOneExactlyFunctionOrDo(Node n) {
++    if (n.getType() == Token.LABEL) {
++      Node labeledStatement = n.getLastChild();
++      if (labeledStatement.getType() != Token.BLOCK) {
++        return isOneExactlyFunctionOrDo(labeledStatement);
++      } else {
+         // For labels with block children, we need to ensure that a
+         // labeled FUNCTION or DO isn't generated when extraneous BLOCKs 
+         // are skipped. 
++        if (getNonEmptyChildCount(n, 2) == 1) { 
++          return isOneExactlyFunctionOrDo(getFirstNonEmptyChild(n));
++        } else {
+           // Either a empty statement or an block with more than one child,
+           // way it isn't a FUNCTION or DO.
++          return false;
++        }
++      }
++    } else {
+       return (n.getType() == Token.FUNCTION || n.getType() == Token.DO);
++    }
+   }
+ 
+   /**
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testFunctionSafariCompatiblity() {
+    // Functions within IFs cause syntax errors on Safari.
+    assertPrint("function(){if(e1){function goo(){return true}}else foo()}",
+        "function(){if(e1){function goo(){return true}}else foo()}");
+
+    assertPrint("function(){if(e1)function goo(){return true}else foo()}",
+        "function(){if(e1){function goo(){return true}}else foo()}");
+
+    assertPrint("if(e1){function goo(){return true}}",
+        "if(e1){function goo(){return true}}");
+
+    assertPrint("if(e1)function goo(){return true}",
+        "if(e1){function goo(){return true}}");
+
+    assertPrint("if(e1)A:function goo(){return true}",
+        "if(e1){A:function goo(){return true}}");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,95 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Compress
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Compress
+       Program: commons-compress
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/Compress.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-compress.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/active-bugs.csv
+Number of bugs: 47
+--------------------------------------------------------------------------------
+
+Summary for Bug: Compress-16
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+9bdacbfb9631d3a3710a64f35482c643b78a2e79
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-07-07 05:30:40 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COMPRESS-191
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COMPRESS-191
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.compress.archivers.ArchiveStreamFactoryTest::aiffFilesAreNoTARs
+   --> junit.framework.AssertionFailedError: created an input stream for a non-archive
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.compress.archivers.ArchiveStreamFactory
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.compress.archivers.ArchiveStreamFactory ===
+diff --git a/src/main/java/org/apache/commons/compress/archivers/ArchiveStreamFactory.java b/src/main/java/org/apache/commons/compress/archivers/ArchiveStreamFactory.java
+index 37dfbe03..90820df8 100644
+--- a/src/main/java/org/apache/commons/compress/archivers/ArchiveStreamFactory.java
++++ b/src/main/java/org/apache/commons/compress/archivers/ArchiveStreamFactory.java
+@@ -241,8 +241,9 @@ public class ArchiveStreamFactory {
+                 try {
+                     TarArchiveInputStream tais = new TarArchiveInputStream(new ByteArrayInputStream(tarheader));
+                     // COMPRESS-191 - verify the header checksum
+-                    tais.getNextEntry();
++                    if (tais.getNextTarEntry().isCheckSumOK()) {
+                         return new TarArchiveInputStream(in);
++                    }
+                 } catch (Exception e) { // NOPMD
+                     // can generate IllegalArgumentException as well
+                     // as IOException
+
+
+=== TRIGGERING TEST METHOD ===
+    public void aiffFilesAreNoTARs() throws Exception {
+        InputStream is = null;
+        try {
+            is = new BufferedInputStream(new FileInputStream("src/test/resources/testAIFF.aif"));
+            new ArchiveStreamFactory().createArchiveInputStream(is);
+            fail("created an input stream for a non-archive");
+        } catch (ArchiveException ae) {
+            assertTrue(ae.getMessage().startsWith("No Archiver found"));
+        } finally {
+            if (is != null) {
+                is.close();
+            }
+        }
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

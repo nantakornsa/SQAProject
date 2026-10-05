@@ -1,0 +1,48 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791143306-BEtuvA3yUxe5N10JEoGw","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Jsoup Bug**\n\nI'm currently diving into Jsoup-57, specifically examining the `Attributes.removeIgnoreCase` method. My focus is on understanding the iteration and removal logic within this function to pinpoint the root cause of the issue.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.jsoup.nodes;\n\nimport org.jsoup.Jsoup;\nimport org.jsoup.nodes."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Document;\nimport org.jsoup.nodes.Element;\nimport org.junit.Test;\n\nimport static org"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".junit.Assert.assertEquals;\n\npublic class AttributesRegressionTest {\n\n    @Test\n    public void testChainedRemoveAttributes() {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        String html = \"<a one two three four>Text</a>\";\n        Document doc = Jsoup.parse"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(html);\n        Element a = doc.select(\"a\").first();\n        a\n            .removeAttr(\"zero\")\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"            .removeAttr(\"one\")\n            .removeAttr(\"two\")\n            .removeAttr(\"three\")\n            .removeAttr"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(\"four\")\n            .removeAttr(\"five\");\n        assertEquals(\"<a>Text</a>\", a.outerHtml());\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":982,"output_tokens":546,"output_tokens_details":{"thinking_tokens":361},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.002784,"is_byok":false,"cost_details":{"upstream_inference_cost":0.002784,"upstream_inference_prompt_cost":0.0007365,"upstream_inference_completions_cost":0.0020475}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

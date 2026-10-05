@@ -1,0 +1,91 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonCore
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonCore
+       Program: jackson-core
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonCore/JacksonCore.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-core.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonCore/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonCore-14
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+3c2c9610b6c76e2b348eb057d0a8268681d573a6
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-03-07 23:01:17 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+255
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-core/issues/255
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.core.io.TestIOContext::testAllocations
+   --> junit.framework.AssertionFailedError: Expected an exception with one of substrings ([smaller than original]): got one with message "Trying to release buffer not owned by the context"
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.core.io.IOContext
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.core.io.IOContext ===
+diff --git a/src/main/java/com/fasterxml/jackson/core/io/IOContext.java b/src/main/java/com/fasterxml/jackson/core/io/IOContext.java
+index 94797eed..18f50c8e 100644
+--- a/src/main/java/com/fasterxml/jackson/core/io/IOContext.java
++++ b/src/main/java/com/fasterxml/jackson/core/io/IOContext.java
+@@ -271,16 +271,16 @@ public class IOContext
+ 
+     protected final void _verifyRelease(byte[] toRelease, byte[] src) {
+         // 07-Mar-2016, tatu: As per [core#255], only prevent shrinking of buffer
+-        if ((toRelease != src) && (toRelease.length <= src.length)) { throw wrongBuf(); }
++        if ((toRelease != src) && (toRelease.length < src.length)) { throw wrongBuf(); }
+     }
+ 
+     protected final void _verifyRelease(char[] toRelease, char[] src) {
+         // 07-Mar-2016, tatu: As per [core#255], only prevent shrinking of buffer
+-        if ((toRelease != src) && (toRelease.length <= src.length)) { throw wrongBuf(); }
++        if ((toRelease != src) && (toRelease.length < src.length)) { throw wrongBuf(); }
+     }
+ 
+     private IllegalArgumentException wrongBuf() {
+         // sanity check failed; trying to return different, smaller buffer.
+-return new IllegalArgumentException("Trying to release buffer not owned by the context"); 
++        return new IllegalArgumentException("Trying to release buffer smaller than original");
+     }
+ }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testAllocations() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

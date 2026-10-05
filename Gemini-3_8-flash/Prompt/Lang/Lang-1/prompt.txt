@@ -1,0 +1,128 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-1
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+d1a45e9738de5b3e299bb51e987565dcce55fee6
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-07-26 01:03:52 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-747
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-747
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang3.math.NumberUtilsTest::TestLang747
+   --> java.lang.NumberFormatException: For input string: "80000000"
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang3.math.NumberUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang3.math.NumberUtils ===
+diff --git a/src/main/java/org/apache/commons/lang3/math/NumberUtils.java b/src/main/java/org/apache/commons/lang3/math/NumberUtils.java
+index 1e6ccdc02..70b8d6466 100644
+--- a/src/main/java/org/apache/commons/lang3/math/NumberUtils.java
++++ b/src/main/java/org/apache/commons/lang3/math/NumberUtils.java
+@@ -464,11 +464,20 @@ public class NumberUtils {
+             }
+         }
+         if (pfxLen > 0) { // we have a hex number
++            char firstSigDigit = 0; // strip leading zeroes
++            for(int i = pfxLen; i < str.length(); i++) {
++                firstSigDigit = str.charAt(i);
++                if (firstSigDigit == '0') { // count leading zeroes
++                    pfxLen++;
++                } else {
++                    break;
++                }
++            }
+             final int hexDigits = str.length() - pfxLen;
+-            if (hexDigits > 16) { // too many for Long
++            if (hexDigits > 16 || (hexDigits == 16 && firstSigDigit > '7')) { // too many for Long
+                 return createBigInteger(str);
+             }
+-            if (hexDigits > 8) { // too many for an int
++            if (hexDigits > 8 || (hexDigits == 8 && firstSigDigit > '7')) { // too many for an int
+                 return createLong(str);
+             }
+             return createInteger(str);
+
+
+=== TRIGGERING TEST METHOD ===
+    public void TestLang747() {
+        assertEquals(Integer.valueOf(0x8000),      NumberUtils.createNumber("0x8000"));
+        assertEquals(Integer.valueOf(0x80000),     NumberUtils.createNumber("0x80000"));
+        assertEquals(Integer.valueOf(0x800000),    NumberUtils.createNumber("0x800000"));
+        assertEquals(Integer.valueOf(0x8000000),   NumberUtils.createNumber("0x8000000"));
+        assertEquals(Integer.valueOf(0x7FFFFFFF),  NumberUtils.createNumber("0x7FFFFFFF"));
+        assertEquals(Long.valueOf(0x80000000L),    NumberUtils.createNumber("0x80000000"));
+        assertEquals(Long.valueOf(0xFFFFFFFFL),    NumberUtils.createNumber("0xFFFFFFFF"));
+
+        // Leading zero tests
+        assertEquals(Integer.valueOf(0x8000000),   NumberUtils.createNumber("0x08000000"));
+        assertEquals(Integer.valueOf(0x7FFFFFFF),  NumberUtils.createNumber("0x007FFFFFFF"));
+        assertEquals(Long.valueOf(0x80000000L),    NumberUtils.createNumber("0x080000000"));
+        assertEquals(Long.valueOf(0xFFFFFFFFL),    NumberUtils.createNumber("0x00FFFFFFFF"));
+
+        assertEquals(Long.valueOf(0x800000000L),        NumberUtils.createNumber("0x800000000"));
+        assertEquals(Long.valueOf(0x8000000000L),       NumberUtils.createNumber("0x8000000000"));
+        assertEquals(Long.valueOf(0x80000000000L),      NumberUtils.createNumber("0x80000000000"));
+        assertEquals(Long.valueOf(0x800000000000L),     NumberUtils.createNumber("0x800000000000"));
+        assertEquals(Long.valueOf(0x8000000000000L),    NumberUtils.createNumber("0x8000000000000"));
+        assertEquals(Long.valueOf(0x80000000000000L),   NumberUtils.createNumber("0x80000000000000"));
+        assertEquals(Long.valueOf(0x800000000000000L),  NumberUtils.createNumber("0x800000000000000"));
+        assertEquals(Long.valueOf(0x7FFFFFFFFFFFFFFFL), NumberUtils.createNumber("0x7FFFFFFFFFFFFFFF"));
+        // N.B. Cannot use a hex constant such as 0x8000000000000000L here as that is interpreted as a negative long
+        assertEquals(new BigInteger("8000000000000000", 16), NumberUtils.createNumber("0x8000000000000000"));
+        assertEquals(new BigInteger("FFFFFFFFFFFFFFFF", 16), NumberUtils.createNumber("0xFFFFFFFFFFFFFFFF"));
+
+        // Leading zero tests
+        assertEquals(Long.valueOf(0x80000000000000L),   NumberUtils.createNumber("0x00080000000000000"));
+        assertEquals(Long.valueOf(0x800000000000000L),  NumberUtils.createNumber("0x0800000000000000"));
+        assertEquals(Long.valueOf(0x7FFFFFFFFFFFFFFFL), NumberUtils.createNumber("0x07FFFFFFFFFFFFFFF"));
+        // N.B. Cannot use a hex constant such as 0x8000000000000000L here as that is interpreted as a negative long
+        assertEquals(new BigInteger("8000000000000000", 16), NumberUtils.createNumber("0x00008000000000000000"));
+        assertEquals(new BigInteger("FFFFFFFFFFFFFFFF", 16), NumberUtils.createNumber("0x0FFFFFFFFFFFFFFFF"));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

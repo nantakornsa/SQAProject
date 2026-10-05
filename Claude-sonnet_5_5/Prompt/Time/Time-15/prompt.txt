@@ -1,0 +1,119 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Time
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Time
+       Program: joda-time
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/Time.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/joda-time.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Time-15
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+0cefc4c212e92e5dccdfa658785c419483317558
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-04-30 12:27:18 +0100
+--------------------------------------------------------------------------------
+Bug report id:
+147
+--------------------------------------------------------------------------------
+Bug report url:
+https://sourceforge.net/p/joda-time/bugs/147
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.joda.time.field.TestFieldUtils::testSafeMultiplyLongInt
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.joda.time.field.FieldUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.joda.time.field.FieldUtils ===
+diff --git a/src/main/java/org/joda/time/field/FieldUtils.java b/src/main/java/org/joda/time/field/FieldUtils.java
+index a0fe7e2d..1e045b22 100644
+--- a/src/main/java/org/joda/time/field/FieldUtils.java
++++ b/src/main/java/org/joda/time/field/FieldUtils.java
+@@ -135,6 +135,9 @@ public class FieldUtils {
+     public static long safeMultiply(long val1, int val2) {
+         switch (val2) {
+             case -1:
++                if (val1 == Long.MIN_VALUE) {
++                    throw new ArithmeticException("Multiplication overflows a long: " + val1 + " * " + val2);
++                }
+                 return -val1;
+             case 0:
+                 return 0L;
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testSafeMultiplyLongInt() {
+        assertEquals(0L, FieldUtils.safeMultiply(0L, 0));
+        
+        assertEquals(1L, FieldUtils.safeMultiply(1L, 1));
+        assertEquals(3L, FieldUtils.safeMultiply(1L, 3));
+        assertEquals(3L, FieldUtils.safeMultiply(3L, 1));
+        
+        assertEquals(6L, FieldUtils.safeMultiply(2L, 3));
+        assertEquals(-6L, FieldUtils.safeMultiply(2L, -3));
+        assertEquals(-6L, FieldUtils.safeMultiply(-2L, 3));
+        assertEquals(6L, FieldUtils.safeMultiply(-2L, -3));
+        
+        assertEquals(-1L * Integer.MIN_VALUE, FieldUtils.safeMultiply(-1L, Integer.MIN_VALUE));
+        
+        assertEquals(Long.MAX_VALUE, FieldUtils.safeMultiply(Long.MAX_VALUE, 1));
+        assertEquals(Long.MIN_VALUE, FieldUtils.safeMultiply(Long.MIN_VALUE, 1));
+        assertEquals(-Long.MAX_VALUE, FieldUtils.safeMultiply(Long.MAX_VALUE, -1));
+        
+        try {
+            FieldUtils.safeMultiply(Long.MIN_VALUE, -1);
+            fail();
+        } catch (ArithmeticException e) {
+        }
+        
+        try {
+            FieldUtils.safeMultiply(Long.MIN_VALUE, 100);
+            fail();
+        } catch (ArithmeticException e) {
+        }
+        
+        try {
+            FieldUtils.safeMultiply(Long.MIN_VALUE, Integer.MAX_VALUE);
+            fail();
+        } catch (ArithmeticException e) {
+        }
+        
+        try {
+            FieldUtils.safeMultiply(Long.MAX_VALUE, Integer.MIN_VALUE);
+            fail();
+        } catch (ArithmeticException e) {
+        }
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

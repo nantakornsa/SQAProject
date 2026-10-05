@@ -1,0 +1,107 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Gson
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Gson
+       Program: gson
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Gson/Gson.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/gson.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Gson/active-bugs.csv
+Number of bugs: 18
+--------------------------------------------------------------------------------
+
+Summary for Bug: Gson-14
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+a300148003e3a067875b1444e8268b6e0f0e0e02
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-05-30 17:47:04 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1074
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/google/gson/issues/1074
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.gson.internal.bind.RecursiveTypesResolveTest::testDoubleSupertype
+   --> junit.framework.AssertionFailedError: expected:<? super java.lang.Number> but was:<? super ? super java.lang.Number>
+ - com.google.gson.internal.bind.RecursiveTypesResolveTest::testIssue440WeakReference
+   --> java.lang.StackOverflowError
+ - com.google.gson.internal.bind.RecursiveTypesResolveTest::testSubSupertype
+   --> junit.framework.AssertionFailedError: expected:<?> but was:<? extends ? super java.lang.Number>
+ - com.google.gson.internal.bind.RecursiveTypesResolveTest::testDoubleSubtype
+   --> junit.framework.AssertionFailedError: expected:<? extends java.lang.Number> but was:<? extends ? extends java.lang.Number>
+ - com.google.gson.internal.bind.RecursiveTypesResolveTest::testIssue603PrintStream
+   --> java.lang.StackOverflowError
+ - com.google.gson.internal.bind.RecursiveTypesResolveTest::testSuperSubtype
+   --> junit.framework.AssertionFailedError: expected:<?> but was:<? super ? extends java.lang.Number>
+ - com.google.gson.internal.bind.RecursiveTypesResolveTest::testRecursiveResolveSimple
+   --> java.lang.StackOverflowError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.gson.internal.$Gson$Types
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.gson.internal.$Gson$Types ===
+diff --git a/gson/src/main/java/com/google/gson/internal/$Gson$Types.java b/gson/src/main/java/com/google/gson/internal/$Gson$Types.java
+index c2372c79..67394531 100644
+--- a/gson/src/main/java/com/google/gson/internal/$Gson$Types.java
++++ b/gson/src/main/java/com/google/gson/internal/$Gson$Types.java
+@@ -76,7 +76,11 @@ public final class $Gson$Types {
+    */
+   public static WildcardType subtypeOf(Type bound) {
+     Type[] upperBounds;
++    if (bound instanceof WildcardType) {
++      upperBounds = ((WildcardType) bound).getUpperBounds();
++    } else {
+       upperBounds = new Type[] { bound };
++    }
+     return new WildcardTypeImpl(upperBounds, EMPTY_TYPE_ARRAY);
+   }
+ 
+@@ -87,7 +91,11 @@ public final class $Gson$Types {
+    */
+   public static WildcardType supertypeOf(Type bound) {
+     Type[] lowerBounds;
++    if (bound instanceof WildcardType) {
++      lowerBounds = ((WildcardType) bound).getLowerBounds();
++    } else {
+       lowerBounds = new Type[] { bound };
++    }
+     return new WildcardTypeImpl(new Type[] { Object.class }, lowerBounds);
+   }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testDoubleSupertype() {
+    assertEquals($Gson$Types.supertypeOf(Number.class),
+            $Gson$Types.supertypeOf($Gson$Types.supertypeOf(Number.class)));
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

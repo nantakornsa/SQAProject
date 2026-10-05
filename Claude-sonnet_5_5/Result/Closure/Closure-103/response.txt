@@ -1,0 +1,48 @@
+The fix adds `Token.INSTANCEOF` to `mayThrowException` in `ControlFlowAnalysis`. Without it, the `catch` block looks unreachable when the only possibly-throwing statement is an `instanceof`. The test below is the triggering test, placed in `CheckUnreachableCodeTest`, so it follows that class's existing conventions.
+
+In the existing test class, `CheckUnreachableCodeTest` extends `CompilerTestCase`. It uses `testSame` and sets up the compiler pass in `getProcessor`. I'm reproducing the file structure from memory of the Closure source at that time. The `getProcessor` implementation creates a `CheckUnreachableCode` pass, so I'm assuming that is the version-appropriate setup.
+
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.Node;
+
+public class CheckUnreachableCodeTest extends CompilerTestCase {
+
+  public CheckUnreachableCodeTest() {
+    super("");
+  }
+
+  @Override
+  protected CompilerPass getProcessor(Compiler compiler) {
+    return new CheckUnreachableCode(compiler,
+        CheckLevel.ERROR);
+  }
+
+  @Override
+  public int getNumRepetitions() {
+    return 1;
+  }
+
+  public void testInstanceOfThrowsException() {
+    testSame("function f() {try { if (value instanceof type) return true; } " +
+             "catch (e) { }}");
+  }
+
+  public void testInstanceOfThrowsExceptionWithCatchBody() {
+    testSame("function f() {try { if (value instanceof type) return true; } " +
+             "catch (e) { e; }}");
+  }
+}
+```
+
+I'm unsure of the exact `CheckUnreachableCode` constructor in this revision. If it differs, the sketch below shows the form I'd expect for that era, where the constructor takes a compiler and a `CheckLevel`:
+
+```java
+  @Override
+  protected CompilerPass getProcessor(Compiler compiler) {
+    return new CheckUnreachableCode(compiler, CheckLevel.ERROR);
+  }
+```
+
+The added `testInstanceOfThrowsExceptionWithCatchBody` also fails on the buggy version, because the catch body is flagged unreachable there. Both tests pass on the fixed version, where `instanceof` is treated as possibly throwing.

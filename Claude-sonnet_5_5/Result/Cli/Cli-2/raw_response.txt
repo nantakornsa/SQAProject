@@ -1,0 +1,141 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791086471-jqJnATltoxuRxdtArnLZ","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1252,"output_tokens":5,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"'m recalling the BugCLI51Test setup, which configures an option with a space value separator and another option definition in commons-cli's test suite."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I'm trying to re"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"construct how the test exercises the bug in token bursting logic—specifically how `burstToken` handles unrecognized characters within a combined short option token, and what the actual fix was meant to produce when enc"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ountering an option that takes an argument versus one that doesn't."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"With \"-vx\" tre"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ated as a burst token, I'm tracing how stopAtNonOption interacts with burstToken versus the normal option-processing branch to figure out where the un"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"recognized option exception should actually trigger in the buggy versus fixed versions."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I'm trying to re"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"construct the exact test case that would distinguish buggy from fixed behavior, considering option tokens like \"-t\" combined with other flags, where the bur"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"st-token logic in the fixed version would produce a different \"Unrecognized option\" message depending on whether it reports the whole remaining token or just the single unrecognized"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" character."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I'm tracing through how"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" Options.hasOption and the flatten logic interact when stripping hyphens from a token, trying to figure out whether the burst method even gets called before the option check happens. I think the real test case"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" probably needs an option that matches after stripping, so I should look for a configuration where a short option is defined that makes this"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" stripped token valid."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"Tracing the burst log"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ic: \"-v\" gets processed as a valid option, then the remaining \"x\" isn't recognized, so it falls through to being appended as \"-vx\" and passed along to the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" main parser, which then tries processing that token and should trigger the unrecognized option error."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I need to conf"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"irm the exception message correctly reports \"-vx\" rather than just \"-x\", and check whether the UnrecognizedOptionException exposes a getOption() method at this version, falling back to getMessage()"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" otherwise. I'll write the test using JUnit 3's TestCase with an explicit fail() call if no exception is thrown."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1zb25uZXQtNS41LTIwMjYwOTI4fGNsYXVkZS1vbi1hd3MifQ"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.apache.commons.cli.bug;\n\nimport junit.framework.Test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Case;\n\nimport org.apache.commons.cli.CommandLine;\nimport org.apache.commons.cli.Options;\nimport org.apache.commons.cli.Parser;\nimport org.apache.commons.cli.PosixParser;\nimport org.apache.commons."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"cli.UnrecognizedOptionException;\n\n/**\n * Regression test for CLI-51: PosixParser.burstToken must keep the original\n * token when it meets an unrecognized character, instead of splitting it into"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n * a bogus \"-x\" token.\n */\npublic class BugCLI51Test extends TestCase\n{\n    public void test() throws Exception\n    {\n        Options options = new Options();\n        options.addOption(\"v\", false, \"verbose\");\n\n        Parser parser = new PosixParser"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"();\n\n        try\n        {\n            CommandLine cmd = parser.parse(options, new String[] { \"-vx\" });\n            fail(\"UnrecognizedOptionException expected, but parsed: \" + cmd);\n        }\n        catch (Unrecognized"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"OptionException e)\n        {\n            // The whole original token must be reported as unrecognized,\n            // not the single burst character \"-x\".\n            assertEquals(\"Unrecognized option: -vx\", e.getMessage());\n        }\n    }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n}\n```\n\nI did not run this test, and I could not recall the original `BugCLI51Test`, so the scenario is my own. The test parses `-vx` with only"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" `v` defined, using `stopAtNonOption` set to false.\n\n- **Buggy version:** `burstToken` emits `-v`, then a made-up `-x` token."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" The exception message is \"Unrecognized option: -x\".\n- **Fixed version:** `burstToken` emits `-v`, then adds the original token `-vx` and st"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ops. The exception message is \"Unrecognized option: -vx\".\n\nThe test fails on the buggy version because the message differs, and passes on the fixed version."}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1252,"output_tokens":3483,"output_tokens_details":{"thinking_tokens":2846},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.037334,"is_byok":false,"cost_details":{"upstream_inference_cost":0.037334,"upstream_inference_prompt_cost":0.002504,"upstream_inference_completions_cost":0.03483}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,89 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-48
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+c0b4954297ce01b64487c09a1dcfcc0124f7053b
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-09-02 11:09:59 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-631
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-631
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.analysis.solvers.RegulaFalsiSolverTest::testIssue631
+   --> java.lang.Exception: Unexpected exception, expected<org.apache.commons.math.exception.ConvergenceException> but was<org.apache.commons.math.exception.TooManyEvaluationsException>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.analysis.solvers.BaseSecantSolver
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.analysis.solvers.BaseSecantSolver ===
+diff --git a/src/main/java/org/apache/commons/math/analysis/solvers/BaseSecantSolver.java b/src/main/java/org/apache/commons/math/analysis/solvers/BaseSecantSolver.java
+index 8a667dad3..034752553 100644
+--- a/src/main/java/org/apache/commons/math/analysis/solvers/BaseSecantSolver.java
++++ b/src/main/java/org/apache/commons/math/analysis/solvers/BaseSecantSolver.java
+@@ -186,6 +186,9 @@ public abstract class BaseSecantSolver
+                 case REGULA_FALSI:
+                     // Detect early that algorithm is stuck, instead of waiting
+                     // for the maximum number of iterations to be exceeded.
++                    if (x == x1) {
++                        throw new ConvergenceException();
++                    }
+                     break;
+                 default:
+                     // Should never happen.
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testIssue631() {
+        final UnivariateRealFunction f = new UnivariateRealFunction() {
+                /** {@inheritDoc} */
+                public double value(double x) {
+                    return Math.exp(x) - Math.pow(Math.PI, 3.0);
+                }
+            };
+
+        final UnivariateRealSolver solver = new RegulaFalsiSolver();
+        final double root = solver.solve(3624, f, 1, 10);
+        Assert.assertEquals(3.4341896575482003, root, 1e-15);
+	}
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

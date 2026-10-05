@@ -1,0 +1,29 @@
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.Node;
+
+import junit.framework.TestCase;
+
+public class CodePrinterDelCharRegressionTest extends TestCase {
+
+  private String print(String js) {
+    Compiler compiler = new Compiler();
+    compiler.initOptions(new CompilerOptions());
+    Node root = compiler.parseTestCode(js);
+    assertEquals(0, compiler.getErrorCount());
+    return compiler.toSource(root);
+  }
+
+  public void testDelCharacterIsEscaped() {
+    String result = print("var x ='\\x7f';");
+    // The DEL character (0x7f) must be escaped, not emitted raw.
+    assertTrue("Unexpected output: " + result,
+        result.contains("\\u007f"));
+    assertEquals(-1, result.indexOf('\u007f'));
+  }
+
+  public void testRegularCharactersUnchanged() {
+    assertTrue(print("var x ='\\x68';").contains("\"h\""));
+    assertTrue(print("var x ='\\x0f';").contains("\\u000f"));
+  }
+}

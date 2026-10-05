@@ -1,0 +1,208 @@
+You are an expert software testing engineer working with Defects4J Java projects.
+
+Your task is to generate ONE minimal, executable JUnit test that detects the known defect in the specified Defects4J buggy version.
+
+IMPORTANT CONSTRAINTS:
+1. Generate only a test. Do not modify production code.
+2. The test must compile and execute in the existing Defects4J project.
+3. Use only APIs and classes that exist in the provided project source.
+4. Do not invent classes, methods, constructors, or APIs.
+5. The test must fail on the buggy version and pass on the fixed version.
+6. Keep the test minimal and directly focused on the reported defect.
+7. Prefer extending the existing JUnit 3 style used by this project.
+8. Return a COMPLETE Java source file, not only a method or code fragment.
+9. Do not include Markdown code fences around the Java source in the TEST CODE section.
+10. Preserve the package declaration required by the target test location.
+11. The generated test must be suitable for direct compilation after being copied into the Defects4J test source directory.
+
+PROJECT INFORMATION
+
+Project: Codec
+Program: commons-codec
+Bug: Codec-3
+Bug Report ID: CODEC-84
+Buggy Version: 3b
+Fixed Revision: a5dfe5cbc95d7f3ce0b4829756690c2cb8439f4c
+
+KNOWN TRIGGERING TEST
+
+Existing test class:
+org.apache.commons.codec.language.DoubleMetaphone2Test
+
+Existing triggering test:
+testDoubleMetaphoneAlternate
+
+The existing test iterates through TEST_DATA and performs:
+
+assertEquals(
+    "Test [" + i + "]=" + value,
+    TEST_DATA[i][2],
+    doubleMetaphone.doubleMetaphone(value, true)
+);
+
+The relevant test data contains:
+
+new String[] {"Angier", "ANJ", "ANJR"},
+
+Therefore, for the input "Angier":
+
+Primary expected result:
+ANJ
+
+Alternate expected result:
+ANJR
+
+The buggy version produces:
+
+ANKR
+
+The known failure is:
+
+Test [19]=Angier expected:<AN[J]R> but was:<AN[K]R>
+
+MODIFIED PRODUCTION SOURCE
+
+Modified source class:
+
+org.apache.commons.codec.language.DoubleMetaphone
+
+The relevant public method is:
+
+public String doubleMetaphone(String value, boolean alternate)
+
+It returns:
+
+return alternate ? result.getAlternate() : result.getPrimary();
+
+The implementation processes characters using handlers, including:
+
+case 'J':
+    index = handleJ(value, result, index, slavoGermanic);
+    break;
+
+The J handler is:
+
+private int handleJ(String value, DoubleMetaphoneResult result, int index,
+                    boolean slavoGermanic) {
+    if (contains(value, index, 4, "JOSE") || contains(value, 0, 4, "SAN ")) {
+        if ((index == 0 && (charAt(value, index + 4) == ' ') ||
+             value.length() == 4) || contains(value, 0, 4, "SAN ")) {
+            result.append('H');
+        } else {
+            result.append('J', 'H');
+        }
+        index++;
+    } else {
+        if (index == 0 && !contains(value, index, 4, "JOSE")) {
+            result.append('J', 'A');
+        } else if (isVowel(charAt(value, index - 1)) && !slavoGermanic &&
+                   (charAt(value, index + 1) == 'A' ||
+                    charAt(value, index + 1) == 'O')) {
+            result.append('J', 'H');
+        } else if (index == value.length() - 1) {
+            result.append('J', ' ');
+        } else if (!contains(value, index + 1, 1, L_T_K_S_N_M_B_Z) &&
+                   !contains(value, index - 1, 1, "S", "K", "L")) {
+            result.append('J');
+        }
+
+        if (charAt(value, index + 1) == 'J') {
+            index += 2;
+        } else {
+            index++;
+        }
+    }
+    return index;
+}
+
+EXISTING TEST CLASS STYLE
+
+The existing test class is:
+
+package org.apache.commons.codec.language;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+public class DoubleMetaphone2Test extends TestCase {
+
+    public static Test suite() {
+        return new TestSuite(DoubleMetaphone2Test.class);
+    }
+
+    private DoubleMetaphone doubleMetaphone = null;
+
+    public DoubleMetaphone2Test(String name) {
+        super(name);
+    }
+
+    public void setUp() throws Exception {
+        super.setUp();
+        this.doubleMetaphone = new DoubleMetaphone();
+    }
+
+    public void tearDown() throws Exception {
+        super.tearDown();
+        this.doubleMetaphone = null;
+    }
+}
+
+TEST REQUIREMENT
+
+Create one minimal regression test for Codec-3.
+
+The test should directly verify the known defect using the input:
+
+Angier
+
+The test must specifically exercise the alternate Double Metaphone encoding by calling:
+
+doubleMetaphone("Angier", true)
+
+The expected alternate result must be:
+
+ANJR
+
+The test should fail on Codec-3b because the buggy implementation produces:
+
+ANKR
+
+The same test must pass on Codec-3f.
+
+Do not rely on the entire TEST_DATA array. Do not copy the complete existing test class. Create a focused test that directly targets the known regression case.
+
+The test should use the existing JUnit 3 style available in this project.
+
+OUTPUT FORMAT
+
+=== ANALYSIS ===
+
+Briefly explain:
+- what the defect is,
+- why "Angier" is a useful minimal regression case,
+- what output is expected,
+- what output the buggy version produces.
+
+Do not claim that you executed the test.
+
+=== TEST CODE ===
+
+Return the complete Java source file.
+
+Requirements:
+- Correct package declaration.
+- Correct imports.
+- Public test class.
+- JUnit 3 compatible.
+- One focused test method.
+- Directly call DoubleMetaphone.doubleMetaphone("Angier", true).
+- Assert that the result equals "ANJR".
+
+=== TARGET TEST ===
+
+Return the exact test class and test method name in this format:
+
+DoubleMetaphoneCodec3Test::testDoubleMetaphoneAlternateAngier
+
+Do not add any additional text after the TARGET TEST section.

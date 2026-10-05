@@ -1,0 +1,36 @@
+```java
+package com.google.javascript.jscomp;
+
+/**
+ * Regression test: Normalize must traverse the externs as well as the
+ * main root. Without this, duplicate var declarations in externs are not
+ * normalized and the compiler fails with an internal error.
+ */
+public class NormalizeExternsRegressionTest extends CompilerTestCase {
+
+  public NormalizeExternsRegressionTest() {
+    super("", false);
+  }
+
+  @Override
+  protected CompilerPass getProcessor(final Compiler compiler) {
+    return new Normalize(compiler, false);
+  }
+
+  @Override
+  protected int getNumRepetitions() {
+    return 1;
+  }
+
+  public void testIssue() {
+    super.allowExternsChanges(true);
+    test("var a,b,c; var a,b", "a(), b()", "a(), b()", null, null);
+  }
+}
+```
+
+I haven't compiled or run this against either version. I wrote it from memory of `NormalizeTest` and `CompilerTestCase`, which I couldn't see. The `super("", false)` constructor, the `Normalize(compiler, false)` constructor, `allowExternsChanges(true)` and the five-argument `test(...)` overload are assumptions about what exists in this revision.
+
+The test reproduces the triggering `NormalizeTest::testIssue`. Its externs declare `var a,b,c; var a,b`, which only `Normalize` can clean up if it traverses the externs. On the buggy version, `Normalize.process` calls `traverse(root)` and skips the externs, which should produce the "INTERNAL COMPILER ERROR". The fixed version uses `traverseRoots(externs, root)`.
+
+It does not cover the `VarCheck` half of the fix (the added `compiler.reportCodeChange()`). That is exercised by the existing `VarCheckTest` cases (`testPropReferenceInExterns1`, `testPropReferenceInExterns3`, `testVarReferenceInExterns`, `testCallInExterns`).

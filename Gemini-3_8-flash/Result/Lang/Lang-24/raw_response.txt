@@ -1,0 +1,51 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791140030-mQVHO9EAjRurc19ilihy","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing Lang-24 Bug**\n\nI've identified the root cause of Lang-24: `NumberUtils.isNumber` incorrectly validates numbers with a decimal and a trailing 'l'/'L'. My fix addresses this by ensuring the `!hasDecPoint` condition is considered.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.apache.commons."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"lang3.math;\n\nimport static org.junit.Assert.assertFalse;\nimport org.junit.Test;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\npublic class NumberUtilsLang664Test {\n\n    @Test\n    public void testIsNumberLang664()"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" {\n        assertFalse(\"1.1L should not be considered a valid number\", NumberUtils.isNumber(\""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"1.1L\"));\n        assertFalse(\"1.1l should not be considered a valid number\", NumberUtils"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".isNumber(\"1.1l\"));\n        assertFalse(\"-1.1L should not be considered a valid number\","}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" NumberUtils.isNumber(\"-1.1L\"));\n        assertFalse(\".1L should not be considered a valid number\", NumberUtils"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".isNumber(\".1L\"));\n        assertFalse(\"1.L should not be considered a valid number\", Number"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Utils.isNumber(\"1.L\"));\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":3630,"output_tokens":424,"output_tokens_details":{"thinking_tokens":220},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.0043125,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0043125,"upstream_inference_prompt_cost":0.0027225,"upstream_inference_completions_cost":0.00159}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

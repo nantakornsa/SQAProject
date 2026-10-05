@@ -1,0 +1,27 @@
+```java
+package com.google.javascript.rhino.jstype;
+
+/**
+ * Regression test: a function type must report "prototype" as an own
+ * property. Before the fix, {@code FunctionType} only overrode
+ * {@code hasProperty}, so {@code hasOwnProperty("prototype")} returned false.
+ */
+public class FunctionTypeHasOwnPrototypeTest extends BaseJSTypeTestCase {
+
+  public void testFunctionTypeHasOwnPrototypeProperty() {
+    assertTrue(U2U_CONSTRUCTOR_TYPE.hasProperty("prototype"));
+    assertTrue(U2U_CONSTRUCTOR_TYPE.hasOwnProperty("prototype"));
+  }
+
+  public void testFunctionTypeDoesNotHaveUnknownOwnProperty() {
+    assertFalse(U2U_CONSTRUCTOR_TYPE.hasOwnProperty("noSuchProperty$$"));
+  }
+}
+```
+
+I haven't compiled or run this against either version, and two things are unverified.
+
+- **`hasOwnProperty` assumption:** I'm assuming `hasOwnProperty("prototype")` returns false on the buggy `FunctionType`, because the fix adds an override for exactly that. I did not confirm that `PrototypeObjectType` has no `prototype` slot to fall back on.
+- **Base-class field:** I'm assuming `BaseJSTypeTestCase` exposes `U2U_CONSTRUCTOR_TYPE`. If it doesn't, the test won't compile.
+
+The test targets only the `FunctionType.hasOwnProperty` half of the fix. I did not cover the `DevirtualizePrototypeMethods` change (`setJSType` on the replacement name) or the `setPrototype` early return for an equal prototype. I couldn't see the input strings in `RewritePrototypeMethodTestInput` or the body of `testGoodExtends9`, so I couldn't write reliable tests for those without guessing.

@@ -1,0 +1,126 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-49
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+6983d81680483705c0e2cf4d62b15feba4e6e3ab
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-08-13 18:10:13 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-645
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-645
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.linear.SparseRealVectorTest::testConcurrentModification
+   --> org.apache.commons.math.MathRuntimeException$6: map has been modified while iterating
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.linear.OpenMapRealVector
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.linear.OpenMapRealVector ===
+diff --git a/src/main/java/org/apache/commons/math/linear/OpenMapRealVector.java b/src/main/java/org/apache/commons/math/linear/OpenMapRealVector.java
+index 5db488466..13ebfd24d 100644
+--- a/src/main/java/org/apache/commons/math/linear/OpenMapRealVector.java
++++ b/src/main/java/org/apache/commons/math/linear/OpenMapRealVector.java
+@@ -342,7 +342,7 @@ public class OpenMapRealVector extends AbstractRealVector
+     public OpenMapRealVector ebeDivide(RealVector v) {
+         checkVectorDimensions(v.getDimension());
+         OpenMapRealVector res = new OpenMapRealVector(this);
+-        Iterator iter = res.entries.iterator();
++        Iterator iter = entries.iterator();
+         while (iter.hasNext()) {
+             iter.advance();
+             res.setEntry(iter.key(), iter.value() / v.getEntry(iter.key()));
+@@ -355,7 +355,7 @@ public class OpenMapRealVector extends AbstractRealVector
+     public OpenMapRealVector ebeDivide(double[] v) {
+         checkVectorDimensions(v.length);
+         OpenMapRealVector res = new OpenMapRealVector(this);
+-        Iterator iter = res.entries.iterator();
++        Iterator iter = entries.iterator();
+         while (iter.hasNext()) {
+             iter.advance();
+             res.setEntry(iter.key(), iter.value() / v[iter.key()]);
+@@ -367,7 +367,7 @@ public class OpenMapRealVector extends AbstractRealVector
+     public OpenMapRealVector ebeMultiply(RealVector v) {
+         checkVectorDimensions(v.getDimension());
+         OpenMapRealVector res = new OpenMapRealVector(this);
+-        Iterator iter = res.entries.iterator();
++        Iterator iter = entries.iterator();
+         while (iter.hasNext()) {
+             iter.advance();
+             res.setEntry(iter.key(), iter.value() * v.getEntry(iter.key()));
+@@ -380,7 +380,7 @@ public class OpenMapRealVector extends AbstractRealVector
+     public OpenMapRealVector ebeMultiply(double[] v) {
+         checkVectorDimensions(v.length);
+         OpenMapRealVector res = new OpenMapRealVector(this);
+-        Iterator iter = res.entries.iterator();
++        Iterator iter = entries.iterator();
+         while (iter.hasNext()) {
+             iter.advance();
+             res.setEntry(iter.key(), iter.value() * v[iter.key()]);
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testConcurrentModification() {
+        final RealVector u = new OpenMapRealVector(3, 1e-6);
+        u.setEntry(0, 1);
+        u.setEntry(1, 0);
+        u.setEntry(2, 2);
+
+        final RealVector v1 = new OpenMapRealVector(3, 1e-6);
+        final double[] v2 = new double[3];
+        v1.setEntry(0, 0);
+        v2[0] = 0;
+        v1.setEntry(1, 3);
+        v2[1] = 3;
+        v1.setEntry(2, 0);
+        v2[2] = 0;
+
+        RealVector w;
+
+        w = u.ebeMultiply(v1);
+        w = u.ebeMultiply(v2);
+
+        w = u.ebeDivide(v1);
+        w = u.ebeDivide(v2);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

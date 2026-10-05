@@ -1,0 +1,86 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Time
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Time
+       Program: joda-time
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/Time.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/joda-time.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Time-7
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+1adb1e69863dcd1ff282692bf1452c422528eeb9
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-07-21 01:12:57 +0100
+--------------------------------------------------------------------------------
+Bug report id:
+21
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/JodaOrg/joda-time/issues/21
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.joda.time.format.TestDateTimeFormatter::testParseInto_monthDay_feb29_newYork_startOfYear
+   --> org.joda.time.IllegalFieldValueException: Cannot parse "2 29": Value 29 for dayOfMonth must be in the range [1,28]
+ - org.joda.time.format.TestDateTimeFormatter::testParseInto_monthDay_feb29_tokyo_endOfYear
+   --> org.joda.time.IllegalFieldValueException: Cannot parse "2 29": Value 29 for dayOfMonth must be in the range [1,28]
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.joda.time.format.DateTimeFormatter
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.joda.time.format.DateTimeFormatter ===
+diff --git a/src/main/java/org/joda/time/format/DateTimeFormatter.java b/src/main/java/org/joda/time/format/DateTimeFormatter.java
+index 447674a2..913d036e 100644
+--- a/src/main/java/org/joda/time/format/DateTimeFormatter.java
++++ b/src/main/java/org/joda/time/format/DateTimeFormatter.java
+@@ -705,9 +705,9 @@ public class DateTimeFormatter {
+         
+         long instantMillis = instant.getMillis();
+         Chronology chrono = instant.getChronology();
++        int defaultYear = DateTimeUtils.getChronology(chrono).year().get(instantMillis);
+         long instantLocal = instantMillis + chrono.getZone().getOffset(instantMillis);
+         chrono = selectChronology(chrono);
+-        int defaultYear = chrono.year().get(instantLocal);
+         
+         DateTimeParserBucket bucket = new DateTimeParserBucket(
+             instantLocal, chrono, iLocale, iPivotYear, defaultYear);
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testParseInto_monthDay_feb29_newYork_startOfYear() {
+        DateTimeFormatter f = DateTimeFormat.forPattern("M d").withLocale(Locale.UK);
+        MutableDateTime result = new MutableDateTime(2004, 1, 1, 0, 0, 0, 0, NEWYORK);
+        assertEquals(4, f.parseInto(result, "2 29", 0));
+        assertEquals(new MutableDateTime(2004, 2, 29, 0, 0, 0, 0, NEWYORK), result);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

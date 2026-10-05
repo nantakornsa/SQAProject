@@ -1,0 +1,75 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791148105-W94B89hNnzKfr58KXVSl","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1609,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" test below"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" should"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" f"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ail on the buggy version and"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" pass on the fixed one"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":". I have"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" not comp"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"iled or run it.\n\nIn"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" the buggy `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"getInitialDomain`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":", the initial value is `d / (d - 2.0)`. For `d = 1` that is `-1.0`, and for `d = 2` it divides by zero and gives infinity. Both values"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" make `inverseCumulativeProbability` throw an `IllegalArgumentException`. The fix returns `1.0` whenever `d <= 2.0`.\n\nThe test follows the project's JUnit 3 style (`TestCase`) and chec"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ks that `inverseCumulativeProbability` recovers the original x for `d = 1` and `d = 2`. It also checks `d = 0.5`, which would give a"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" negative initial value in the buggy code.\n\n```java\npackage org.apache.commons.math.distribution;\n\nimport junit.framework.TestCase;\n\npublic class FDistributionSmallDofRegressionTest extends TestCase {\n\n    public F"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"DistributionSmallDofRegressionTest(String name) {\n        super(name);\n    }\n\n    public void testSmallDegreesOfFreedom() throws Exception {\n        FDistributionImpl fd = new FDistributionImpl(1.0, 1.0);\n        double p = fd.cum"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ulativeProbability(0.975);\n        double x = fd.inverseCumulativeProbability(p);\n        assertEquals(0.975, x, 1.0e-5);\n\n        fd.setDenominatorDegreesOfFreedom(2.0);\n        p = fd.cumulativeProbability"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"(0.975);\n        x = fd.inverseCumulativeProbability(p);\n        assertEquals(0.975, x, 1.0e-5);\n    }\n\n    public void testInitialDomainDenominatorBelowTwo() throws Exception"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" {\n        FDistributionImpl fd = new FDistributionImpl(2.0, 0.5);\n        double p = fd.cumulativeProbability(1.5);\n        double x = fd.inverseCumulativeProbability(p);\n        assertEquals(1.5, x"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":", 1.0e-3);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1609,"output_tokens":689,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.010108,"is_byok":false,"cost_details":{"upstream_inference_cost":0.010108,"upstream_inference_prompt_cost":0.003218,"upstream_inference_completions_cost":0.00689}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

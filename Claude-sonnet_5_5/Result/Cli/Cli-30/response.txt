@@ -1,0 +1,84 @@
+```java
+package org.apache.commons.cli;
+
+import java.util.Properties;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for CLI-203: default options supplied through Properties
+ * must respect option groups, and undefined default options must be reported.
+ */
+public class PropertyOptionGroupRegressionTest extends TestCase
+{
+    private CommandLineParser[] createParsers()
+    {
+        return new CommandLineParser[] {
+            new BasicParser(),
+            new GnuParser(),
+            new PosixParser(),
+            new DefaultParser()
+        };
+    }
+
+    private Options createGroupedOptions()
+    {
+        OptionGroup group = new OptionGroup();
+        group.addOption(new Option("a", "first"));
+        group.addOption(new Option("b", "second"));
+
+        Options options = new Options();
+        options.addOptionGroup(group);
+        return options;
+    }
+
+    public void testPropertyOptionInGroupAlreadySelected() throws Exception
+    {
+        CommandLineParser[] parsers = createParsers();
+        for (int i = 0; i < parsers.length; i++)
+        {
+            Options options = createGroupedOptions();
+
+            Properties properties = new Properties();
+            properties.setProperty("b", "true");
+
+            CommandLine cmd = null;
+            try
+            {
+                cmd = parsers[i].parse(options, new String[] { "-a" }, properties);
+            }
+            catch (AlreadySelectedException e)
+            {
+                fail("Property option must be ignored when another option of the group is selected ("
+                        + parsers[i].getClass().getName() + ")");
+            }
+
+            assertTrue(cmd.hasOption("a"));
+            assertFalse(cmd.hasOption("b"));
+        }
+    }
+
+    public void testPropertyOptionUnexpected() throws Exception
+    {
+        CommandLineParser[] parsers = createParsers();
+        for (int i = 0; i < parsers.length; i++)
+        {
+            Options options = new Options();
+            options.addOption("a", false, "first");
+
+            Properties properties = new Properties();
+            properties.setProperty("z", "true");
+
+            try
+            {
+                parsers[i].parse(options, new String[0], properties);
+                fail("UnrecognizedOptionException expected for " + parsers[i].getClass().getName());
+            }
+            catch (UnrecognizedOptionException e)
+            {
+                // expected
+            }
+        }
+    }
+}
+```

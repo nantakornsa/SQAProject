@@ -1,0 +1,201 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-76
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+78b01c3a435cd175ce3ee70f97b2f8faac342cdc
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-03-18 21:59:28 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+384
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-384.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.DeadAssignmentsEliminationTest::testInExpression2
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.DeadAssignmentsEliminationTest::testIssue384b
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.DeadAssignmentsEliminationTest::testIssue384c
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.DeadAssignmentsEliminationTest::testIssue384d
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.DeadAssignmentsElimination
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.DeadAssignmentsElimination ===
+diff --git a/src/com/google/javascript/jscomp/DeadAssignmentsElimination.java b/src/com/google/javascript/jscomp/DeadAssignmentsElimination.java
+index 63a7f29fc..aaab0d625 100644
+--- a/src/com/google/javascript/jscomp/DeadAssignmentsElimination.java
++++ b/src/com/google/javascript/jscomp/DeadAssignmentsElimination.java
+@@ -297,26 +297,40 @@ class DeadAssignmentsElimination extends AbstractPostOrderCallback implements
+           // If the currently node is the first child of
+           // AND/OR, be conservative only consider the READs
+           // of the second operand.
++          if (n.getNext() != null) {
++            state = isVariableReadBeforeKill(
++                n.getNext(), variable);
++            if (state == VariableLiveness.KILL) {
++              state = VariableLiveness.MAYBE_LIVE;
++            }
++          }
++          break;
+ 
+         case Token.HOOK:
+           // If current node is the condition, check each following
+           // branch, otherwise it is a conditional branch and the
+           // other branch can be ignored.
++          if (n.getNext() != null && n.getNext().getNext() != null) {
++            state = checkHookBranchReadBeforeKill(
++                n.getNext(), n.getNext().getNext(), variable);
++          }
++          break;
+ 
+         default:
+           for(Node sibling = n.getNext(); sibling != null;
+               sibling = sibling.getNext()) {
+-            if (!ControlFlowGraph.isEnteringNewCfgNode(sibling)) {
+             state = isVariableReadBeforeKill(sibling, variable);
++            if (state != VariableLiveness.MAYBE_LIVE) {
++              break;
++            }
++          }
++      }
+ 
+       // If we see a READ or KILL there is no need to continue.
+       if (state == VariableLiveness.READ) {
+         return true;
+       } else if (state == VariableLiveness.KILL) {
+         return false;
+-            }
+-          }
+-      }
+       }
+       n = n.getParent();
+     }
+@@ -337,6 +351,9 @@ class DeadAssignmentsElimination extends AbstractPostOrderCallback implements
+    */
+   private VariableLiveness isVariableReadBeforeKill(
+       Node n, String variable) {
++    if (ControlFlowGraph.isEnteringNewCfgNode(n)) { // Not a FUNCTION
++      return VariableLiveness.MAYBE_LIVE;
++    }
+ 
+     if (NodeUtil.isName(n) && variable.equals(n.getString())) {
+       if (NodeUtil.isLhs(n, n.getParent())) {
+@@ -359,9 +376,25 @@ class DeadAssignmentsElimination extends AbstractPostOrderCallback implements
+       // Conditionals
+       case Token.OR:
+       case Token.AND:
++        VariableLiveness v1 = isVariableReadBeforeKill(
++          n.getFirstChild(), variable);
++        VariableLiveness v2 = isVariableReadBeforeKill(
++          n.getLastChild(), variable);
+         // With a AND/OR the first branch always runs, but the second is
+         // may not.
++        if (v1 != VariableLiveness.MAYBE_LIVE) {
++          return v1;
++        } else if (v2 == VariableLiveness.READ) {
++          return VariableLiveness.READ;
++        } else {
++          return VariableLiveness.MAYBE_LIVE;
++        }
+       case Token.HOOK:
++        VariableLiveness first = isVariableReadBeforeKill(
++            n.getFirstChild(), variable);
++        if (first != VariableLiveness.MAYBE_LIVE) {
++          return first;
++        }
+         return checkHookBranchReadBeforeKill(
+             n.getFirstChild().getNext(), n.getLastChild(), variable);
+ 
+@@ -369,13 +402,11 @@ class DeadAssignmentsElimination extends AbstractPostOrderCallback implements
+         // Expressions are evaluated left-right, depth first.
+         for (Node child = n.getFirstChild();
+             child != null; child = child.getNext()) {
+-          if (!ControlFlowGraph.isEnteringNewCfgNode(child)) { // Not a FUNCTION
+           VariableLiveness state = isVariableReadBeforeKill(child, variable);
+           if (state != VariableLiveness.MAYBE_LIVE) {
+             return state;
+           }
+         }
+-      }
+     }
+ 
+     return VariableLiveness.MAYBE_LIVE;
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testInExpression2() {
+    // This can be improved.  "a = 1" is dead but "a" is read in the following
+    // expression.
+    inFunction(
+        "var a; a = 1; if ((a = 2) || (a = 3) || (a)) {}",
+        "var a; a = 1; if ((    2) || (a = 3) || (a)) {}");
+
+    inFunction(
+        "var a; (a = 1) || (a = 2)",
+        "var a; 1 || 2");
+
+    inFunction("var a; (a = 1) || (a = 2); return a");
+
+    inFunction(
+        "var a; a = 1; a ? a = 2 : a;",
+        "var a; a = 1; a ?     2 : a;");
+
+    inFunction("var a; a = 1; a ? a = 2 : a; return a");
+
+    inFunction(
+        "var a; a = 1; a ? a : a = 2;",
+        "var a; a = 1; a ? a : 2;");
+
+    inFunction("var a; a = 1; a ? a : a =2; return a");
+
+    inFunction(
+        "var a; (a = 1) ? a = 2 : a = 3;",
+        "var a;      1  ?     2 :     3;");
+
+    // This can be improved.  "a = 1" is dead but "a" is read in the following
+    // expression.
+    inFunction("var a; (a = 1) ? a = 2 : a = 3; return a");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

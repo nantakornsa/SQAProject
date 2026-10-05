@@ -1,0 +1,128 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-117
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+871bca1f36c5c06aa880ce21429da63a76f8f6e9
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-08-30 18:12:50 -0400
+--------------------------------------------------------------------------------
+Bug report id:
+1047
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-1047.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.TypeCheckTest::testIssue1047
+   --> junit.framework.ComparisonFailure: expected:<...p never defined on C[2]> but was:<...p never defined on C[3.c2_]>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.TypeValidator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.TypeValidator ===
+diff --git a/src/com/google/javascript/jscomp/TypeValidator.java b/src/com/google/javascript/jscomp/TypeValidator.java
+index bcd024ac1..f57ae14ce 100644
+--- a/src/com/google/javascript/jscomp/TypeValidator.java
++++ b/src/com/google/javascript/jscomp/TypeValidator.java
+@@ -722,8 +722,20 @@ class TypeValidator {
+    *     to an Object type, if possible.
+    */
+   String getReadableJSTypeName(Node n, boolean dereference) {
++    JSType type = getJSType(n);
++    if (dereference) {
++      ObjectType dereferenced = type.dereference();
++      if (dereferenced != null) {
++        type = dereferenced;
++      }
++    }
+ 
+     // The best type name is the actual type name.
++    if (type.isFunctionPrototypeType() ||
++        (type.toObjectType() != null &&
++         type.toObjectType().getConstructor() != null)) {
++      return type.toString();
++    }
+ 
+     // If we're analyzing a GETPROP, the property may be inherited by the
+     // prototype chain. So climb the prototype chain and find out where
+@@ -753,18 +765,6 @@ class TypeValidator {
+       }
+     }
+ 
+-    JSType type = getJSType(n);
+-    if (dereference) {
+-      ObjectType dereferenced = type.dereference();
+-      if (dereferenced != null) {
+-        type = dereferenced;
+-      }
+-    }
+-    if (type.isFunctionPrototypeType() ||
+-        (type.toObjectType() != null &&
+-         type.toObjectType().getConstructor() != null)) {
+-      return type.toString();
+-    }
+     String qualifiedName = n.getQualifiedName();
+     if (qualifiedName != null) {
+       return qualifiedName;
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue1047() throws Exception {
+    testTypes(
+        "/**\n" +
+        " * @constructor\n" +
+        " */\n" +
+        "function C2() {}\n" +
+        "\n" +
+        "/**\n" +
+        " * @constructor\n" +
+        " */\n" +
+        "function C3(c2) {\n" +
+        "  /**\n" +
+        "   * @type {C2} \n" +
+        "   * @private\n" +
+        "   */\n" +
+        "  this.c2_;\n" +
+        "\n" +
+        "  var x = this.c2_.prop;\n" +
+        "}",
+        "Property prop never defined on C2");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

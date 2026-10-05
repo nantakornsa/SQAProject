@@ -1,0 +1,31 @@
+The bug is in the hex decode table of `Base32`. It has an extra entry, so 'W' (0x57) maps to 32 instead of being outside the alphabet. The constructor `new Base32(true, (byte)'W')` therefore throws `IllegalArgumentException` on the buggy version, and it succeeds on the fixed version.
+
+The test follows the project's JUnit 3 style (`TestCase`, `assertNotNull`). The constructor call is the same as in the triggering test. I added a round-trip check using 'W' as the pad character, which the fixed version should handle correctly.
+
+```java
+package org.apache.commons.codec.binary;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import org.junit.Test;
+
+public class Base32Codec200RegressionTest {
+
+    @Test
+    public void testHexAlphabetAllowsWAsPad() {
+        final Base32 codec = new Base32(true, (byte) 'W'); // 'W' is not in the hex alphabet, so it should be allowed
+        assertNotNull(codec);
+    }
+
+    @Test
+    public void testHexAlphabetWithWPadRoundTrip() {
+        final Base32 codec = new Base32(0, null, true, (byte) 'W');
+        final byte[] data = "foob".getBytes();
+        final byte[] encoded = codec.encode(data);
+        assertEquals("CPNMUOGW", new String(encoded));
+        assertArrayEquals(data, codec.decode(encoded));
+    }
+}
+```

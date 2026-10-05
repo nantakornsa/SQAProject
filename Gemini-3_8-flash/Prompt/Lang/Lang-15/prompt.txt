@@ -1,0 +1,131 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-15
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+c71d0f03dab384f98ef2c0ba0050822fba22a063
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-11-17 23:59:36 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-775
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-775
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang3.reflect.TypeUtilsTest::testGetTypeArguments
+   --> junit.framework.AssertionFailedError: expected:<2> but was:<0>
+ - org.apache.commons.lang3.reflect.TypeUtilsTest::testIsAssignable
+   --> junit.framework.AssertionFailedError: type class org.apache.commons.lang3.reflect.TypeUtilsTest$Thing not assignable to org.apache.commons.lang3.reflect.TypeUtilsTest$This<java.lang.String, java.lang.String>!
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang3.reflect.TypeUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang3.reflect.TypeUtils ===
+diff --git a/src/main/java/org/apache/commons/lang3/reflect/TypeUtils.java b/src/main/java/org/apache/commons/lang3/reflect/TypeUtils.java
+index 415cefa31..8db8abf4b 100644
+--- a/src/main/java/org/apache/commons/lang3/reflect/TypeUtils.java
++++ b/src/main/java/org/apache/commons/lang3/reflect/TypeUtils.java
+@@ -216,9 +216,9 @@ public class TypeUtils {
+                 toClass, typeVarAssigns);
+ 
+         // now to check each type argument
+-        for (Map.Entry<TypeVariable<?>, Type> entry : toTypeVarAssigns.entrySet()) {
+-            Type toTypeArg = entry.getValue();
+-            Type fromTypeArg = fromTypeVarAssigns.get(entry.getKey());
++        for (TypeVariable<?> var : toTypeVarAssigns.keySet()) {
++            Type toTypeArg = unrollVariableAssignments(var, toTypeVarAssigns);
++            Type fromTypeArg = unrollVariableAssignments(var, fromTypeVarAssigns);
+ 
+             // parameters must either be absent from the subject type, within
+             // the bounds of the wildcard type, or be an exact match to the
+@@ -672,7 +672,7 @@ public class TypeUtils {
+                 : new HashMap<TypeVariable<?>, Type>(subtypeVarAssigns);
+ 
+         // has target class been reached?
+-        if (cls.getTypeParameters().length > 0 || toClass.equals(cls)) {
++        if (toClass.equals(cls)) {
+             return typeVarAssigns;
+         }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testGetTypeArguments() {
+        Map<TypeVariable<?>, Type> typeVarAssigns;
+        TypeVariable<?> treeSetTypeVar;
+        Type typeArg;
+
+        typeVarAssigns = TypeUtils.getTypeArguments(Integer.class, Comparable.class);
+        treeSetTypeVar = Comparable.class.getTypeParameters()[0];
+        Assert.assertTrue("Type var assigns for Comparable from Integer: " + typeVarAssigns,
+                typeVarAssigns.containsKey(treeSetTypeVar));
+        typeArg = typeVarAssigns.get(treeSetTypeVar);
+        Assert.assertEquals("Type argument of Comparable from Integer: " + typeArg, Integer.class,
+                typeVarAssigns.get(treeSetTypeVar));
+
+        typeVarAssigns = TypeUtils.getTypeArguments(int.class, Comparable.class);
+        treeSetTypeVar = Comparable.class.getTypeParameters()[0];
+        Assert.assertTrue("Type var assigns for Comparable from int: " + typeVarAssigns,
+                typeVarAssigns.containsKey(treeSetTypeVar));
+        typeArg = typeVarAssigns.get(treeSetTypeVar);
+        Assert.assertEquals("Type argument of Comparable from int: " + typeArg, Integer.class,
+                typeVarAssigns.get(treeSetTypeVar));
+
+        Collection<Integer> col = Arrays.asList(new Integer[0]);
+        typeVarAssigns = TypeUtils.getTypeArguments(List.class, Collection.class);
+        treeSetTypeVar = Comparable.class.getTypeParameters()[0];
+        Assert.assertFalse("Type var assigns for Collection from List: " + typeVarAssigns,
+                typeVarAssigns.containsKey(treeSetTypeVar));
+
+        typeVarAssigns = TypeUtils.getTypeArguments(AAAClass.BBBClass.class, AAClass.BBClass.class);
+        Assert.assertTrue(typeVarAssigns.size() == 2);
+        Assert.assertEquals(String.class, typeVarAssigns.get(AAClass.class.getTypeParameters()[0]));
+        Assert.assertEquals(String.class, typeVarAssigns.get(AAClass.BBClass.class.getTypeParameters()[0]));
+
+        typeVarAssigns = TypeUtils.getTypeArguments(Other.class, This.class);
+        Assert.assertEquals(2, typeVarAssigns.size());
+        Assert.assertEquals(String.class, typeVarAssigns.get(This.class.getTypeParameters()[0]));
+        Assert.assertEquals(Other.class.getTypeParameters()[0], typeVarAssigns.get(This.class.getTypeParameters()[1]));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

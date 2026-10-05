@@ -1,0 +1,45 @@
+package com.fasterxml.jackson.databind.jsontype;
+
+import java.math.BigDecimal;
+
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class ExternalTypeIdBigDecimal965Test extends BaseMapTest
+{
+    static class Wrapper965 {
+        @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "type")
+        @JsonSubTypes({ @JsonSubTypes.Type(value = Value965.class, name = "val") })
+        public Object value;
+
+        public Wrapper965() { }
+        public Wrapper965(Object v) { value = v; }
+    }
+
+    static class Value965 {
+        public BigDecimal amount;
+
+        public Value965() { }
+        public Value965(BigDecimal a) { amount = a; }
+    }
+
+    public void testBigDecimal965() throws Exception
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
+
+        BigDecimal bd = new BigDecimal("-10000000000.0000000001");
+        String json = mapper.writeValueAsString(new Wrapper965(new Value965(bd)));
+
+        Wrapper965 result = mapper.readValue(json, Wrapper965.class);
+        assertNotNull(result);
+        assertTrue(result.value instanceof Value965);
+        Value965 val = (Value965) result.value;
+
+        assertEquals(String.format("Expected BigDecimal = %s; got back BigDecimal = %s",
+                bd, val.amount), bd, val.amount);
+    }
+}

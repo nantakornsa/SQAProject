@@ -1,0 +1,36 @@
+package org.apache.commons.collections.buffer;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for COLLECTIONS-220: UnboundedFifoBuffer serialization bug.
+ */
+public class TestCollections220 extends TestCase {
+
+    public TestCollections220(String name) {
+        super(name);
+    }
+
+    public void testCollections220() throws Exception {
+        UnboundedFifoBuffer buffer = new UnboundedFifoBuffer();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(buffer);
+        oos.flush();
+        oos.close();
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bais);
+        UnboundedFifoBuffer deserialized = (UnboundedFifoBuffer) ois.readObject();
+        ois.close();
+
+        deserialized.add("test");
+        assertEquals(1, deserialized.size());
+    }
+}

@@ -1,0 +1,149 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Mockito
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Mockito
+       Program: mockito
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/Mockito.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/mockito.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/active-bugs.csv
+Number of bugs: 38
+--------------------------------------------------------------------------------
+
+Summary for Bug: Mockito-23
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+82935114a09390cbab0c6b6df9b6fd6788bf55d9
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2014-01-16 09:37:53 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+399
+--------------------------------------------------------------------------------
+Bug report url:
+https://code.google.com/archive/p/mockito/issues/399
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.mockitousage.stubbing.DeepStubsSerializableTest::should_serialize_and_deserialize_mock_created_by_deep_stubs
+   --> java.io.NotSerializableException: org.mockito.internal.stubbing.defaultanswers.ReturnsDeepStubs$2
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.mockito.internal.stubbing.defaultanswers.ReturnsDeepStubs
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.mockito.internal.stubbing.defaultanswers.ReturnsDeepStubs ===
+diff --git a/src/org/mockito/internal/stubbing/defaultanswers/ReturnsDeepStubs.java b/src/org/mockito/internal/stubbing/defaultanswers/ReturnsDeepStubs.java
+index c4384f7fc..b18dd3b05 100644
+--- a/src/org/mockito/internal/stubbing/defaultanswers/ReturnsDeepStubs.java
++++ b/src/org/mockito/internal/stubbing/defaultanswers/ReturnsDeepStubs.java
+@@ -41,14 +41,16 @@ public class ReturnsDeepStubs implements Answer<Object>, Serializable {
+     
+     private static final long serialVersionUID = -7105341425736035847L;
+ 
+-    private MockitoCore mockitoCore = new MockitoCore();
+-    private ReturnsEmptyValues delegate = new ReturnsEmptyValues();
++    private transient MockitoCore mockitoCore;
++    private transient ReturnsEmptyValues delegate;
+ 
+     public Object answer(InvocationOnMock invocation) throws Throwable {
+         GenericMetadataSupport returnTypeGenericMetadata =
+                 actualParameterizedType(invocation.getMock()).resolveGenericReturnType(invocation.getMethod());
+ 
+         Class<?> rawType = returnTypeGenericMetadata.rawType();
++        instantiateMockitoCoreIfNeeded();
++        instantiateDelegateIfNeeded();
+         if (!mockitoCore.isTypeMockable(rawType)) {
+             return delegate.returnValueFor(rawType);
+         }
+@@ -56,7 +58,17 @@ public class ReturnsDeepStubs implements Answer<Object>, Serializable {
+         return getMock(invocation, returnTypeGenericMetadata);
+     }
+ 
++    private synchronized void instantiateMockitoCoreIfNeeded() {
++        if (mockitoCore == null) {
++            mockitoCore = new MockitoCore();
++        }
++    }
+ 
++    private synchronized void instantiateDelegateIfNeeded() {
++        if (delegate == null) {
++            delegate = new ReturnsEmptyValues();
++        }
++    }
+ 
+     private Object getMock(InvocationOnMock invocation, GenericMetadataSupport returnTypeGenericMetadata) throws Throwable {
+     	InternalMockHandler<Object> handler = new MockUtil().getMockHandler(invocation.getMock());
+@@ -97,6 +109,7 @@ public class ReturnsDeepStubs implements Answer<Object>, Serializable {
+                 : withSettings();
+ 
+         return mockSettings
++		        .serializable()
+                 .defaultAnswer(returnsDeepStubsAnswerUsing(returnTypeGenericMetadata));
+     }
+ 
+@@ -111,7 +124,7 @@ public class ReturnsDeepStubs implements Answer<Object>, Serializable {
+ 
+     private Object recordDeepStubMock(final Object mock, InvocationContainerImpl container) throws Throwable {
+ 
+-        container.addAnswer(new Answer<Object>() {
++        container.addAnswer(new SerializableAnswer() {
+             public Object answer(InvocationOnMock invocation) throws Throwable {
+                 return mock;
+             }
+@@ -120,7 +133,9 @@ public class ReturnsDeepStubs implements Answer<Object>, Serializable {
+         return mock;
+     }
+ 	
++	abstract class SerializableAnswer implements Answer<Object>, Serializable {
+ 		
++	}
+ 	
+ 
+     protected GenericMetadataSupport actualParameterizedType(Object mock) {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void should_serialize_and_deserialize_mock_created_by_deep_stubs() throws Exception {
+        // given
+        SampleClass sampleClass = mock(SampleClass.class, withSettings().defaultAnswer(Mockito.RETURNS_DEEP_STUBS).serializable());
+        when(sampleClass.getSample().isSth()).thenReturn(STUBBED_BOOLEAN_VALUE);
+        when(sampleClass.getSample().getNumber()).thenReturn(STUBBED_INTEGER_VALUE);
+
+        // when
+        Object o = SimpleSerializationUtil.serializeAndBack(sampleClass);
+
+        // then
+        assertThat(o).isInstanceOf(SampleClass.class);
+        SampleClass deserializedSample = (SampleClass) o;
+        assertThat(deserializedSample.getSample().isSth()).isEqualTo(STUBBED_BOOLEAN_VALUE);
+        assertThat(deserializedSample.getSample().getNumber()).isEqualTo(STUBBED_INTEGER_VALUE);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

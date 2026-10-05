@@ -1,0 +1,123 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-65
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+4fa93397353a7cd3cf15f9c29c40f8a18fc051e5
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-10-07 15:46:27 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+807
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/807
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.parser.HtmlParserTest::testTemplateInsideTable
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.parser.HtmlTreeBuilder
+ - org.jsoup.parser.HtmlTreeBuilderState
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.parser.HtmlTreeBuilder ===
+diff --git a/src/main/java/org/jsoup/parser/HtmlTreeBuilder.java b/src/main/java/org/jsoup/parser/HtmlTreeBuilder.java
+index 6ada343a..041dcbd9 100644
+--- a/src/main/java/org/jsoup/parser/HtmlTreeBuilder.java
++++ b/src/main/java/org/jsoup/parser/HtmlTreeBuilder.java
+@@ -357,11 +357,11 @@ public class HtmlTreeBuilder extends TreeBuilder {
+     }
+ 
+     void clearStackToTableBodyContext() {
+-        clearStackToContext("tbody", "tfoot", "thead");
++        clearStackToContext("tbody", "tfoot", "thead", "template");
+     }
+ 
+     void clearStackToTableRowContext() {
+-        clearStackToContext("tr");
++        clearStackToContext("tr", "template");
+     }
+ 
+     private void clearStackToContext(String... nodeNames) {
+
+=== MODIFIED SOURCE: org.jsoup.parser.HtmlTreeBuilderState ===
+diff --git a/src/main/java/org/jsoup/parser/HtmlTreeBuilderState.java b/src/main/java/org/jsoup/parser/HtmlTreeBuilderState.java
+index aaf60415..c4924e42 100644
+--- a/src/main/java/org/jsoup/parser/HtmlTreeBuilderState.java
++++ b/src/main/java/org/jsoup/parser/HtmlTreeBuilderState.java
+@@ -1033,7 +1033,9 @@ enum HtmlTreeBuilderState {
+                 case StartTag:
+                     Token.StartTag startTag = t.asStartTag();
+                     String name = startTag.normalName();
+-                    if (name.equals("tr")) {
++                    if (name.equals("template")) {
++                        tb.insert(startTag);
++                    } else if (name.equals("tr")) {
+                         tb.clearStackToTableBodyContext();
+                         tb.insert(startTag);
+                         tb.transition(InRow);
+@@ -1093,7 +1095,9 @@ enum HtmlTreeBuilderState {
+                 Token.StartTag startTag = t.asStartTag();
+                 String name = startTag.normalName();
+ 
+-                if (StringUtil.in(name, "th", "td")) {
++                if (name.equals("template")) {
++                    tb.insert(startTag);
++                } else if (StringUtil.in(name, "th", "td")) {
+                     tb.clearStackToTableRowContext();
+                     tb.insert(startTag);
+                     tb.transition(InCell);
+
+
+=== TRIGGERING TEST METHOD ===
+  @Test public void testTemplateInsideTable() throws IOException {
+        File in = ParseTest.getFile("/htmltests/table-polymer-template.html");
+        Document doc = Jsoup.parse(in, "UTF-8");
+        doc.outputSettings().prettyPrint(true);
+
+        Elements templates = doc.body().getElementsByTag("template");
+        for (Element template : templates) {
+            assertTrue(template.childNodes().size() > 1);
+        }
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

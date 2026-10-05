@@ -1,0 +1,45 @@
+```java
+package com.fasterxml.jackson.core.read;
+
+import com.fasterxml.jackson.core.BaseTest;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.exc.InputCoercionException;
+
+public class NumberCoercionOverflowTest extends BaseTest {
+    private final JsonFactory JSON_F = new JsonFactory();
+
+    public void testToIntOverflowCoercionException() throws Exception {
+        // Value exceeds Integer.MAX_VALUE (2147483647), parsed as long then coerced to int
+        final String doc = "2147483648";
+        try (JsonParser p = JSON_F.createParser(doc)) {
+            assertToken(JsonToken.VALUE_NUMBER_INT, p.nextToken());
+            try {
+                p.getIntValue();
+                fail("Expected InputCoercionException");
+            } catch (InputCoercionException e) {
+                verifyException(e, "Numeric value (2147483648) out of range of int");
+                assertEquals(JsonToken.VALUE_NUMBER_INT, e.getInputType());
+                assertEquals(Integer.TYPE, e.getTargetType());
+            }
+        }
+    }
+
+    public void testToLongOverflowCoercionException() throws Exception {
+        // Value exceeds Long.MAX_VALUE (9223372036854775807)
+        final String doc = "9223372036854775817";
+        try (JsonParser p = JSON_F.createParser(doc)) {
+            assertToken(JsonToken.VALUE_NUMBER_INT, p.nextToken());
+            try {
+                p.getLongValue();
+                fail("Expected InputCoercionException");
+            } catch (InputCoercionException e) {
+                verifyException(e, "Numeric value (9223372036854775817) out of range of long");
+                assertEquals(JsonToken.VALUE_NUMBER_INT, e.getInputType());
+                assertEquals(Long.TYPE, e.getTargetType());
+            }
+        }
+    }
+}
+```

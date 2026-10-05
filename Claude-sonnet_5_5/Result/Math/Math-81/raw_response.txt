@@ -1,0 +1,78 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791147993-j8XhCGkSQ9sL60iLPcJc","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":2655,"output_tokens":8,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"```java\npackage org.apache"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".commons.math.linear"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":";\n\nimport junit.framework"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Test;\nimport junit.fram"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ework.TestCase;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\nimport junit.framework.T"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"estSuite;\n\nimport org"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".apache.commons.math"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".util.MathUtils"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":";\n\npublic class EigenD"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ecompositionImplMath308Test extends TestCase {\n\n    public EigenDecompositionImplMath308Test(String name) {\n        super(name);\n    }\n\n    public static Test suite() {\n        return new TestSuite(EigenDecompositionImplMath308Test.class);\n    }\n\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"public void testMath308() {\n\n        double[] mainTridiagonal = {\n            22.330154644539597, 46.65485522478641, 17.393672330044705, 54.46687435351116, 80.17800767709437\n        };\n        double[] secondaryTridiagonal = {\n            13.04450406501"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"361, -5.977590941539671, 2.9040909856707517, 7.1570352792841225\n        };\n\n        // the reference values have been computed using routine DSTEMR\n        // from the fortran library LAPACK version 3.2.1\n        double[] refEigenValues = {\n            82.044413207204002"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":", 53.456697699894512, 52.536278520113882, 18.847969733754262, 14.138204224043099\n        };\n        RealVector[] refEigenVectors = {\n            new ArrayRealVector(new double[] { -0.000462690386766, -0.002118073109055,  0.011530"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"080757413,  0.252322434584915,  0.967572088232592 }),\n            new ArrayRealVector(new double[] {  0.314647769490148,  0.750806415553905, -0.167700312025760, -0.537092972407375,  0.143854968127780 }),\n            new "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ArrayRealVector(new double[] {  0.222368839324646,  0.514921891363332, -0.021377019336614,  0.801196801016305, -0.207446991247740 }),\n            new ArrayRealVector(new double[] {  0.713933751051495, -0.190582113553930,  "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"0.671410443368332, -0.056056055955050,  0.006541576993581 }),\n            new ArrayRealVector(new double[] {  0.584677060845929, -0.367177264979103, -0.721453187784497,  0.052971054621812, -0.005740715188257 })\n        };"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n        EigenDecomposition decomposition =\n            new EigenDecompositionImpl(mainTridiagonal, secondaryTridiagonal, MathUtils.SAFE_MIN);\n\n        double[] eigenValues = decomposition.getRealEigenvalues();\n        for (int i"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" = 0; i < refEigenValues.length; ++i) {\n            assertEquals(refEigenValues[i], eigenValues[i], 1.0e-5);\n            assertEquals(0, refEigenVectors[i].subtract(decomposition.getEigenvector(i)).getNorm"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"(), 2.0e-7);\n        }\n\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2655,"output_tokens":960,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.01491,"is_byok":false,"cost_details":{"upstream_inference_cost":0.01491,"upstream_inference_prompt_cost":0.00531,"upstream_inference_completions_cost":0.0096}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

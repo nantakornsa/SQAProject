@@ -1,0 +1,25 @@
+The project uses JUnit 4 (the triggering test uses `Assert`), so the regression test is a JUnit 4 test class. It parses CSV with `CSVFormat.DEFAULT`, which has no header, and asserts that `getHeaderMap()` returns null. On the buggy version `getHeaderMap()` throws a `NullPointerException`, because it copies a null `headerMap`. On the fixed version it returns null, so the test passes.
+
+```java
+package org.apache.commons.csv;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+/**
+ * Regression test for CSV-100: getHeaderMap() must not throw a NullPointerException
+ * when no header was configured.
+ */
+public class CSVParserNoHeaderMapRegressionTest {
+
+    @Test
+    public void testNoHeaderMap() throws Exception {
+        final CSVParser parser = CSVParser.parse("a,b,c\n1,2,3\nx,y,z", CSVFormat.DEFAULT);
+        try {
+            Assert.assertNull(parser.getHeaderMap());
+        } finally {
+            parser.close();
+        }
+    }
+}
+```

@@ -1,0 +1,107 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Collections
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Collections
+       Program: commons-collections
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/Collections.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-collections.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/active-bugs.csv
+Number of bugs: 28
+--------------------------------------------------------------------------------
+
+Summary for Bug: Collections-10
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+e6d4f465446e5645f1a68f3d90964a6ade82f59e
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-05-16 08:09:42 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COLLECTIONS-240
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COLLECTIONS-240
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.collections.map.TestMultiValueMap::testEmptyMapCompatibility
+   --> java.io.InvalidClassException: org.apache.commons.collections.map.MultiValueMap; class invalid for deserialization
+ - org.apache.commons.collections.map.TestMultiValueMap::testFullMapCompatibility
+   --> java.io.InvalidClassException: org.apache.commons.collections.map.MultiValueMap; class invalid for deserialization
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.collections.map.MultiValueMap
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.collections.map.MultiValueMap ===
+diff --git a/src/java/org/apache/commons/collections/map/MultiValueMap.java b/src/java/org/apache/commons/collections/map/MultiValueMap.java
+index b312aa4f..2de5fbff 100644
+--- a/src/java/org/apache/commons/collections/map/MultiValueMap.java
++++ b/src/java/org/apache/commons/collections/map/MultiValueMap.java
+@@ -66,9 +66,10 @@ import org.apache.commons.collections.iterators.IteratorChain;
+  * @version $Revision$ $Date$
+  * @since Commons Collections 3.2
+  */
+-public class MultiValueMap extends AbstractMapDecorator implements MultiMap {
++public class MultiValueMap extends AbstractMapDecorator implements MultiMap, Serializable {
+ 
+     /** Serialization version */
++    private static final long serialVersionUID = -2214159910087182007L;
+ 
+     /** The factory for creating value collections. */
+     private final Factory collectionFactory;
+@@ -186,7 +187,7 @@ public class MultiValueMap extends AbstractMapDecorator implements MultiMap {
+      * @param value the value to remove
+      * @return the value removed (which was passed in), null if nothing removed
+      */
+-    public Object removeMapping(Object key, Object value) {
++    public Object remove(Object key, Object value) {
+         Collection valuesForKey = getCollection(key);
+         if (valuesForKey == null) {
+             return null;
+@@ -457,7 +458,7 @@ public class MultiValueMap extends AbstractMapDecorator implements MultiMap {
+     /**
+      * Inner class that provides a simple reflection factory.
+      */
+-    private static class ReflectionFactory implements Factory {
++    private static class ReflectionFactory implements Factory, Serializable {
+         private final Class clazz;
+ 
+         public ReflectionFactory(Class clazz) {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testEmptyMapCompatibility() throws Exception {
+        Map map = makeEmptyMap();
+        Map map2 = (Map) readExternalFormFromDisk(getCanonicalEmptyCollectionName(map));
+        assertEquals("Map is empty", 0, map2.size());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

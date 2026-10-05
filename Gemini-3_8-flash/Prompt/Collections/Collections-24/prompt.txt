@@ -1,0 +1,110 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Collections
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Collections
+       Program: commons-collections
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/Collections.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-collections.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/active-bugs.csv
+Number of bugs: 28
+--------------------------------------------------------------------------------
+
+Summary for Bug: Collections-24
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+539be680cd2b1a8f6833b28ee0cca22a88161466
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-11-11 16:47:20 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COLLECTIONS-496
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COLLECTIONS-496
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.collections4.collection.UnmodifiableBoundedCollectionTest::testDecorateFactory
+   --> junit.framework.AssertionFailedError: expected same:<[, One, 2, Three, null, 4, One, 5.0, 6.0, Seven, Eight, Nine, 10, 11, 12, Thirteen, 14, 15, 16]> was not:<[, One, 2, Three, null, 4, One, 5.0, 6.0, Seven, Eight, Nine, 10, 11, 12, Thirteen, 14, 15, 16]>
+ - org.apache.commons.collections4.collection.UnmodifiableBoundedCollectionTest::testUnmodifiable
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.collections4.collection.UnmodifiableBoundedCollection
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.collections4.collection.UnmodifiableBoundedCollection ===
+diff --git a/src/main/java/org/apache/commons/collections4/collection/UnmodifiableBoundedCollection.java b/src/main/java/org/apache/commons/collections4/collection/UnmodifiableBoundedCollection.java
+index 5a9a9a50..52e5b813 100644
+--- a/src/main/java/org/apache/commons/collections4/collection/UnmodifiableBoundedCollection.java
++++ b/src/main/java/org/apache/commons/collections4/collection/UnmodifiableBoundedCollection.java
+@@ -20,6 +20,7 @@ import java.util.Collection;
+ import java.util.Iterator;
+ 
+ import org.apache.commons.collections4.BoundedCollection;
++import org.apache.commons.collections4.Unmodifiable;
+ import org.apache.commons.collections4.iterators.UnmodifiableIterator;
+ 
+ /**
+@@ -40,7 +41,7 @@ import org.apache.commons.collections4.iterators.UnmodifiableIterator;
+  * @version $Id$
+  */
+ public final class UnmodifiableBoundedCollection<E> extends AbstractCollectionDecorator<E>
+-        implements BoundedCollection<E> {
++        implements BoundedCollection<E>, Unmodifiable {
+ 
+     /** Serialization version */
+     private static final long serialVersionUID = -7112672385450340330L;
+@@ -55,6 +56,11 @@ public final class UnmodifiableBoundedCollection<E> extends AbstractCollectionDe
+      * @since 4.0
+      */
+     public static <E> BoundedCollection<E> unmodifiableBoundedCollection(final BoundedCollection<? extends E> coll) {
++        if (coll instanceof Unmodifiable) {
++            @SuppressWarnings("unchecked") // safe to upcast
++            final BoundedCollection<E> tmpColl = (BoundedCollection<E>) coll;
++            return tmpColl;
++        }
+         return new UnmodifiableBoundedCollection<E>(coll);
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testDecorateFactory() {
+        final BoundedCollection<E> coll = makeFullCollection();
+        assertSame(coll, UnmodifiableBoundedCollection.unmodifiableBoundedCollection(coll));
+
+        try {
+            UnmodifiableBoundedCollection.unmodifiableBoundedCollection(null);
+            fail();
+        } catch (final IllegalArgumentException ex) {}
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

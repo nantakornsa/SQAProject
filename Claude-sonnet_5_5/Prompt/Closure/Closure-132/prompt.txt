@@ -1,0 +1,101 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-132
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+5b9485903b5e7d926f49dc91b915a256df92591c
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-02-25 10:05:04 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+925
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-925.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.PeepholeSubstituteAlternateSyntaxTest::testIssue925
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.PeepholeSubstituteAlternateSyntax
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.PeepholeSubstituteAlternateSyntax ===
+diff --git a/src/com/google/javascript/jscomp/PeepholeSubstituteAlternateSyntax.java b/src/com/google/javascript/jscomp/PeepholeSubstituteAlternateSyntax.java
+index ae568e8eb..520c5923a 100644
+--- a/src/com/google/javascript/jscomp/PeepholeSubstituteAlternateSyntax.java
++++ b/src/com/google/javascript/jscomp/PeepholeSubstituteAlternateSyntax.java
+@@ -779,7 +779,9 @@ class PeepholeSubstituteAlternateSyntax
+               // evaluates LHS before cond]
+               // NOTE - there are some circumstances where we can
+               // proceed even if there are side effects...
+-              !mayEffectMutableState(lhs)) {
++              !mayEffectMutableState(lhs) &&
++              (!mayHaveSideEffects(cond) ||
++                  (thenOp.isAssign() && thenOp.getFirstChild().isName()))) {
+ 
+             n.removeChild(cond);
+             Node assignName = thenOp.removeFirstChild();
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue925() {
+    test(
+        "if (x[--y] === 1) {\n" +
+        "    x[y] = 0;\n" +
+        "} else {\n" +
+        "    x[y] = 1;\n" +
+        "}",
+        "(x[--y] === 1) ? x[y] = 0 : x[y] = 1;");
+
+    test(
+        "if (x[--y]) {\n" +
+        "    a = 0;\n" +
+        "} else {\n" +
+        "    a = 1;\n" +
+        "}",
+        "a = (x[--y]) ? 0 : 1;");
+
+    test("if (x++) { x += 2 } else { x += 3 }",
+         "x++ ? x += 2 : x += 3");
+
+    test("if (x++) { x = x + 2 } else { x = x + 3 }",
+        "x = x++ ? x + 2 : x + 3");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,86 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonCore
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonCore
+       Program: jackson-core
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonCore/JacksonCore.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-core.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonCore/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonCore-13
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+d58d420f116e854bfd7b155cc1aed4e32939e1da
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-02-22 20:11:12 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+246
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-core/pull/246
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.core.json.TestJsonGeneratorFeatures::testFieldNameQuotingEnabled
+   --> junit.framework.ComparisonFailure: expected:<{[foo]:1}> but was:<{["foo"]:1}>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.core.json.JsonGeneratorImpl
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.core.json.JsonGeneratorImpl ===
+diff --git a/src/main/java/com/fasterxml/jackson/core/json/JsonGeneratorImpl.java b/src/main/java/com/fasterxml/jackson/core/json/JsonGeneratorImpl.java
+index fb8f21cd..1270eae4 100644
+--- a/src/main/java/com/fasterxml/jackson/core/json/JsonGeneratorImpl.java
++++ b/src/main/java/com/fasterxml/jackson/core/json/JsonGeneratorImpl.java
+@@ -124,6 +124,14 @@ public abstract class JsonGeneratorImpl extends GeneratorBase
+         return this;
+     }
+ 
++    @Override
++    public JsonGenerator disable(Feature f) {
++        super.disable(f);
++        if (f == Feature.QUOTE_FIELD_NAMES) {
++            _cfgUnqNames = true;
++        }
++        return this;
++    }
+ 
+     @Override
+     protected void _checkStdFeatureChanges(int newFeatureFlags, int changedFeatures) {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testFieldNameQuotingEnabled() throws IOException
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

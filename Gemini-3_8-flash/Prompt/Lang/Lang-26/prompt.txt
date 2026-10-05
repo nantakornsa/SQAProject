@@ -1,0 +1,90 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-26
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+14a0cc2a9baf84a97348263975082ef3857daf97
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-09-08 06:09:57 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-645
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-645
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang3.time.FastDateFormatTest::testLang645
+   --> junit.framework.ComparisonFailure: expected:<fredag, week [53]> but was:<fredag, week [01]>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang3.time.FastDateFormat
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang3.time.FastDateFormat ===
+diff --git a/src/main/java/org/apache/commons/lang3/time/FastDateFormat.java b/src/main/java/org/apache/commons/lang3/time/FastDateFormat.java
+index e30da2a56..95925fc99 100644
+--- a/src/main/java/org/apache/commons/lang3/time/FastDateFormat.java
++++ b/src/main/java/org/apache/commons/lang3/time/FastDateFormat.java
+@@ -817,7 +817,7 @@ public class FastDateFormat extends Format {
+      * @return the formatted string
+      */
+     public String format(Date date) {
+-        Calendar c = new GregorianCalendar(mTimeZone);
++        Calendar c = new GregorianCalendar(mTimeZone, mLocale);
+         c.setTime(date);
+         return applyRules(c, new StringBuffer(mMaxLengthEstimate)).toString();
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testLang645() {
+        Locale locale = new Locale("sv", "SE");
+
+        Calendar cal = Calendar.getInstance();
+        cal.set(2010, 0, 1, 12, 0, 0);
+        Date d = cal.getTime();
+
+        FastDateFormat fdf = FastDateFormat.getInstance("EEEE', week 'ww", locale);
+
+        assertEquals("fredag, week 53", fdf.format(d));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

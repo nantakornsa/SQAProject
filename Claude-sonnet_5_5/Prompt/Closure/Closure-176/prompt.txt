@@ -1,0 +1,111 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-176
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+aeed47f424d93d9ff82e0782fca53259829362b1
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-11-19 01:13:39 -0500
+--------------------------------------------------------------------------------
+Bug report id:
+1056
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-1056.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.TypeCheckTest::testIssue1056
+   --> junit.framework.AssertionFailedError: expected a warning
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.TypeInference
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.TypeInference ===
+diff --git a/src/com/google/javascript/jscomp/TypeInference.java b/src/com/google/javascript/jscomp/TypeInference.java
+index c43a7d1ad..54d429d9c 100644
+--- a/src/com/google/javascript/jscomp/TypeInference.java
++++ b/src/com/google/javascript/jscomp/TypeInference.java
+@@ -527,7 +527,9 @@ class TypeInference
+       case Token.NAME:
+         String varName = left.getString();
+         Var var = syntacticScope.getVar(varName);
+-        boolean isVarDeclaration = left.hasChildren();
++        JSType varType = var == null ? null : var.getType();
++        boolean isVarDeclaration = left.hasChildren()
++            && varType != null && !var.isTypeInferred();
+ 
+         // When looking at VAR initializers for declared VARs, we tend
+         // to use the declared type over the type it's being
+@@ -545,8 +547,9 @@ class TypeInference
+         // sure we back-infer the <string> element constraint on
+         // the left hand side, so we use the left hand side.
+ 
+-        boolean isVarTypeBetter = !isVarDeclaration || var == null || var.isTypeInferred();
++        boolean isVarTypeBetter = isVarDeclaration &&
+             // Makes it easier to check for NPEs.
++            !resultType.isNullType() && !resultType.isVoidType();
+ 
+         // TODO(nicksantos): This might be a better check once we have
+         // back-inference of object/array constraints.  It will probably
+@@ -559,10 +562,11 @@ class TypeInference
+ 
+ 
+         if (isVarTypeBetter) {
++          redeclareSimpleVar(scope, left, varType);
++        } else {
+           redeclareSimpleVar(scope, left, resultType);
+         }
+-        left.setJSType(isVarDeclaration || leftType == null ?
+-            resultType : null);
++        left.setJSType(resultType);
+ 
+         if (var != null && var.isTypeInferred()) {
+           JSType oldType = var.getType();
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue1056() throws Exception {
+    testTypes(
+        "/** @type {Array} */ var x = null;" +
+        "x.push('hi');",
+        "No properties on this expression\n" +
+        "found   : null\n" +
+        "required: Object");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

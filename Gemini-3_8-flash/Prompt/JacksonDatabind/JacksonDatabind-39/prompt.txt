@@ -1,0 +1,89 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-39
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+308ed4ed89b32d119b5994e457597275c6a0af7d
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-01-29 22:29:46 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+1108
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1108
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.jsontype.TestPolymorphicWithDefaultImpl::testUnknownTypeIDRecovery
+   --> com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException: Unrecognized field "location" (class com.fasterxml.jackson.databind.jsontype.TestPolymorphicWithDefaultImpl$CallRecord), not marked as ignorable (4 known properties: "version", "item", "item2", "application"])
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.deser.std.NullifyingDeserializer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.deser.std.NullifyingDeserializer ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/deser/std/NullifyingDeserializer.java b/src/main/java/com/fasterxml/jackson/databind/deser/std/NullifyingDeserializer.java
+index 5bc789fc0..04535951d 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/deser/std/NullifyingDeserializer.java
++++ b/src/main/java/com/fasterxml/jackson/databind/deser/std/NullifyingDeserializer.java
+@@ -32,7 +32,17 @@ public class NullifyingDeserializer
+     {
+         // 29-Jan-2016, tatu: Simple skipping for all other tokens, but FIELD_NAME bit
+         //    special unfortunately
++        if (p.hasToken(JsonToken.FIELD_NAME)) {
++            while (true) {
++                JsonToken t = p.nextToken();
++                if ((t == null) || (t == JsonToken.END_OBJECT)) {
++                    break;
++                }
++                p.skipChildren();
++            }
++        } else {
+             p.skipChildren();
++        }
+         return null;
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testUnknownTypeIDRecovery() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

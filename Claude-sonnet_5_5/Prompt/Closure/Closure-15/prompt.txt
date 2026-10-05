@@ -1,0 +1,83 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-15
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+968b3f467f51c6bfec18af1fbcf980a0f19a1fb3
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-07-09 21:33:55 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+773
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-773.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.FlowSensitiveInlineVariablesTest::testSimpleForIn
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.FlowSensitiveInlineVariables
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.FlowSensitiveInlineVariables ===
+diff --git a/src/com/google/javascript/jscomp/FlowSensitiveInlineVariables.java b/src/com/google/javascript/jscomp/FlowSensitiveInlineVariables.java
+index a8e92fcca..20196bf79 100644
+--- a/src/com/google/javascript/jscomp/FlowSensitiveInlineVariables.java
++++ b/src/com/google/javascript/jscomp/FlowSensitiveInlineVariables.java
+@@ -99,6 +99,9 @@ class FlowSensitiveInlineVariables extends AbstractPostOrderCallback
+           return true;
+         }
+ 
++        if (n.isDelProp()) {
++          return true;
++        }
+ 
+         for (Node c = n.getFirstChild(); c != null; c = c.getNext()) {
+           if (!ControlFlowGraph.isEnteringNewCfgNode(c) && apply(c)) {
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testSimpleForIn() {
+    inline("var a,b,x = a in b; x",
+           "var a,b,x; a in b");
+    noInline("var a, b; var x = a in b; print(1); x");
+    noInline("var a,b,x = a in b; delete a[b]; x");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

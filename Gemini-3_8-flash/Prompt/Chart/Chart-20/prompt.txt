@@ -1,0 +1,80 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Chart
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Chart
+       Program: jfreechart
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Chart/Chart.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Svn
+    Repository: file:///Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jfreechart/trunk
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Chart/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Chart-20
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+283
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2007-10-08 02:39:54 -0700 
+--------------------------------------------------------------------------------
+Bug report id:
+UNKNOWN
+--------------------------------------------------------------------------------
+Bug report url:
+UNKNOWN
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jfree.chart.plot.junit.ValueMarkerTests::test1808376
+   --> junit.framework.AssertionFailedError: expected:<java.awt.Color[r=0,g=0,b=255]> but was:<java.awt.Color[r=255,g=0,b=0]>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jfree.chart.plot.ValueMarker
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jfree.chart.plot.ValueMarker ===
+diff --git a/source/org/jfree/chart/plot/ValueMarker.java b/source/org/jfree/chart/plot/ValueMarker.java
+index 075683d..58d5289 100644
+--- a/source/org/jfree/chart/plot/ValueMarker.java
++++ b/source/org/jfree/chart/plot/ValueMarker.java
+@@ -92,7 +92,7 @@ public class ValueMarker extends Marker {
+      */
+     public ValueMarker(double value, Paint paint, Stroke stroke, 
+                        Paint outlinePaint, Stroke outlineStroke, float alpha) {
+-        super(paint, stroke, paint, stroke, alpha);
++        super(paint, stroke, outlinePaint, outlineStroke, alpha);
+         this.value = value;
+     }
+     
+
+
+=== TRIGGERING TEST METHOD ===
+ * 08-Oct-2007 : Added test1808376() method (DG);
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

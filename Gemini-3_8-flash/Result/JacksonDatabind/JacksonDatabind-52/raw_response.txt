@@ -1,0 +1,66 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791184713-6dkdvTp2tsVHZlcPsaxM","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing Jackson Bug**\n\nI've identified the root cause of bug JacksonDatabind-52, specifically within `BeanDeserializerBase`. The issue stemmed from an incorrect method call; `extTypes.build()` was used instead of `extTypes.build(_beanProperties)`. This oversight prevented the type property from being properly linked to its external type property handler, hindering standard property assignment.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"fasterxml.jackson.databind.jsontype.ext;\n\nimport com.fasterxml.jackson.annotation.JsonSub"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Types;\nimport com.fasterxml.jackson.annotation.JsonTypeInfo;\nimport com.fasterxml.jackson."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"databind.BaseMapTest;\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\npublic class ExternalTypeId999Test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" extends BaseMapTest\n{\n    static class Envelope {\n        public String type;\n\n        @JsonTypeInfo(use ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXTERNAL_PROPERTY, property = \"type"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\")\n        @JsonSubTypes({\n            @JsonSubTypes.Type(value = Payload.class, name = \"foo"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\")\n        })\n        public Object payload;\n    }\n\n    static class Payload {\n        public int value"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\n\n        public Payload() { }\n        public Payload(int v) { value = v; }\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"}\n\n    public void testExternalTypeId() throws Exception\n    {\n        ObjectMapper mapper = new ObjectMapper();\n        String json = apos"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ToQuotes(\"{'type':'foo','payload':{'value':42}}\");\n        Envelope env = mapper.readValue(json"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":", Envelope.class);\n\n        assertNotNull(env);\n        assertEquals(\"foo\", env.type);\n        assertNotNull("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"env.payload);\n        assertTrue(env.payload instanceof Payload);\n        assertEquals(42, ((Payload)"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" env.payload).value);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1465,"output_tokens":665,"output_tokens_details":{"thinking_tokens":339},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.0035925,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0035925,"upstream_inference_prompt_cost":0.00109875,"upstream_inference_completions_cost":0.00249375}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

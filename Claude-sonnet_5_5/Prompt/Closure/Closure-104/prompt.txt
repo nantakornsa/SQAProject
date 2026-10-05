@@ -1,0 +1,81 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-104
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+67289ae4cbaba3ae70cd2e8fb92f3f2898039dfb
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-02-22 22:55:41 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+114
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-114.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.rhino.jstype.UnionTypeTest::testGreatestSubtypeUnionTypes5
+   --> junit.framework.AssertionFailedError: expected:<NoObject> but was:<None>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.rhino.jstype.UnionType
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.rhino.jstype.UnionType ===
+diff --git a/src/com/google/javascript/rhino/jstype/UnionType.java b/src/com/google/javascript/rhino/jstype/UnionType.java
+index a9c9a0aef..6f0d798e5 100644
+--- a/src/com/google/javascript/rhino/jstype/UnionType.java
++++ b/src/com/google/javascript/rhino/jstype/UnionType.java
+@@ -288,7 +288,7 @@ public class UnionType extends JSType {
+       builder.addAlternate(that);
+     }
+     JSType result = builder.build();
+-    if (result != null) {
++    if (!result.isNoType()) {
+       return result;
+     } else if (this.isObject() && that.isObject()) {
+       return getNativeType(JSTypeNative.NO_OBJECT_TYPE);
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testGreatestSubtypeUnionTypes5() throws Exception {
+    JSType errUnion = createUnionType(EVAL_ERROR_TYPE, URI_ERROR_TYPE);
+    assertEquals(NO_OBJECT_TYPE,
+        errUnion.getGreatestSubtype(STRING_OBJECT_TYPE));
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

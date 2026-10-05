@@ -1,0 +1,42 @@
+package org.jfree.chart.plot.junit;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+
+/**
+ * Regression test for bug Chart-4 in XYPlot.
+ */
+public class XYPlotBug4Tests extends TestCase {
+
+    public static Test suite() {
+        return new TestSuite(XYPlotBug4Tests.class);
+    }
+
+    /**
+     * Test that getDataRange does not throw NullPointerException when
+     * the renderer associated with a dataset is null.
+     */
+    public void testGetDataRangeWithNullRenderer() {
+        XYSeries series = new XYSeries("Series");
+        series.add(1.0, 2.0);
+        series.add(3.0, 4.0);
+        XYSeriesCollection dataset = new XYSeriesCollection(series);
+
+        NumberAxis xAxis = new NumberAxis("X");
+        NumberAxis yAxis = new NumberAxis("Y");
+        XYPlot plot = new XYPlot(dataset, xAxis, yAxis, null);
+
+        // This should not throw NullPointerException even when renderer is null
+        try {
+            assertNull(plot.getDataRange(xAxis));
+            assertNull(plot.getDataRange(yAxis));
+        } catch (NullPointerException e) {
+            fail("getDataRange() should not throw NullPointerException when renderer is null.");
+        }
+    }
+}

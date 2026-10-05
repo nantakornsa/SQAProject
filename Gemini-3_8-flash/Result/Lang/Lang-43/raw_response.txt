@@ -1,0 +1,69 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791140354-j3tmwCGmPFYyOdJlUED0","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing Infinite Loop**\n\nI've identified an infinite loop in `appendQuotedString` related to escaped quotes when `escapingOn` is true. The issue stems from a missing `next(pos)` call. I'm currently implementing the fix to address this bug.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Pattern Parsing**\n\nI'm digging into how the `registry` influences `applyPattern`, specifically when it's an empty map or `Collections.emptyMap()`. This seems key to understanding the behavior around escaped quotes and potential loops in `appendQuotedString`.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".apache.commons.lang.text;\n\nimport java.text.FieldPosition;\nimport java.text.Format;\nimport java"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".text.ParsePosition;\nimport java.util.Collections;\nimport java.util.HashMap;\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" java.util.Map;\n\nimport junit.framework.TestCase;\n\n/**\n * Regression test for LANG-477:"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" ExtendedMessageFormat causes OutOfMemoryError\n * due to an infinite loop when an escaped quote is encountered.\n */\npublic class"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" ExtendedMessageFormatLANG477Test extends TestCase {\n\n    public void testEscapedQuote_LANG_477() {\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        Map registry = new HashMap();\n        registry.put(\"lower\", new FormatFactory() {\n            public Format getFormat("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"String name, String arguments, java.util.Locale locale) {\n                return new Format() {\n                    public StringBuffer"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {\n                        return toAppendTo.append((("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"String) obj).toLowerCase());\n                    }\n                    public Object parseObject(String source, ParsePosition pos) {\n                        throw"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" new UnsupportedOperationException();\n                    }\n                };\n            }\n        });\n\n        String pattern = \"it"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"''s a {0,lower} 'test'!\";\n        ExtendedMessageFormat emf = new ExtendedMessageFormat("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"pattern, registry);\n        assertEquals(\"it's a dummy test!\", emf.format(new Object[] {\"D"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"UMMY\"}));\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":993,"output_tokens":873,"output_tokens_details":{"thinking_tokens":547},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.0040185,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0040185,"upstream_inference_prompt_cost":0.00074475,"upstream_inference_completions_cost":0.00327375}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

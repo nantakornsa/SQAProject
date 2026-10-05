@@ -1,0 +1,156 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Chart
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Chart
+       Program: jfreechart
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Chart/Chart.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Svn
+    Repository: file:///Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jfreechart/trunk
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Chart/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Chart-21
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+231
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2007-10-03 06:28:03 -0700 
+--------------------------------------------------------------------------------
+Bug report id:
+UNKNOWN
+--------------------------------------------------------------------------------
+Bug report url:
+UNKNOWN
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jfree.data.statistics.junit.DefaultBoxAndWhiskerCategoryDatasetTests::testGetRangeBounds
+   --> junit.framework.AssertionFailedError: expected:<Range[8.5,9.6]> but was:<Range[8.6,9.6]>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset ===
+diff --git a/source/org/jfree/data/statistics/DefaultBoxAndWhiskerCategoryDataset.java b/source/org/jfree/data/statistics/DefaultBoxAndWhiskerCategoryDataset.java
+index 7fd86f4..a973da9 100644
+--- a/source/org/jfree/data/statistics/DefaultBoxAndWhiskerCategoryDataset.java
++++ b/source/org/jfree/data/statistics/DefaultBoxAndWhiskerCategoryDataset.java
+@@ -154,6 +154,7 @@ public class DefaultBoxAndWhiskerCategoryDataset extends AbstractDataset
+                 && this.minimumRangeValueColumn == c))  {
+             updateBounds();
+         }
++        else {
+         
+             double minval = Double.NaN;
+             if (item.getMinOutlier() != null) {
+@@ -185,6 +186,7 @@ public class DefaultBoxAndWhiskerCategoryDataset extends AbstractDataset
+                 this.minimumRangeValueRow = r;
+                 this.minimumRangeValueColumn = c;
+             }
++        }
+         
+         this.rangeBounds = new Range(this.minimumRangeValue,
+               this.maximumRangeValue);
+@@ -738,7 +740,44 @@ public class DefaultBoxAndWhiskerCategoryDataset extends AbstractDataset
+      */
+     private void updateBounds() {
+         this.minimumRangeValue = Double.NaN;
++        this.minimumRangeValueRow = -1;
++        this.minimumRangeValueColumn = -1;
+         this.maximumRangeValue = Double.NaN;
++        this.maximumRangeValueRow = -1;
++        this.maximumRangeValueColumn = -1;
++        int rowCount = getRowCount();
++        int columnCount = getColumnCount();
++        for (int r = 0; r < rowCount; r++) {
++            for (int c = 0; c < columnCount; c++) {
++                BoxAndWhiskerItem item = getItem(r, c);
++                if (item != null) {
++                    Number min = item.getMinOutlier();
++                    if (min != null) {
++                        double minv = min.doubleValue();
++                        if (!Double.isNaN(minv)) {
++                            if (minv < this.minimumRangeValue || Double.isNaN(
++                                    this.minimumRangeValue)) {
++                                this.minimumRangeValue = minv;
++                                this.minimumRangeValueRow = r;
++                                this.minimumRangeValueColumn = c;
++                            }
++                        }
++                    }
++                    Number max = item.getMaxOutlier();
++                    if (max != null) {
++                        double maxv = max.doubleValue();
++                        if (!Double.isNaN(maxv)) {
++                            if (maxv > this.maximumRangeValue || Double.isNaN(
++                                    this.maximumRangeValue)) {
++                                this.maximumRangeValue = maxv;
++                                this.maximumRangeValueRow = r;
++                                this.maximumRangeValueColumn = c;
++                            }
++                        }
++                    }
++                }
++            }
++        }
+     }
+     
+     /**
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testGetRangeBounds() {
+        DefaultBoxAndWhiskerCategoryDataset d1 
+                = new DefaultBoxAndWhiskerCategoryDataset();
+        d1.add(new BoxAndWhiskerItem(1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 
+                new ArrayList()), "R1", "C1");
+        assertEquals(new Range(7.0, 8.0), d1.getRangeBounds(false));
+        assertEquals(new Range(7.0, 8.0), d1.getRangeBounds(true));
+        
+        d1.add(new BoxAndWhiskerItem(1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 
+                new ArrayList()), "R1", "C1");
+        assertEquals(new Range(7.5, 8.5), d1.getRangeBounds(false));
+        assertEquals(new Range(7.5, 8.5), d1.getRangeBounds(true));
+        
+        d1.add(new BoxAndWhiskerItem(2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 
+                new ArrayList()), "R2", "C1");
+        assertEquals(new Range(7.5, 9.5), d1.getRangeBounds(false));
+        assertEquals(new Range(7.5, 9.5), d1.getRangeBounds(true));
+        
+        // this replaces the entry with the current minimum value, but the new
+        // minimum value is now in a different item
+        d1.add(new BoxAndWhiskerItem(1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 8.6, 9.6, 
+                new ArrayList()), "R1", "C1");
+        assertEquals(new Range(8.5, 9.6), d1.getRangeBounds(false));
+        assertEquals(new Range(8.5, 9.6), d1.getRangeBounds(true));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

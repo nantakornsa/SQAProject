@@ -1,0 +1,42 @@
+```java
+package com.fasterxml.jackson.databind.objectid;
+
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class Issue1083Test extends BaseMapTest {
+
+    static class JsonRoot {
+        public List<JsonSchema> schemas;
+    }
+
+    @JsonTypeInfo(
+            use = JsonTypeInfo.Id.NAME,
+            include = JsonTypeInfo.As.PROPERTY,
+            property = "type",
+            defaultImpl = JsonMapSchema.class
+    )
+    abstract static class JsonSchema {
+        public String name;
+    }
+
+    static class JsonMapSchema extends JsonSchema {
+    }
+
+    public void testPolymorphicSubclassInheritedProperties() throws Exception {
+        final ObjectMapper mapper = new ObjectMapper();
+        final String json = aposToQuotes("{'schemas': [{\n"
+                + "  'name': 'FoodMart'\n"
+                + "}]}\n");
+        JsonRoot root = mapper.readValue(json, JsonRoot.class);
+        assertNotNull(root);
+        assertNotNull(root.schemas);
+        assertEquals(1, root.schemas.size());
+        assertTrue(root.schemas.get(0) instanceof JsonMapSchema);
+        assertEquals("FoodMart", root.schemas.get(0).name);
+    }
+}
+```

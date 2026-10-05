@@ -1,0 +1,55 @@
+package com.google.javascript.jscomp;
+
+/**
+ * Regression test for comparisons between NOT expressions (e.g. "!0 == !0")
+ * in {@link PeepholeFoldConstants}.
+ */
+public class PeepholeFoldConstantsNotComparisonTest extends CompilerTestCase {
+
+  public PeepholeFoldConstantsNotComparisonTest() {
+    super("");
+  }
+
+  @Override
+  protected CompilerPass getProcessor(final Compiler compiler) {
+    PeepholeOptimizationsPass peepholePass =
+        new PeepholeOptimizationsPass(compiler, new PeepholeFoldConstants());
+    return peepholePass;
+  }
+
+  @Override
+  protected int getNumRepetitions() {
+    // Only one pass over the code is needed.
+    return 1;
+  }
+
+  private void fold(String js, String expected) {
+    test(js, expected);
+  }
+
+  public void testFoldComparisonOfNotExpressions() {
+    fold("x = !1 == !0", "x = false");
+
+    fold("x = !0 == !0", "x = true");
+    fold("x = !1 == !1", "x = true");
+    fold("x = !1 == null", "x = false");
+    fold("x = !1 == !0", "x = false");
+    fold("x = !0 == null", "x = false");
+
+    fold("!0 == !0", "true");
+    fold("!1 == null", "false");
+    fold("!1 == !0", "false");
+    fold("!0 == null", "false");
+
+    fold("x = !0 === !0", "x = true");
+    fold("x = !1 === !1", "x = true");
+    fold("x = !1 === null", "x = false");
+    fold("x = !1 === !0", "x = false");
+    fold("x = !0 === null", "x = false");
+
+    fold("!0 === !0", "true");
+    fold("!1 === null", "false");
+    fold("!1 === !0", "false");
+    fold("!0 === null", "false");
+  }
+}

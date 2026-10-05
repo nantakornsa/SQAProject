@@ -1,0 +1,19 @@
+package org.apache.commons.lang.math;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for LANG-300: NumberUtils.createNumber does not handle positive longs like "1l".
+ */
+public class NumberUtilsLang300Test extends TestCase {
+
+    public void testLang300() {
+        Number expected = Long.valueOf(1L);
+        Number result = NumberUtils.createNumber("1l");
+        assertEquals("Failed to parse '1l' as a valid Long", expected, result);
+
+        assertEquals(Long.valueOf(1L), NumberUtils.createNumber("1L"));
+        assertEquals(Long.valueOf(-1L), NumberUtils.createNumber("-1l"));
+        assertEquals(Long.valueOf(10L), NumberUtils.createNumber("10l"));
+    }
+}

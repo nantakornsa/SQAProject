@@ -1,0 +1,60 @@
+package org.apache.commons.codec.binary;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for CODEC-105: Base64InputStream.read() threw an
+ * ArrayIndexOutOfBoundsException when encoding, because the caller's
+ * one-byte array was used as the encoder's initial output buffer.
+ */
+public class Base64InputStreamTest extends TestCase {
+
+    /**
+     * Without the fix, the following calls cause an ArrayIndexOutOfBoundsException.
+     */
+    public void testCodec105() throws IOException {
+        Base64InputStream in = new Base64InputStream(new Codec105ErrorInputStream(), true, 0, null);
+        for (int i = 0; i < 5; i++) {
+            in.read();
+        }
+    }
+
+    /**
+     * Verifies that single-byte reads while encoding yield the expected output.
+     */
+    public void testCodec105EncodedContent() throws IOException {
+        Base64InputStream in = new Base64InputStream(new Codec105ErrorInputStream(), true, 0, null);
+        // three zero bytes encode to "AAAA"
+        for (int i = 0; i < 4; i++) {
+            assertEquals('A', in.read());
+        }
+        assertEquals(-1, in.read());
+    }
+
+    /**
+     * An input stream that supplies three zero bytes in a single bulk read and then reports EOF.
+     */
+    private static class Codec105ErrorInputStream extends InputStream {
+
+        private boolean done = false;
+
+        public int read() throws IOException {
+            throw new UnsupportedOperationException("Only bulk reads are supported");
+        }
+
+        public int read(byte[] b, int pos, int len) throws IOException {
+            if (done) {
+                return -1;
+            }
+            done = true;
+            int n = Math.min(3, len);
+            for (int i = 0; i < n; i++) {
+                b[pos + i] = 0;
+            }
+            return n;
+        }
+    }
+}

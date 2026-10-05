@@ -1,0 +1,93 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791140280-Ctco2sc8Rz01ST0H1X8c","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating `StringUtils` Errors**\n\nI'm currently digging into a bug within `StringUtils`, specifically in methods like `containsNone` and `indexOfAny`. It seems to be related to how supplementary characters, or surrogate pairs, are handled. My current focus is on understanding the discrepancy with `CharU20000` and its representation as `\\uD840\\uDC00`.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Reproducing `StringUtils` Issue**\n\nI've pinpointed the `StringUtils.containsNone` bug with supplementary characters. The issue arises because the code incorrectly treats high surrogates as distinct characters. I'm now focusing on creating a JUnit test to reliably reproduce this regression for `\\uD840\\uDC00` and `\\uD840\\uDC01`.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.apache.commons.lang"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"3;\n\nimport junit.framework.TestCase;\n\n/**\n * Regression test for LANG-607 - String"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Utils methods handling supplementary characters.\n */\npublic class StringUtilsSupplementaryCharsTest extends TestCase {\n\n    private static final String CharU"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"20000 = \"\\uD840\\uDC00\";\n    private static final String"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" CharU20001 = \"\\uD840\\uDC01\";\n\n    public void"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" testContainsNone_CharArrayWithSupplementaryChars() {\n        // CharU20000 and CharU200"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"01 share the same high surrogate (\\uD840)\n        // but have different low surrogates (\\uDC"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"00 vs \\uDC01).\n        // containsNone should not match on partial surrogate pairs.\n        assertTrue("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"StringUtils.containsNone(CharU20000, CharU20001.toCharArray()));\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        assertTrue(StringUtils.containsNone(CharU20001, CharU20000."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"toCharArray()));\n    }\n\n    public void testContainsNone_StringWithSupplementaryChars() {\n        assertTrue(StringUtils.containsNone("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"CharU20000, CharU20001));\n        assertTrue(StringUtils.containsNone"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(CharU20001, CharU20000));\n    }\n\n    public void"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" testIndexOfAny_StringCharArrayWithSupplementaryChars() {\n        assertEquals(2, StringUtils.indexOfAny(\"zz\""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" + CharU20000, CharU20000.toCharArray()));\n        assertEquals(-1, StringUtils.indexOf"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Any(CharU20000, CharU20001.toCharArray()));\n        assertEquals(-1, StringUtils"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".indexOfAny(CharU20001, CharU20000.toCharArray()));\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"}\n\n    public void testIndexOfAny_StringStringWithSupplementaryChars() {\n        assertEquals(2, StringUtils.indexOf"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Any(\"zz\" + CharU20000, CharU20000));\n        assertEquals"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(-1, StringUtils.indexOfAny(CharU20000, CharU20001"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"));\n        assertEquals(-1, StringUtils.indexOfAny(CharU20001, CharU2"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"0000));\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2879,"output_tokens":1085,"output_tokens_details":{"thinking_tokens":557},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.006228,"is_byok":false,"cost_details":{"upstream_inference_cost":0.006228,"upstream_inference_prompt_cost":0.00215925,"upstream_inference_completions_cost":0.00406875}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

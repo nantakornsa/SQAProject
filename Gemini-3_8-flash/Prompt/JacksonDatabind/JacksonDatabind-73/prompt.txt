@@ -1,0 +1,117 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-73
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+4d34006e4d8a566c6c64a3a0e04c17e50d63bb82
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-01-26 19:12:29 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+935
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/935
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.deser.ReadOrWriteOnlyTest::testReadOnlyAndWriteOnly
+   --> com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException: Unrecognized field "x" (class com.fasterxml.jackson.databind.deser.ReadOrWriteOnlyTest$ReadXWriteY), not marked as ignorable (one known property: "y"])
+ - com.fasterxml.jackson.databind.deser.ReadOrWriteOnlyTest::testReadOnly935
+   --> com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException: Unrecognized field "fullName" (class com.fasterxml.jackson.databind.deser.ReadOrWriteOnlyTest$Pojo935), not marked as ignorable (2 known properties: "lastName", "firstName"])
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.introspect.POJOPropertiesCollector
+ - com.fasterxml.jackson.databind.introspect.POJOPropertyBuilder
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.introspect.POJOPropertiesCollector ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/introspect/POJOPropertiesCollector.java b/src/main/java/com/fasterxml/jackson/databind/introspect/POJOPropertiesCollector.java
+index 3d36b0ffc..fd6a613e6 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/introspect/POJOPropertiesCollector.java
++++ b/src/main/java/com/fasterxml/jackson/databind/introspect/POJOPropertiesCollector.java
+@@ -4,6 +4,7 @@ import java.lang.reflect.Modifier;
+ import java.util.*;
+ 
+ import com.fasterxml.jackson.annotation.JsonAnySetter;
++import com.fasterxml.jackson.annotation.JsonProperty.Access;
+ import com.fasterxml.jackson.databind.*;
+ import com.fasterxml.jackson.databind.cfg.HandlerInstantiator;
+ import com.fasterxml.jackson.databind.cfg.MapperConfig;
+@@ -728,7 +729,10 @@ public class POJOPropertiesCollector
+         while (it.hasNext()) {
+             POJOPropertyBuilder prop = it.next();
+             // 26-Jan-2017, tatu: [databind#935]: need to denote removal of
+-            prop.removeNonVisible(inferMutators);
++            Access acc = prop.removeNonVisible(inferMutators);
++            if (!_forSerialization && (acc == Access.READ_ONLY)) {
++                _collectIgnorals(prop.getName());
++            }
+         }
+     }
+ 
+
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.introspect.POJOPropertyBuilder ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/introspect/POJOPropertyBuilder.java b/src/main/java/com/fasterxml/jackson/databind/introspect/POJOPropertyBuilder.java
+index 954f5dd46..b9a403c13 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/introspect/POJOPropertyBuilder.java
++++ b/src/main/java/com/fasterxml/jackson/databind/introspect/POJOPropertyBuilder.java
+@@ -641,7 +641,7 @@ public class POJOPropertyBuilder
+      * @param inferMutators Whether mutators can be "pulled in" by visible
+      *    accessors or not. 
+      */
+-    public void removeNonVisible(boolean inferMutators)
++    public JsonProperty.Access removeNonVisible(boolean inferMutators)
+     {
+         /* 07-Jun-2015, tatu: With 2.6, we will allow optional definition
+          *  of explicit access type for property; if not "AUTO", it will
+@@ -680,6 +680,7 @@ public class POJOPropertyBuilder
+                 _setters = _removeNonVisible(_setters);
+             }
+         }
++        return acc;
+     }
+ 
+     /**
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testReadOnlyAndWriteOnly() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

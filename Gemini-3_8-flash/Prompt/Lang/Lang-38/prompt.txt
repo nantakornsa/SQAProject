@@ -1,0 +1,90 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-38
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+825481f019e4482e5ea74d5b0b5e5c438535cb68
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-12-17 06:04:28 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-538
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-538
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang3.time.FastDateFormatTest::testLang538
+   --> junit.framework.ComparisonFailure: dateTime expected:<2009-10-16T[16]:42:16.000Z> but was:<2009-10-16T[08]:42:16.000Z>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang3.time.FastDateFormat
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang3.time.FastDateFormat ===
+diff --git a/src/java/org/apache/commons/lang3/time/FastDateFormat.java b/src/java/org/apache/commons/lang3/time/FastDateFormat.java
+index 6b10a94f0..d60af9610 100644
+--- a/src/java/org/apache/commons/lang3/time/FastDateFormat.java
++++ b/src/java/org/apache/commons/lang3/time/FastDateFormat.java
+@@ -869,6 +869,7 @@ public class FastDateFormat extends Format {
+      */
+     public StringBuffer format(Calendar calendar, StringBuffer buf) {
+         if (mTimeZoneForced) {
++            calendar.getTime(); /// LANG-538
+             calendar = (Calendar) calendar.clone();
+             calendar.setTimeZone(mTimeZone);
+         }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testLang538() {
+        final String dateTime = "2009-10-16T16:42:16.000Z";
+
+        // more commonly constructed with: cal = new GregorianCalendar(2009, 9, 16, 8, 42, 16)
+        // for the unit test to work in any time zone, constructing with GMT-8 rather than default locale time zone
+        GregorianCalendar cal = new GregorianCalendar(TimeZone.getTimeZone("GMT-8"));
+        cal.clear();
+        cal.set(2009, 9, 16, 8, 42, 16);
+
+        FastDateFormat format = FastDateFormat.getInstance("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", TimeZone.getTimeZone("GMT"));
+        assertEquals("dateTime", dateTime, format.format(cal));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

@@ -1,0 +1,92 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-57
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+2c58e975ab00eb369ee3dfbba07a4a78a1ef9e19
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-10-26 12:58:24 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+759
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/759
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.nodes.ElementTest::testChainedRemoveAttributes
+   --> java.util.ConcurrentModificationException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.nodes.Attributes
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.nodes.Attributes ===
+diff --git a/src/main/java/org/jsoup/nodes/Attributes.java b/src/main/java/org/jsoup/nodes/Attributes.java
+index 49ff25dd..8fdb654d 100644
+--- a/src/main/java/org/jsoup/nodes/Attributes.java
++++ b/src/main/java/org/jsoup/nodes/Attributes.java
+@@ -122,7 +122,7 @@ public class Attributes implements Iterable<Attribute>, Cloneable {
+         for (Iterator<String> it = attributes.keySet().iterator(); it.hasNext(); ) {
+             String attrKey = it.next();
+             if (attrKey.equalsIgnoreCase(key))
+-                attributes.remove(attrKey);
++                it.remove();
+         }
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testChainedRemoveAttributes() {
+        String html = "<a one two three four>Text</a>";
+        Document doc = Jsoup.parse(html);
+        Element a = doc.select("a").first();
+        a
+            .removeAttr("zero")
+            .removeAttr("one")
+            .removeAttr("two")
+            .removeAttr("three")
+            .removeAttr("four")
+            .removeAttr("five");
+        assertEquals("<a>Text</a>", a.outerHtml());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

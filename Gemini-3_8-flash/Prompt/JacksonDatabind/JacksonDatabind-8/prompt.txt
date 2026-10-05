@@ -1,0 +1,108 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-8
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+3b041e3bad5968ade7f7519daeef6695a8f6b7f9
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-01-02 15:38:56 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+667
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/667
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.deser.TestJdkTypes::testStringBuilder
+   --> com.fasterxml.jackson.databind.JsonMappingException: Conflicting String creators: already had explicitly marked [constructor for java.lang.StringBuilder, annotations: [null]], encountered [constructor for java.lang.StringBuilder, annotations: [null]]
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.deser.impl.CreatorCollector
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.deser.impl.CreatorCollector ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/deser/impl/CreatorCollector.java b/src/main/java/com/fasterxml/jackson/databind/deser/impl/CreatorCollector.java
+index 39514f63f..1a99abc5e 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/deser/impl/CreatorCollector.java
++++ b/src/main/java/com/fasterxml/jackson/databind/deser/impl/CreatorCollector.java
+@@ -280,6 +280,7 @@ public class CreatorCollector
+         AnnotatedWithParams oldOne = _creators[typeIndex];
+         // already had an explicitly marked one?
+         if (oldOne != null) {
++            boolean verify;
+ 
+             if ((_explicitCreators & mask) != 0) { // already had explicitly annotated, leave as-is
+                 // but skip, if new one not annotated
+@@ -287,17 +288,27 @@ public class CreatorCollector
+                     return;
+                 }
+                 // both explicit: verify
++                verify = true;
++            } else {
+                 // otherwise only verify if neither explicitly annotated.
++                verify = !explicit;
+             }
+ 
+             // one more thing: ok to override in sub-class
+-            if (oldOne.getClass() == newOne.getClass()) {
++            if (verify && (oldOne.getClass() == newOne.getClass())) {
+                 // [databind#667]: avoid one particular class of bogus problems
++                Class<?> oldType = oldOne.getRawParameterType(0);
++                Class<?> newType = newOne.getRawParameterType(0);
+ 
++                if (oldType == newType) {
+                     throw new IllegalArgumentException("Conflicting "+TYPE_DESCS[typeIndex]
+                             +" creators: already had explicitly marked "+oldOne+", encountered "+newOne);
++                }
+                 // otherwise, which one to choose?
++                if (newType.isAssignableFrom(oldType)) {
+                     // new type more generic, use old
++                    return;
++                }
+                 // new type more specific, use it
+             }
+         }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testStringBuilder() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

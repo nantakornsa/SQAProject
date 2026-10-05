@@ -1,0 +1,94 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-60
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+1a158281aa058ee2dc9cfae3b56012a9f92f3b2b
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2006-10-31 23:00:54 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-295
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-295
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang.text.StrBuilderTest::testLang295
+   --> junit.framework.AssertionFailedError: The contains(char) method is looking beyond the end of the string
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang.text.StrBuilder
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang.text.StrBuilder ===
+diff --git a/src/java/org/apache/commons/lang/text/StrBuilder.java b/src/java/org/apache/commons/lang/text/StrBuilder.java
+index c7cbfb3e1..886d424ea 100644
+--- a/src/java/org/apache/commons/lang/text/StrBuilder.java
++++ b/src/java/org/apache/commons/lang/text/StrBuilder.java
+@@ -1670,7 +1670,7 @@ public class StrBuilder implements Cloneable {
+      */
+     public boolean contains(char ch) {
+         char[] thisBuf = buffer;
+-        for (int i = 0; i < thisBuf.length; i++) {
++        for (int i = 0; i < this.size; i++) {
+             if (thisBuf[i] == ch) {
+                 return true;
+             }
+@@ -1727,7 +1727,7 @@ public class StrBuilder implements Cloneable {
+             return -1;
+         }
+         char[] thisBuf = buffer;
+-        for (int i = startIndex; i < thisBuf.length; i++) {
++        for (int i = startIndex; i < size; i++) {
+             if (thisBuf[i] == ch) {
+                 return i;
+             }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testLang295() {
+        StrBuilder sb = new StrBuilder("onetwothree");
+        sb.deleteFirst("three");
+        assertFalse( "The contains(char) method is looking beyond the end of the string", sb.contains('h'));
+        assertEquals( "The indexOf(char) method is looking beyond the end of the string", -1, sb.indexOf('h'));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

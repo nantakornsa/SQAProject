@@ -1,0 +1,131 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Time
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Time
+       Program: joda-time
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/Time.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/joda-time.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Time-6
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+28aeba952e838fb12c9b934ce6ef65658e45d7b2
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-08-16 14:41:18 +0100
+--------------------------------------------------------------------------------
+Bug report id:
+28
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/JodaOrg/joda-time/issues/28
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.joda.time.chrono.TestGJDate::test_cutoverPreZero
+   --> junit.framework.AssertionFailedError
+ - org.joda.time.chrono.TestGJDate::test_plusWeekyears_positiveToNegative_crossCutover
+   --> junit.framework.AssertionFailedError: expected:<-0002-06-30> but was:<-0001-06-28>
+ - org.joda.time.chrono.TestGJDate::test_plusYears_positiveToZero_crossCutover
+   --> org.joda.time.IllegalFieldValueException: Value 0 for year is not supported
+ - org.joda.time.chrono.TestGJDate::test_plusYears_positiveToNegative_crossCutover
+   --> junit.framework.AssertionFailedError: expected:<-0002-06-30> but was:<-0001-06-30>
+ - org.joda.time.chrono.TestGJDate::test_plusWeekyears_positiveToZero_crossCutover
+   --> org.joda.time.IllegalFieldValueException: Value 0 for year is not supported
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.joda.time.chrono.GJChronology
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.joda.time.chrono.GJChronology ===
+diff --git a/src/main/java/org/joda/time/chrono/GJChronology.java b/src/main/java/org/joda/time/chrono/GJChronology.java
+index b970403b..d1556f52 100644
+--- a/src/main/java/org/joda/time/chrono/GJChronology.java
++++ b/src/main/java/org/joda/time/chrono/GJChronology.java
+@@ -193,6 +193,10 @@ public final class GJChronology extends AssembledChronology {
+             cutoverInstant = DEFAULT_CUTOVER;
+         } else {
+             cutoverInstant = gregorianCutover.toInstant();
++            LocalDate cutoverDate = new LocalDate(cutoverInstant.getMillis(), GregorianChronology.getInstance(zone));
++            if (cutoverDate.getYear() <= 0) {
++                throw new IllegalArgumentException("Cutover too early. Must be on or after 0001-01-01.");
++            }
+         }
+ 
+         GJChronology chrono;
+@@ -976,6 +980,17 @@ public final class GJChronology extends AssembledChronology {
+                 if (instant < iCutover) {
+                     // Only adjust if gap fully crossed.
+                     if (instant + iGapDuration < iCutover) {
++                        if (iConvertByWeekyear) {
++                            int wyear = iGregorianChronology.weekyear().get(instant);
++                            if (wyear <= 0) {
++                                instant = iGregorianChronology.weekyear().add(instant, -1);
++                            }
++                        } else {
++                            int year = iGregorianChronology.year().get(instant);
++                            if (year <= 0) {
++                                instant = iGregorianChronology.year().add(instant, -1);
++                            }
++                        }
+                         instant = gregorianToJulian(instant);
+                     }
+                 }
+@@ -998,6 +1013,17 @@ public final class GJChronology extends AssembledChronology {
+                 if (instant < iCutover) {
+                     // Only adjust if gap fully crossed.
+                     if (instant + iGapDuration < iCutover) {
++                        if (iConvertByWeekyear) {
++                            int wyear = iGregorianChronology.weekyear().get(instant);
++                            if (wyear <= 0) {
++                                instant = iGregorianChronology.weekyear().add(instant, -1);
++                            }
++                        } else {
++                            int year = iGregorianChronology.year().get(instant);
++                            if (year <= 0) {
++                                instant = iGregorianChronology.year().add(instant, -1);
++                            }
++                        }
+                         instant = gregorianToJulian(instant);
+                     }
+                 }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void test_cutoverPreZero() {
+        DateTime cutover = new LocalDate(-2, 6, 30, ISOChronology.getInstanceUTC()).toDateTimeAtStartOfDay(DateTimeZone.UTC);
+        try {
+            GJChronology.getInstance(DateTimeZone.UTC, cutover);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

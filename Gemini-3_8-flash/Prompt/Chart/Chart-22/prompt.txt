@@ -1,0 +1,174 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Chart
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Chart
+       Program: jfreechart
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Chart/Chart.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Svn
+    Repository: file:///Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jfreechart/trunk
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Chart/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Chart-22
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+227
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2007-10-03 03:58:18 -0700 
+--------------------------------------------------------------------------------
+Bug report id:
+UNKNOWN
+--------------------------------------------------------------------------------
+Bug report url:
+UNKNOWN
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jfree.data.junit.KeyedObjects2DTests::testRemoveColumnByKey
+   --> org.jfree.data.UnknownKeyException: The key (C2) is not recognised.
+ - org.jfree.data.junit.KeyedObjects2DTests::testRemoveValue
+   --> junit.framework.AssertionFailedError: expected:<1> but was:<2>
+ - org.jfree.data.junit.KeyedObjects2DTests::testGetValueByKey
+   --> org.jfree.data.UnknownKeyException: The key (C2) is not recognised.
+ - org.jfree.data.junit.KeyedObjects2DTests::testRemoveColumnByIndex
+   --> org.jfree.data.UnknownKeyException: The key (C1) is not recognised.
+ - org.jfree.data.junit.KeyedObjects2DTests::testSetObject
+   --> org.jfree.data.UnknownKeyException: The key (C2) is not recognised.
+ - org.jfree.data.junit.KeyedObjects2DTests::testRemoveRowByKey
+   --> java.lang.ArrayIndexOutOfBoundsException: -1
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jfree.data.KeyedObjects2D
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jfree.data.KeyedObjects2D ===
+diff --git a/source/org/jfree/data/KeyedObjects2D.java b/source/org/jfree/data/KeyedObjects2D.java
+index d0e832f..7cc5ad6 100644
+--- a/source/org/jfree/data/KeyedObjects2D.java
++++ b/source/org/jfree/data/KeyedObjects2D.java
+@@ -228,9 +228,10 @@ public class KeyedObjects2D implements Cloneable, Serializable {
+             throw new UnknownKeyException("Column key (" + columnKey 
+                     + ") not recognised.");
+         }
+-        if (row >= 0) {
+         KeyedObjects rowData = (KeyedObjects) this.rows.get(row);
+-            return rowData.getObject(columnKey);
++        int index = rowData.getIndex(columnKey);
++        if (index >= 0) {
++            return rowData.getObject(index);
+         }
+         else {
+             return null;
+@@ -315,8 +316,29 @@ public class KeyedObjects2D implements Cloneable, Serializable {
+         }
+         
+         // 2. check whether the column is now empty.
++        allNull = true;
+         
++        for (int item = 0, itemCount = this.rows.size(); item < itemCount; 
++             item++) {
++            row = (KeyedObjects) this.rows.get(item);
++            int columnIndex = row.getIndex(columnKey);
++            if (columnIndex >= 0 && row.getObject(columnIndex) != null) {
++                allNull = false;
++                break;
++            }
++        }
+         
++        if (allNull) {
++            for (int item = 0, itemCount = this.rows.size(); item < itemCount; 
++                 item++) {
++                row = (KeyedObjects) this.rows.get(item);
++                int columnIndex = row.getIndex(columnKey);
++                if (columnIndex >= 0) {
++                    row.removeValue(columnIndex);
++                }
++            }
++            this.columnKeys.remove(columnKey);
++        }
+     }
+ 
+     /**
+@@ -342,6 +364,10 @@ public class KeyedObjects2D implements Cloneable, Serializable {
+      */
+     public void removeRow(Comparable rowKey) {
+         int index = getRowIndex(rowKey);
++        if (index < 0) {
++            throw new UnknownKeyException("Row key (" + rowKey 
++                    + ") not recognised.");
++        }
+         removeRow(index);
+     }
+ 
+@@ -375,7 +401,10 @@ public class KeyedObjects2D implements Cloneable, Serializable {
+         Iterator iterator = this.rows.iterator();
+         while (iterator.hasNext()) {
+             KeyedObjects rowData = (KeyedObjects) iterator.next();
+-                rowData.removeValue(columnKey);
++            int i = rowData.getIndex(columnKey);
++            if (i >= 0) {
++                rowData.removeValue(i);
++            }
+         }
+         this.columnKeys.remove(columnKey);
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testRemoveColumnByKey() {
+        KeyedObjects2D data = new KeyedObjects2D();
+        data.setObject("Obj1", "R1", "C1");
+        data.setObject("Obj2", "R2", "C2");
+        data.removeColumn("C2");
+        assertEquals(1, data.getColumnCount());
+        assertEquals("Obj1", data.getObject(0, 0));
+        
+        // try unknown column key
+        boolean pass = false;
+        try {
+            data.removeColumn("XXX");
+        }
+        catch (UnknownKeyException e) {
+            pass = true;
+        }
+        assertTrue(pass);
+        
+        // try null column key
+        pass = false;
+        try {
+            data.removeColumn(null);
+        }
+        catch (IllegalArgumentException e) {
+            pass = true;
+        }
+        assertTrue(pass);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

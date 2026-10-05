@@ -1,0 +1,81 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791092302-PCwcAkWkGytdX88SsM64","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1860,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" bu"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ggy code calls `with"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Years`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" wh"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"enever the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" normalized year count"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" is non"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"-zero."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" With `PeriodType."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"months()`, years"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" is unsupported, so it throws `UnsupportedOperationException`. The fixed code folds everything into months instead.\n\nThe test uses the JUnit 3 style (`TestCase`)"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" that the project already uses. For `new Period(1, 15, 0, ...)`, the total is 27 months, and `PeriodType.months()` supports only months, so the result is 27 months."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" A second case, `new Period(0, 27, ...)`, covers the months-only input. A third case, `P"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"eriodType.yearMonthDay()`, checks that the normal path still works.\n\n```java\npackage org.joda.time;\n\nimport junit.framework.TestCase;\nimport junit.framework.TestSuite;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\npublic class TestPeriodNormalizedMonthsRegression extends TestCase {\n\n    public static void main(String[] args) {\n        junit.textui.TestRunner.run(suite());\n    }\n\n    public static TestSuite suite"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"() {\n        return new TestSuite(TestPeriodNormalizedMonthsRegression.class);\n    }\n\n    public void testNormalizedStandard_periodType_months_yearsFoldedIntoMonths() {\n        Period test = new Period"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"(1, 15, 0, 0, 0, 0, 0, 0);\n        Period result = test.normalizedStandard(PeriodType.months());\n        assertEquals(new Period(1, 15, 0, 0, 0, 0, 0, 0), test);\n        assertEquals(new Period"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"(0, 27, 0, 0, 0, 0, 0, 0, PeriodType.months()), result);\n        assertEquals(27, result.getMonths());\n    }\n\n    public void testNormalizedStandard_periodType_months_onlyMonths() {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n        Period test = new Period(0, 27, 0, 0, 0, 0, 0, 0);\n        Period result = test.normalizedStandard(PeriodType.months());\n        assertEquals(new Period(0, 27, 0, 0, 0, 0, 0, 0, PeriodType"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".months()), result);\n    }\n\n    public void testNormalizedStandard_periodType_yearMonthDay_stillNormalizes() {\n        Period test = new Period(1, 15, 0, 0, 0, 0, 0, 0);\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Period result = test.normalizedStandard(PeriodType.yearMonthDay());\n        assertEquals(2, result.getYears());\n        assertEquals(3, result.getMonths());\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1860,"output_tokens":834,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.01206,"is_byok":false,"cost_details":{"upstream_inference_cost":0.01206,"upstream_inference_prompt_cost":0.00372,"upstream_inference_completions_cost":0.00834}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

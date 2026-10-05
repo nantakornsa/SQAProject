@@ -1,0 +1,195 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Gson
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Gson
+       Program: gson
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Gson/Gson.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/gson.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Gson/active-bugs.csv
+Number of bugs: 18
+--------------------------------------------------------------------------------
+
+Summary for Bug: Gson-4
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+af68d70cd55826fa7149effd7397d64667ca264c
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-01-18 15:16:01 -0500
+--------------------------------------------------------------------------------
+Bug report id:
+773
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/google/gson/pull/773
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.gson.stream.JsonReaderTest::testTopLevelValueTypeWithSkipValue
+   --> com.google.gson.stream.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 1 column 1 path $
+ - com.google.gson.stream.JsonReaderTest::testTopLevelValueTypes
+   --> com.google.gson.stream.MalformedJsonException: Use JsonReader.setLenient(true) to accept malformed JSON at line 1 column 1 path $
+ - com.google.gson.stream.JsonWriterTest::testTopLevelValueTypes
+   --> java.lang.IllegalStateException: JSON must start with an array or an object.
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.gson.stream.JsonReader
+ - com.google.gson.stream.JsonWriter
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.gson.stream.JsonReader ===
+diff --git a/gson/src/main/java/com/google/gson/stream/JsonReader.java b/gson/src/main/java/com/google/gson/stream/JsonReader.java
+index e3ad50e5..838355cb 100644
+--- a/gson/src/main/java/com/google/gson/stream/JsonReader.java
++++ b/gson/src/main/java/com/google/gson/stream/JsonReader.java
+@@ -571,9 +571,6 @@ public class JsonReader implements Closeable {
+       checkLenient();
+       return peeked = PEEKED_SINGLE_QUOTED;
+     case '"':
+-      if (stackSize == 1) {
+-        checkLenient();
+-      }
+       return peeked = PEEKED_DOUBLE_QUOTED;
+     case '[':
+       return peeked = PEEKED_BEGIN_ARRAY;
+@@ -582,9 +579,6 @@ public class JsonReader implements Closeable {
+     default:
+       pos--; // Don't consume the first character in a literal value.
+     }
+-    if (stackSize == 1) {
+-      checkLenient();
+-    }
+ 
+     int result = peekKeyword();
+     if (result != PEEKED_NONE) {
+
+=== MODIFIED SOURCE: com.google.gson.stream.JsonWriter ===
+diff --git a/gson/src/main/java/com/google/gson/stream/JsonWriter.java b/gson/src/main/java/com/google/gson/stream/JsonWriter.java
+index d76f7c10..9bf2d22a 100644
+--- a/gson/src/main/java/com/google/gson/stream/JsonWriter.java
++++ b/gson/src/main/java/com/google/gson/stream/JsonWriter.java
+@@ -322,7 +322,7 @@ public class JsonWriter implements Closeable, Flushable {
+    * bracket.
+    */
+   private JsonWriter open(int empty, String openBracket) throws IOException {
+-    beforeValue(true);
++    beforeValue();
+     push(empty);
+     out.write(openBracket);
+     return this;
+@@ -415,7 +415,7 @@ public class JsonWriter implements Closeable, Flushable {
+       return nullValue();
+     }
+     writeDeferredName();
+-    beforeValue(false);
++    beforeValue();
+     string(value);
+     return this;
+   }
+@@ -432,7 +432,7 @@ public class JsonWriter implements Closeable, Flushable {
+       return nullValue();
+     }
+     writeDeferredName();
+-    beforeValue(false);
++    beforeValue();
+     out.append(value);
+     return this;
+   }
+@@ -451,7 +451,7 @@ public class JsonWriter implements Closeable, Flushable {
+         return this; // skip the name and the value
+       }
+     }
+-    beforeValue(false);
++    beforeValue();
+     out.write("null");
+     return this;
+   }
+@@ -463,7 +463,7 @@ public class JsonWriter implements Closeable, Flushable {
+    */
+   public JsonWriter value(boolean value) throws IOException {
+     writeDeferredName();
+-    beforeValue(false);
++    beforeValue();
+     out.write(value ? "true" : "false");
+     return this;
+   }
+@@ -480,7 +480,7 @@ public class JsonWriter implements Closeable, Flushable {
+       throw new IllegalArgumentException("Numeric values must be finite, but was " + value);
+     }
+     writeDeferredName();
+-    beforeValue(false);
++    beforeValue();
+     out.append(Double.toString(value));
+     return this;
+   }
+@@ -492,7 +492,7 @@ public class JsonWriter implements Closeable, Flushable {
+    */
+   public JsonWriter value(long value) throws IOException {
+     writeDeferredName();
+-    beforeValue(false);
++    beforeValue();
+     out.write(Long.toString(value));
+     return this;
+   }
+@@ -515,7 +515,7 @@ public class JsonWriter implements Closeable, Flushable {
+         && (string.equals("-Infinity") || string.equals("Infinity") || string.equals("NaN"))) {
+       throw new IllegalArgumentException("Numeric values must be finite, but was " + value);
+     }
+-    beforeValue(false);
++    beforeValue();
+     out.append(string);
+     return this;
+   }
+@@ -610,7 +610,7 @@ public class JsonWriter implements Closeable, Flushable {
+    * closing bracket or another element.
+    */
+   @SuppressWarnings("fallthrough")
+-  private void beforeValue(boolean root) throws IOException {
++  private void beforeValue() throws IOException {
+     switch (peek()) {
+     case NONEMPTY_DOCUMENT:
+       if (!lenient) {
+@@ -619,10 +619,6 @@ public class JsonWriter implements Closeable, Flushable {
+       }
+       // fall-through
+     case EMPTY_DOCUMENT: // first in document
+-      if (!lenient && !root) {
+-        throw new IllegalStateException(
+-            "JSON must start with an array or an object.");
+-      }
+       replaceTop(NONEMPTY_DOCUMENT);
+       break;
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testTopLevelValueTypeWithSkipValue() throws IOException {
+    JsonReader reader = new JsonReader(reader("true"));
+    reader.skipValue();
+    assertEquals(JsonToken.END_DOCUMENT, reader.peek());
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

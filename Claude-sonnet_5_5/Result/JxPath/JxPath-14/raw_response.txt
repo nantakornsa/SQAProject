@@ -1,0 +1,72 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791056228-kn3B0RIRq4Tl3hDHEGP9","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":3463,"output_tokens":8,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"```java\npackage org.apache"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".commons.jxpath"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".ri.compiler;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\nimport junit.framework."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"TestCase;\n\nimport org"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".apache.commons.j"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"xpath.JXPath"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Context;\n\n/"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"**\n * Regression test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" for JXPATH-102"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":": flo"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"or(), ceiling() and round() must\n * preserve NaN and infinite values.\n */\npublic class CoreFunctionNaNInfinityRegressionTest extends TestCase {\n\n    private JXPathContext context;\n\n    prot"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ected void setUp() throws Exception {\n        super.setUp();\n        context = JXPathContext.newContext(new Object());\n    }\n\n    public void testRoundNaN() {\n        Object result = context.getValue(\"round('NaN')\");\n        assertTrue(result instanceof Double);\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"assertTrue(\"round('NaN') should be NaN but was \" + result,\n                ((Double) result).isNaN());\n    }\n\n    public void testRoundInfinity() {\n        assertEquals(new Double(Double.NEGATIVE_INF"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"INITY),\n                context.getValue(\"round(-2 div 0)\"));\n        assertEquals(new Double(Double.POSITIVE_INFINITY),\n                context.getValue(\"round(2 div 0)\"));\n    }\n\n    public void testFloorNaNAndInfinity() {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n        Object result = context.getValue(\"floor('NaN')\");\n        assertTrue(result instanceof Double);\n        assertTrue(\"floor('NaN') should be NaN but was \" + result,\n                ((Double) result).isNaN());\n        assertEquals(new Double(Double.NEGATI"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"VE_INFINITY),\n                context.getValue(\"floor(-2 div 0)\"));\n        assertEquals(new Double(Double.POSITIVE_INFINITY),\n                context.getValue(\"floor(2 div 0)\"));\n    }\n\n    public void testCeilingNaNAndInfin"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ity() {\n        Object result = context.getValue(\"ceiling('NaN')\");\n        assertTrue(result instanceof Double);\n        assertTrue(\"ceiling('NaN') should be NaN but was \" + result,\n                ((Double) result).isNaN());\n        assertEquals(new Double("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Double.NEGATIVE_INFINITY),\n                context.getValue(\"ceiling(-2 div 0)\"));\n        assertEquals(new Double(Double.POSITIVE_INFINITY),\n                context.getValue(\"ceiling(2 div 0)\"));\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":3463,"output_tokens":799,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.014916,"is_byok":false,"cost_details":{"upstream_inference_cost":0.014916,"upstream_inference_prompt_cost":0.006926,"upstream_inference_completions_cost":0.00799}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

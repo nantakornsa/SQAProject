@@ -1,0 +1,40 @@
+```java
+package org.apache.commons.math.fraction;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+public class FractionCompareToRegressionTest extends TestCase {
+
+    public FractionCompareToRegressionTest(String name) {
+        super(name);
+    }
+
+    public static Test suite() {
+        return new TestSuite(FractionCompareToRegressionTest.class);
+    }
+
+    public void testCompareToBasic() {
+        Fraction first = new Fraction(1, 2);
+        Fraction second = new Fraction(1, 3);
+        Fraction third = new Fraction(1, 2);
+
+        assertEquals(0, first.compareTo(first));
+        assertEquals(0, first.compareTo(third));
+        assertEquals(1, first.compareTo(second));
+        assertEquals(-1, second.compareTo(first));
+    }
+
+    public void testCompareToCloseValues() {
+        // these two values are different approximations of PI
+        // the first  one is approximately PI - 3.07e-18
+        // the second one is approximately PI + 1.936e-17
+        Fraction pi1 = new Fraction(1068966896, 340262731);
+        Fraction pi2 = new Fraction( 411557987, 131002976);
+        assertEquals(-1, pi1.compareTo(pi2));
+        assertEquals( 1, pi2.compareTo(pi1));
+        assertEquals(0.0, pi1.doubleValue() - pi2.doubleValue(), 1.0e-20);
+    }
+}
+```

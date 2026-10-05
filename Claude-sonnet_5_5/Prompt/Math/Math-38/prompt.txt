@@ -1,0 +1,111 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-38
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+0093f7b0a2a9e06ec5b5e1e551676269171c3e3d
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-12-20 13:30:29 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-728
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-728
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.optimization.direct.BOBYQAOptimizerTest::testConstrainedRosenWithMoreInterpolationPoints
+   --> org.apache.commons.math.optimization.direct.BOBYQAOptimizer$PathIsExploredException: If this exception is thrown, just remove it from the code prelim (at line 1752)
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.optimization.direct.BOBYQAOptimizer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.optimization.direct.BOBYQAOptimizer ===
+diff --git a/src/main/java/org/apache/commons/math/optimization/direct/BOBYQAOptimizer.java b/src/main/java/org/apache/commons/math/optimization/direct/BOBYQAOptimizer.java
+index 592a2e894..ba3fe26cb 100644
+--- a/src/main/java/org/apache/commons/math/optimization/direct/BOBYQAOptimizer.java
++++ b/src/main/java/org/apache/commons/math/optimization/direct/BOBYQAOptimizer.java
+@@ -1657,10 +1657,10 @@ public class BOBYQAOptimizer
+                     final int tmp2 = jpt;
+                     jpt = ipt - n;
+                     ipt = tmp2;
+-                    throw new PathIsExploredException(); // XXX
++//                     throw new PathIsExploredException(); // XXX
+                 }
+-                final int iptMinus1 = ipt;
+-                final int jptMinus1 = jpt;
++                final int iptMinus1 = ipt - 1;
++                final int jptMinus1 = jpt - 1;
+                 interpolationPoints.setEntry(nfm, iptMinus1, interpolationPoints.getEntry(ipt, iptMinus1));
+                 interpolationPoints.setEntry(nfm, jptMinus1, interpolationPoints.getEntry(jpt, jptMinus1));
+             }
+@@ -1749,7 +1749,7 @@ public class BOBYQAOptimizer
+                 final int ih = ipt * (ipt - 1) / 2 + jpt - 1;
+                 final double tmp = interpolationPoints.getEntry(nfm, ipt - 1) * interpolationPoints.getEntry(nfm, jpt - 1);
+                 modelSecondDerivativesValues.setEntry(ih, (fbeg - fAtInterpolationPoints.getEntry(ipt) - fAtInterpolationPoints.getEntry(jpt) + f) / tmp);
+-                throw new PathIsExploredException(); // XXX
++//                 throw new PathIsExploredException(); // XXX
+             }
+         } while (getEvaluations() < npt);
+     } // prelim
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testConstrainedRosenWithMoreInterpolationPoints() {
+        final double[] startPoint = point(DIM, 0.1);
+        final double[][] boundaries = boundaries(DIM, -1, 2);
+        final RealPointValuePair expected = new RealPointValuePair(point(DIM, 1.0), 0.0);
+
+        // This should have been 78 because in the code the hard limit is
+        // said to be
+        //   ((DIM + 1) * (DIM + 2)) / 2 - (2 * DIM + 1)
+        // i.e. 78 in this case, but the test fails for 48, 59, 62, 63, 64,
+        // 65, 66, ...
+        final int maxAdditionalPoints = 47;
+
+        for (int num = 1; num <= maxAdditionalPoints; num++) {
+            doTest(new Rosen(), startPoint, boundaries,
+                   GoalType.MINIMIZE,
+                   1e-12, 1e-6, 2000,
+                   num,
+                   expected,
+                   "num=" + num);
+        }
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

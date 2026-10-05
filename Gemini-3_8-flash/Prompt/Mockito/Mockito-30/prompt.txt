@@ -1,0 +1,113 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Mockito
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Mockito
+       Program: mockito
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/Mockito.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/mockito.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/active-bugs.csv
+Number of bugs: 38
+--------------------------------------------------------------------------------
+
+Summary for Bug: Mockito-30
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+3c924f80a4db3692a13341f0da4517052ab77a2a
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-11-05 18:55:32 -0200
+--------------------------------------------------------------------------------
+Bug report id:
+225
+--------------------------------------------------------------------------------
+Bug report url:
+https://code.google.com/archive/p/mockito/issues/225
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.mockito.internal.stubbing.defaultanswers.ReturnsSmartNullsTest::shouldPrintTheParametersOnSmartNullPointerExceptionMessage
+   --> junit.framework.AssertionFailedError: Exception message should include oompa and lumpa, but was: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.mockito.exceptions.Reporter
+ - org.mockito.internal.stubbing.defaultanswers.ReturnsSmartNulls
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.mockito.exceptions.Reporter ===
+diff --git a/src/org/mockito/exceptions/Reporter.java b/src/org/mockito/exceptions/Reporter.java
+index 5e46a2bba..5900574f4 100644
+--- a/src/org/mockito/exceptions/Reporter.java
++++ b/src/org/mockito/exceptions/Reporter.java
+@@ -435,10 +435,11 @@ public class Reporter {
+                 ));
+     }
+ 
+-    public void smartNullPointerException(Location location) {
++    public void smartNullPointerException(Object obj, Location location) {
+         throw new SmartNullPointerException(join(
+                 "You have a NullPointerException here:",
+                 new Location(),
++                obj,
+                 "Because this method was *not* stubbed correctly:",
+                 location,
+                 ""
+
+=== MODIFIED SOURCE: org.mockito.internal.stubbing.defaultanswers.ReturnsSmartNulls ===
+diff --git a/src/org/mockito/internal/stubbing/defaultanswers/ReturnsSmartNulls.java b/src/org/mockito/internal/stubbing/defaultanswers/ReturnsSmartNulls.java
+index 4942d7cc7..928f314ec 100644
+--- a/src/org/mockito/internal/stubbing/defaultanswers/ReturnsSmartNulls.java
++++ b/src/org/mockito/internal/stubbing/defaultanswers/ReturnsSmartNulls.java
+@@ -53,7 +53,7 @@ public class ReturnsSmartNulls implements Answer<Object>, Serializable {
+                 return "SmartNull returned by unstubbed " + formatMethodCall()  + " method on mock";
+             }
+ 
+-            new Reporter().smartNullPointerException(location);
++            new Reporter().smartNullPointerException(obj, location);
+             return null;
+         }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+	public void shouldPrintTheParametersOnSmartNullPointerExceptionMessage() throws Throwable {
+    	Answer<Object> answer = new ReturnsSmartNulls();
+
+        Foo smartNull = (Foo) answer.answer(invocationOf(Foo.class, "withArgs", "oompa", "lumpa"));
+
+        try {
+            smartNull.get();
+            fail();
+        } catch (SmartNullPointerException ex) {
+        	String message = ex.getMessage();
+        	assertTrue("Exception message should include oompa and lumpa, but was: " + message,
+        			message.contains("oompa, lumpa"));
+        }
+	}
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

@@ -1,0 +1,136 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-138
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+1f5edbcd2b5b09ec59151137e643d9ce75ef1055
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-03-18 23:07:23 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+124
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-124.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.ClosureReverseAbstractInterpreterTest::testGoogIsArrayOnNull
+   --> junit.framework.AssertionFailedError: expected:<Array> but was:<null>
+ - com.google.javascript.jscomp.ClosureReverseAbstractInterpreterTest::testGoogIsFunctionOnNull
+   --> junit.framework.AssertionFailedError: expected:<Function> but was:<null>
+ - com.google.javascript.jscomp.ClosureReverseAbstractInterpreterTest::testGoogIsObjectOnNull
+   --> junit.framework.AssertionFailedError: expected:<Object> but was:<null>
+ - com.google.javascript.jscomp.TypeCheckTest::testIssue124b
+   --> junit.framework.ComparisonFailure: expected:<...tes to false
+ - com.google.javascript.jscomp.TypeCheckTest::testIssue124
+   --> junit.framework.AssertionFailedError: unexpected warnings(s):
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.ClosureReverseAbstractInterpreter
+ - com.google.javascript.jscomp.TypeInference
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.ClosureReverseAbstractInterpreter ===
+diff --git a/src/com/google/javascript/jscomp/ClosureReverseAbstractInterpreter.java b/src/com/google/javascript/jscomp/ClosureReverseAbstractInterpreter.java
+index 720b60b77..7bfbae529 100644
+--- a/src/com/google/javascript/jscomp/ClosureReverseAbstractInterpreter.java
++++ b/src/com/google/javascript/jscomp/ClosureReverseAbstractInterpreter.java
+@@ -205,7 +205,6 @@ class ClosureReverseAbstractInterpreter
+       Node param = condition.getLastChild();
+       if (callee.getType() == GETPROP && param.isQualifiedName()) {
+         JSType paramType =  getTypeIfRefinable(param, blindScope);
+-        if (paramType != null) {
+         Node left = callee.getFirstChild();
+         Node right = callee.getLastChild();
+         if (left.getType() == NAME && "goog".equals(left.getString()) &&
+@@ -215,7 +214,6 @@ class ClosureReverseAbstractInterpreter
+           if (restricter != null) {
+             return restrictParameter(param, paramType, blindScope, restricter,
+                 outcome);
+-            }
+           }
+         }
+       }
+
+=== MODIFIED SOURCE: com.google.javascript.jscomp.TypeInference ===
+diff --git a/src/com/google/javascript/jscomp/TypeInference.java b/src/com/google/javascript/jscomp/TypeInference.java
+index 1b3755d28..749eb6d3a 100644
+--- a/src/com/google/javascript/jscomp/TypeInference.java
++++ b/src/com/google/javascript/jscomp/TypeInference.java
+@@ -629,21 +629,29 @@ class TypeInference
+       return scope;
+     } else {
+       StaticSlot<JSType> var = scope.getSlot(varName);
+-      if (var != null &&
+-          !(var.isTypeInferred() && unflowableVarNames.contains(varName))) {
++      if (var != null) {
+         // There are two situations where we don't want to use type information
+         // from the scope, even if we have it.
+ 
+         // 1) The var is escaped in a weird way, e.g.,
+         // function f() { var x = 3; function g() { x = null } (x); }
++        boolean isInferred = var.isTypeInferred();
++        boolean unflowable =
++            isInferred && unflowableVarNames.contains(varName);
+ 
+         // 2) We're reading type information from another scope for an
+         // inferred variable.
+         // var t = null; function f() { (t); }
++        boolean nonLocalInferredSlot =
++            isInferred &&
++            syntacticScope.getParent() != null &&
++            var == syntacticScope.getParent().getSlot(varName);
+ 
++        if (!unflowable && !nonLocalInferredSlot) {
+           type = var.getType();
+           if (type == null) {
+             type = getNativeType(UNKNOWN_TYPE);
++          }
+         }
+       }
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testGoogIsArrayOnNull() throws Exception {
+    testClosureFunction("goog.isArray",
+        null,
+        ARRAY_TYPE,
+        null);
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,138 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791213504-8h9eH9DVPZTnEnkvywWQ","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":10639,"output_tokens":2,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I need"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" to write"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" a test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" in CodePrinterT"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"est, rec"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"alling the helper method that parses and prints JS then compares type annotations against the expected output string."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I'm consid"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ering alternatives: I could write a self-contained test using the Compiler API directly with CompilerOptions and checkTypes enabled, compiling externs and inputs via JSSourceFile and inspecting the resulting type"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" annotations. Another option is extending CompilerTestCase and overriding the processor to run TypeCheck, then examining node.getJSType() after compilation."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"Still writing sc"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ope creator set"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"up..."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"Actually, this fe"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"els too risky to hand-roll. I should go with the simpler CodePrinter/Compiler approach instead -- compile with options that"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" enable type checking, then inspect the resulting node, similar to how CodePrinterTest handles parsing and printing."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I can check if"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" the function node carries the inferred type by walking for the FUNCTION token and asserting its toString matches \"function (this:Foo): undefined\" for a constructor-annotated function, using an empty extern source"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1zb25uZXQtNS41LTIwMjYwOTI4fGNsYXVkZS1vbi1hd3MifQ"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"This test compiles a small script with type checking on"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":", finds the function node and checks its inferred type. I haven't compiled or run it. The `Compiler.compile(JSSourceFile[],"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" JSSourceFile[], CompilerOptions)` signature is from memory for the mid-2010 API, so it may need adjusting.\n\nOn the buggy version, a function with no `return` statement"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" and no `@return` annotation gets return type `?`. On the fixed version it gets `undefined`, which is what `testTypeAnnotationsAssign` expects in its `@return {undefined}` output. The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" test asserts the `undefined` return type on a constructor function and on a plain function.\n\n```java\npackage com.google.javascript.jscomp;\n\nimport com.google.javascript.rhino.Node;\nimport com.google.javascript.rhino.Token;\nimport com.google"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".javascript.rhino.jstype.FunctionType;\nimport com.google.javascript.rhino.jstype.JSType;\n\nimport junit.framework.TestCase;\n\n/**\n * Regression test: functions without return statements and without an\n * explicit"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" {@code @return} annotation must have an inferred return type of\n * {@code undefined}, not the unknown type.\n */\npublic class FunctionReturnTypeInferenceRegressionTest extends T"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"estCase {\n\n  private Node firstFunction(Node n) {\n    if (n.getType() == Token.FUNCTION) {\n      return n;\n    }\n    for (Node c = n.getFirstChild(); c != null; c = c.getNext()) {\n      Node result = firstFunction(c"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":");\n      if (result != null) {\n        return result;\n      }\n    }\n    return null;\n  }\n\n  private JSType compileAndGetFunctionType(String js) {\n    Compiler compiler = new Compiler();\n    CompilerOptions options = new CompilerOptions();"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n    options.checkTypes = true;\n\n    compiler.compile(\n        new JSSourceFile[] { JSSourceFile.fromCode(\"externs\", \"\") },\n        new JSSourceFile[] { JSSourceFile.fromCode(\"testcode\", js) },\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"options);\n\n    Node root = compiler.getRoot();\n    assertNotNull(root);\n    Node fn = firstFunction(root);\n    assertNotNull(\"function node not found\", fn);\n    JSType type = fn.getJSType();\n    assertNotNull(\"function"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" has no type\", type);\n    return type;\n  }\n\n  public void testConstructorWithoutReturnHasVoidReturnType() {\n    JSType type = compileAndGetFunctionType(\n        \"/** @constructor */ var Foo = function(){};\");\n    assertTrue"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(type instanceof FunctionType);\n    assertEquals(\"function (this:Foo): undefined\", type.toString());\n  }\n\n  public void testFunctionWithoutReturnHasVoidReturnType() {\n    JSType type = compileAndGetFunctionType(\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\"var f = function(x){ x = 1; };\");\n    assertTrue(type instanceof FunctionType);\n    assertTrue(((FunctionType) type).getReturnType().isVoidType());\n  }\n}"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":10639,"output_tokens":2950,"output_tokens_details":{"thinking_tokens":1936},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.050778,"is_byok":false,"cost_details":{"upstream_inference_cost":0.050778,"upstream_inference_prompt_cost":0.021278,"upstream_inference_completions_cost":0.0295}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

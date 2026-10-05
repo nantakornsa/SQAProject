@@ -1,0 +1,130 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-85
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+21a2103d7fa5664ea324ef9ee25b4a8922e50955
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-01-07 21:09:14 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+311
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-311.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.UnreachableCodeEliminationTest::testCascadedRemovalOfUnlessUnconditonalJumps
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.UnreachableCodeEliminationTest::testIssue311
+   --> java.lang.RuntimeException: INTERNAL COMPILER ERROR.
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.UnreachableCodeElimination
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.UnreachableCodeElimination ===
+diff --git a/src/com/google/javascript/jscomp/UnreachableCodeElimination.java b/src/com/google/javascript/jscomp/UnreachableCodeElimination.java
+index c2150b147..e6d4320a0 100644
+--- a/src/com/google/javascript/jscomp/UnreachableCodeElimination.java
++++ b/src/com/google/javascript/jscomp/UnreachableCodeElimination.java
+@@ -150,20 +150,7 @@ class UnreachableCodeElimination extends AbstractPostOrderCallback
+       return n;
+     }
+ 
+-    if (n.getParent() == null) {
+-      List<DiGraphEdge<Node,Branch>> outEdges = gNode.getOutEdges();
+-      if (outEdges.size() == 1) {
+-        return tryRemoveUnconditionalBranching(outEdges.get(0).getDestination().getValue());
+-      }
+-    }
+     switch (n.getType()) {
+-      case Token.BLOCK:
+-        if (n.hasChildren()) {
+-          Node first = n.getFirstChild();
+-          return tryRemoveUnconditionalBranching(first);
+-        } else {
+-          return tryRemoveUnconditionalBranching(ControlFlowAnalysis.computeFollowNode(n));
+-        }
+       case Token.RETURN:
+         if (n.hasChildren()) {
+           break;
+@@ -180,7 +167,7 @@ class UnreachableCodeElimination extends AbstractPostOrderCallback
+             (n.getNext() == null || n.getNext().getType() == Token.FUNCTION)) {
+ 
+           Preconditions.checkState(outEdges.get(0).getValue() == Branch.UNCOND);
+-          Node fallThrough = tryRemoveUnconditionalBranching(computeFollowing(n));
++          Node fallThrough = computeFollowing(n);
+           Node nextCfgNode = outEdges.get(0).getDestination().getValue();
+           if (nextCfgNode == fallThrough) {
+             removeDeadExprStatementSafely(n);
+@@ -193,6 +180,13 @@ class UnreachableCodeElimination extends AbstractPostOrderCallback
+ 
+   private Node computeFollowing(Node n) {
+     Node next = ControlFlowAnalysis.computeFollowNode(n);
++    while (next != null && next.getType() == Token.BLOCK) {
++      if (next.hasChildren()) {
++        next = next.getFirstChild();
++      } else {
++        next = computeFollowing(next);
++      }
++    }
+     return next;
+   }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testCascadedRemovalOfUnlessUnconditonalJumps() {
+    test("switch (a) { case 'a': break; case 'b': break; case 'c': break }",
+         "switch (a) { case 'a': break; case 'b': case 'c': }");
+    // Only one break removed per pass.
+    test("switch (a) { case 'a': break; case 'b': case 'c': }",
+         "switch (a) { case 'a': case 'b': case 'c': }");
+
+    test("function foo() {" +
+      "  switch (a) { case 'a':return; case 'b':return; case 'c':return }}",
+      "function foo() { switch (a) { case 'a':return; case 'b': case 'c': }}");
+    test("function foo() {" +
+      "  switch (a) { case 'a':return; case 'b': case 'c': }}",
+      "function foo() { switch (a) { case 'a': case 'b': case 'c': }}");
+
+    testSame("function foo() {" +
+             "switch (a) { case 'a':return 2; case 'b':return 1}}");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

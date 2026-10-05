@@ -1,0 +1,54 @@
+This is a standalone test class that mirrors the setup of `CollapsePropertiesTest`. I have not compiled or run it. The `CollapseProperties` constructor signature `(compiler, collapsePropertiesOnExternTypes, inlineAliases)` is from my recollection of this Closure version, so check it against the source.
+
+```java
+package com.google.javascript.jscomp;
+
+/**
+ * Regression test for issue 931: CollapseProperties must not try to inline
+ * aliases of names that are declared in externs (such as "arguments").
+ */
+public class CollapsePropertiesIssue931Test extends CompilerTestCase {
+
+  private static final String EXTERNS =
+      "var window;\n" +
+      "function alert(s) {}\n" +
+      "function parseInt(s) {}\n" +
+      "/** @constructor */ function String() {};\n" +
+      "var arguments;\n" +
+      "function setTimeout(f, t) {}\n";
+
+  private boolean collapsePropertiesOnExternTypes = false;
+
+  public CollapsePropertiesIssue931Test() {
+    super(EXTERNS);
+  }
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    collapsePropertiesOnExternTypes = false;
+  }
+
+  @Override
+  protected CompilerPass getProcessor(Compiler compiler) {
+    return new CollapseProperties(
+        compiler, collapsePropertiesOnExternTypes, true);
+  }
+
+  @Override
+  protected int getNumRepetitions() {
+    return 1;
+  }
+
+  public void testIssue931() {
+    collapsePropertiesOnExternTypes = true;
+    testSame(
+        "function f() {\n" +
+        "  return function () {\n" +
+        "    var args = arguments;\n" +
+        "    setTimeout(function() { alert(args); }, 0);\n" +
+        "  }\n" +
+        "};\n");
+  }
+}
+```

@@ -1,0 +1,125 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-94
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+7cc748592670105f9d783b1b85f0f27e938db4ff
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-10-01 23:37:19 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+255
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-255.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.NodeUtilTest::testValidDefine
+   --> junit.framework.AssertionFailedError
+ - com.google.javascript.jscomp.ProcessDefinesTest::testOverridingString1
+   --> junit.framework.AssertionFailedError: Unexpected error(s): JSC_INVALID_DEFINE_INIT_ERROR. illegal initialization of @define variable DEF_OVERRIDE_STRING at testcode line 1 : 54 expected:<0> but was:<1>
+ - com.google.javascript.jscomp.ProcessDefinesTest::testOverridingString3
+   --> junit.framework.AssertionFailedError: Unexpected error(s): JSC_INVALID_DEFINE_INIT_ERROR. illegal initialization of @define variable DEF_OVERRIDE_STRING at testcode line 1 : 54 expected:<0> but was:<1>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.NodeUtil
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.NodeUtil ===
+diff --git a/src/com/google/javascript/jscomp/NodeUtil.java b/src/com/google/javascript/jscomp/NodeUtil.java
+index a31b17a2c..8c5d125fa 100644
+--- a/src/com/google/javascript/jscomp/NodeUtil.java
++++ b/src/com/google/javascript/jscomp/NodeUtil.java
+@@ -326,14 +326,33 @@ public final class NodeUtil {
+         return true;
+ 
+       // Binary operators are only valid if both children are valid.
++      case Token.ADD:
+       case Token.BITAND:
+       case Token.BITNOT:
+       case Token.BITOR:
+       case Token.BITXOR:
++      case Token.DIV:
++      case Token.EQ:
++      case Token.GE:
++      case Token.GT:
++      case Token.LE:
++      case Token.LSH:
++      case Token.LT:
++      case Token.MOD:
++      case Token.MUL:
++      case Token.NE:
++      case Token.RSH:
++      case Token.SHEQ:
++      case Token.SHNE:
++      case Token.SUB:
++      case Token.URSH:
++        return isValidDefineValue(val.getFirstChild(), defines)
++            && isValidDefineValue(val.getLastChild(), defines);
+ 
+       // Uniary operators are valid if the child is valid.
+       case Token.NOT:
+       case Token.NEG:
++      case Token.POS:
+         return isValidDefineValue(val.getFirstChild(), defines);
+ 
+       // Names are valid if and only if they are defines themselves.
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testValidDefine() {
+    assertTrue(testValidDefineValue("1"));
+    assertTrue(testValidDefineValue("-3"));
+    assertTrue(testValidDefineValue("true"));
+    assertTrue(testValidDefineValue("false"));
+    assertTrue(testValidDefineValue("'foo'"));
+    
+    assertFalse(testValidDefineValue("x"));
+    assertFalse(testValidDefineValue("null"));
+    assertFalse(testValidDefineValue("undefined"));
+    assertFalse(testValidDefineValue("NaN"));
+    
+    assertTrue(testValidDefineValue("!true"));
+    assertTrue(testValidDefineValue("-true"));
+    assertTrue(testValidDefineValue("1 & 8"));
+    assertTrue(testValidDefineValue("1 + 8"));
+    assertTrue(testValidDefineValue("'a' + 'b'"));
+
+    assertFalse(testValidDefineValue("1 & foo"));
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,37 @@
+The test class is `InlineObjectLiteralsTest`, and its existing `testLocal` helper wraps the code in a function and compares the output. I haven't compiled or run this against the buggy and fixed versions.
+
+I reused the triggering test as the regression test. On the buggy version, `testLocal("var a = {}", "")` throws an INTERNAL COMPILER ERROR because `nodes` is empty. The fixed version handles that case by emitting `true`.
+
+I can't see the real test file, so I wrote the class to match the usual Closure layout. It extends `CompilerTestCase`, and I reconstructed `testLocal` from memory of the upstream test. The `getProcessor` and `setUp` details are the likely points of mismatch.
+
+```java
+package com.google.javascript.jscomp;
+
+public class InlineObjectLiteralsTest extends CompilerTestCase {
+
+  public InlineObjectLiteralsTest() {
+    super("function _func(x) {}", false);
+  }
+
+  @Override
+  protected CompilerPass getProcessor(Compiler compiler) {
+    return new InlineObjectLiterals(
+        compiler, compiler.getUniqueNameIdSupplier());
+  }
+
+  @Override
+  protected int getNumRepetitions() {
+    return 1;
+  }
+
+  private void testLocal(String js, String expected) {
+    test("function f() {" + js + "}",
+         "function f() {" + expected + "}");
+  }
+
+  public void testBug545() {
+    testLocal("var a = {}", "");
+    testLocal("var a; a = {}", "true");
+  }
+}
+```

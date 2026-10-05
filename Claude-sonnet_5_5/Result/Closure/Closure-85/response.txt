@@ -1,0 +1,46 @@
+```java
+package com.google.javascript.jscomp;
+
+public class UnreachableCodeEliminationTest extends CompilerTestCase {
+
+  public UnreachableCodeEliminationTest() {
+    super("");
+  }
+
+  @Override
+  protected CompilerPass getProcessor(final Compiler compiler) {
+    return new UnreachableCodeElimination(compiler, true);
+  }
+
+  @Override
+  protected int getNumRepetitions() {
+    // Only run the pass once so that each test shows what a single pass removes.
+    return 1;
+  }
+
+  public void testCascadedRemovalOfUnlessUnconditonalJumps() {
+    test("switch (a) { case 'a': break; case 'b': break; case 'c': break }",
+         "switch (a) { case 'a': break; case 'b': case 'c': }");
+    // Only one break removed per pass.
+    test("switch (a) { case 'a': break; case 'b': case 'c': }",
+         "switch (a) { case 'a': case 'b': case 'c': }");
+
+    test("function foo() {" +
+         "  switch (a) { case 'a':return; case 'b':return; case 'c':return }}",
+         "function foo() { switch (a) { case 'a':return; case 'b': case 'c': }}");
+    test("function foo() {" +
+         "  switch (a) { case 'a':return; case 'b': case 'c': }}",
+         "function foo() { switch (a) { case 'a': case 'b': case 'c': }}");
+
+    testSame("function foo() {" +
+             "switch (a) { case 'a':return 2; case 'b':return 1}}");
+  }
+}
+```
+
+I haven't compiled or run this against the buggy and fixed versions. Two parts rest on my recollection of the project rather than on the bug report:
+
+- **Pass constructor:** `new UnreachableCodeElimination(compiler, true)` is the signature I recall for this era of Closure Compiler.
+- **Test scaffolding:** the `super("")` constructor call and the `getNumRepetitions()` override returning 1 are from memory of the existing test class.
+
+I included only `testCascadedRemovalOfUnlessUnconditonalJumps`, which fails on the buggy version with an assertion error. I left out `testIssue311` (the internal compiler error) because I could not reproduce its exact expected output with confidence.

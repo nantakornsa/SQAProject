@@ -1,0 +1,147 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonCore
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonCore
+       Program: jackson-core
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonCore/JacksonCore.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-core.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonCore/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonCore-9
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+698f3a73d4e20594357e10fc7bb5db57bb8f7780
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-03-30 17:26:08 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+188
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-core/issues/188
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.core.json.TestJsonParser::testGetValueAsTextBytes
+   --> junit.framework.ComparisonFailure: expected:<a> but was:<null>
+ - com.fasterxml.jackson.core.json.TestJsonParser::testGetValueAsTextChars
+   --> junit.framework.ComparisonFailure: expected:<a> but was:<null>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.core.base.ParserMinimalBase
+ - com.fasterxml.jackson.core.json.ReaderBasedJsonParser
+ - com.fasterxml.jackson.core.json.UTF8StreamJsonParser
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.core.base.ParserMinimalBase ===
+diff --git a/src/main/java/com/fasterxml/jackson/core/base/ParserMinimalBase.java b/src/main/java/com/fasterxml/jackson/core/base/ParserMinimalBase.java
+index 37c6503c..fbca28ed 100644
+--- a/src/main/java/com/fasterxml/jackson/core/base/ParserMinimalBase.java
++++ b/src/main/java/com/fasterxml/jackson/core/base/ParserMinimalBase.java
+@@ -389,6 +389,9 @@ public abstract class ParserMinimalBase extends JsonParser
+         if (_currToken == JsonToken.VALUE_STRING) {
+             return getText();
+         }
++        if (_currToken == JsonToken.FIELD_NAME) {
++            return getCurrentName();
++        }
+         return getValueAsString(null);
+     }
+     
+@@ -397,6 +400,9 @@ public abstract class ParserMinimalBase extends JsonParser
+         if (_currToken == JsonToken.VALUE_STRING) {
+             return getText();
+         }
++        if (_currToken == JsonToken.FIELD_NAME) {
++            return getCurrentName();
++        }
+         if (_currToken == null || _currToken == JsonToken.VALUE_NULL || !_currToken.isScalarValue()) {
+             return defaultValue;
+         }
+
+=== MODIFIED SOURCE: com.fasterxml.jackson.core.json.ReaderBasedJsonParser ===
+diff --git a/src/main/java/com/fasterxml/jackson/core/json/ReaderBasedJsonParser.java b/src/main/java/com/fasterxml/jackson/core/json/ReaderBasedJsonParser.java
+index b5b0051c..4f0f753f 100644
+--- a/src/main/java/com/fasterxml/jackson/core/json/ReaderBasedJsonParser.java
++++ b/src/main/java/com/fasterxml/jackson/core/json/ReaderBasedJsonParser.java
+@@ -250,6 +250,9 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
+             }
+             return _textBuffer.contentsAsString();
+         }
++        if (_currToken == JsonToken.FIELD_NAME) {
++            return getCurrentName();
++        }
+         return super.getValueAsString(null);
+     }
+     
+@@ -263,6 +266,9 @@ public class ReaderBasedJsonParser // final in 2.3, earlier
+             }
+             return _textBuffer.contentsAsString();
+         }
++        if (_currToken == JsonToken.FIELD_NAME) {
++            return getCurrentName();
++        }
+         return super.getValueAsString(defValue);
+     }
+ 
+
+=== MODIFIED SOURCE: com.fasterxml.jackson.core.json.UTF8StreamJsonParser ===
+diff --git a/src/main/java/com/fasterxml/jackson/core/json/UTF8StreamJsonParser.java b/src/main/java/com/fasterxml/jackson/core/json/UTF8StreamJsonParser.java
+index 2fe36835..2b83d188 100644
+--- a/src/main/java/com/fasterxml/jackson/core/json/UTF8StreamJsonParser.java
++++ b/src/main/java/com/fasterxml/jackson/core/json/UTF8StreamJsonParser.java
+@@ -302,6 +302,9 @@ public class UTF8StreamJsonParser
+             }
+             return _textBuffer.contentsAsString();
+         }
++        if (_currToken == JsonToken.FIELD_NAME) {
++            return getCurrentName();
++        }
+         return super.getValueAsString(null);
+     }
+     
+@@ -316,6 +319,9 @@ public class UTF8StreamJsonParser
+             }
+             return _textBuffer.contentsAsString();
+         }
++        if (_currToken == JsonToken.FIELD_NAME) {
++            return getCurrentName();
++        }
+         return super.getValueAsString(defValue);
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testGetValueAsTextBytes() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

@@ -1,0 +1,37 @@
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.Node;
+
+/**
+ * Regression test for Closure issue 182: a "this" reference inside a function
+ * that is a value in an object literal should be reported as a global this.
+ */
+public class CheckGlobalThisTest extends CompilerTestCase {
+
+  private static final DiagnosticType GLOBAL_THIS = CheckGlobalThis.GLOBAL_THIS;
+
+  public CheckGlobalThisTest() {
+    super("");
+  }
+
+  @Override
+  protected CompilerPass getProcessor(final Compiler compiler) {
+    return new CompilerPass() {
+      public void process(Node externs, Node root) {
+        NodeTraversal.traverse(compiler, root, new CheckGlobalThis(compiler));
+      }
+    };
+  }
+
+  private void testFailure(String js) {
+    test(js, null, GLOBAL_THIS);
+  }
+
+  public void testIssue182a() {
+    testFailure("var NS = {read: function() { return this.foo; }};");
+  }
+
+  public void testIssue182b() {
+    testFailure("var NS = {write: function() { this.foo = 3; }};");
+  }
+}

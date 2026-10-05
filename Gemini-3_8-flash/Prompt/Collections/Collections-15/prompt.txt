@@ -1,0 +1,113 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Collections
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Collections
+       Program: commons-collections
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/Collections.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-collections.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/active-bugs.csv
+Number of bugs: 28
+--------------------------------------------------------------------------------
+
+Summary for Bug: Collections-15
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+0122245f02ba7b22dd40f38c98aa2f08984707bd
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-11-05 15:47:43 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COLLECTIONS-304
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COLLECTIONS-304
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.collections.list.TestSetUniqueList::testCollections304
+   --> junit.framework.AssertionFailedError: expected:<3> but was:<4>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.collections.list.SetUniqueList
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.collections.list.SetUniqueList ===
+diff --git a/src/java/org/apache/commons/collections/list/SetUniqueList.java b/src/java/org/apache/commons/collections/list/SetUniqueList.java
+index e1491aec..8ad35538 100644
+--- a/src/java/org/apache/commons/collections/list/SetUniqueList.java
++++ b/src/java/org/apache/commons/collections/list/SetUniqueList.java
+@@ -221,13 +221,13 @@ public class SetUniqueList extends AbstractSerializableListDecorator {
+         int pos = indexOf(object);
+         Object removed = super.set(index, object);
+ 
+-        if (pos == -1 || pos == index) {
++        if (pos != -1 && pos != index) {
+             // the object is already in the uniq list
+             // (and it hasn't been swapped with itself)
+-            return removed;
++            super.remove(pos);  // remove the duplicate by index
+         }
+ 
+-        super.remove(pos);
++        set.add(object);      // add the new item to the unique set
+         set.remove(removed);  // remove the item deleted by the set
+ 
+         return removed;  // return the item deleted by the set
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testCollections304() {
+        List list = new LinkedList();
+        SetUniqueList decoratedList = SetUniqueList.decorate(list);
+        String s1 = "Apple";
+        String s2 = "Lemon";
+        String s3 = "Orange";
+        String s4 = "Strawberry";
+
+        decoratedList.add(s1);
+        decoratedList.add(s2);
+        decoratedList.add(s3);
+
+        assertEquals(3, decoratedList.size());
+
+        decoratedList.set(1, s4);
+
+        assertEquals(3, decoratedList.size());
+
+        decoratedList.add(1, s4);
+
+        assertEquals(3, decoratedList.size());
+
+        decoratedList.add(1, s2);
+
+        assertEquals(4, decoratedList.size());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

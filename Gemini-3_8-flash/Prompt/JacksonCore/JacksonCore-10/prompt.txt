@@ -1,0 +1,97 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonCore
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonCore
+       Program: jackson-core
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonCore/JacksonCore.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-core.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonCore/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonCore-10
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+c2823b4de28120d86aeba9215f0231d990a8eb47
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-07-31 19:43:48 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+207
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-core/issues/207
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.core.sym.TestByteBasedSymbols::testIssue207
+   --> java.lang.ArrayIndexOutOfBoundsException: 256
+ - com.fasterxml.jackson.core.sym.TestSymbolTables::testCollisionsWithBytesNew187b
+   --> junit.framework.AssertionFailedError: expected:<16384> but was:<32768>
+ - com.fasterxml.jackson.core.sym.TestSymbolTables::testSyntheticWithBytesNew
+   --> junit.framework.AssertionFailedError: expected:<8534> but was:<8524>
+ - com.fasterxml.jackson.core.sym.TestSymbolTables::testShortNameCollisionsDirectNew
+   --> junit.framework.AssertionFailedError: expected:<1024> but was:<2048>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.core.sym.ByteQuadsCanonicalizer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.core.sym.ByteQuadsCanonicalizer ===
+diff --git a/src/main/java/com/fasterxml/jackson/core/sym/ByteQuadsCanonicalizer.java b/src/main/java/com/fasterxml/jackson/core/sym/ByteQuadsCanonicalizer.java
+index 976ef6e4..7c37ffa4 100644
+--- a/src/main/java/com/fasterxml/jackson/core/sym/ByteQuadsCanonicalizer.java
++++ b/src/main/java/com/fasterxml/jackson/core/sym/ByteQuadsCanonicalizer.java
+@@ -922,7 +922,8 @@ public final class ByteQuadsCanonicalizer
+         /* 31-Jul-2015, tatu: Note that spillover area does NOT end at end of array,
+          *   since "long names" area follows. Instead, need to calculate from hash size.
+          */
+-        if (_spilloverEnd >= hashArea.length) {
++        final int end = (_hashSize << 3);
++        if (_spilloverEnd >= end) {
+             if (_failOnDoS) {
+                 _reportTooManyCollisions();
+             }
+@@ -981,7 +982,8 @@ public final class ByteQuadsCanonicalizer
+          *    to work it out, but this is the simplest, fast and seems to do ok.
+          */
+         hash += (hash >>> 16); // to xor hi- and low- 16-bits
+-        hash ^= (hash >>> 12);
++        hash ^= (hash << 3); // shuffle back a bit
++        hash += (hash >>> 12); // and bit more
+         return hash;
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testIssue207() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

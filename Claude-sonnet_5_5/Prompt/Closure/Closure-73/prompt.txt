@@ -1,0 +1,81 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-73
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+ee8344091722c28c9351e78dcb4155fbfddfd1af
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-04-15 16:10:54 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+416
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-416.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.CodePrinterTest::testUnicode
+   --> junit.framework.ComparisonFailure: expected:<var x="[\u007f]"> but was:<var x="[]">
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.CodeGenerator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.CodeGenerator ===
+diff --git a/src/com/google/javascript/jscomp/CodeGenerator.java b/src/com/google/javascript/jscomp/CodeGenerator.java
+index 558e74fe1..823d897a2 100644
+--- a/src/com/google/javascript/jscomp/CodeGenerator.java
++++ b/src/com/google/javascript/jscomp/CodeGenerator.java
+@@ -1042,7 +1042,7 @@ class CodeGenerator {
+             // No charsetEncoder provided - pass straight latin characters
+             // through, and escape the rest.  Doing the explicit character
+             // check is measurably faster than using the CharsetEncoder.
+-            if (c > 0x1f && c <= 0x7f) {
++            if (c > 0x1f && c < 0x7f) {
+               sb.append(c);
+             } else {
+               // Other characters can be misinterpreted by some js parsers,
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testUnicode() {
+    assertPrint("var x ='\\x0f';", "var x=\"\\u000f\"");
+    assertPrint("var x ='\\x68';", "var x=\"h\"");
+    assertPrint("var x ='\\x7f';", "var x=\"\\u007f\"");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

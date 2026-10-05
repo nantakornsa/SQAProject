@@ -1,0 +1,118 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-33
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+382422adae8e9f07fc23c94089c0ebe08a2174bc
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-04-02 21:17:00 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+700
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-700.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.TypeCheckTest::testIssue700
+   --> junit.framework.AssertionFailedError: unexpected warnings(s):
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.rhino.jstype.PrototypeObjectType
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.rhino.jstype.PrototypeObjectType ===
+diff --git a/src/com/google/javascript/rhino/jstype/PrototypeObjectType.java b/src/com/google/javascript/rhino/jstype/PrototypeObjectType.java
+index b6e3fc783..81a7d89ea 100644
+--- a/src/com/google/javascript/rhino/jstype/PrototypeObjectType.java
++++ b/src/com/google/javascript/rhino/jstype/PrototypeObjectType.java
+@@ -554,6 +554,9 @@ class PrototypeObjectType extends ObjectType {
+   @Override
+   public void matchConstraint(ObjectType constraintObj) {
+     // We only want to match contraints on anonymous types.
++    if (hasReferenceName()) {
++      return;
++    }
+ 
+     // Handle the case where the constraint object is a record type.
+     //
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue700() throws Exception {
+    testTypes(
+        "/**\n" +
+        " * @param {{text: string}} opt_data\n" +
+        " * @return {string}\n" +
+        " */\n" +
+        "function temp1(opt_data) {\n" +
+        "  return opt_data.text;\n" +
+        "}\n" +
+        "\n" +
+        "/**\n" +
+        " * @param {{activity: (boolean|number|string|null|Object)}} opt_data\n" +
+        " * @return {string}\n" +
+        " */\n" +
+        "function temp2(opt_data) {\n" +
+        "  /** @notypecheck */\n" +
+        "  function __inner() {\n" +
+        "    return temp1(opt_data.activity);\n" +
+        "  }\n" +
+        "  return __inner();\n" +
+        "}\n" +
+        "\n" +
+        "/**\n" +
+        " * @param {{n: number, text: string, b: boolean}} opt_data\n" +
+        " * @return {string}\n" +
+        " */\n" +
+        "function temp3(opt_data) {\n" +
+        "  return 'n: ' + opt_data.n + ', t: ' + opt_data.text + '.';\n" +
+        "}\n" +
+        "\n" +
+        "function callee() {\n" +
+        "  var output = temp3({\n" +
+        "    n: 0,\n" +
+        "    text: 'a string',\n" +
+        "    b: true\n" +
+        "  })\n" +
+        "  alert(output);\n" +
+        "}\n" +
+        "\n" +
+        "callee();");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

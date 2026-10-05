@@ -1,0 +1,37 @@
+package org.apache.commons.collections4.list;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for COLLECTIONS-310: SetUniqueList.subList should return an unmodifiable list.
+ */
+public class SetUniqueListSubListTest extends TestCase {
+
+    public void testSubListIsUnmodifiable() {
+        final List<Integer> list = new ArrayList<Integer>();
+        list.add(1);
+        list.add(2);
+        list.add(3);
+        list.add(4);
+
+        final SetUniqueList<Integer> uniqueList = SetUniqueList.setUniqueList(list);
+        final List<Integer> subList = uniqueList.subList(1, 3);
+
+        try {
+            subList.remove(0);
+            fail("subList should be unmodifiable");
+        } catch (final UnsupportedOperationException e) {
+            // expected
+        }
+
+        try {
+            subList.add(5);
+            fail("subList should be unmodifiable");
+        } catch (final UnsupportedOperationException e) {
+            // expected
+        }
+    }
+}

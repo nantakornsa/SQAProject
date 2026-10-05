@@ -1,0 +1,209 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-28
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+a31ec08e102fd3832f3ff4449e9163440f0afb2c
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-09-23 12:16:52 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+224
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/224
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.nodes.EntitiesTest::unescape
+   --> junit.framework.AssertionFailedError: expected:<Hello &<> ® Å [&angst] π π 新 there &! ¾ © ...> but was:<Hello &<> ® Å [Å] π π 新 there &! ¾ © ...>
+ - org.jsoup.nodes.EntitiesTest::noSpuriousDecodes
+   --> junit.framework.AssertionFailedError: expected:<...tp://www.foo.com?a=1[&num_rooms=1&children=0&int]=VA&b=2> but was:<...tp://www.foo.com?a=1[#_rooms=1&children=0∫]=VA&b=2>
+ - org.jsoup.parser.AttributeParseTest::moreAttributeUnescapes
+   --> junit.framework.AssertionFailedError: expected:<...23&mid-size=true&ok=[&wr]> but was:<...23&mid-size=true&ok=[≀]>
+ - org.jsoup.parser.AttributeParseTest::strictAttributeUnescapes
+   --> junit.framework.AssertionFailedError: expected:<?foo=bar[&mid]&lt=true> but was:<?foo=bar[∣]&lt=true>
+ - org.jsoup.parser.HtmlParserTest::doesNotFindShortestMatchingEntity
+   --> junit.framework.AssertionFailedError: expected:<One [&amp;clubsuit]e; ♣> but was:<One [♣]e; ♣>
+ - org.jsoup.parser.HtmlParserTest::relaxedBaseEntityMatchAndStrictExtendedMatch
+   --> junit.framework.AssertionFailedError: expected:<&amp; &quot; &reg; &[amp;icy &amp;hopf] &icy; &hopf;> but was:<&amp; &quot; &reg; &[icy; &hopf;] &icy; &hopf;>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.nodes.Entities
+ - org.jsoup.parser.Parser
+ - org.jsoup.parser.Tokeniser
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.nodes.Entities ===
+diff --git a/src/main/java/org/jsoup/nodes/Entities.java b/src/main/java/org/jsoup/nodes/Entities.java
+index be73e321..a60fab89 100644
+--- a/src/main/java/org/jsoup/nodes/Entities.java
++++ b/src/main/java/org/jsoup/nodes/Entities.java
+@@ -1,5 +1,6 @@
+ package org.jsoup.nodes;
+ 
++import org.jsoup.parser.Parser;
+ 
+ import java.io.IOException;
+ import java.io.InputStream;
+@@ -58,6 +59,9 @@ public class Entities {
+      * @return true if a known named entity in the base set
+      * @see #isNamedEntity(String)
+      */
++    public static boolean isBaseNamedEntity(String name) {
++        return base.containsKey(name);
++    }
+ 
+     /**
+      * Get the Character value of the named entity
+@@ -100,33 +104,7 @@ public class Entities {
+      * @return
+      */
+     static String unescape(String string, boolean strict) {
+-        if (!string.contains("&"))
+-            return string;
+-        Matcher m = strict? strictUnescapePattern.matcher(string) : unescapePattern.matcher(string);
+-        StringBuffer accum = new StringBuffer(string.length());
+-        while (m.find()) {
+-            int charval = -1;
+-            String num = m.group(3);
+-            if (num != null) {
+-                try {
+-                    int base = m.group(2) != null ? 16 : 10;
+-                    charval = Integer.valueOf(num, base);
+-                } catch (NumberFormatException e) {
+-                }
+-            } else {
+-                String name = m.group(1);
+-                if (full.containsKey(name))
+-                    charval = full.get(name);
+-            }
+-            if (charval != -1 || charval > 0xFFFF) {
+-                String c = Character.toString((char) charval);
+-                m.appendReplacement(accum, Matcher.quoteReplacement(c));
+-            } else {
+-                m.appendReplacement(accum, Matcher.quoteReplacement(m.group(0)));
+-            }
+-        }
+-        m.appendTail(accum);
+-        return accum.toString();
++        return Parser.unescapeEntities(string, strict);
+     }
+ 
+     // xhtml has restricted entities
+
+=== MODIFIED SOURCE: org.jsoup.parser.Parser ===
+diff --git a/src/main/java/org/jsoup/parser/Parser.java b/src/main/java/org/jsoup/parser/Parser.java
+index ed700d94..eebce38d 100644
+--- a/src/main/java/org/jsoup/parser/Parser.java
++++ b/src/main/java/org/jsoup/parser/Parser.java
+@@ -130,6 +130,10 @@ public class Parser {
+      * @param inAttribute if the string is to be escaped in strict mode (as attributes are)
+      * @return an unescaped string
+      */
++    public static String unescapeEntities(String string, boolean inAttribute) {
++        Tokeniser tokeniser = new Tokeniser(new CharacterReader(string), ParseErrorList.noTracking());
++        return tokeniser.unescapeEntities(inAttribute);
++    }
+ 
+     /**
+      * @param bodyHtml HTML to parse
+
+=== MODIFIED SOURCE: org.jsoup.parser.Tokeniser ===
+diff --git a/src/main/java/org/jsoup/parser/Tokeniser.java b/src/main/java/org/jsoup/parser/Tokeniser.java
+index 5c40cf72..34458558 100644
+--- a/src/main/java/org/jsoup/parser/Tokeniser.java
++++ b/src/main/java/org/jsoup/parser/Tokeniser.java
+@@ -133,23 +133,14 @@ class Tokeniser {
+         } else { // named
+             // get as many letters as possible, and look for matching entities.
+             String nameRef = reader.consumeLetterThenDigitSequence();
+-            String origNameRef = new String(nameRef);
+             boolean looksLegit = reader.matches(';');
+             // found if a base named entity without a ;, or an extended entity with the ;.
+-            boolean found = false;
+-            while (nameRef.length() > 0 && !found) {
+-                if (Entities.isNamedEntity(nameRef))
+-                    found = true;
+-                else {
+-                    nameRef = nameRef.substring(0, nameRef.length()-1);
+-                    reader.unconsume();
+-                }
+-            }
++            boolean found = (Entities.isBaseNamedEntity(nameRef) || (Entities.isNamedEntity(nameRef) && looksLegit));
+ 
+             if (!found) {
+                 reader.rewindToMark();
+                 if (looksLegit) // named with semicolon
+-                    characterReferenceError(String.format("invalid named referenece '%s'", origNameRef));
++                    characterReferenceError(String.format("invalid named referenece '%s'", nameRef));
+                 return null;
+             }
+             if (inAttribute && (reader.matchesLetter() || reader.matchesDigit() || reader.matchesAny('=', '-', '_'))) {
+@@ -235,4 +226,19 @@ class Tokeniser {
+      * @param inAttribute
+      * @return unescaped string from reader
+      */
++    String unescapeEntities(boolean inAttribute) {
++        StringBuilder builder = new StringBuilder();
++        while (!reader.isEmpty()) {
++            builder.append(reader.consumeTo('&'));
++            if (reader.matches('&')) {
++                reader.consume();
++                Character c = consumeCharacterReference(null, inAttribute);
++                if (c == null)
++                    builder.append('&');
++                else
++                    builder.append(c);
++            }
++        }
++        return builder.toString();
++    }
+ }
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void unescape() {
+        String text = "Hello &amp;&LT&gt; &reg &angst; &angst &#960; &#960 &#x65B0; there &! &frac34; &copy; &COPY;";
+        assertEquals("Hello &<> ® Å &angst π π 新 there &! ¾ © ©", Entities.unescape(text));
+
+        assertEquals("&0987654321; &unknown", Entities.unescape("&0987654321; &unknown"));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

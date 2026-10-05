@@ -1,0 +1,88 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-26
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+d7b5d5b28a6dd7ff198f02e1ee82160220135a74
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-06-03 20:40:32 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+154
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/154
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.safety.CleanerTest::handlesFramesets
+   --> java.lang.NullPointerException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.safety.Cleaner
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.safety.Cleaner ===
+diff --git a/src/main/java/org/jsoup/safety/Cleaner.java b/src/main/java/org/jsoup/safety/Cleaner.java
+index 7d7f3166..8110836f 100644
+--- a/src/main/java/org/jsoup/safety/Cleaner.java
++++ b/src/main/java/org/jsoup/safety/Cleaner.java
+@@ -40,6 +40,7 @@ public class Cleaner {
+         Validate.notNull(dirtyDocument);
+ 
+         Document clean = Document.createShell(dirtyDocument.baseUri());
++        if (dirtyDocument.body() != null) // frameset documents won't have a body. the clean doc will have empty body.
+             copySafeNodes(dirtyDocument.body(), clean.body());
+ 
+         return clean;
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void handlesFramesets() {
+        String dirty = "<html><head><script></script><noscript></noscript></head><frameset><frame src=\"foo\" /><frame src=\"foo\" /></frameset></html>";
+        String clean = Jsoup.clean(dirty, Whitelist.basic());
+        assertEquals("", clean); // nothing good can come out of that
+
+        Document dirtyDoc = Jsoup.parse(dirty);
+        Document cleanDoc = new Cleaner(Whitelist.basic()).clean(dirtyDoc);
+        assertFalse(cleanDoc == null);
+        assertEquals(0, cleanDoc.body().childNodes().size());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

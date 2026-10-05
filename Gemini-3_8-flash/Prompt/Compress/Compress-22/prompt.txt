@@ -1,0 +1,185 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Compress
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Compress
+       Program: commons-compress
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/Compress.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-compress.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/active-bugs.csv
+Number of bugs: 47
+--------------------------------------------------------------------------------
+
+Summary for Bug: Compress-22
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+71e4eeadcfc5eb390eca1142fc1f6ee5b1b4d5c1
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2014-01-20 13:26:08 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COMPRESS-253
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COMPRESS-253
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.compress.compressors.bzip2.PythonTruncatedBzip2Test::testPartialReadTruncatedData
+   --> java.io.IOException: unexpected end of stream
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream ===
+diff --git a/src/main/java/org/apache/commons/compress/compressors/bzip2/BZip2CompressorInputStream.java b/src/main/java/org/apache/commons/compress/compressors/bzip2/BZip2CompressorInputStream.java
+index 4f89e0e5..1cd6f913 100644
+--- a/src/main/java/org/apache/commons/compress/compressors/bzip2/BZip2CompressorInputStream.java
++++ b/src/main/java/org/apache/commons/compress/compressors/bzip2/BZip2CompressorInputStream.java
+@@ -64,7 +64,6 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
+     private InputStream in;
+     private final boolean decompressConcatenated;
+ 
+-    private int currentChar = -1;
+     private static final int EOF = 0;
+     private static final int START_BLOCK_STATE = 1;
+     private static final int RAND_PART_A_STATE = 2;
+@@ -132,7 +131,6 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
+ 
+         init(true);
+         initBlock();
+-        setupBlock();
+     }
+ 
+     @Override
+@@ -196,40 +194,34 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
+     }
+ 
+     private int read0() throws IOException {
+-        final int retChar = this.currentChar;
+         switch (currentState) {
+         case EOF:
+             return -1;
+ 
+         case START_BLOCK_STATE:
+-            throw new IllegalStateException();
++            return setupBlock();
+ 
+         case RAND_PART_A_STATE:
+             throw new IllegalStateException();
+ 
+         case RAND_PART_B_STATE:
+-            setupRandPartB();
+-            break;
++            return setupRandPartB();
+ 
+         case RAND_PART_C_STATE:
+-            setupRandPartC();
+-            break;
++            return setupRandPartC();
+ 
+         case NO_RAND_PART_A_STATE:
+             throw new IllegalStateException();
+ 
+         case NO_RAND_PART_B_STATE:
+-            setupNoRandPartB();
+-            break;
++            return setupNoRandPartB();
+ 
+         case NO_RAND_PART_C_STATE:
+-            setupNoRandPartC();
+-            break;
++            return setupNoRandPartC();
+ 
+         default:
+             throw new IllegalStateException();
+         }
+-        return retChar;
+     }
+ 
+     private boolean init(boolean isFirstStream) throws IOException {
+@@ -850,7 +842,6 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
+             }
+             this.su_ch2 = su_ch2Shadow ^= (this.su_rNToGo == 1) ? 1 : 0;
+             this.su_i2++;
+-            this.currentChar = su_ch2Shadow;
+             this.currentState = RAND_PART_B_STATE;
+             this.crc.updateCRC(su_ch2Shadow);
+             return su_ch2Shadow;
+@@ -868,7 +859,6 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
+             this.su_ch2 = su_ch2Shadow;
+             this.su_tPos = this.data.tt[this.su_tPos];
+             this.su_i2++;
+-            this.currentChar = su_ch2Shadow;
+             this.currentState = NO_RAND_PART_B_STATE;
+             this.crc.updateCRC(su_ch2Shadow);
+             return su_ch2Shadow;
+@@ -910,7 +900,6 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
+ 
+     private int setupRandPartC() throws IOException {
+         if (this.su_j2 < this.su_z) {
+-            this.currentChar = this.su_ch2;
+             this.crc.updateCRC(this.su_ch2);
+             this.su_j2++;
+             return this.su_ch2;
+@@ -939,7 +928,6 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
+     private int setupNoRandPartC() throws IOException {
+         if (this.su_j2 < this.su_z) {
+             int su_ch2Shadow = this.su_ch2;
+-            this.currentChar = su_ch2Shadow;
+             this.crc.updateCRC(su_ch2Shadow);
+             this.su_j2++;
+             this.currentState = NO_RAND_PART_C_STATE;
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testPartialReadTruncatedData() throws IOException {
+        //with BZ2File(self.filename) as f:
+        //    self.assertEqual(f.read(len(self.TEXT)), self.TEXT)
+        //    self.assertRaises(EOFError, f.read, 1)
+
+        final int length = TEXT.length();
+        ByteBuffer buffer = ByteBuffer.allocate(length);
+        bz2Channel.read(buffer);
+
+        assertArrayEquals(Arrays.copyOfRange(TEXT.getBytes(), 0, length),
+                buffer.array());
+
+        // subsequent read should throw
+        buffer = ByteBuffer.allocate(1);
+        try {
+            bz2Channel.read(buffer);
+            Assert.fail("The read should have thrown.");
+        } catch (IOException e) {
+            // pass
+        }
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

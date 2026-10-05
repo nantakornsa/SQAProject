@@ -1,0 +1,113 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Cli
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Cli
+       Program: commons-cli
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/Cli.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-cli.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/active-bugs.csv
+Number of bugs: 39
+--------------------------------------------------------------------------------
+
+Summary for Bug: Cli-31
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+4d2c8a22d1e1831858029b8ef225a07f4445a221
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-06-19 22:06:00 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CLI-205
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CLI-205
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.cli.HelpFormatterTest::testDefaultArgName
+   --> junit.framework.ComparisonFailure: expected:<usage: app -f <arg[ument]>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.cli.HelpFormatter
+ - org.apache.commons.cli.Option
+ - org.apache.commons.cli.OptionBuilder
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.cli.HelpFormatter ===
+diff --git a/src/main/java/org/apache/commons/cli/HelpFormatter.java b/src/main/java/org/apache/commons/cli/HelpFormatter.java
+index 1debaf6..6d73237 100644
+--- a/src/main/java/org/apache/commons/cli/HelpFormatter.java
++++ b/src/main/java/org/apache/commons/cli/HelpFormatter.java
+@@ -650,10 +650,10 @@ public class HelpFormatter
+         }
+         
+         // if the Option has a value and a non blank argname
+-        if (option.hasArg() && option.hasArgName())
++        if (option.hasArg() && (option.getArgName() == null || option.getArgName().length() != 0))
+         {
+             buff.append(option.getOpt() == null ? longOptSeparator : " ");
+-            buff.append("<").append(option.getArgName()).append(">");
++            buff.append("<").append(option.getArgName() != null ? option.getArgName() : getArgName()).append(">");
+         }
+         
+         // if the Option is not a required option
+
+=== MODIFIED SOURCE: org.apache.commons.cli.Option ===
+diff --git a/src/main/java/org/apache/commons/cli/Option.java b/src/main/java/org/apache/commons/cli/Option.java
+index 921c7ab..ce12780 100644
+--- a/src/main/java/org/apache/commons/cli/Option.java
++++ b/src/main/java/org/apache/commons/cli/Option.java
+@@ -54,7 +54,7 @@ public class Option implements Cloneable, Serializable
+     private String longOpt;
+ 
+     /** the name of the argument for this option */
+-    private String argName = "arg";
++    private String argName;
+ 
+     /** description of the option */
+     private String description;
+
+=== MODIFIED SOURCE: org.apache.commons.cli.OptionBuilder ===
+diff --git a/src/main/java/org/apache/commons/cli/OptionBuilder.java b/src/main/java/org/apache/commons/cli/OptionBuilder.java
+index 33a24a6..a22d829 100644
+--- a/src/main/java/org/apache/commons/cli/OptionBuilder.java
++++ b/src/main/java/org/apache/commons/cli/OptionBuilder.java
+@@ -77,7 +77,7 @@ public final class OptionBuilder
+     private static void reset()
+     {
+         description = null;
+-        argName = "arg";
++        argName = null;
+         longopt = null;
+         type = null;
+         required = false;
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testDefaultArgName()
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

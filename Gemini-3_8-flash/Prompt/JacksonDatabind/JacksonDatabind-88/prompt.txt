@@ -1,0 +1,83 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-88
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+f2c445d6d2de988531dcda25da81fda129bc53f2
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-08-17 13:43:37 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1735
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1735
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.jsontype.GenericTypeId1735Test::testNestedTypeCheck1735
+   --> junit.framework.AssertionFailedError: Expected an exception with one of substrings ([not subtype of]): got one (of type com.fasterxml.jackson.databind.JsonMappingException) with message "Problem deserializing property 'w' (expected type: [simple type, class com.fasterxml.jackson.databind.jsontype.GenericTypeId1735Test$Payload1735]; actual type: java.util.HashMap), problem: Can not set com.fasterxml.jackson.databind.jsontype.GenericTypeId1735Test$Payload1735 field com.fasterxml.jackson.databind.jsontype.GenericTypeId1735Test$Wrapper1735.w to java.util.HashMap
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.jsontype.impl.ClassNameIdResolver
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.jsontype.impl.ClassNameIdResolver ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/jsontype/impl/ClassNameIdResolver.java b/src/main/java/com/fasterxml/jackson/databind/jsontype/impl/ClassNameIdResolver.java
+index 142fc3629..d1418eb0a 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/jsontype/impl/ClassNameIdResolver.java
++++ b/src/main/java/com/fasterxml/jackson/databind/jsontype/impl/ClassNameIdResolver.java
+@@ -55,7 +55,11 @@ public class ClassNameIdResolver
+             //    compatibility -- needed later anyway, and not doing so may open
+             //    security issues.
+             JavaType t = tf.constructFromCanonical(id);
++            if (!t.isTypeOrSubTypeOf(_baseType.getRawClass())) {
+                 // Probably cleaner to have a method in `TypeFactory` but can't add in patch
++                throw new IllegalArgumentException(String.format(
++                        "Class %s not subtype of %s", t.getRawClass().getName(), _baseType));
++            }
+             return t;
+         }
+         Class<?> cls;
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testNestedTypeCheck1735() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

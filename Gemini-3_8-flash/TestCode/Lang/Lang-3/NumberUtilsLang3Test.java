@@ -1,0 +1,27 @@
+package org.apache.commons.lang3.math;
+
+import static org.junit.Assert.assertTrue;
+
+import java.math.BigDecimal;
+import org.junit.Test;
+
+public class NumberUtilsLang3Test {
+
+    @Test
+    public void testCreateNumberEnsureNoPrecisionLoss() {
+        final String shouldBeFloat = "1.23";
+        final String shouldBeDouble = "3.40282354e+38";
+        final String shouldBeBigDecimal = "1.797693134862315759e+308";
+
+        final Number resultFloat = NumberUtils.createNumber(shouldBeFloat);
+        final Number resultDouble = NumberUtils.createNumber(shouldBeDouble);
+        final Number resultBigDecimal = NumberUtils.createNumber(shouldBeBigDecimal);
+
+        assertTrue("Expected Float for " + shouldBeFloat + " but was " + resultFloat.getClass().getSimpleName(),
+                resultFloat instanceof Float);
+        assertTrue("Expected Double for " + shouldBeDouble + " but was " + resultDouble.getClass().getSimpleName(),
+                resultDouble instanceof Double);
+        assertTrue("Expected BigDecimal for " + shouldBeBigDecimal + " but was " + resultBigDecimal.getClass().getSimpleName(),
+                resultBigDecimal instanceof BigDecimal);
+    }
+}

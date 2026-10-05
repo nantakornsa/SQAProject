@@ -1,0 +1,74 @@
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.Node;
+
+import junit.framework.TestCase;
+
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * Regression test for valid @define initial values (Closure-94).
+ */
+public class NodeUtilDefineRegressionTest extends TestCase {
+
+  private static Node parse(String js) {
+    Compiler compiler = new Compiler();
+    Node n = compiler.parseTestCode(js);
+    assertEquals(0, compiler.getErrorCount());
+    return n;
+  }
+
+  private boolean testValidDefineValue(String js) {
+    Node script = parse("var test = " + js + ";");
+    Node var = script.getFirstChild();
+    Node name = var.getFirstChild();
+    Node value = name.getFirstChild();
+
+    Set<String> defines = new HashSet<String>();
+    defines.add("defined");
+    return NodeUtil.isValidDefineValue(value, defines);
+  }
+
+  public void testValidDefine() {
+    assertTrue(testValidDefineValue("1"));
+    assertTrue(testValidDefineValue("-3"));
+    assertTrue(testValidDefineValue("true"));
+    assertTrue(testValidDefineValue("false"));
+    assertTrue(testValidDefineValue("'foo'"));
+
+    assertFalse(testValidDefineValue("x"));
+    assertFalse(testValidDefineValue("null"));
+    assertFalse(testValidDefineValue("undefined"));
+    assertFalse(testValidDefineValue("NaN"));
+
+    assertTrue(testValidDefineValue("!true"));
+    assertTrue(testValidDefineValue("-true"));
+    assertTrue(testValidDefineValue("1 & 8"));
+    assertTrue(testValidDefineValue("1 + 8"));
+    assertTrue(testValidDefineValue("'a' + 'b'"));
+    assertTrue(testValidDefineValue("1 - 2"));
+    assertTrue(testValidDefineValue("2 * 3"));
+    assertTrue(testValidDefineValue("6 / 3"));
+    assertTrue(testValidDefineValue("7 % 4"));
+    assertTrue(testValidDefineValue("1 << 3"));
+    assertTrue(testValidDefineValue("8 >> 1"));
+    assertTrue(testValidDefineValue("8 >>> 1"));
+    assertTrue(testValidDefineValue("1 < 2"));
+    assertTrue(testValidDefineValue("1 <= 2"));
+    assertTrue(testValidDefineValue("1 > 2"));
+    assertTrue(testValidDefineValue("1 >= 2"));
+    assertTrue(testValidDefineValue("1 == 2"));
+    assertTrue(testValidDefineValue("1 != 2"));
+    assertTrue(testValidDefineValue("1 === 2"));
+    assertTrue(testValidDefineValue("1 !== 2"));
+    assertTrue(testValidDefineValue("+1"));
+    assertTrue(testValidDefineValue("'a' + defined"));
+
+    assertFalse(testValidDefineValue("1 & foo"));
+    assertFalse(testValidDefineValue("1 + foo"));
+    assertFalse(testValidDefineValue("'a' + x"));
+  }
+}
+```

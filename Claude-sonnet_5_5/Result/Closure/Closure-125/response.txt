@@ -1,0 +1,51 @@
+The test below reproduces the Issue 1002 scenario inside `TypeCheckTest`, which extends `CompilerTypeTestCase` and uses the `testTypes` helper. I have not compiled or run it against either version.
+
+On the buggy version, `A === B` makes the type checker infer a narrowed type for `B` in the `if` branch. That type is probably a function type with no instance type, so `new B()` reaches `getInstanceType()` and throws `IllegalStateException`. On the fixed version, the `hasInstanceType()` guard avoids that call.
+
+```java
+package com.google.javascript.jscomp;
+
+public class TypeCheckIssue1002Test extends TypeCheckTestCase {
+
+  public void testIssue1002() throws Exception {
+    testTypes(
+        "/** @interface */" +
+        "var I = function() {};" +
+        "/** @constructor @implements {I} */" +
+        "var A = function() {};" +
+        "/** @constructor @implements {I} */" +
+        "var B = function() {};" +
+        "var f = function() {" +
+        "  if (A === B) {" +
+        "    new B();" +
+        "  }" +
+        "};");
+  }
+}
+```
+
+`TypeCheckTestCase` does not exist in that version of the project, so this class will not compile unless that base class is available. The original `TypeCheckTest` is the safer place for it. Here is the same test as a method to add there:
+
+```java
+package com.google.javascript.jscomp;
+
+public class TypeCheckTest extends CompilerTypeTestCase {
+
+  // ... existing members and helpers (testTypes, etc.) ...
+
+  public void testIssue1002() throws Exception {
+    testTypes(
+        "/** @interface */" +
+        "var I = function() {};" +
+        "/** @constructor @implements {I} */" +
+        "var A = function() {};" +
+        "/** @constructor @implements {I} */" +
+        "var B = function() {};" +
+        "var f = function() {" +
+        "  if (A === B) {" +
+        "    new B();" +
+        "  }" +
+        "};");
+  }
+}
+```

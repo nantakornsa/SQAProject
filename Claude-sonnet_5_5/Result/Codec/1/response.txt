@@ -1,0 +1,54 @@
+=== ANALYSIS ===
+`Caverphone.caverphone` calls `txt.toLowerCase()` with the JVM default locale. Under the Turkish locale, `"I".toLowerCase()` returns the dotless `ı` (U+0131) instead of `i`. The next step, `replaceAll("[^a-z]", "")`, then strips that character, so the result for "I" becomes "1111111111". Under English, "I" lowercases to "i", which becomes a vowel, and the result is "A111111111". The result for "I" therefore depends on the default locale.
+
+The test encodes "I" with the default locale set to English, then sets it to Turkish and encodes again. It asserts that the two results are equal. On the buggy version they differ ("A111111111" vs "1111111111"), so the test fails. On the fixed version the code uses `Locale.ENGLISH`, so the results match and the test passes. The original locale is restored in a `finally` block.
+
+=== TEST CODE ===
+```java
+package org.apache.commons.codec.language;
+
+import java.util.Locale;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.apache.commons.codec.StringEncoder;
+import org.apache.commons.codec.StringEncoderAbstractTest;
+
+public class CaverphoneTest extends StringEncoderAbstractTest {
+
+    public static Test suite() {
+        return new TestSuite(CaverphoneTest.class);
+    }
+
+    public CaverphoneTest(String name) {
+        super(name);
+    }
+
+    protected StringEncoder makeEncoder() {
+        return new Caverphone();
+    }
+
+    public void testLocaleIndependence() throws Exception {
+        StringEncoder encoder = makeEncoder();
+        String[] data = { "I", "i" };
+        Locale orig = Locale.getDefault();
+        try {
+            for (int i = 0; i < data.length; i++) {
+                Locale.setDefault(Locale.ENGLISH);
+                String ref = encoder.encode(data[i]);
+
+                Locale.setDefault(new Locale("tr"));
+                String cur = encoder.encode(data[i]);
+
+                assertEquals("Locale tr, input " + data[i] + ": ", ref, cur);
+            }
+        } finally {
+            Locale.setDefault(orig);
+        }
+    }
+}
+```
+
+=== TARGET TEST ===
+`org.apache.commons.codec.language.CaverphoneTest::testLocaleIndependence`

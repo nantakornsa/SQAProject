@@ -1,0 +1,61 @@
+```java
+package com.fasterxml.jackson.databind.interop;
+
+import java.util.List;
+import java.util.Map;
+
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
+import com.fasterxml.jackson.databind.type.MapType;
+import com.fasterxml.jackson.databind.type.SimpleType;
+
+/**
+ * Regression test for [databind#1102]: handling of types constructed via
+ * deprecated {@code construct()} methods on {@link CollectionType},
+ * {@link MapType}, and {@link SimpleType}.
+ */
+public class DeprecatedTypeHandling1102Test extends BaseMapTest {
+
+    static class Point {
+        public int x, y;
+    }
+
+    static class Point3D extends Point {
+        public int z;
+    }
+
+    private final ObjectMapper MAPPER = new ObjectMapper();
+
+    public void testPOJOSubType() throws Exception {
+        @SuppressWarnings("deprecation")
+        JavaType t = SimpleType.construct(Point3D.class);
+        Point3D p = MAPPER.readValue("{\"x\":1,\"y\":2,\"z\":3}", t);
+        assertEquals(1, p.x);
+        assertEquals(2, p.y);
+        assertEquals(3, p.z);
+    }
+
+    public void testExplicitCollectionType() throws Exception {
+        @SuppressWarnings("deprecation")
+        JavaType t = CollectionType.construct(List.class,
+                SimpleType.construct(Point.class));
+        List<Object> list = MAPPER.readValue("[{\"x\":1,\"y\":2}]", t);
+        assertEquals(1, list.size());
+        Object item = list.get(0);
+        assertEquals(Point.class, item.getClass());
+    }
+
+    public void testExplicitMapType() throws Exception {
+        @SuppressWarnings("deprecation")
+        JavaType t = MapType.construct(Map.class,
+                SimpleType.construct(String.class),
+                SimpleType.construct(Point.class));
+        Map<Object, Object> map = MAPPER.readValue("{\"a\":{\"x\":1,\"y\":2}}", t);
+        assertEquals(1, map.size());
+        Object item = map.get("a");
+        assertEquals(Point.class, item.getClass());
+    }
+}
+```

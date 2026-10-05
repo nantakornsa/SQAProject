@@ -1,0 +1,40 @@
+This is a standalone regression test class, not an addition to `PeepholeFoldConstantsTest`, because I can't reproduce that whole file here. I haven't compiled or run it, and the constructor call in `getProcessor` is from memory of the 2012-era code. If `PeepholeFoldConstants` took a `late` boolean at this revision, that call would need adjusting.
+
+The fix changes `NodeUtil.mayBeString(n, true)` from `allResultsMatch` to `anyResultsMatch`. The buggy version wrongly folds `(cond ? '1' : 2) + 3 + 4` into `... + 7`. That changes the result, since string concatenation gives `"134"` or `"34"` rather than `"17"` or `9`. The test asserts the expression is left unchanged, so it fails on the buggy version and passes on the fixed one.
+
+```java
+package com.google.javascript.jscomp;
+
+/**
+ * Regression test for issue 821: constant folding must not combine numeric
+ * operands of an addition when the left operand may evaluate to a string
+ * in only some branches.
+ */
+public class PeepholeFoldConstantsIssue821Test extends CompilerTestCase {
+
+  public PeepholeFoldConstantsIssue821Test() {
+    super("", false);
+  }
+
+  @Override
+  public CompilerPass getProcessor(final Compiler compiler) {
+    return new PeepholeOptimizationsPass(compiler, new PeepholeFoldConstants());
+  }
+
+  @Override
+  protected int getNumRepetitions() {
+    // Only one pass over the code is needed.
+    return 1;
+  }
+
+  private void foldSame(String js) {
+    testSame(js);
+  }
+
+  public void testIssue821() {
+    foldSame("var a =(Math.random()>0.5? '1' : 2 ) + 3 + 4;");
+    foldSame("var a = ((Math.random() ? 0 : 1) ||" +
+             "(Math.random()>0.5? '1' : 2 )) + 3 + 4;");
+  }
+}
+```

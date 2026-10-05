@@ -1,0 +1,27 @@
+package org.mockitousage.bugs;
+
+import org.junit.Test;
+
+import static org.fest.assertions.Assertions.assertThat;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
+
+public class DeepStubsWronglyReportsSerializationProblemsTest {
+
+    @Test
+    public void should_not_raise_a_mockito_exception_about_serialization_when_accessing_deep_stub() {
+        NotSerializableShouldBeMocked the_deep_stub = mock(ToBeDeepStubbed.class, RETURNS_DEEP_STUBS).getSomething();
+        assertThat(the_deep_stub).isNotNull();
+    }
+
+    static class ToBeDeepStubbed {
+        public NotSerializableShouldBeMocked getSomething() {
+            return null;
+        }
+    }
+
+    static class NotSerializableShouldBeMocked {
+        NotSerializableShouldBeMocked(String paramWithoutNoArgConstructor) {
+        }
+    }
+}

@@ -1,0 +1,94 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Compress
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Compress
+       Program: commons-compress
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/Compress.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-compress.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/active-bugs.csv
+Number of bugs: 47
+--------------------------------------------------------------------------------
+
+Summary for Bug: Compress-44
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+6f379134ae1807cd404ed6c9579707e5dc6a6df0
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-06-17 20:29:37 +0200
+--------------------------------------------------------------------------------
+Bug report id:
+COMPRESS-412
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COMPRESS-412
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.compress.utils.ChecksumCalculatingInputStreamTest::testClassInstantiationWithParameterBeingNullThrowsNullPointerExceptionOne
+   --> junit.framework.AssertionFailedError: Expected exception: java.lang.NullPointerException
+ - org.apache.commons.compress.utils.ChecksumCalculatingInputStreamTest::testClassInstantiationWithParameterBeingNullThrowsNullPointerExceptionTwo
+   --> junit.framework.AssertionFailedError: Expected exception: java.lang.NullPointerException
+ - org.apache.commons.compress.utils.ChecksumCalculatingInputStreamTest::testClassInstantiationWithParameterBeingNullThrowsNullPointerExceptionThree
+   --> junit.framework.AssertionFailedError: Expected exception: java.lang.NullPointerException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.compress.utils.ChecksumCalculatingInputStream
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.compress.utils.ChecksumCalculatingInputStream ===
+diff --git a/src/main/java/org/apache/commons/compress/utils/ChecksumCalculatingInputStream.java b/src/main/java/org/apache/commons/compress/utils/ChecksumCalculatingInputStream.java
+index 10c7d68d..4a408a56 100644
+--- a/src/main/java/org/apache/commons/compress/utils/ChecksumCalculatingInputStream.java
++++ b/src/main/java/org/apache/commons/compress/utils/ChecksumCalculatingInputStream.java
+@@ -32,7 +32,13 @@ public class ChecksumCalculatingInputStream extends InputStream {
+ 
+     public ChecksumCalculatingInputStream(final Checksum checksum, final InputStream in) {
+ 
++        if ( checksum == null ){
++            throw new NullPointerException("Parameter checksum must not be null");
++        }
+ 
++        if ( in == null ){
++            throw new NullPointerException("Parameter in must not be null");
++        }
+ 
+         this.checksum = checksum;
+         this.in = in;
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testClassInstantiationWithParameterBeingNullThrowsNullPointerExceptionOne() {
+
+        ChecksumCalculatingInputStream checksumCalculatingInputStream = new ChecksumCalculatingInputStream(null,null);
+
+
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

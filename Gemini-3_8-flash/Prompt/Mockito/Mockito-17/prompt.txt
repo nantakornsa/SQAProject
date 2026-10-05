@@ -1,0 +1,128 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Mockito
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Mockito
+       Program: mockito
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/Mockito.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/mockito.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/active-bugs.csv
+Number of bugs: 38
+--------------------------------------------------------------------------------
+
+Summary for Bug: Mockito-17
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+77cb2037314dd024eb53ffe2e9e06304088a2d53
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-11-21 23:04:52 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+152
+--------------------------------------------------------------------------------
+Bug report url:
+https://code.google.com/archive/p/mockito/issues/152
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.mockitousage.basicapi.MocksSerializationTest::shouldBeSerializeAndHaveExtraInterfaces
+   --> java.io.NotSerializableException: org.mockitousage.IMethods$$EnhancerByMockitoWithCGLIB$$a155cf16
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.mockito.internal.creation.MockSettingsImpl
+ - org.mockito.internal.util.MockUtil
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.mockito.internal.creation.MockSettingsImpl ===
+diff --git a/src/org/mockito/internal/creation/MockSettingsImpl.java b/src/org/mockito/internal/creation/MockSettingsImpl.java
+index bf2cf3bf2..5285d9094 100644
+--- a/src/org/mockito/internal/creation/MockSettingsImpl.java
++++ b/src/org/mockito/internal/creation/MockSettingsImpl.java
+@@ -17,9 +17,11 @@ public class MockSettingsImpl implements MockSettings {
+     private Object spiedInstance;
+     private Answer<Object> defaultAnswer;
+     private MockName mockName;
++    private boolean serializable;
+ 
+     public MockSettings serializable() {
+-        return this.extraInterfaces(java.io.Serializable.class);
++        this.serializable = true;
++        return this;
+     }
+ 
+     public MockSettings extraInterfaces(Class<?>... extraInterfaces) {
+@@ -71,7 +73,7 @@ public class MockSettingsImpl implements MockSettings {
+     }
+ 
+     public boolean isSerializable() {
+-        return extraInterfaces != null && java.util.Arrays.asList(extraInterfaces).contains(java.io.Serializable.class);
++        return serializable;
+     }
+ 
+     public void initiateMockName(Class classToMock) {
+
+=== MODIFIED SOURCE: org.mockito.internal.util.MockUtil ===
+diff --git a/src/org/mockito/internal/util/MockUtil.java b/src/org/mockito/internal/util/MockUtil.java
+index d2d042f74..b8ed8b474 100644
+--- a/src/org/mockito/internal/util/MockUtil.java
++++ b/src/org/mockito/internal/util/MockUtil.java
+@@ -16,6 +16,7 @@ import org.mockito.internal.creation.MockSettingsImpl;
+ import org.mockito.internal.creation.jmock.ClassImposterizer;
+ import org.mockito.internal.util.reflection.LenientCopyTool;
+ 
++import java.io.Serializable;
+ 
+ @SuppressWarnings("unchecked")
+ public class MockUtil {
+@@ -42,7 +43,11 @@ public class MockUtil {
+         Class<?>[] interfaces = settings.getExtraInterfaces();
+ 
+         Class<?>[] ancillaryTypes;
++        if (settings.isSerializable()) {
++            ancillaryTypes = interfaces == null ? new Class<?>[] {Serializable.class} : new ArrayUtils().concat(interfaces, Serializable.class);
++        } else {
+             ancillaryTypes = interfaces == null ? new Class<?>[0] : interfaces;
++        }
+ 
+         Object spiedInstance = settings.getSpiedInstance();
+         
+
+
+=== TRIGGERING TEST METHOD ===
+    public void shouldBeSerializeAndHaveExtraInterfaces() throws Exception {
+        //when
+        IMethods mock = mock(IMethods.class, withSettings().serializable().extraInterfaces(List.class));
+        IMethods mockTwo = mock(IMethods.class, withSettings().extraInterfaces(List.class).serializable());
+
+        //then
+        serializeAndBack((List) mock);
+        serializeAndBack((List) mockTwo);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

@@ -1,0 +1,105 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-25
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+2e904fcdc3bc09e3bff557fcfca383ba7e450095
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-05-18 23:58:44 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+729
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-729.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.TypeInferenceTest::testBackwardsInferenceNew
+   --> junit.framework.ComparisonFailure: expected:<{[foo: (number|undefined)]}> but was:<{[]}>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.TypeInference
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.TypeInference ===
+diff --git a/src/com/google/javascript/jscomp/TypeInference.java b/src/com/google/javascript/jscomp/TypeInference.java
+index 7e218d888..74728ee93 100644
+--- a/src/com/google/javascript/jscomp/TypeInference.java
++++ b/src/com/google/javascript/jscomp/TypeInference.java
+@@ -1033,9 +1033,9 @@ class TypeInference
+   }
+ 
+   private FlowScope traverseNew(Node n, FlowScope scope) {
++    scope = traverseChildren(n, scope);
+ 
+     Node constructor = n.getFirstChild();
+-    scope = traverse(constructor, scope);
+     JSType constructorType = constructor.getJSType();
+     JSType type = null;
+     if (constructorType != null) {
+@@ -1052,13 +1052,11 @@ class TypeInference
+         }
+         if (ct != null && ct.isConstructor()) {
+           type = ct.getInstanceType();
++          backwardsInferenceFromCallSite(n, ct);
+         }
+       }
+     }
+     n.setJSType(type);
+-    for (Node arg = constructor.getNext(); arg != null; arg = arg.getNext()) {
+-      scope = traverse(arg, scope);
+-    }
+     return scope;
+   }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testBackwardsInferenceNew() {
+    inFunction(
+        "/**\n" +
+        " * @constructor\n" +
+        " * @param {{foo: (number|undefined)}} x\n" +
+        " */" +
+        "function F(x) {}" +
+        "var y = {};" +
+        "new F(y);");
+
+    assertEquals("{foo: (number|undefined)}", getType("y").toString());
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

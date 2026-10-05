@@ -1,0 +1,84 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791118709-NpXIRFQwzTuhEy3tp2pd","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Compression Issue**\n\nI'm currently examining a bug in `Compress-22`, specifically COMPRESS-253. It's causing `BZip2CompressorInputStream` to exhibit unexpected behavior with truncated data or during block transitions. The issue seems rooted in how `currentChar` is handled after `setupBlock()`.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.apache.commons.compress"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".compressors.bzip2;\n\nimport static org.junit.Assert.assertArrayEquals;\nimport static org.junit.Assert"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".fail;\n\nimport java.io.ByteArrayInputStream;\nimport java.io.ByteArrayOutputStream;\nimport java."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"io.IOException;\nimport java.util.Arrays;\nimport org.junit.Test;\n\npublic class B"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Zip2CompressorInputStreamTest {\n\n    @Test\n    public void testPartialReadTruncatedData() throws IOException"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" {\n        byte[] data = \"Hello, world! This is a test string for bzip2 compression truncation.\"."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"getBytes(\"US-ASCII\");\n\n        ByteArrayOutputStream baos = new ByteArrayOutputStream();\n        BZip2CompressorOutputStream out"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" = new BZip2CompressorOutputStream(baos);\n        out.write(data);\n        out.close();\n\n        byte"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"[] compressed = baos.toByteArray();\n        // Truncate the stream by removing trailer bytes (the end-of"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"-stream magic and CRC)\n        // Keep enough data to decompress the block, but truncate the stream ending\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        byte[] truncated = Arrays.copyOf(compressed, compressed.length - 10);\n\n        BZip2"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"CompressorInputStream in = new BZip2CompressorInputStream(new ByteArrayInputStream(truncated));\n        byte[] buffer = new byte"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"[data.length];\n        int totalRead = 0;\n        while (totalRead < data.length) {\n            "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"int read = in.read(buffer, totalRead, data.length - totalRead);\n            if (read == -1)"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" {\n                break;\n            }\n            totalRead += read;\n        }\n\n        // On the buggy"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" version, reading the last byte eagerly triggers setup of the next block/trailer,\n        // causing an unexpected end of stream IOException"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" during reading the original data.\n        assertArrayEquals(data, buffer);\n\n        // Subsequent read after reading all valid data should throw IOException"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        try {\n            in.read();\n            fail(\"Expected IOException on reading past truncated data\");\n        } catch"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" (IOException e) {\n            // expected\n        } finally {\n            in.close();\n        }\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2037,"output_tokens":799,"output_tokens_details":{"thinking_tokens":318},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.004524,"is_byok":false,"cost_details":{"upstream_inference_cost":0.004524,"upstream_inference_prompt_cost":0.00152775,"upstream_inference_completions_cost":0.00299625}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

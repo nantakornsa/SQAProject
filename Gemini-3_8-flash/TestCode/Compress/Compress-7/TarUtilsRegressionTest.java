@@ -1,0 +1,18 @@
+package org.apache.commons.compress.archivers.tar;
+
+import junit.framework.TestCase;
+
+public class TarUtilsRegressionTest extends TestCase {
+
+    public void testParseNameWithHighBitCharacters() {
+        // String containing characters with high bit set (byte value >= 128 / negative signed byte)
+        // '±' is unicode \u00B1 (byte value 0xB1 = 177 in ISO-8859-1 or raw byte representation)
+        String input = "0302-0601-3±MOE.model";
+        byte[] buffer = new byte[50];
+        
+        int length = TarUtils.formatNameBytes(input, buffer, 0, buffer.length);
+        String result = TarUtils.parseName(buffer, 0, length);
+        
+        assertEquals(input, result);
+    }
+}

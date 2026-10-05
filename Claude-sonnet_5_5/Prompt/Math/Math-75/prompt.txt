@@ -1,0 +1,100 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-75
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+6dd3724b9b5e29a9bd9f404d28d0cf6d43ccfe95
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-01-16 20:01:17 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-329
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-329
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.stat.FrequencyTest::testPcts
+   --> junit.framework.AssertionFailedError: three (Object) pct expected:<0.5> but was:<1.0>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.stat.Frequency
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.stat.Frequency ===
+diff --git a/src/main/java/org/apache/commons/math/stat/Frequency.java b/src/main/java/org/apache/commons/math/stat/Frequency.java
+index c45d72883..68c8bf2de 100644
+--- a/src/main/java/org/apache/commons/math/stat/Frequency.java
++++ b/src/main/java/org/apache/commons/math/stat/Frequency.java
+@@ -300,7 +300,7 @@ public class Frequency implements Serializable {
+      */
+     @Deprecated
+     public double getPct(Object v) {
+-        return getCumPct((Comparable<?>) v);
++        return getPct((Comparable<?>) v);
+     }
+ 
+     /**
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testPcts() {
+        f.addValue(oneL);
+        f.addValue(twoL);
+        f.addValue(oneI);
+        f.addValue(twoI);
+        f.addValue(threeL);
+        f.addValue(threeL);
+        f.addValue(3);
+        f.addValue(threeI);
+        assertEquals("one pct",0.25,f.getPct(1),tolerance);
+        assertEquals("two pct",0.25,f.getPct(Long.valueOf(2)),tolerance);
+        assertEquals("three pct",0.5,f.getPct(threeL),tolerance);
+        // MATH-329
+        assertEquals("three (Object) pct",0.5,f.getPct((Object) (Integer.valueOf(3))),tolerance);
+        assertEquals("five pct",0,f.getPct(5),tolerance);
+        assertEquals("foo pct",0,f.getPct("foo"),tolerance);
+        assertEquals("one cum pct",0.25,f.getCumPct(1),tolerance);
+        assertEquals("two cum pct",0.50,f.getCumPct(Long.valueOf(2)),tolerance);
+        assertEquals("Integer argument",0.50,f.getCumPct(Integer.valueOf(2)),tolerance);
+        assertEquals("three cum pct",1.0,f.getCumPct(threeL),tolerance);
+        assertEquals("five cum pct",1.0,f.getCumPct(5),tolerance);
+        assertEquals("zero cum pct",0.0,f.getCumPct(0),tolerance);
+        assertEquals("foo cum pct",0,f.getCumPct("foo"),tolerance);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

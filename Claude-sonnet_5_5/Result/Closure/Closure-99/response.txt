@@ -1,0 +1,49 @@
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.Node;
+
+/**
+ * Regression test for CheckGlobalThis: assignments to a property of a
+ * prototype property (e.g. a.prototype.b.c) must still be reported when
+ * the function uses the global "this".
+ */
+public class CheckGlobalThisTest extends CompilerTestCase {
+
+  public CheckGlobalThisTest() {
+    super("");
+  }
+
+  @Override
+  protected CompilerPass getProcessor(final Compiler compiler) {
+    return new CompilerPass() {
+      @Override
+      public void process(Node externs, Node root) {
+        NodeTraversal.traverse(compiler, root, new CheckGlobalThis(compiler));
+      }
+    };
+  }
+
+  @Override
+  protected int getNumRepetitions() {
+    return 1;
+  }
+
+  private void testFailure(String js) {
+    test(js, null, CheckGlobalThis.GLOBAL_THIS);
+  }
+
+  public void testPropertyOfMethod() {
+    testFailure("a.protoype.b = {}; " +
+        "a.prototype.b.c = function() { this.foo = 3; };");
+  }
+}
+```
+
+I could not check this against the project sources, so it may need small adjustments to compile. In particular, I assumed these names and signatures:
+- `super("")` as the `CompilerTestCase` constructor
+- the `getNumRepetitions` override
+- `test(js, null, CheckGlobalThis.GLOBAL_THIS)`
+- `NodeTraversal.traverse(compiler, root, callback)`
+
+I only included the triggering test, `testPropertyOfMethod`. I did not add tests for `testMethod4` or `testInterface1` because I don't know their exact input code.

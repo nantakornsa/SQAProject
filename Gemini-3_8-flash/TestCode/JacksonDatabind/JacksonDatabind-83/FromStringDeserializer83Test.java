@@ -1,0 +1,37 @@
+package com.fasterxml.jackson.databind.deser.std;
+
+import java.io.IOException;
+
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+
+public class FromStringDeserializer83Test extends BaseMapTest
+{
+    @SuppressWarnings("serial")
+    static class CustomNullFromStringDeserializer extends FromStringDeserializer<Object> {
+        public CustomNullFromStringDeserializer() {
+            super(Object.class);
+        }
+
+        @Override
+        protected Object _deserialize(String value, DeserializationContext ctxt) throws IOException {
+            if ("return-null".equals(value)) {
+                return null;
+            }
+            return "not-null:" + value;
+        }
+    }
+
+    public void testNullResultFromDeserialize() throws Exception
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(Object.class, new CustomNullFromStringDeserializer());
+        mapper.registerModule(module);
+
+        Object result = mapper.readValue(quote("return-null"), Object.class);
+        assertNull(result);
+    }
+}

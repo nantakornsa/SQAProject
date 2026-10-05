@@ -1,0 +1,35 @@
+```java
+package com.fasterxml.jackson.databind.jsontype;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class WrapperObjectWithObjectIdTest extends BaseMapTest
+{
+    @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.WRAPPER_OBJECT)
+    @JsonSubTypes({ @JsonSubTypes.Type(value = DesktopComputer.class, name = "desktop") })
+    @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@id")
+    static abstract class Computer {
+        public Computer make;
+    }
+
+    static class DesktopComputer extends Computer {
+    }
+
+    public void testSimple() throws Exception
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        DesktopComputer desktop = new DesktopComputer();
+        desktop.make = desktop;
+        String json = mapper.writeValueAsString(desktop);
+
+        Computer result = mapper.readValue(json, Computer.class);
+        assertNotNull(result);
+        assertSame(result, result.make);
+    }
+}
+```

@@ -1,0 +1,24 @@
+An issue in `TreeBuilderState` caused `<script>` tags encountered inside the `<body>` (or `InBody` state) to not be delegated to `InHead` processing. As a result, the tokenizer was not switched to the script data state, leading HTML tags inside the script (like `<a ... />`) to be parsed as actual elements and script code to be treated as visible text.
+
+Here is the regression test reproducing this issue:
+
+```java
+package org.jsoup.parser;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
+public class ParserScriptTest {
+
+    @Test
+    public void handlesScriptInBody() {
+        String html = "<p>Hello</p><script>obj.insert('<a rel=\"none\" />');\ni++;</script><p>There</p>";
+        Document doc = Jsoup.parse(html);
+        assertEquals("Hello There", doc.text());
+        assertEquals("obj.insert('<a rel=\"none\" />');\ni++;", doc.data());
+    }
+}
+```

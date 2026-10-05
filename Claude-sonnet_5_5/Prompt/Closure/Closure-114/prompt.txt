@@ -1,0 +1,80 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-114
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+5f03c6817341d39d8dead76c7511fd6bb0b9009f
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-10-03 18:21:15 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1085
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-1085.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.NameAnalyzerTest::testAssignWithCall
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.NameAnalyzer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.NameAnalyzer ===
+diff --git a/src/com/google/javascript/jscomp/NameAnalyzer.java b/src/com/google/javascript/jscomp/NameAnalyzer.java
+index 0fc5ae8ff..a7b95b00e 100644
+--- a/src/com/google/javascript/jscomp/NameAnalyzer.java
++++ b/src/com/google/javascript/jscomp/NameAnalyzer.java
+@@ -575,7 +575,7 @@ final class NameAnalyzer implements CompilerPass {
+           } else {
+             recordDepScope(nameNode, ns);
+           }
+-        } else {
++        } else if (!(parent.isCall() && parent.getFirstChild() == n)) {
+           // The rhs of the assignment is the caller, so it's used by the
+           // context. Don't associate it w/ the lhs.
+           // FYI: this fixes only the specific case where the assignment is the
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testAssignWithCall() {
+    test("var fun, x; (fun = function(){ x; })();",
+        "var x; (function(){ x; })();");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

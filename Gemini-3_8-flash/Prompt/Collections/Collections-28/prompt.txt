@@ -1,0 +1,107 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Collections
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Collections
+       Program: commons-collections
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/Collections.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-collections.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/active-bugs.csv
+Number of bugs: 28
+--------------------------------------------------------------------------------
+
+Summary for Bug: Collections-28
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+a270ff62852e62b5ac0f943a7e57292a72b77271
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-08-04 17:32:17 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COLLECTIONS-586
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COLLECTIONS-586
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.collections4.trie.PatriciaTrieTest::testPrefixMapClear
+   --> java.lang.NullPointerException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.collections4.trie.AbstractPatriciaTrie
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.collections4.trie.AbstractPatriciaTrie ===
+diff --git a/src/main/java/org/apache/commons/collections4/trie/AbstractPatriciaTrie.java b/src/main/java/org/apache/commons/collections4/trie/AbstractPatriciaTrie.java
+index 41f8535d..bd11f75b 100644
+--- a/src/main/java/org/apache/commons/collections4/trie/AbstractPatriciaTrie.java
++++ b/src/main/java/org/apache/commons/collections4/trie/AbstractPatriciaTrie.java
+@@ -2259,6 +2259,16 @@ abstract class AbstractPatriciaTrie<K, V> extends AbstractBitwiseTrie<K, V> {
+             return new RangeEntryMap(fromKey, fromInclusive, toKey, toInclusive);
+         }
+ 
++        @Override
++        public void clear() {
++            Iterator<Map.Entry<K, V>> it = AbstractPatriciaTrie.this.entrySet().iterator();
++            Set<K> currentKeys = keySet();
++            while (it.hasNext()) {
++                if (currentKeys.contains(it.next().getKey())) {
++                    it.remove();
++                }
++            }
++        }
+     }
+ 
+     /**
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testPrefixMapClear() {
+        Trie<String, Integer> trie = new PatriciaTrie<Integer>();
+        trie.put("Anna", 1);
+        trie.put("Anael", 2);
+        trie.put("Analu", 3);
+        trie.put("Andreas", 4);
+        trie.put("Andrea", 5);
+        trie.put("Andres", 6);
+        trie.put("Anatole", 7);
+        SortedMap<String, Integer> prefixMap = trie.prefixMap("And");
+        assertEquals(new HashSet<String>(Arrays.asList("Andrea", "Andreas", "Andres")), prefixMap.keySet());
+        assertEquals(Arrays.asList(5, 4, 6), new ArrayList<Integer>(prefixMap.values()));
+
+        prefixMap.clear();
+        assertTrue(prefixMap.isEmpty());
+        assertTrue(prefixMap.keySet().isEmpty());
+        assertTrue(prefixMap.values().isEmpty());
+        assertEquals(new HashSet<String>(Arrays.asList("Anael", "Analu", "Anatole", "Anna")), trie.keySet());
+        assertEquals(Arrays.asList(2, 3, 7, 1), new ArrayList<Integer>(trie.values()));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

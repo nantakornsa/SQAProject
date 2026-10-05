@@ -1,0 +1,35 @@
+```java
+package org.apache.commons.cli;
+
+import junit.framework.TestCase;
+
+public class PosixParserStopAtUnknownLongOptionTest extends TestCase
+{
+    private Options options;
+    private Parser parser;
+
+    public void setUp()
+    {
+        options = new Options()
+            .addOption("a", "enable-a", false, "turn [a] on or off")
+            .addOption("b", "bfile", true, "set the value of [b]")
+            .addOption("c", "copt", false, "turn [c] on or off");
+        parser = new PosixParser();
+    }
+
+    public void testStopAtUnknownLongOptionWithEquals() throws Exception
+    {
+        String[] args = new String[] { "--zop==1", "-abtoast", "--b=bar" };
+
+        CommandLine cl = parser.parse(options, args, true);
+
+        assertFalse("Confirm -a is not set", cl.hasOption("a"));
+        assertFalse("Confirm -b is not set", cl.hasOption("b"));
+        assertEquals("Confirm  3 extra args: " + cl.getArgList().size(), 3, cl.getArgList().size());
+    }
+}
+```
+
+I did not run this test. I wrote it from my recollection of the project's `testStop3`, which uses these same arguments, so the exact arguments and expected counts may differ from the real test.
+
+In the fixed version, `--zop==1` is an unrecognized long option, so parsing stops there and `--zop==1`, `-abtoast` and `--b=bar` all become extra args (3 in total). The buggy version splits `--zop==1` at the first `=` into separate tokens and carries on parsing, so the extra-arg count is wrong. The triggering test reported 7 extra args on the buggy version.

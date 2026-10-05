@@ -1,0 +1,53 @@
+package com.google.javascript.jscomp;
+
+import com.google.common.collect.Lists;
+
+import junit.framework.TestCase;
+
+import java.util.List;
+
+/**
+ * Regression test for Closure-4: an inheritance cycle that goes through
+ * both @implements and @extends must be reported as a cycle, not as
+ * "can only implement interfaces".
+ */
+public class ImplementsExtendsLoopRegressionTest extends TestCase {
+
+  public void testImplementsExtendsLoop() throws Exception {
+    String js =
+        "/** @constructor \n * @implements {F} */var G = function() {};" +
+        "/** @constructor \n * @extends {G} */var F = function() {};" +
+        "alert((new F).foo);";
+
+    Compiler compiler = new Compiler();
+    CompilerOptions options = new CompilerOptions();
+    options.checkTypes = true;
+
+    List<SourceFile> externs =
+        Lists.newArrayList(SourceFile.fromCode("externs", "function alert(x) {}"));
+    List<SourceFile> inputs =
+        Lists.newArrayList(SourceFile.fromCode("testcode", js));
+
+    compiler.compile(externs, inputs, options);
+
+    boolean foundCycle = false;
+    for (JSError warning : compiler.getWarnings()) {
+      String description = warning.description;
+      if (description.contains(
+          "Cycle detected in inheritance chain of type F")) {
+        foundCycle = true;
+      }
+      assertFalse("Unexpected warning: " + description,
+          description.contains("can only implement interfaces"));
+    }
+    for (JSError error : compiler.getErrors()) {
+      assertFalse("Unexpected error: " + error.description,
+          error.description.contains("can only implement interfaces"));
+      if (error.description.contains(
+          "Cycle detected in inheritance chain of type F")) {
+        foundCycle = true;
+      }
+    }
+    assertTrue("Expected inheritance cycle warning for type F", foundCycle);
+  }
+}

@@ -1,0 +1,134 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonCore
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonCore
+       Program: jackson-core
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonCore/JacksonCore.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-core.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonCore/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonCore-18
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+96642978dcf1b69cba68ec72cb2f652d59a8b5be
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-08-24 22:53:20 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+315
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-core/issues/315
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.core.json.TestJsonGeneratorFeatures::testTooBigBigDecimal
+   --> junit.framework.AssertionFailedError: Should not have written without exception: 1E+10000
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.core.base.GeneratorBase
+ - com.fasterxml.jackson.core.json.UTF8JsonGenerator
+ - com.fasterxml.jackson.core.json.WriterBasedJsonGenerator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.core.base.GeneratorBase ===
+diff --git a/src/main/java/com/fasterxml/jackson/core/base/GeneratorBase.java b/src/main/java/com/fasterxml/jackson/core/base/GeneratorBase.java
+index a4148391..128fbcf4 100644
+--- a/src/main/java/com/fasterxml/jackson/core/base/GeneratorBase.java
++++ b/src/main/java/com/fasterxml/jackson/core/base/GeneratorBase.java
+@@ -50,6 +50,7 @@ public abstract class GeneratorBase extends JsonGenerator
+      * 
+      * @since 2.7.7
+      */
++    protected final static int MAX_BIG_DECIMAL_SCALE = 9999;
+     
+     /*
+     /**********************************************************
+@@ -431,7 +432,16 @@ public abstract class GeneratorBase extends JsonGenerator
+      * @since 2.7.7
+      */
+     protected String _asString(BigDecimal value) throws IOException {
++        if (Feature.WRITE_BIGDECIMAL_AS_PLAIN.enabledIn(_features)) {
+             // 24-Aug-2016, tatu: [core#315] prevent possible DoS vector
++            int scale = value.scale();
++            if ((scale < -MAX_BIG_DECIMAL_SCALE) || (scale > MAX_BIG_DECIMAL_SCALE)) {
++                _reportError(String.format(
++"Attempt to write plain `java.math.BigDecimal` (see JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN) with illegal scale (%d): needs to be between [-%d, %d]",
++scale, MAX_BIG_DECIMAL_SCALE, MAX_BIG_DECIMAL_SCALE));
++            }
++            return value.toPlainString();
++        }
+         return value.toString();
+     }
+ 
+
+=== MODIFIED SOURCE: com.fasterxml.jackson.core.json.UTF8JsonGenerator ===
+diff --git a/src/main/java/com/fasterxml/jackson/core/json/UTF8JsonGenerator.java b/src/main/java/com/fasterxml/jackson/core/json/UTF8JsonGenerator.java
+index cf6ca3a6..55246913 100644
+--- a/src/main/java/com/fasterxml/jackson/core/json/UTF8JsonGenerator.java
++++ b/src/main/java/com/fasterxml/jackson/core/json/UTF8JsonGenerator.java
+@@ -907,10 +907,7 @@ public class UTF8JsonGenerator
+         if (value == null) {
+             _writeNull();
+         } else  if (_cfgNumbersAsStrings) {
+-            String raw = Feature.WRITE_BIGDECIMAL_AS_PLAIN.enabledIn(_features) ? value.toPlainString() : value.toString();
+-            _writeQuotedRaw(raw);
+-        } else if (Feature.WRITE_BIGDECIMAL_AS_PLAIN.enabledIn(_features)) {
+-            writeRaw(value.toPlainString());
++            _writeQuotedRaw(_asString(value));
+         } else {
+             writeRaw(_asString(value));
+         }
+
+=== MODIFIED SOURCE: com.fasterxml.jackson.core.json.WriterBasedJsonGenerator ===
+diff --git a/src/main/java/com/fasterxml/jackson/core/json/WriterBasedJsonGenerator.java b/src/main/java/com/fasterxml/jackson/core/json/WriterBasedJsonGenerator.java
+index 156d997b..2340ea20 100644
+--- a/src/main/java/com/fasterxml/jackson/core/json/WriterBasedJsonGenerator.java
++++ b/src/main/java/com/fasterxml/jackson/core/json/WriterBasedJsonGenerator.java
+@@ -684,10 +684,7 @@ public final class WriterBasedJsonGenerator
+         if (value == null) {
+             _writeNull();
+         } else  if (_cfgNumbersAsStrings) {
+-            String raw = isEnabled(Feature.WRITE_BIGDECIMAL_AS_PLAIN) ? value.toPlainString() : value.toString();
+-            _writeQuotedRaw(raw);
+-        } else if (isEnabled(Feature.WRITE_BIGDECIMAL_AS_PLAIN)) {
+-            writeRaw(value.toPlainString());
++            _writeQuotedRaw(_asString(value));
+         } else {
+             writeRaw(_asString(value));
+         }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testTooBigBigDecimal() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

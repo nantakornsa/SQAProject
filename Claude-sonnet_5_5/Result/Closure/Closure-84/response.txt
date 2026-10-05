@@ -1,0 +1,47 @@
+```java
+package com.google.javascript.jscomp.parsing;
+
+import com.google.javascript.jscomp.CompilerOptions;
+import com.google.javascript.jscomp.Compiler;
+import com.google.javascript.jscomp.JSError;
+import com.google.javascript.jscomp.JSSourceFile;
+import com.google.javascript.jscomp.Result;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test: a destructuring assignment such as "[x, y] = foo();"
+ * must report both "destructuring assignment forbidden" and
+ * "invalid assignment target".
+ */
+public class DestructuringAssignTargetTest extends TestCase {
+
+  private JSError[] compileForErrors(String code) {
+    Compiler compiler = new Compiler();
+    CompilerOptions options = new CompilerOptions();
+    Result result = compiler.compile(
+        JSSourceFile.fromCode("externs", ""),
+        JSSourceFile.fromCode("input", code),
+        options);
+    assertFalse(result.success);
+    return result.errors;
+  }
+
+  private static boolean hasError(JSError[] errors, String text) {
+    for (JSError error : errors) {
+      if (error.description != null && error.description.contains(text)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public void testDestructuringAssignForbidden4() {
+    JSError[] errors = compileForErrors("[x, y] = foo();");
+    assertTrue("Expected 'destructuring assignment forbidden' error",
+        hasError(errors, "destructuring assignment forbidden"));
+    assertTrue("Expected 'invalid assignment target' error",
+        hasError(errors, "invalid assignment target"));
+  }
+}
+```

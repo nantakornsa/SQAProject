@@ -1,0 +1,45 @@
+package org.apache.commons.math.optimization.general;
+
+import junit.framework.TestCase;
+
+import org.apache.commons.math.FunctionEvaluationException;
+import org.apache.commons.math.analysis.DifferentiableMultivariateVectorialFunction;
+import org.apache.commons.math.analysis.MultivariateMatrixFunction;
+import org.apache.commons.math.optimization.OptimizationException;
+
+public class LevenbergMarquardtChiSquareWeightTest extends TestCase {
+
+    /** f(x) = (x, x): two observations of the same single parameter. */
+    private static class DoubleObservation implements DifferentiableMultivariateVectorialFunction {
+
+        public double[] value(double[] point) throws FunctionEvaluationException, IllegalArgumentException {
+            return new double[] { point[0], point[0] };
+        }
+
+        public MultivariateMatrixFunction jacobian() {
+            return new MultivariateMatrixFunction() {
+                public double[][] value(double[] point)
+                    throws FunctionEvaluationException, IllegalArgumentException {
+                    return new double[][] { { 1.0 }, { 1.0 } };
+                }
+            };
+        }
+    }
+
+    public void testChiSquareUsesWeightsAsMultipliers()
+        throws FunctionEvaluationException, OptimizationException {
+        LevenbergMarquardtOptimizer optimizer = new LevenbergMarquardtOptimizer();
+        optimizer.optimize(new DoubleObservation(),
+                           new double[] { 1.0, 3.0 },
+                           new double[] { 2.0, 2.0 },
+                           new double[] { 0.0 });
+
+        // optimum is x = 2, residuals are -1 and +1.
+        // chi2 = sum(w * r^2) = 2*1 + 2*1 = 4
+        assertEquals(4.0, optimizer.getChiSquare(), 1.0e-6);
+        // RMS = sqrt(chi2 / rows) = sqrt(2)
+        assertEquals(Math.sqrt(2.0), optimizer.getRMS(), 1.0e-6);
+        // consistency between RMS and chi2
+        assertEquals(optimizer.getChiSquare(), 2 * optimizer.getRMS() * optimizer.getRMS(), 1.0e-6);
+    }
+}

@@ -1,0 +1,129 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Codec
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Codec
+       Program: commons-codec
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Codec/Codec.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-codec.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Codec/active-bugs.csv
+Number of bugs: 18
+--------------------------------------------------------------------------------
+
+Summary for Bug: Codec-13
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+37ba197e62d6b60037d18afc33801e6221f1b8c6
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2014-04-10 13:51:06 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CODEC-184
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CODEC-184
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.codec.language.DoubleMetaphoneTest::testIsDoubleMetaphoneEqualBasic
+   --> java.lang.NullPointerException
+ - org.apache.commons.codec.language.DoubleMetaphoneTest::testCodec184
+   --> java.lang.NullPointerException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.codec.binary.CharSequenceUtils
+ - org.apache.commons.codec.binary.StringUtils
+ - org.apache.commons.codec.language.DoubleMetaphone
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.codec.binary.StringUtils ===
+diff --git a/src/main/java/org/apache/commons/codec/binary/StringUtils.java b/src/main/java/org/apache/commons/codec/binary/StringUtils.java
+index b3c399f5..8f1f57fa 100644
+--- a/src/main/java/org/apache/commons/codec/binary/StringUtils.java
++++ b/src/main/java/org/apache/commons/codec/binary/StringUtils.java
+@@ -67,6 +67,18 @@ public class StringUtils {
+      * @return {@code true} if the CharSequences are equal (case-sensitive), or both {@code null}
+      * @since 1.10
+      */
++    public static boolean equals(final CharSequence cs1, final CharSequence cs2) {
++        if (cs1 == cs2) {
++            return true;
++        }
++        if (cs1 == null || cs2 == null) {
++            return false;
++        }
++        if (cs1 instanceof String && cs2 instanceof String) {
++            return cs1.equals(cs2);
++        }
++        return CharSequenceUtils.regionMatches(cs1, false, 0, cs2, 0, Math.max(cs1.length(), cs2.length()));
++    }
+ 
+     /**
+      * Calls {@link String#getBytes(Charset)}
+
+=== MODIFIED SOURCE: org.apache.commons.codec.language.DoubleMetaphone ===
+diff --git a/src/main/java/org/apache/commons/codec/language/DoubleMetaphone.java b/src/main/java/org/apache/commons/codec/language/DoubleMetaphone.java
+index 125503ac..6ccd3f27 100644
+--- a/src/main/java/org/apache/commons/codec/language/DoubleMetaphone.java
++++ b/src/main/java/org/apache/commons/codec/language/DoubleMetaphone.java
+@@ -19,6 +19,7 @@ package org.apache.commons.codec.language;
+ 
+ import org.apache.commons.codec.EncoderException;
+ import org.apache.commons.codec.StringEncoder;
++import org.apache.commons.codec.binary.StringUtils;
+ 
+ /**
+  * Encodes a string into a double metaphone value. This Implementation is based on the algorithm by <CITE>Lawrence
+@@ -241,7 +242,7 @@ public class DoubleMetaphone implements StringEncoder {
+      *          {@code false} otherwise.
+      */
+     public boolean isDoubleMetaphoneEqual(final String value1, final String value2, final boolean alternate) {
+-        return doubleMetaphone(value1, alternate).equals(doubleMetaphone(value2, alternate));
++        return StringUtils.equals(doubleMetaphone(value1, alternate), doubleMetaphone(value2, alternate));
+     }
+ 
+     /**
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testIsDoubleMetaphoneEqualBasic() {
+        final String[][] testFixture = new String[][] { { 
+                "", "" }, {
+                "Case", "case" }, {
+                "CASE", "Case" }, {
+                "caSe", "cAsE" }, {
+                "cookie", "quick" }, {
+                "quick", "cookie" }, {
+                "Brian", "Bryan" }, {
+                "Auto", "Otto" }, {
+                "Steven", "Stefan" }, {
+                "Philipowitz", "Filipowicz" }
+        };
+        doubleMetaphoneEqualTest(testFixture, false);
+        doubleMetaphoneEqualTest(testFixture, true);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,80 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Cli
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Cli
+       Program: commons-cli
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/Cli.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-cli.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/active-bugs.csv
+Number of bugs: 39
+--------------------------------------------------------------------------------
+
+Summary for Bug: Cli-35
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+085a1538fa20d8e48faad49eaffd697f024bf1af
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-06-09 05:18:22 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CLI-252
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CLI-252
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.cli.bug.BugCLI252Test::testExactOptionNameMatch
+   --> org.apache.commons.cli.AmbiguousOptionException: Ambiguous option: '--prefix'  (could be: 'prefix', 'prefixplusplus')
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.cli.Options
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.cli.Options ===
+diff --git a/src/main/java/org/apache/commons/cli/Options.java b/src/main/java/org/apache/commons/cli/Options.java
+index e9a0aa9..798b176 100644
+--- a/src/main/java/org/apache/commons/cli/Options.java
++++ b/src/main/java/org/apache/commons/cli/Options.java
+@@ -237,6 +237,9 @@ public class Options implements Serializable
+         List<String> matchingOpts = new ArrayList<String>();
+ 
+         // for a perfect match return the single option only
++        if(longOpts.keySet().contains(opt)) {
++            return Collections.singletonList(opt);
++        }
+ 
+         for (String longOpt : longOpts.keySet())
+         {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testExactOptionNameMatch() throws ParseException {
+        new DefaultParser().parse(getOptions(), new String[]{"--prefix"});
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

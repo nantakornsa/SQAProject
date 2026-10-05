@@ -1,0 +1,84 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-35
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+76399e5b273d63d6affeb94597d8dfddce811964
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-10-06 16:20:52 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+313
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/313
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.parser.HtmlParserTest::handlesUnclosedAnchors
+   --> junit.framework.AssertionFailedError: expected:<...com/">Link</a>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.parser.HtmlTreeBuilderState
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.parser.HtmlTreeBuilderState ===
+diff --git a/src/main/java/org/jsoup/parser/HtmlTreeBuilderState.java b/src/main/java/org/jsoup/parser/HtmlTreeBuilderState.java
+index aebbe447..24bef3bc 100644
+--- a/src/main/java/org/jsoup/parser/HtmlTreeBuilderState.java
++++ b/src/main/java/org/jsoup/parser/HtmlTreeBuilderState.java
+@@ -723,6 +723,7 @@ enum HtmlTreeBuilderState {
+                             }
+ 
+                             Element adopter = new Element(formatEl.tag(), tb.getBaseUri());
++                            adopter.attributes().addAll(formatEl.attributes());
+                             Node[] childNodes = furthestBlock.childNodes().toArray(new Node[furthestBlock.childNodeSize()]);
+                             for (Node childNode : childNodes) {
+                                 adopter.appendChild(childNode); // append will reparent. thus the clone to avoid concurrent mod.
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void handlesUnclosedAnchors() {
+        String h = "<a href='http://example.com/'>Link<p>Error link</a>";
+        Document doc = Jsoup.parse(h);
+        String want = "<a href=\"http://example.com/\">Link</a>\n<p><a href=\"http://example.com/\">Error link</a></p>";
+        assertEquals(want, doc.body().html());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

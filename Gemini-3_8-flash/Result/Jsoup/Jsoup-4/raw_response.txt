@@ -1,0 +1,45 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791141492-fCgWPkxZaMk0hpkd1mSG","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing Jsoup Case Sensitivity**\n\nI've identified a bug in Jsoup-4 where `toLowerCase()` was improperly applied to entity names, breaking case sensitivity and causing issues like `&Uuml;` being mishandled. This is my primary focus right now.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.jsoup.nodes;\n\nimport org.junit.Test;\n\nimport java.nio."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"charset.Charset;\n\nimport static org.junit.Assert.assertEquals;\n\npublic class EntitiesRegressionTest {\n\n    @Test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n    public void testCaseSensitiveEntities() {\n        String text = \"Ü ü & &\";\n        String"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" escaped = Entities.escape(text, Charset.forName(\"ascii\").newEncoder(), Entities.EscapeMode.base"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":");\n        assertEquals(\"&Uuml; &uuml; &amp; &amp;\", escaped);\n\n        String unescap"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ed = Entities.unescape(escaped);\n        assertEquals(text, unescaped);\n    }\n}"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1396,"output_tokens":447,"output_tokens_details":{"thinking_tokens":298},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00272325,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00272325,"upstream_inference_prompt_cost":0.001047,"upstream_inference_completions_cost":0.00167625}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,35 @@
+```java
+package com.fasterxml.jackson.core.json;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonLocation;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import org.junit.Assert;
+import org.junit.Test;
+
+public class TestLocationOffsetBug3 {
+
+    @Test
+    public void testOffsetWithInputOffset() throws Exception {
+        JsonFactory f = new JsonFactory();
+        byte[] doc = "   { }".getBytes("UTF-8");
+        // Create parser starting at offset 3, so effective document is "{ }"
+        JsonParser p = f.createParser(doc, 3, doc.length - 3);
+
+        Assert.assertNull(p.currentToken());
+        JsonLocation loc = p.getCurrentLocation();
+        Assert.assertEquals(1, loc.getLineNr());
+        Assert.assertEquals(0, loc.getByteOffset());
+        Assert.assertEquals(1, loc.getColumnNr());
+
+        Assert.assertEquals(JsonToken.START_OBJECT, p.nextToken());
+        loc = p.getTokenLocation();
+        Assert.assertEquals(1, loc.getLineNr());
+        Assert.assertEquals(0, loc.getByteOffset());
+        Assert.assertEquals(1, loc.getColumnNr());
+
+        p.close();
+    }
+}
+```

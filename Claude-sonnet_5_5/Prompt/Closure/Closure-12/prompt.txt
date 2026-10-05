@@ -1,0 +1,88 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-12
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+d06ac163013a3779fcec7c2f544ba99d08f69f58
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-08-10 19:39:40 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+794
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-794.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.FlowSensitiveInlineVariablesTest::testIssue794b
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.MaybeReachingVariableUse
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.MaybeReachingVariableUse ===
+diff --git a/src/com/google/javascript/jscomp/MaybeReachingVariableUse.java b/src/com/google/javascript/jscomp/MaybeReachingVariableUse.java
+index add5c664a..8361ac9b2 100644
+--- a/src/com/google/javascript/jscomp/MaybeReachingVariableUse.java
++++ b/src/com/google/javascript/jscomp/MaybeReachingVariableUse.java
+@@ -157,6 +157,12 @@ class MaybeReachingVariableUse extends
+   }
+ 
+   private boolean hasExceptionHandler(Node cfgNode) {
++    List<DiGraphEdge<Node, Branch>> branchEdges = getCfg().getOutEdges(cfgNode);
++    for (DiGraphEdge<Node, Branch> edge : branchEdges) {
++      if (edge.getValue() == Branch.ON_EX) {
++        return true;
++      }
++    }
+     return false;
+   }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue794b() {
+    noInline(
+        "var x = 1; " +
+        "try { x = x + someFunction(); } catch (e) {}" +
+        "x = x + 1;" +
+        "try { x = x + someFunction(); } catch (e) {}" +
+        "return x;");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

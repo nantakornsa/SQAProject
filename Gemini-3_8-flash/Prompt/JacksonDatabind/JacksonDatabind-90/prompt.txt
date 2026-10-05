@@ -1,0 +1,106 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-90
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+a1404d5684783ccf28dc1b0a2791ce7c0c311907
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-10-23 20:02:43 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1804
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1804
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.creators.DelegatingArrayCreator1804Test::testDelegatingArray1804
+   --> com.fasterxml.jackson.databind.JsonMappingException: Can not construct instance of com.fasterxml.jackson.databind.creators.DelegatingArrayCreator1804Test$MyType: abstract types either need to be mapped to concrete types, have custom deserializer, or contain additional type information
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.deser.ValueInstantiator
+ - com.fasterxml.jackson.databind.deser.std.StdValueInstantiator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.deser.ValueInstantiator ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/deser/ValueInstantiator.java b/src/main/java/com/fasterxml/jackson/databind/deser/ValueInstantiator.java
+index b721f6909..fceac96e9 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/deser/ValueInstantiator.java
++++ b/src/main/java/com/fasterxml/jackson/databind/deser/ValueInstantiator.java
+@@ -69,7 +69,7 @@ public abstract class ValueInstantiator
+      */
+     public boolean canInstantiate() {
+         return canCreateUsingDefault()
+-                || canCreateUsingDelegate() 
++                || canCreateUsingDelegate() || canCreateUsingArrayDelegate()
+                 || canCreateFromObjectWith() || canCreateFromString()
+                 || canCreateFromInt() || canCreateFromLong()
+                 || canCreateFromDouble() || canCreateFromBoolean();
+
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.deser.std.StdValueInstantiator ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/deser/std/StdValueInstantiator.java b/src/main/java/com/fasterxml/jackson/databind/deser/std/StdValueInstantiator.java
+index 917bdfe82..97057703a 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/deser/std/StdValueInstantiator.java
++++ b/src/main/java/com/fasterxml/jackson/databind/deser/std/StdValueInstantiator.java
+@@ -229,6 +229,14 @@ public class StdValueInstantiator
+         return (_withArgsCreator != null);
+     }
+ 
++    @Override
++    public boolean canInstantiate() {
++        return canCreateUsingDefault()
++                || canCreateUsingDelegate() || canCreateUsingArrayDelegate()
++                || canCreateFromObjectWith() || canCreateFromString()
++                || canCreateFromInt() || canCreateFromLong()
++                || canCreateFromDouble() || canCreateFromBoolean();
++    }
+ 
+     @Override
+     public JavaType getDelegateType(DeserializationConfig config) {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testDelegatingArray1804() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        MyType thing = mapper.readValue("[]", MyType.class);
+        assertNotNull(thing);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

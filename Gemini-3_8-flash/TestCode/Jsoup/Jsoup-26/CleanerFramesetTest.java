@@ -1,0 +1,24 @@
+package org.jsoup.safety;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+public class CleanerFramesetTest {
+
+    @Test
+    public void testCleanFramesetDocumentDoesNotThrowNullPointerException() {
+        String dirty = "<html><head><script></script><noscript></noscript></head><frameset><frame src=\"foo\" /><frame src=\"foo\" /></frameset></html>";
+        
+        String clean = Jsoup.clean(dirty, Whitelist.basic());
+        assertEquals("", clean);
+
+        Document dirtyDoc = Jsoup.parse(dirty);
+        Document cleanDoc = new Cleaner(Whitelist.basic()).clean(dirtyDoc);
+        assertNotNull(cleanDoc);
+        assertEquals(0, cleanDoc.body().childNodes().size());
+    }
+}

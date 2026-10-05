@@ -1,0 +1,31 @@
+This regression test reproduces the MATH-631 scenario. I have not compiled or run it against the buggy and fixed versions. It uses the same function and bounds as the triggering test, and the project's JUnit 4 `Assert` style.
+
+On the buggy version, `RegulaFalsiSolver` makes no progress and throws `TooManyEvaluationsException` after 3,624 evaluations. On the fixed version, `BaseSecantSolver` updates the search interval and the solver converges to the expected root.
+
+```java
+package org.apache.commons.math.analysis.solvers;
+
+import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.junit.Assert;
+import org.junit.Test;
+
+/**
+ * Regression test for MATH-631: the Regula Falsi solver failed to converge
+ * because the update formula could not make any progress.
+ */
+public class RegulaFalsiSolverTest {
+
+    @Test
+    public void testIssue631() {
+        final UnivariateRealFunction f = new UnivariateRealFunction() {
+            public double value(double x) {
+                return Math.exp(x) - Math.pow(Math.PI, 3.0);
+            }
+        };
+
+        final UnivariateRealSolver solver = new RegulaFalsiSolver();
+        final double root = solver.solve(3624, f, 1, 10);
+        Assert.assertEquals(3.4341896575482003, root, 1e-15);
+    }
+}
+```

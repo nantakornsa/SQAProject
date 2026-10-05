@@ -1,0 +1,224 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JxPath
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JxPath
+       Program: commons-jxpath
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JxPath/JxPath.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-jxpath.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JxPath/active-bugs.csv
+Number of bugs: 22
+--------------------------------------------------------------------------------
+
+Summary for Bug: JxPath-4
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+9f912437a14392f8d4c98aa811e9134fbf7b5a52
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2007-05-16 19:47:47 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+JXPATH-83
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/JXPATH-83
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.jxpath.ri.model.XMLSpaceTest::testPreserveDOM
+   --> junit.framework.AssertionFailedError: expected:<foo> but was:< foo >
+ - org.apache.commons.jxpath.ri.model.XMLSpaceTest::testNestedJDOM
+   --> junit.framework.AssertionFailedError: expected:<> but was:<foo;bar; baz >
+ - org.apache.commons.jxpath.ri.model.XMLSpaceTest::testNestedWithCommentsJDOM
+   --> junit.framework.AssertionFailedError: expected:<> but was:<foo;bar; baz >
+ - org.apache.commons.jxpath.ri.model.XMLSpaceTest::testPreserveJDOM
+   --> junit.framework.AssertionFailedError: expected:<foo> but was:< foo >
+ - org.apache.commons.jxpath.ri.model.XMLSpaceTest::testNestedDOM
+   --> junit.framework.AssertionFailedError: expected:<foo
+ - org.apache.commons.jxpath.ri.model.XMLSpaceTest::testNestedWithCommentsDOM
+   --> junit.framework.AssertionFailedError: expected:<foo
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.jxpath.ri.model.dom.DOMNodePointer
+ - org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.jxpath.ri.model.dom.DOMNodePointer ===
+diff --git a/src/java/org/apache/commons/jxpath/ri/model/dom/DOMNodePointer.java b/src/java/org/apache/commons/jxpath/ri/model/dom/DOMNodePointer.java
+index 5236867..1ad9324 100644
+--- a/src/java/org/apache/commons/jxpath/ri/model/dom/DOMNodePointer.java
++++ b/src/java/org/apache/commons/jxpath/ri/model/dom/DOMNodePointer.java
+@@ -293,12 +293,11 @@ public class DOMNodePointer extends NodePointer {
+                 : current.toUpperCase().startsWith(lang.toUpperCase());
+     }
+ 
+-    protected String getLanguage() {
+-        Node n = node;
++    protected static String findEnclosingAttribute(Node n, String attrName) {
+         while (n != null) {
+             if (n.getNodeType() == Node.ELEMENT_NODE) {
+                 Element e = (Element) n;
+-                String attr = e.getAttribute("xml:lang");
++                String attr = e.getAttribute(attrName);
+                 if (attr != null && !attr.equals("")) {
+                     return attr;
+                 }
+@@ -308,6 +307,9 @@ public class DOMNodePointer extends NodePointer {
+         return null;
+     }
+ 
++    protected String getLanguage() {
++        return findEnclosingAttribute(node, "xml:lang");
++    }
+ 
+     /**
+      * Sets contents of the node to the specified value. If the value is
+@@ -629,35 +631,34 @@ public class DOMNodePointer extends NodePointer {
+     }
+ 
+     public Object getValue() {
++        if (node.getNodeType() == Node.COMMENT_NODE) {
++            String text = ((Comment) node).getData();
++            return text == null ? "" : text.trim();
++        }
+         return stringValue(node);
+     }
+ 
+     private String stringValue(Node node) {
+         int nodeType = node.getNodeType();
+         if (nodeType == Node.COMMENT_NODE) {
+-            String text = ((Comment) node).getData();
+-            return text == null ? "" : text.trim();
++            return "";
+         }
++        boolean trim = !"preserve".equals(findEnclosingAttribute(node, "xml:space"));
+         if (nodeType == Node.TEXT_NODE || nodeType == Node.CDATA_SECTION_NODE) {
+             String text = node.getNodeValue();
+-            return text == null ? "" : text.trim();
++            return text == null ? "" : trim ? text.trim() : text;
+         }
+         if (nodeType == Node.PROCESSING_INSTRUCTION_NODE) {
+             String text = ((ProcessingInstruction) node).getData();
+-            return text == null ? "" : text.trim();
++            return text == null ? "" : trim ? text.trim() : text;
+         }
+         NodeList list = node.getChildNodes();
+         StringBuffer buf = new StringBuffer(16);
+         for (int i = 0; i < list.getLength(); i++) {
+             Node child = list.item(i);
+-            if (child.getNodeType() == Node.TEXT_NODE) {
+-                buf.append(child.getNodeValue());
+-            }
+-            else {
+             buf.append(stringValue(child));
+-            }
+         }
+-        return buf.toString().trim();
++        return buf.toString();
+     }
+ 
+     /**
+
+=== MODIFIED SOURCE: org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer ===
+diff --git a/src/java/org/apache/commons/jxpath/ri/model/jdom/JDOMNodePointer.java b/src/java/org/apache/commons/jxpath/ri/model/jdom/JDOMNodePointer.java
+index 975dbc4..a26f118 100644
+--- a/src/java/org/apache/commons/jxpath/ri/model/jdom/JDOMNodePointer.java
++++ b/src/java/org/apache/commons/jxpath/ri/model/jdom/JDOMNodePointer.java
+@@ -237,7 +237,14 @@ public class JDOMNodePointer extends NodePointer {
+ 
+     public Object getValue() {
+         if (node instanceof Element) {
+-            return ((Element) node).getTextTrim();
++            StringBuffer buf = new StringBuffer();
++            for (NodeIterator children = childIterator(null, false, null); children.setPosition(children.getPosition() + 1);) {
++                NodePointer ptr = children.getNodePointer();
++                if (ptr.getImmediateNode() instanceof Element || ptr.getImmediateNode() instanceof Text) {
++                    buf.append(ptr.getValue());
++                }
++            }
++            return buf.toString();
+         }
+         if (node instanceof Comment) {
+             String text = ((Comment) node).getText();
+@@ -246,20 +253,15 @@ public class JDOMNodePointer extends NodePointer {
+             }
+             return text;
+         }
++        String result = null;
+         if (node instanceof Text) {
+-            return ((Text) node).getTextTrim();
+-        }
+-        if (node instanceof CDATA) {
+-            return ((CDATA) node).getTextTrim();
++            result = ((Text) node).getText();
+         }
+         if (node instanceof ProcessingInstruction) {
+-            String text = ((ProcessingInstruction) node).getData();
+-            if (text != null) {
+-                text = text.trim();
+-            }
+-            return text;
++            result = ((ProcessingInstruction) node).getData();
+         }
+-        return null;
++        boolean trim = !"preserve".equals(findEnclosingAttribute(node, "space", Namespace.XML_NAMESPACE));
++        return result != null && trim ? result.trim() : result;
+     }
+ 
+     public void setValue(Object value) {
+@@ -433,12 +435,14 @@ public class JDOMNodePointer extends NodePointer {
+     }
+ 
+     protected String getLanguage() {
+-        Object n = node;
++        return findEnclosingAttribute(node, "lang", Namespace.XML_NAMESPACE);
++    }
++
++    protected static String findEnclosingAttribute(Object n, String attrName, Namespace ns) {
+         while (n != null) {
+             if (n instanceof Element) {
+                 Element e = (Element) n;
+-                String attr =
+-                    e.getAttributeValue("lang", Namespace.XML_NAMESPACE);
++                String attr = e.getAttributeValue(attrName, ns);
+                 if (attr != null && !attr.equals("")) {
+                     return attr;
+                 }
+@@ -753,4 +757,4 @@ public class JDOMNodePointer extends NodePointer {
+         return factory;
+     }
+ 
+-}
++}
+\ No newline at end of file
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testPreserveDOM() {
+        doTest("preserve", DocumentContainer.MODEL_DOM, " foo ");
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,78 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791147892-AqJQ9LC7dRe0ppXFvQKS","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1724,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" b"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ug is in `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"BrentSolver.sol"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ve(f, min, max,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" initial)`. When the init"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ial guess is not a root"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" and ne"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ither s"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ub-interval br"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ackets one"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":", the buggy version never checks that `[min, max]` brackets a root. It goes straight into the full Brent algorithm.\n\nThe test uses `SinFunction` with `solve(f, 1, 1.5, 1.2"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":")`.\n- sin(1) and sin(1.5) are both positive, so the interval does not bracket a root.\n- sin(1.2) is positive, so the initial guess is not a root.\n- The fix adds the `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"yMin * yMax > 0` check, so the fixed version throws `IllegalArgumentException`.\n\nThis matches the project's JUnit 3 style (`TestCase`, `fail`). `SinFunction`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" lives in the same package (`org.apache.commons.math.analysis`), so I import it from there.\n\n```java\npackage org.apache.commons.math.analysis.solvers;\n\nimport junit.framework.TestC"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ase;\n\nimport org.apache.commons.math.analysis.SinFunction;\nimport org.apache.commons.math.analysis.UnivariateRealFunction;\n\n/**\n * Regression test for MATH-343: BrentSolver must reject non-bracketing\n * intervals when an"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" initial guess is supplied.\n */\npublic class BrentSolverNonBracketingRegressionTest extends TestCase {\n\n    public void testBadEndpointsWithInitialGuess() throws Exception {\n        UnivariateRealFunction f = new SinFunction();\n        Univari"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ateRealSolver solver = new BrentSolver();\n        try {  // no bracket, initial guess supplied\n            solver.solve(f, 1, 1.5, 1.2);\n            fail(\"Expecting IllegalArgumentException - non-brac"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"keting\");\n        } catch (IllegalArgumentException ex) {\n            // expected\n        }\n    }\n\n    public void testBadEndpointsWithoutInitialGuess() throws Exception {\n        UnivariateRealFunction f = new SinFunction();\n        UnivariateRealSolver"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" solver = new BrentSolver();\n        try {  // no bracket\n            solver.solve(f, 1, 1.5);\n            fail(\"Expecting IllegalArgumentException - non-bracketing\");\n        } catch (IllegalArgumentException ex) {\n            // expected\n        }\n    }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1724,"output_tokens":781,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.011258,"is_byok":false,"cost_details":{"upstream_inference_cost":0.011258,"upstream_inference_prompt_cost":0.003448,"upstream_inference_completions_cost":0.00781}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

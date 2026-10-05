@@ -1,0 +1,60 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791106743-TiU2MWnunGdv5CSktqe0","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Jackson Core Bug**\n\nI'm currently digging into Jackson Core bug 14, specifically within the `IOContext._verifyRelease` method. The core issue appears to be a condition in the buggy version (`toRelease.length <= src.length`) that's been addressed in the fixed version.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.core"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".io;\n\nimport com.fasterxml.jackson.core.util.BufferRecycler;\nimport org.junit.Test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\n\nimport static org.junit.Assert.fail;\n\npublic class TestIOContextReleaseBuffer {\n\n    @Test\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"public void testReleaseSameLengthDifferentBuffer() {\n        IOContext ctxt = new IOContext(new BufferRecycl"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"er(), \"source\", false);\n\n        // Test byte[] buffer release\n        byte[] readBuffer = ctxt.allocRead"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"IOBuffer();\n        byte[] differentByteBuffer = new byte[readBuffer.length];\n        try {\n            ctxt.release"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ReadIOBuffer(differentByteBuffer);\n        } catch (IllegalArgumentException e) {\n            fail(\"Releasing a different buffer of the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" same length should be allowed, but threw: \" + e.getMessage());\n        }\n\n        // Test char[]"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" buffer release\n        char[] concatBuffer = ctxt.allocConcatBuffer();\n        char[] differentCharBuffer = new char"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"[concatBuffer.length];\n        try {\n            ctxt.releaseConcatBuffer(differentCharBuffer);\n        } catch ("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"IllegalArgumentException e) {\n            fail(\"Releasing a different buffer of the same length should be allowed, but threw"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":": \" + e.getMessage());\n        }\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1161,"output_tokens":711,"output_tokens_details":{"thinking_tokens":421},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.003537,"is_byok":false,"cost_details":{"upstream_inference_cost":0.003537,"upstream_inference_prompt_cost":0.00087075,"upstream_inference_completions_cost":0.00266625}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

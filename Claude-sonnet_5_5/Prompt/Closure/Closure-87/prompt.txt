@@ -1,0 +1,105 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-87
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+f64a3f51bd346547ce6e1edb30601df73dff27d9
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-12-14 23:17:54 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+291
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-291.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.PeepholeSubstituteAlternateSyntaxTest::testIssue291
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.PeepholeSubstituteAlternateSyntax
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.PeepholeSubstituteAlternateSyntax ===
+diff --git a/src/com/google/javascript/jscomp/PeepholeSubstituteAlternateSyntax.java b/src/com/google/javascript/jscomp/PeepholeSubstituteAlternateSyntax.java
+index 9498fa6e8..6c4ee4a93 100644
+--- a/src/com/google/javascript/jscomp/PeepholeSubstituteAlternateSyntax.java
++++ b/src/com/google/javascript/jscomp/PeepholeSubstituteAlternateSyntax.java
+@@ -520,17 +520,29 @@ public class PeepholeSubstituteAlternateSyntax
+     if (n.getType() == Token.BLOCK) {
+       if (n.hasOneChild()) {
+         Node maybeExpr = n.getFirstChild();
++        if (maybeExpr.getType() == Token.EXPR_RESULT) {
+           // IE has a bug where event handlers behave differently when
+           // their return value is used vs. when their return value is in
+           // an EXPR_RESULT. It's pretty freaking weird. See:
+           // http://code.google.com/p/closure-compiler/issues/detail?id=291
+           // We try to detect this case, and not fold EXPR_RESULTs
+           // into other expressions.
++          if (maybeExpr.getFirstChild().getType() == Token.CALL) {
++            Node calledFn = maybeExpr.getFirstChild().getFirstChild();
+ 
+             // We only have to worry about methods with an implicit 'this'
+             // param, or this doesn't happen.
++            if (calledFn.getType() == Token.GETELEM) {
++              return false;
++            } else if (calledFn.getType() == Token.GETPROP &&
++                       calledFn.getLastChild().getString().startsWith("on")) {
++              return false;
++            }
++          }
+ 
+-          return NodeUtil.isExpressionNode(maybeExpr);
++          return true;
++        }
++        return false;
+       }
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue291() {
+    fold("if (true) { f.onchange(); }", "if (1) f.onchange();");
+    foldSame("if (f) { f.onchange(); }");
+    foldSame("if (f) { f.bar(); } else { f.onchange(); }");
+    fold("if (f) { f.bonchange(); }", "f && f.bonchange();");
+    foldSame("if (f) { f['x'](); }");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

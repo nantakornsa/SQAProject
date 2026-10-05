@@ -1,0 +1,117 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791199504-zsIrbOgjOnKFNlED8RQF","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1976,"output_tokens":2,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I need to constru"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ct a test case for ScopedAliasesTest demonstrating the function declaration bug—where in the buggy version, a function declared inside a scope isn't flagged since its parent isn't a var statement, while"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" the fixed version correctly reports it. I'm trying to recall the existing test class structure, including its externs setup, so I can write a compilable version that matches the original conventions."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"Since the constructor signature"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" is risky to"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" guess, I'm considering an alternative approach: running the full compiler pipeline with closurePass enabled instead of instantiating ScopedAliases directly, since that pass should f"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ire automatically when the option is set. I'm trying to recall whether the 2012-era DefaultPassConfig actually registers the goog.scope alias pass under that flag."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I'm trying to rec"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"all whether the transformation handler took two constructor arguments based on the alias diff, and whether I should avoid the JSSourceFile/SourceFile naming conf"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"usion from that era by testing against the Compiler API directly rather than CompilerTestCase."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I recall C"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ompilerOptions defines NULL_ALIAS_TRANSFORMATION_HANDLER as a constant pointing to a no-op handler implementation, so I'll just use that directly in the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" constructor call. Time to write the test."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1zb25uZXQtNS41LTIwMjYwOTI4fGNsYXVkZS1vbi1hd3MifQ"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.google.javascript.jscomp;\n\nimport com.google.javascript.jscomp.CompilerOptions.AliasTransformation"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Handler;\n\npublic class ScopedAliasesTest extends CompilerTestCase {\n\n  private AliasTransformationHandler transformationHandler =\n      CompilerOptions.NULL_ALIAS_TRANSFORMATION_HANDLER;\n\n  @Override\n  protected Compil"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"erPass getProcessor(Compiler compiler) {\n    return new ScopedAliases(compiler, transformationHandler);\n  }\n\n  @Override\n  public int getNumRepetitions() {\n    return 1;\n  }\n\n  private"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" void testScopedFailure(String code, DiagnosticType expectedError) {\n    test(\"goog.scope(function() {\" + code + \"});\",\n        null, expectedError);\n  }\n\n  public void testFunctionDeclarationInScopeIsNonAliasLocal() {\n    testScopedF"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ailure(\"function f() {}\",\n        ScopedAliases.GOOG_SCOPE_NON_ALIAS_LOCAL);\n  }\n\n  public void testNonAliasLocal() {\n    testScopedFailure(\"var x = 10\", ScopedAliases."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"GOOG_SCOPE_NON_ALIAS_LOCAL);\n    testScopedFailure(\"var x = goog.dom + 10\",\n        ScopedAliases.GOOG_SCOPE_NON_ALIAS_LOCAL);\n    testScopedF"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ailure(\"var x = goog['dom']\",\n        ScopedAliases.GOOG_SCOPE_NON_ALIAS_LOCAL);\n    testScopedFailure(\"var x = goog.dom, y = 10\",\n        ScopedAliases.GOOG_SCOP"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"E_NON_ALIAS_LOCAL);\n    testScopedFailure(\"function f() {}\",\n        ScopedAliases.GOOG_SCOPE_NON_ALIAS_LOCAL);\n  }\n}\n```\n\nI wrote this from memory of the project"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"'s `ScopedAliasesTest` and did not compile or run it. Two things could break it:\n- **Constructor and constant:** I assumed `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ScopedAliases` takes `(compiler, transformationHandler)` and that `CompilerOptions.NULL_ALIAS_TRANSFORMATION_HANDLER` exists at this revision. If either differs, the test will"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" not compile.\n- **Class replacement:** the class replaces the real `ScopedAliasesTest` rather than adding to it, so it only"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" carries the helpers these two tests need.\n\n`testFunctionDeclarationInScopeIsNonAliasLocal` isolates the `function f() {}` case from the triggering test. On the buggy version the function"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" declaration's parent is not a `var`, so no error is reported and the test fails with \"There should be one error. expected:<1> but was:<0>\". The fix adds the `GOOG_SCOPE_NON_ALIAS_LOCAL"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"` report for that case, so the test passes there. `testNonAliasLocal` is the original triggering test and fails on the buggy version for the same reason."}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1976,"output_tokens":2932,"output_tokens_details":{"thinking_tokens":1905},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.033272,"is_byok":false,"cost_details":{"upstream_inference_cost":0.033272,"upstream_inference_prompt_cost":0.003952,"upstream_inference_completions_cost":0.02932}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

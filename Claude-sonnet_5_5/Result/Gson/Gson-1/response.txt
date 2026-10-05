@@ -1,0 +1,125 @@
+```java
+package com.google.gson.functional;
+
+import com.google.gson.Gson;
+
+import junit.framework.TestCase;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Functional test for type variables that must be resolved through a
+ * multi-level class hierarchy.
+ */
+public class TypeVariableTest extends TestCase {
+
+  public void testSingle() throws Exception {
+    Gson gson = new Gson();
+    Bar bar1 = new Bar("someString", 1);
+    ArrayList<Integer> arrayList = new ArrayList<Integer>();
+    arrayList.add(1);
+    arrayList.add(2);
+    bar1.map.put("key1", arrayList);
+    bar1.map.put("key2", new ArrayList<Integer>());
+    String json = gson.toJson(bar1);
+
+    Bar bar2 = gson.fromJson(json, Bar.class);
+    assertEquals(bar1, bar2);
+  }
+
+  public void testTypeVariableResolvedThroughHierarchy() throws Exception {
+    Gson gson = new Gson();
+    Bar bar = new Bar("hello", 42);
+    String json = gson.toJson(bar);
+    assertTrue(json.contains("\"s\":\"hello\""));
+    assertTrue(json.contains("\"t\":42"));
+
+    Bar deserialized = gson.fromJson("{\"s\":\"abc\",\"t\":7,\"map\":{}}", Bar.class);
+    assertEquals("abc", deserialized.s);
+    assertEquals(Integer.valueOf(7), deserialized.t);
+  }
+
+  @SuppressWarnings("unused")
+  private static class Blob<S> {
+    S s;
+
+    Blob(S s) {
+      this.s = s;
+    }
+
+    @Override
+    public int hashCode() {
+      return s == null ? 0 : s.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      Blob<?> other = (Blob<?>) o;
+      return s == null ? other.s == null : s.equals(other.s);
+    }
+  }
+
+  @SuppressWarnings("unused")
+  private static class Foo<S, T> extends Blob<S> {
+    T t;
+
+    Foo(S s, T t) {
+      super(s);
+      this.t = t;
+    }
+
+    @Override
+    public int hashCode() {
+      return super.hashCode() * 31 + (t == null ? 0 : t.hashCode());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (!super.equals(o)) {
+        return false;
+      }
+      Foo<?, ?> other = (Foo<?, ?>) o;
+      return t == null ? other.t == null : t.equals(other.t);
+    }
+  }
+
+  private static class Bar extends Foo<String, Integer> {
+    Map<String, Collection<Integer>> map = new HashMap<String, Collection<Integer>>();
+
+    Bar() {
+      super(null, null);
+    }
+
+    Bar(String s, int t) {
+      super(s, t);
+    }
+
+    @Override
+    public int hashCode() {
+      return super.hashCode() * 31 + map.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (!super.equals(o)) {
+        return false;
+      }
+      Bar other = (Bar) o;
+      return map.equals(other.map);
+    }
+  }
+}
+```
+
+I haven't compiled or run this against the buggy and fixed versions. The `Blob<S>` → `Foo<S,T>` → `Bar extends Foo<String,Integer>` hierarchy is my reconstruction, not copied from the original Gson test. The bug should be triggered when Gson resolves field `s`, declared in `Blob`, from the `Bar` class: `S` has to be traced through `Foo`'s own type variable to `String`. That is the case the fix adds to `TypeInfoFactory`.
+
+`Bar` also has a no-arg constructor, so deserialization does not depend on Gson's unsafe allocator.

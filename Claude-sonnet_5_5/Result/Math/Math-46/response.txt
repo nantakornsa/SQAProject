@@ -1,0 +1,38 @@
+The fix makes division by a zero divisor return NaN. Before the fix, a non-zero numerator divided by zero returned INF. The test below checks both `divide(Complex)` and `divide(double)`, plus `atan()` of `I`, which the triggering test covers. `Complex.I.atan()` divides by a zero complex value internally, so on the buggy version it gives INF rather than NaN.
+
+The project uses JUnit 4 style (`org.junit.Assert`, with `TestCase`-style names), so I used `@Test` annotations.
+
+```java
+package org.apache.commons.math.complex;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+public class ComplexDivideByZeroRegressionTest {
+
+    @Test
+    public void testAtanI() {
+        Assert.assertTrue(Complex.I.atan().isNaN());
+    }
+
+    @Test
+    public void testDivideComplexByZero() {
+        Complex numerator = new Complex(1.0, 1.0);
+        Complex result = numerator.divide(Complex.ZERO);
+        Assert.assertTrue(result.isNaN());
+    }
+
+    @Test
+    public void testDivideDoubleByZero() {
+        Complex numerator = new Complex(1.0, 1.0);
+        Complex result = numerator.divide(0.0);
+        Assert.assertTrue(result.isNaN());
+    }
+
+    @Test
+    public void testDivideZeroByZero() {
+        Assert.assertTrue(Complex.ZERO.divide(Complex.ZERO).isNaN());
+        Assert.assertTrue(Complex.ZERO.divide(0.0).isNaN());
+    }
+}
+```

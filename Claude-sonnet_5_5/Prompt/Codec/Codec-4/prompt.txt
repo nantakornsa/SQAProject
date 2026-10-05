@@ -1,0 +1,87 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Codec
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Codec
+       Program: commons-codec
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Codec/Codec.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-codec.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Codec/active-bugs.csv
+Number of bugs: 18
+--------------------------------------------------------------------------------
+
+Summary for Bug: Codec-4
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+bcfef8906931a7929a6db14b9d82d387fd3f17f6
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-03-27 00:02:22 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CODEC-89
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CODEC-89
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.codec.binary.Base64Codec13Test::testEncoder
+   --> junit.framework.AssertionFailedError: Encoder test-1
+ - org.apache.commons.codec.binary.Base64Codec13Test::testBinaryEncoder
+   --> junit.framework.AssertionFailedError: BinaryEncoder test-1
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.codec.binary.Base64
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+diff --git a/src/java/org/apache/commons/codec/binary/Base64.java b/src/java/org/apache/commons/codec/binary/Base64.java
+index e4d1276c..31671e69 100644
+--- a/src/java/org/apache/commons/codec/binary/Base64.java
++++ b/src/java/org/apache/commons/codec/binary/Base64.java
+@@ -222,7 +222,7 @@ public class Base64 implements BinaryEncoder, BinaryDecoder {
+      * </p>
+      */
+     public Base64() {
+-        this(false);
++        this(0);
+     }
+ 
+     /**
+
+=== TRIGGERING TEST METHOD ===
+    public void testEncoder() throws EncoderException {
+        Encoder enc = new Base64();
+        for (int i = 0; i < STRINGS.length; i++) {
+            if (STRINGS[i] != null) {
+                byte[] base64 = utf8(STRINGS[i]);
+                byte[] binary = BYTES[i];
+                boolean b = Arrays.equals(base64, (byte[]) enc.encode(binary));
+                assertTrue("Encoder test-" + i, b);
+            }
+        }
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

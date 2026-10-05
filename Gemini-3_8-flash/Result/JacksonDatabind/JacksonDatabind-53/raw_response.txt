@@ -1,0 +1,84 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791184720-UEMARVCn5EL75YJHu6k3","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Jackson Bug**\n\nI'm currently pinpointing the root cause of JacksonDatabind-53, specifically within `constructSpecializedType`. My focus is on how type parameters are bound for Map/collection subtypes and the implications of caching parameterized types with bindings keys.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing Map Refinement**\n\nI'm now examining `TypeRefinementForMap1215Test` to understand how abstract types with type parameters, particularly within Maps, are handled. This involves observing the test's structure and the specific failure scenario described in bug report 1215.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".jsontype;\n\nimport java.util.HashMap;\n\nimport com.fasterxml.jackson.annotation.Json"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"TypeInfo;\nimport com.fasterxml.jackson.databind.BaseMapTest;\nimport com.fasterxml.jackson"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".databind.ObjectMapper;\n\npublic class TypeRefinementForMap1215Test extends BaseMapTest\n{\n    @JsonType"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Info(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"public interface HasUniqueId {\n        String getId();\n    }\n\n    public static class UniqueIdBean implements Has"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"UniqueId {\n        protected String id;\n\n        public UniqueIdBean() { }\n        public UniqueIdBean"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(String id) { this.id = id; }\n\n        @Override\n        public String getId() { return"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" id; }\n        public void setId(String id) { this.id = id; }\n    }\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    public static class UniqueIdMap<V> extends HashMap<String, V> {\n        private static final long"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" serialVersionUID = 1L;\n    }\n\n    public static class UniqueIdMapBean {\n        public Unique"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"IdMap<HasUniqueId> map;\n    }\n\n    public void testMapRefinement() throws Exception\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    {\n        ObjectMapper mapper = new ObjectMapper();\n        UniqueIdMapBean bean = new UniqueIdMapBean();"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        bean.map = new UniqueIdMap<HasUniqueId>();\n        bean.map.put(\"key"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\", new UniqueIdBean(\"abc\"));\n        String json = mapper.writeValueAsString(bean);\n\n        UniqueId"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"MapBean result = mapper.readValue(json, UniqueIdMapBean.class);\n        assertNotNull(result);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        assertNotNull(result.map);\n        HasUniqueId value = result.map.get(\"key\");"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        assertNotNull(value);\n        assertEquals(\"abc\", value.getId());\n    }\n}\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2804,"output_tokens":1114,"output_tokens_details":{"thinking_tokens":690},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.0062805,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0062805,"upstream_inference_prompt_cost":0.002103,"upstream_inference_completions_cost":0.0041775}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

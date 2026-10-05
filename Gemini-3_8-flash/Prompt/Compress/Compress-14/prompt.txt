@@ -1,0 +1,102 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Compress
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Compress
+       Program: commons-compress
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/Compress.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-compress.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/active-bugs.csv
+Number of bugs: 47
+--------------------------------------------------------------------------------
+
+Summary for Bug: Compress-14
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+40f2e6380094ebfdc73e4adaf4059b80e1327aad
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-03-02 19:59:50 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COMPRESS-181
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COMPRESS-181
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.compress.archivers.tar.TarArchiveInputStreamTest::workaroundForBrokenTimeHeader
+   --> java.io.IOException: Error detected parsing the header
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.compress.archivers.tar.TarUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.compress.archivers.tar.TarUtils ===
+diff --git a/src/main/java/org/apache/commons/compress/archivers/tar/TarUtils.java b/src/main/java/org/apache/commons/compress/archivers/tar/TarUtils.java
+index 8239480f..d989b8a7 100644
+--- a/src/main/java/org/apache/commons/compress/archivers/tar/TarUtils.java
++++ b/src/main/java/org/apache/commons/compress/archivers/tar/TarUtils.java
+@@ -62,14 +62,7 @@ public class TarUtils {
+             throw new IllegalArgumentException("Length "+length+" must be at least 2");
+         }
+ 
+-        boolean allNUL = true;
+-        for (int i = start; i < end; i++){
+-            if (buffer[i] != 0){
+-                allNUL = false;
+-                break;
+-            }
+-        }
+-        if (allNUL) {
++        if (buffer[start] == 0) {
+             return 0L;
+         }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void workaroundForBrokenTimeHeader() throws Exception {
+        URL tar = getClass().getResource("/simple-aix-native-tar.tar");
+        TarArchiveInputStream in = null;
+        try {
+            in = new TarArchiveInputStream(new FileInputStream(new File(new URI(tar.toString()))));
+            TarArchiveEntry tae = in.getNextTarEntry();
+            tae = in.getNextTarEntry();
+            assertEquals("sample/link-to-txt-file.lnk", tae.getName());
+            assertEquals(new Date(0), tae.getLastModifiedDate());
+            assertTrue(tae.isSymbolicLink());
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+        }
+    }        
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

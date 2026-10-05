@@ -1,0 +1,18 @@
+```java
+package org.apache.commons.lang.text;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for LANG-295 (StrBuilder contains(char) and indexOf(char) looking beyond the buffer size).
+ */
+public class StrBuilderRegressionTest extends TestCase {
+
+    public void testContainsAndIndexOfCharBeyondSize() {
+        StrBuilder sb = new StrBuilder("onetwothree");
+        sb.deleteFirst("three");
+        assertFalse("The contains(char) method is looking beyond the end of the string", sb.contains('h'));
+        assertEquals("The indexOf(char) method is looking beyond the end of the string", -1, sb.indexOf('h'));
+    }
+}
+```

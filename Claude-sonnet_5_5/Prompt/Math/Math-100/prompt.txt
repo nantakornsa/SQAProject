@@ -1,0 +1,128 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-100
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+2c443ab8b0efce5485f63eed62213091a188c993
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-03-28 20:06:54 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-200
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-200
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.estimation.GaussNewtonEstimatorTest::testBoundParameters
+   --> java.lang.ArrayIndexOutOfBoundsException: 6
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.estimation.AbstractEstimator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.estimation.AbstractEstimator ===
+diff --git a/src/java/org/apache/commons/math/estimation/AbstractEstimator.java b/src/java/org/apache/commons/math/estimation/AbstractEstimator.java
+index ea5083d3c..8e5fe1ad0 100644
+--- a/src/java/org/apache/commons/math/estimation/AbstractEstimator.java
++++ b/src/java/org/apache/commons/math/estimation/AbstractEstimator.java
+@@ -163,7 +163,7 @@ public abstract class AbstractEstimator implements Estimator {
+ 
+         // compute transpose(J).J, avoiding building big intermediate matrices
+         final int rows = problem.getMeasurements().length;
+-        final int cols = problem.getAllParameters().length;
++        final int cols = problem.getUnboundParameters().length;
+         final int max  = cols * rows;
+         double[][] jTj = new double[cols][cols];
+         for (int i = 0; i < cols; ++i) {
+@@ -199,12 +199,12 @@ public abstract class AbstractEstimator implements Estimator {
+     public double[] guessParametersErrors(EstimationProblem problem)
+       throws EstimationException {
+         int m = problem.getMeasurements().length;
+-        int p = problem.getAllParameters().length;
++        int p = problem.getUnboundParameters().length;
+         if (m <= p) {
+             throw new EstimationException("no degrees of freedom ({0} measurements, {1} parameters)",
+                                           new Object[] { new Integer(m), new Integer(p)});
+         }
+-        double[] errors = new double[problem.getAllParameters().length];
++        double[] errors = new double[problem.getUnboundParameters().length];
+         final double c = Math.sqrt(getChiSquare(problem) / (m - p));
+         double[][] covar = getCovariances(problem);
+         for (int i = 0; i < errors.length; ++i) {
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testBoundParameters() throws EstimationException {
+      EstimatedParameter[] p = {
+        new EstimatedParameter("unbound0", 2, false),
+        new EstimatedParameter("unbound1", 2, false),
+        new EstimatedParameter("bound",    2, true)
+      };
+      LinearProblem problem = new LinearProblem(new LinearMeasurement[] {
+        new LinearMeasurement(new double[] { 1.0, 1.0, 1.0 },
+                              new EstimatedParameter[] { p[0], p[1], p[2] },
+                              3.0),
+        new LinearMeasurement(new double[] { 1.0, -1.0, 1.0 },
+                              new EstimatedParameter[] { p[0], p[1], p[2] },
+                              1.0),
+        new LinearMeasurement(new double[] { 1.0, 3.0, 2.0 },
+                              new EstimatedParameter[] { p[0], p[1], p[2] },
+                              7.0)
+      });
+
+      GaussNewtonEstimator estimator = new GaussNewtonEstimator(100, 1.0e-6, 1.0e-6);
+      estimator.estimate(problem);
+      assertTrue(estimator.getRMS(problem) < 1.0e-10);
+      double[][] covariances = estimator.getCovariances(problem);
+      int i0 = 0, i1 = 1;
+      if (problem.getUnboundParameters()[0].getName().endsWith("1")) {
+          i0 = 1;
+          i1 = 0;
+      }
+      assertEquals(11.0 / 24, covariances[i0][i0], 1.0e-10);
+      assertEquals(-3.0 / 24, covariances[i0][i1], 1.0e-10);
+      assertEquals(-3.0 / 24, covariances[i1][i0], 1.0e-10);
+      assertEquals( 3.0 / 24, covariances[i1][i1], 1.0e-10);
+
+      double[] errors = estimator.guessParametersErrors(problem);
+      assertEquals(0, errors[i0], 1.0e-10);
+      assertEquals(0, errors[i1], 1.0e-10);
+
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

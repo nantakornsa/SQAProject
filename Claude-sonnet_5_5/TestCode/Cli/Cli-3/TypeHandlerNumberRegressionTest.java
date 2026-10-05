@@ -1,0 +1,24 @@
+package org.apache.commons.cli;
+
+import junit.framework.TestCase;
+
+public class TypeHandlerNumberRegressionTest extends TestCase
+{
+    public void testCreateNumberWithDecimalReturnsDouble()
+    {
+        Number number = TypeHandler.createNumber("4.5");
+        assertEquals("decimal number should be a Double", Double.valueOf("4.5"), number);
+    }
+
+    public void testCreateNumberWithIntegerReturnsLong()
+    {
+        Number number = TypeHandler.createNumber("10");
+        assertEquals("integer number should be a Long", Long.valueOf("10"), number);
+    }
+
+    public void testCreateValueNumberType()
+    {
+        Object value = TypeHandler.createValue("4.5", PatternOptionBuilder.NUMBER_VALUE);
+        assertEquals("number flag value", Double.valueOf("4.5"), value);
+    }
+}

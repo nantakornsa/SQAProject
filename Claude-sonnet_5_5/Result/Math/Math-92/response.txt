@@ -1,0 +1,30 @@
+```java
+package org.apache.commons.math.util;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for MATH-241: binomialCoefficient returned an inexact
+ * result because it was computed through a floating point approximation.
+ */
+public class MathUtilsBinomialRegressionTest extends TestCase {
+
+    public void testBinomialCoefficientExactMedium() {
+        // The buggy version returned 27385657281647 for (48, 22).
+        assertEquals("48,22", 27385657281648L, MathUtils.binomialCoefficient(48, 22));
+        // Symmetry check
+        assertEquals("48,26", 27385657281648L, MathUtils.binomialCoefficient(48, 26));
+    }
+
+    public void testBinomialCoefficientConsistentWithPascalRule() {
+        // C(n,k) = C(n-1,k-1) + C(n-1,k) must hold exactly for results that fit in a long
+        for (int n = 2; n <= 66; n++) {
+            for (int k = 1; k < n; k++) {
+                long expected = MathUtils.binomialCoefficient(n - 1, k - 1)
+                    + MathUtils.binomialCoefficient(n - 1, k);
+                assertEquals(n + "," + k, expected, MathUtils.binomialCoefficient(n, k));
+            }
+        }
+    }
+}
+```

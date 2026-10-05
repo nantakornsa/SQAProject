@@ -1,0 +1,40 @@
+=== ANALYSIS ===
+
+The defect (CODEC-84) is in the Double Metaphone `handleG` logic, which is reached for the "G" in "Angier". The buggy version encodes the "G" before "IER" as "K" in the alternate encoding. The expected alternate result is "ANJR", but the buggy code gives "ANKR". I am inferring this from the failure message and the test data. The `handleJ` code you quoted is not the faulty path, since "Angier" has no 'J'.
+
+"Angier" is a useful minimal case for three reasons:
+- It is the exact input in the known failing test (`Test [19]=Angier`).
+- It reaches the "G" followed by "IER" branch directly.
+- The primary and alternate encodings differ, so the alternate path is exercised on its own.
+
+Expected output for `doubleMetaphone("Angier", true)` is "ANJR". The buggy version, Codec-3b, produces "ANKR".
+
+I have not executed this test.
+
+=== TEST CODE ===
+
+package org.apache.commons.codec.language;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+public class DoubleMetaphoneCodec3Test extends TestCase {
+
+    public static Test suite() {
+        return new TestSuite(DoubleMetaphoneCodec3Test.class);
+    }
+
+    public DoubleMetaphoneCodec3Test(String name) {
+        super(name);
+    }
+
+    public void testDoubleMetaphoneAlternateAngier() {
+        DoubleMetaphone doubleMetaphone = new DoubleMetaphone();
+        assertEquals("ANJR", doubleMetaphone.doubleMetaphone("Angier", true));
+    }
+}
+
+=== TARGET TEST ===
+
+DoubleMetaphoneCodec3Test::testDoubleMetaphoneAlternateAngier

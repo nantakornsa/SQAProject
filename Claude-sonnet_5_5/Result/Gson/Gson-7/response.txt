@@ -1,0 +1,70 @@
+The test below uses `JsonReader` directly with lenient mode. It also covers the `Map` deserialization path through Gson.
+
+In the buggy version, `nextInt()` and `nextLong()` throw `IllegalStateException` when the token is `PEEKED_UNQUOTED`, for example for `{123:"x"}` or `[123abc]`. The fixed version handles unquoted values by reading them with `nextUnquotedValue()` and parsing them.
+
+- **Map keys:** `{123:"x"}` is unquoted in a map key position. `MapTest` is the triggering case, so the Gson-level tests mirror it.
+- **Direct reader test:** `JsonReader` in lenient mode reads `[12]`-style values as numbers. For unquoted strings that look like integers, the key position in an object (`{123:1}`) is where the unquoted path is hit. Reading a name through `nextInt()` gives `PEEKED_UNQUOTED`.
+
+```java
+package com.google.gson.functional;
+
+import java.io.StringReader;
+import java.lang.reflect.Type;
+import java.util.Map;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+
+import junit.framework.TestCase;
+
+public class UnquotedNumericKeysRegressionTest extends TestCase {
+  private Gson gson;
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    gson = new Gson();
+  }
+
+  public void testMapDeserializationWithUnquotedLongKeys() {
+    long longKey = 9876543210L;
+    String json = String.format("{%d:\"456\"}", longKey);
+    Type typeOfMap = new TypeToken<Map<Long, String>>() {}.getType();
+    Map<Long, String> map = gson.fromJson(json, typeOfMap);
+    assertEquals(1, map.size());
+    assertTrue(map.containsKey(longKey));
+    assertEquals("456", map.get(longKey));
+  }
+
+  public void testMapDeserializationWithUnquotedIntegerKeys() {
+    int intKey = 123;
+    String json = String.format("{%d:\"456\"}", intKey);
+    Type typeOfMap = new TypeToken<Map<Integer, String>>() {}.getType();
+    Map<Integer, String> map = gson.fromJson(json, typeOfMap);
+    assertEquals(1, map.size());
+    assertTrue(map.containsKey(intKey));
+    assertEquals("456", map.get(intKey));
+  }
+
+  public void testReaderNextIntOnUnquotedName() throws Exception {
+    JsonReader reader = new JsonReader(new StringReader("{123:true}"));
+    reader.setLenient(true);
+    reader.beginObject();
+    assertEquals(JsonToken.NAME, reader.peek());
+    assertEquals(123, reader.nextInt());
+    assertEquals(true, reader.nextBoolean());
+    reader.endObject();
+  }
+
+  public void testReaderNextLongOnUnquotedName() throws Exception {
+    JsonReader reader = new JsonReader(new StringReader("{9876543210:true}"));
+    reader.setLenient(true);
+    reader.beginObject();
+    assertEquals(9876543210L, reader.nextLong());
+    assertEquals(true, reader.nextBoolean());
+    reader.endObject();
+  }
+}
+```

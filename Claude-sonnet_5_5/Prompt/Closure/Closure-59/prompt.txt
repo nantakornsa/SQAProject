@@ -1,0 +1,82 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-59
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+49b4ef31c850611a5c85d95140b4cedda7f4c59a
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-07-25 22:32:42 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+521
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-521.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.CommandLineRunnerTest::testCheckGlobalThisOff
+   --> junit.framework.AssertionFailedError: Expected no warnings or errors
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.Compiler
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.Compiler ===
+diff --git a/src/com/google/javascript/jscomp/Compiler.java b/src/com/google/javascript/jscomp/Compiler.java
+index b3ca246a6..1d6e49499 100644
+--- a/src/com/google/javascript/jscomp/Compiler.java
++++ b/src/com/google/javascript/jscomp/Compiler.java
+@@ -252,7 +252,8 @@ public class Compiler extends AbstractCompiler {
+           CheckLevel.OFF);
+     }
+ 
+-    if (options.checkGlobalThisLevel.isOn()) {
++    if (options.checkGlobalThisLevel.isOn() &&
++        !options.disables(DiagnosticGroups.GLOBAL_THIS)) {
+       options.setWarningLevel(
+           DiagnosticGroups.GLOBAL_THIS,
+           options.checkGlobalThisLevel);
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testCheckGlobalThisOff() {
+    args.add("--warning_level=VERBOSE");
+    args.add("--jscomp_off=globalThis");
+    testSame("function f() { this.a = 3; }");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

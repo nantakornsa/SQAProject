@@ -1,0 +1,77 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Cli
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Cli
+       Program: commons-cli
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/Cli.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-cli.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/active-bugs.csv
+Number of bugs: 39
+--------------------------------------------------------------------------------
+
+Summary for Bug: Cli-8
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+4f407378c93b9e2a8e24c855e8bed5eb12bf7a06
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-05-08 06:40:58 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CLI-151
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CLI-151
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.cli.HelpFormatterTest::testPrintWrapped
+   --> junit.framework.ComparisonFailure: single line padded text 2 expected:<...TE[-DATE] where DATE[
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.cli.HelpFormatter
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.cli.HelpFormatter ===
+diff --git a/src/java/org/apache/commons/cli/HelpFormatter.java b/src/java/org/apache/commons/cli/HelpFormatter.java
+index 639b9d5..40873f5 100644
+--- a/src/java/org/apache/commons/cli/HelpFormatter.java
++++ b/src/java/org/apache/commons/cli/HelpFormatter.java
+@@ -809,7 +809,7 @@ public class HelpFormatter {
+         while (true)
+         {
+             text = padding + text.substring(pos).trim();
+-            pos = findWrapPos(text, width, nextLineTabStop);
++            pos = findWrapPos(text, width, 0);
+ 
+             if (pos == -1)
+             {
+
+
+=== TRIGGERING TEST METHOD ===
+   public void testPrintWrapped()
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

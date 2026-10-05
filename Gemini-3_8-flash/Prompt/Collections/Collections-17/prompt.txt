@@ -1,0 +1,96 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Collections
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Collections
+       Program: commons-collections
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/Collections.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-collections.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/active-bugs.csv
+Number of bugs: 28
+--------------------------------------------------------------------------------
+
+Summary for Bug: Collections-17
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+459f14b33c02509a4b9cc5360f3ff2f4edba9284
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-07-26 20:24:27 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COLLECTIONS-239
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COLLECTIONS-239
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.collections.functors.TestEqualPredicate::objectFactoryUsesEqualsForTest
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.collections.functors.EqualPredicate
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.collections.functors.EqualPredicate ===
+diff --git a/src/main/java/org/apache/commons/collections/functors/EqualPredicate.java b/src/main/java/org/apache/commons/collections/functors/EqualPredicate.java
+index 03588b74..00a28c2d 100644
+--- a/src/main/java/org/apache/commons/collections/functors/EqualPredicate.java
++++ b/src/main/java/org/apache/commons/collections/functors/EqualPredicate.java
+@@ -81,7 +81,7 @@ public final class EqualPredicate<T> implements Predicate<T>, Serializable {
+     public EqualPredicate(T object) {
+         // do not use the DefaultEquator to keep backwards compatibility
+         // the DefaultEquator returns also true if the two object references are equal
+-        this(object, new DefaultEquator<T>());
++        this(object, null);
+     }
+ 
+     /**
+@@ -105,7 +105,11 @@ public final class EqualPredicate<T> implements Predicate<T>, Serializable {
+      * @return true if input object equals stored value
+      */
+     public boolean evaluate(T object) {
++        if (equator != null) {
+             return equator.equate(iValue, object);
++        } else {
++            return iValue.equals(object);
++        }
+     }
+ 
+     /**
+
+
+=== TRIGGERING TEST METHOD ===
+    public void objectFactoryUsesEqualsForTest() throws Exception {
+        Predicate<EqualsTestObject> predicate = equalPredicate(FALSE_OBJECT);
+        assertFalse(predicate, FALSE_OBJECT);
+        assertTrue(equalPredicate(TRUE_OBJECT), TRUE_OBJECT);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

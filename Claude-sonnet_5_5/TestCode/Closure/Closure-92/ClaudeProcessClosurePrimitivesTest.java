@@ -1,0 +1,61 @@
+package com.google.javascript.jscomp;
+
+import java.lang.reflect.Constructor;
+
+/**
+ * Regression test for Closure issue 261: implicit provides from independent
+ * modules were moved to the wrong place because the first '.' rather than the
+ * last '.' of the namespace was used to find the parent namespace.
+ */
+public class ClaudeProcessClosurePrimitivesTest extends CompilerTestCase {
+
+  public ClaudeProcessClosurePrimitivesTest() {
+    super("");
+  }
+
+  @Override
+  protected CompilerPass getProcessor(final Compiler compiler) {
+    try {
+      // Construct the pass reflectively so the test does not depend on the
+      // exact constructor signature of this revision.
+      Constructor<?> ctor = ProcessClosurePrimitives.class.getDeclaredConstructors()[0];
+      ctor.setAccessible(true);
+      Class<?>[] types = ctor.getParameterTypes();
+      Object[] args = new Object[types.length];
+      for (int i = 0; i < types.length; i++) {
+        if (types[i].isAssignableFrom(Compiler.class)) {
+          args[i] = compiler;
+        } else if (types[i] == CheckLevel.class) {
+          args[i] = CheckLevel.ERROR;
+        } else if (types[i] == boolean.class) {
+          args[i] = Boolean.FALSE;
+        } else {
+          args[i] = null;
+        }
+      }
+      return (CompilerPass) ctor.newInstance(args);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  public int getNumRepetitions() {
+    return 1;
+  }
+
+  public void testProvideInIndependentModules4() {
+    // Regression test for bug 261:
+    // http://code.google.com/p/closure-compiler/issues/detail?id=261
+    test(
+        createModuleStar(
+            "goog.provide('apps');",
+            "goog.provide('apps.foo.bar.B');",
+            "goog.provide('apps.foo.bar.C');"),
+        new String[] {
+            "var apps = {};apps.foo = {};apps.foo.bar = {}",
+            "apps.foo.bar.B = {};",
+            "apps.foo.bar.C = {};",
+        });
+  }
+}

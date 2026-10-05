@@ -1,0 +1,22 @@
+```java
+package org.apache.commons.codec.language;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for CODEC-117: the Caverphone "mb" -> "m2" replacement
+ * must only apply at the end of the string, not at the start.
+ */
+public class CaverphoneEndMbRegressionTest extends TestCase {
+
+    public CaverphoneEndMbRegressionTest(String name) {
+        super(name);
+    }
+
+    public void testEndMb() throws Exception {
+        Caverphone caverphone = new Caverphone();
+        assertEquals("Source: mb", "M111111111", caverphone.caverphone("mb"));
+        assertEquals("Source: mbmb", "MPM1111111", caverphone.caverphone("mbmb"));
+    }
+}
+```

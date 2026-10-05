@@ -1,0 +1,78 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791189392-iYcgOuG54bz1u9yOwypH","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Jackson Bug**\n\nI'm currently diving into JacksonDatabind-97. My focus is on a specific change in `POJONode.java` from May 25, 2018, where a method call was rerouted to preserve contextual information, moving away from a generator. I'm examining the implications of this alteration.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing POJONode Behavior**\n\nI'm digging into how `POJONode` handles custom serialization. It seems the shift from `gen.writeObject(_value)` to `ctxt.defaultSerializeValue(_value, gen)` was critical for preserving contextual information, impacting serializers that rely on attributes or the `SerializerProvider`. The test failure highlights this loss of data.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Exploring Contextual Serialization**\n\nI've realized that `gen.writeObject(_value)`, unlike `ctxt.defaultSerializeValue(_value, gen)`, initiates a fresh `SerializerProvider` with default attributes. This explains the test failure and the loss of contextual data, like custom attributes, which are crucial for certain serializers.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"node;\n\nimport java.io.IOException;\n\nimport com.fasterxml.jackson.core.JsonGenerator;\nimport com.fasterxml."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"jackson.databind.BaseMapTest;\nimport com.fasterxml.jackson.databind.JsonSerializer;\nimport com."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"fasterxml.jackson.databind.ObjectMapper;\nimport com.fasterxml.jackson.databind.SerializerProvider;\nimport com"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".fasterxml.jackson.databind.module.SimpleModule;\n\npublic class POJONodeRegressionTest extends BaseMapTest {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\n    static class CustomData {\n        public final String myStr;\n\n        public CustomData(String str) {\n            this"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".myStr = str;\n        }\n    }\n\n    static class CustomDataSerializer extends JsonSerializer<CustomData"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"> {\n        @Override\n        public void serialize(CustomData value, JsonGenerator gen, SerializerProvider c"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"txt) throws IOException {\n            gen.writeStartObject();\n            gen.writeStringField(\"myStr\", \"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" value is: \" + ctxt.getAttribute(\"myAttr\"));\n            gen.writeEndObject();\n        }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n    }\n\n    public void testPOJONodeCustomSer() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        SimpleModule module = new SimpleModule();\n        module.addSerializer(CustomData.class, new CustomData"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Serializer());\n        mapper.registerModule(module);\n\n        ObjectNode node = mapper.createObjectNode();\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        node.putPOJO(\"data\", new CustomData(\"ignored\"));\n\n        String json = mapper.writer()\n                "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".withAttribute(\"myAttr\", \"Hello!\")\n                .writeValueAsString(node);\n\n        assertEquals(\"{\\\"data\\\":{\\\"my"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Str\\\":\\\"The value is: Hello!\\\"}}\", json);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":987,"output_tokens":1227,"output_tokens_details":{"thinking_tokens":837},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.0053415,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0053415,"upstream_inference_prompt_cost":0.00074025,"upstream_inference_completions_cost":0.00460125}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

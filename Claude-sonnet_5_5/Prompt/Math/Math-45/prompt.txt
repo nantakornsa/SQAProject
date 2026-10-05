@@ -1,0 +1,82 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-45
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+5e6389761c6575f815a5ac91a22c4ecc48596729
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-10-10 19:56:03 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-679
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-679
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.linear.OpenMapRealMatrixTest::testMath679
+   --> junit.framework.AssertionFailedError: Expected exception: org.apache.commons.math.exception.NumberIsTooLargeException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.linear.OpenMapRealMatrix
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.linear.OpenMapRealMatrix ===
+diff --git a/src/main/java/org/apache/commons/math/linear/OpenMapRealMatrix.java b/src/main/java/org/apache/commons/math/linear/OpenMapRealMatrix.java
+index 174eda6ac..f05c8783a 100644
+--- a/src/main/java/org/apache/commons/math/linear/OpenMapRealMatrix.java
++++ b/src/main/java/org/apache/commons/math/linear/OpenMapRealMatrix.java
+@@ -47,6 +47,11 @@ public class OpenMapRealMatrix extends AbstractRealMatrix
+      */
+     public OpenMapRealMatrix(int rowDimension, int columnDimension) {
+         super(rowDimension, columnDimension);
++        long lRow = (long) rowDimension;
++        long lCol = (long) columnDimension;
++        if (lRow * lCol >= (long) Integer.MAX_VALUE) {
++            throw new NumberIsTooLargeException(lRow * lCol, Integer.MAX_VALUE, false);
++        }
+         this.rows = rowDimension;
+         this.columns = columnDimension;
+         this.entries = new OpenIntToDoubleHashMap(0.0);
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testMath679() {
+        new OpenMapRealMatrix(3, Integer.MAX_VALUE);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

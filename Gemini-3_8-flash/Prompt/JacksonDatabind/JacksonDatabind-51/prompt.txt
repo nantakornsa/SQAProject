@@ -1,0 +1,99 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-51
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+36631a98a1199be01b9fbbcc66ac2afa4ad82dfc
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-06-19 22:49:28 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1270
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1270
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.jsontype.TestCustomTypeIdResolver::testPolymorphicTypeViaCustom
+   --> com.fasterxml.jackson.databind.JsonMappingException: Problem deserializing property 'options' (expected type: [simple type, class java.lang.Object]; actual type: java.util.LinkedHashMap), problem: Can not set com.fasterxml.jackson.databind.jsontype.TestCustomTypeIdResolver$Poly1Base field com.fasterxml.jackson.databind.jsontype.TestCustomTypeIdResolver$Base1270.options to java.util.LinkedHashMap
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.jsontype.impl.TypeDeserializerBase
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.jsontype.impl.TypeDeserializerBase ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/jsontype/impl/TypeDeserializerBase.java b/src/main/java/com/fasterxml/jackson/databind/jsontype/impl/TypeDeserializerBase.java
+index 23380f082..cd9b15554 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/jsontype/impl/TypeDeserializerBase.java
++++ b/src/main/java/com/fasterxml/jackson/databind/jsontype/impl/TypeDeserializerBase.java
+@@ -181,7 +181,9 @@ public abstract class TypeDeserializerBase
+                     //   generic type with custom type resolvers. If so, should try to retain them.
+                     //  Whether this is sufficient to avoid problems remains to be seen, but for
+                     //  now it should improve things.
++                    if (!type.hasGenericTypes()) {
+                         type = ctxt.getTypeFactory().constructSpecializedType(_baseType, type.getRawClass());
++                    }
+                 }
+                 deser = ctxt.findContextualValueDeserializer(type, _property);
+             }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testPolymorphicTypeViaCustom() throws Exception {
+        Base1270<Poly1> req = new Base1270<Poly1>();
+        Poly1 o = new Poly1();
+        o.val = "optionValue";
+        req.options = o;
+        req.val = "some value";
+        Top1270 top = new Top1270();
+        top.b = req;
+        String json = MAPPER.writeValueAsString(top);
+        JsonNode tree = MAPPER.readTree(json);
+        assertNotNull(tree.get("b"));
+        assertNotNull(tree.get("b").get("options"));
+        assertNotNull(tree.get("b").get("options").get("val"));
+
+        // Can we reverse the process? I have some doubts
+        Top1270 itemRead = MAPPER.readValue(json, Top1270.class);
+        assertNotNull(itemRead);
+        assertNotNull(itemRead.b);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

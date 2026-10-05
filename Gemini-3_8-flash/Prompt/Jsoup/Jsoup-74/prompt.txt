@@ -1,0 +1,107 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-74
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+c3f8caa7c16c08b803b0f34bfffdf9777c7e382c
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-11-18 13:38:01 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+978
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/978
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.nodes.ElementTest::testNormalizesInvisiblesInText
+   --> junit.framework.AssertionFailedError: expected:<This[isonelong]word> but was:<This[­is​one‌long‍]word>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.helper.StringUtil
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.helper.StringUtil ===
+diff --git a/src/main/java/org/jsoup/helper/StringUtil.java b/src/main/java/org/jsoup/helper/StringUtil.java
+index 439a7d60..9d2e7443 100644
+--- a/src/main/java/org/jsoup/helper/StringUtil.java
++++ b/src/main/java/org/jsoup/helper/StringUtil.java
+@@ -128,7 +128,10 @@ public final class StringUtil {
+         // 160 is &nbsp; (non-breaking space). Not in the spec but expected.
+     }
+ 
++    public static boolean isInvisibleChar(int c) {
++        return Character.getType(c) == 16 && (c == 8203 || c == 8204 || c == 8205 || c == 173);
+         // zero width sp, zw non join, zw join, soft hyphen
++    }
+ 
+     /**
+      * Normalise the whitespace within this string; multiple spaces collapse to a single, and all whitespace characters
+@@ -162,7 +165,7 @@ public final class StringUtil {
+                 accum.append(' ');
+                 lastWasWhite = true;
+             }
+-            else {
++            else if (!isInvisibleChar(c)) {
+                 accum.appendCodePoint(c);
+                 lastWasWhite = false;
+                 reachedNonWhite = true;
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void testNormalizesInvisiblesInText() {
+        // return Character.getType(c) == 16 && (c == 8203 || c == 8204 || c == 8205 || c == 173);
+        String escaped = "This&shy;is&#x200b;one&#x200c;long&#x200d;word";
+        String decoded = "This\u00ADis\u200Bone\u200Clong\u200Dword"; // browser would not display those soft hyphens / other chars, so we don't want them in the text
+
+        Document doc = Jsoup.parse("<p>" + escaped);
+        Element p = doc.select("p").first();
+        doc.outputSettings().charset("ascii"); // so that the outer html is easier to see with escaped invisibles
+        assertEquals("Thisisonelongword", p.text()); // text is normalized
+        assertEquals("<p>" + escaped + "</p>", p.outerHtml()); // html / whole text keeps &shy etc;
+        assertEquals(decoded, p.textNodes().get(0).getWholeText());
+
+        Element matched = doc.select("p:contains(Thisisonelongword)").first(); // really just oneloneword, no invisibles
+        assertEquals("p", matched.nodeName());
+        assertTrue(matched.is(":containsOwn(Thisisonelongword)"));
+
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

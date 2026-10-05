@@ -1,0 +1,19 @@
+The test below is a standalone class rather than an addition to `TypeCheckTest`, which is too large to reproduce here. It targets the root cause in `JSType.isEmptyType()`: the least function type was not treated as an empty type. I have not compiled or run it. It assumes `BaseJSTypeTestCase` exposes a `registry` field, as I recall it does.
+
+```java
+package com.google.javascript.rhino.jstype;
+
+public class LeastFunctionTypeEmptyTest extends BaseJSTypeTestCase {
+
+  public void testLeastFunctionTypeIsEmpty() throws Exception {
+    JSType leastFunction = registry.getNativeType(JSTypeNative.LEAST_FUNCTION_TYPE);
+    assertTrue(leastFunction.isEmptyType());
+  }
+
+  public void testGreatestFunctionTypeIsNotEmpty() throws Exception {
+    JSType greatestFunction =
+        registry.getNativeType(JSTypeNative.GREATEST_FUNCTION_TYPE);
+    assertFalse(greatestFunction.isEmptyType());
+  }
+}
+```

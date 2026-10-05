@@ -1,0 +1,45 @@
+package com.google.gson.internal;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test: UnsafeAllocator must throw UnsupportedOperationException
+ * when asked to instantiate an interface or an abstract class.
+ */
+public final class UnsafeAllocatorInstantiationTest extends TestCase {
+
+  public interface Interface {
+  }
+
+  public static abstract class AbstractClass {
+  }
+
+  public static class ConcreteClass {
+  }
+
+  public void testInterfaceInstantiation() throws Exception {
+    UnsafeAllocator unsafeAllocator = UnsafeAllocator.create();
+    try {
+      unsafeAllocator.newInstance(Interface.class);
+      fail("Expected UnsupportedOperationException");
+    } catch (Exception e) {
+      assertEquals(UnsupportedOperationException.class, e.getClass());
+    }
+  }
+
+  public void testAbstractClassInstantiation() throws Exception {
+    UnsafeAllocator unsafeAllocator = UnsafeAllocator.create();
+    try {
+      unsafeAllocator.newInstance(AbstractClass.class);
+      fail("Expected UnsupportedOperationException");
+    } catch (Exception e) {
+      assertEquals(UnsupportedOperationException.class, e.getClass());
+    }
+  }
+
+  public void testConcreteClassInstantiation() throws Exception {
+    UnsafeAllocator unsafeAllocator = UnsafeAllocator.create();
+    ConcreteClass instance = unsafeAllocator.newInstance(ConcreteClass.class);
+    assertNotNull(instance);
+  }
+}

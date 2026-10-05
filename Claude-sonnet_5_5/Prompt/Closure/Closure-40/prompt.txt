@@ -1,0 +1,99 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-40
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+6ebc0c3d7d4da7d2cf95f53d4ea790e89d3abc7a
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-02-02 16:47:26 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+284
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-284.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.IntegrationTest::testIssue284
+   --> java.lang.RuntimeException: java.lang.RuntimeException: INTERNAL COMPILER ERROR.
+ - com.google.javascript.jscomp.NameAnalyzerTest::testIssue284
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.NameAnalyzer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.NameAnalyzer ===
+diff --git a/src/com/google/javascript/jscomp/NameAnalyzer.java b/src/com/google/javascript/jscomp/NameAnalyzer.java
+index 088a99334..6e9e47036 100644
+--- a/src/com/google/javascript/jscomp/NameAnalyzer.java
++++ b/src/com/google/javascript/jscomp/NameAnalyzer.java
+@@ -632,11 +632,9 @@ final class NameAnalyzer implements CompilerPass {
+         Node nameNode = n.getFirstChild();
+         NameInformation ns = createNameInformation(t, nameNode, n);
+         if (ns != null && ns.onlyAffectsClassDef) {
+-          JsName name = getName(ns.name, false);
+-          if (name != null) {
++          JsName name = getName(ns.name, true);
+           refNodes.add(new ClassDefiningFunctionNode(
+               name, n, parent, parent.getParent()));
+-          }
+         }
+       }
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue284() {
+    CompilerOptions options = createCompilerOptions();
+    options.smartNameRemoval = true;
+    test(options,
+        "var goog = {};" +
+        "goog.inherits = function(x, y) {};" +
+        "var ns = {};" +
+        "/** @constructor */" +
+        "ns.PageSelectionModel = function() {};" +
+        "/** @constructor */" +
+        "ns.PageSelectionModel.FooEvent = function() {};" +
+        "/** @constructor */" +
+        "ns.PageSelectionModel.SelectEvent = function() {};" +
+        "goog.inherits(ns.PageSelectionModel.ChangeEvent," +
+        "    ns.PageSelectionModel.FooEvent);",
+        "");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

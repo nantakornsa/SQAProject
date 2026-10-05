@@ -1,0 +1,415 @@
+You are an expert software testing engineer specializing in Defects4J and Java unit testing.
+
+Your task is to generate ONE minimal, executable JUnit test case for a specific Defects4J bug.
+
+The generated test must satisfy all of the following requirements:
+
+1. It must compile and execute in the original Defects4J project.
+2. It must FAIL on the buggy version.
+3. It must PASS on the fixed version.
+4. It must directly target the described defect.
+5. Do not modify production/source code.
+6. Do not invent APIs, methods, classes, or behavior that do not exist in the provided source.
+7. Reuse the project's existing testing style and JUnit version.
+8. Prefer a minimal regression test rather than reproducing the entire existing test suite.
+9. The test should be deterministic and independent of external resources.
+10. Generate only ONE target test method/class that can be copied into the project and executed.
+
+==================================================
+PROJECT INFORMATION
+==================================================
+
+Project: Codec
+Bug: Codec-2
+Program: commons-codec
+Bug Report ID: CODEC-77
+
+Buggy Version: 2b
+Fixed Version: 2f
+
+Fixed Revision:
+b8c2d9d9dc9aab45f83cf49ac93cfa8546e4c08e
+
+==================================================
+BUG INFORMATION
+==================================================
+
+The Defects4J triggering tests for Codec-2 include:
+
+1. org.apache.commons.codec.binary.Base64InputStreamTest::testBase64EmptyInputStream
+
+Failure:
+junit.framework.AssertionFailedError: EOF expected:<-1> but was:<13>
+
+2. org.apache.commons.codec.binary.Base64OutputStreamTest::testBase64EmptyOutputStream
+
+Failure:
+junit.framework.AssertionFailedError: Streaming base64 encode
+
+The modified production source is:
+
+org.apache.commons.codec.binary.Base64
+
+The defect is related to Base64 streaming behavior when processing empty input and reaching EOF.
+
+==================================================
+EXISTING TRIGGERING TEST
+==================================================
+
+The existing Base64InputStreamTest contains:
+
+public void testBase64EmptyInputStream() throws Exception {
+    byte[] emptyEncoded = new byte[0];
+    byte[] emptyDecoded = new byte[0];
+    testByteByByte(emptyEncoded, emptyDecoded, 76, CRLF);
+    testByChunk(emptyEncoded, emptyDecoded, 76, CRLF);
+}
+
+The relevant encoding path in testByteByByte is:
+
+InputStream in = new ByteArrayInputStream(decoded);
+
+in = new Base64InputStream(
+    in,
+    true,
+    chunkSize,
+    seperator
+);
+
+byte[] output = new byte[encoded.length];
+
+for (int i = 0; i < output.length; i++) {
+    output[i] = (byte) in.read();
+}
+
+assertEquals("EOF", -1, in.read());
+assertEquals("Still EOF", -1, in.read());
+
+assertTrue(
+    "Streaming base64 encode",
+    Arrays.equals(output, encoded)
+);
+
+For the empty-input case:
+
+decoded = new byte[0]
+encoded = new byte[0]
+
+Therefore the important behavioral requirement is that reading from a Base64InputStream configured for encoding an empty input must immediately and consistently return EOF (-1), rather than returning an encoded byte.
+
+==================================================
+BASE64INPUTSTREAM IMPLEMENTATION
+==================================================
+
+Relevant implementation:
+
+public int read() throws IOException {
+    int r = read(singleByte, 0, 1);
+
+    while (r == 0) {
+        r = read(singleByte, 0, 1);
+    }
+
+    if (r > 0) {
+        return singleByte[0] < 0
+            ? 256 + singleByte[0]
+            : singleByte[0];
+    }
+
+    return -1;
+}
+
+public int read(byte b[], int offset, int len) throws IOException {
+    if (b == null) {
+        throw new NullPointerException();
+    } else if (offset < 0 || len < 0 || offset + len < 0) {
+        throw new IndexOutOfBoundsException();
+    } else if (offset > b.length || offset + len > b.length) {
+        throw new IndexOutOfBoundsException();
+    } else if (len == 0) {
+        return 0;
+    } else {
+        if (!base64.hasData()) {
+            byte[] buf = new byte[doEncode ? 4096 : 8192];
+            int c = in.read(buf);
+
+            if (c > 0 && b.length == len) {
+                base64.setInitialBuffer(b, offset, len);
+            }
+
+            if (doEncode) {
+                base64.encode(buf, 0, c);
+            } else {
+                base64.decode(buf, 0, c);
+            }
+        }
+
+        return base64.readResults(b, offset, len);
+    }
+}
+
+==================================================
+BASE64 IMPLEMENTATION
+==================================================
+
+Relevant implementation:
+
+int readResults(byte[] b, int bPos, int bAvail) {
+    if (buf != null) {
+        int len = Math.min(avail(), bAvail);
+
+        if (buf != b) {
+            System.arraycopy(buf, readPos, b, bPos, len);
+            readPos += len;
+
+            if (readPos >= pos) {
+                buf = null;
+            }
+        } else {
+            buf = null;
+        }
+
+        return len;
+    }
+
+    return eof ? -1 : 0;
+}
+
+void encode(byte[] in, int inPos, int inAvail) {
+    if (eof) {
+        return;
+    }
+
+    if (inAvail < 0) {
+        eof = true;
+
+        if (buf == null || buf.length - pos < encodeSize) {
+            resizeBuf();
+        }
+
+        switch (modulus) {
+            case 1:
+                buf[pos++] = encodeTable[(x >> 2) & MASK_6BITS];
+                buf[pos++] = encodeTable[(x << 4) & MASK_6BITS];
+
+                if (encodeTable == STANDARD_ENCODE_TABLE) {
+                    buf[pos++] = PAD;
+                    buf[pos++] = PAD;
+                }
+                break;
+
+            case 2:
+                buf[pos++] = encodeTable[(x >> 10) & MASK_6BITS];
+                buf[pos++] = encodeTable[(x >> 4) & MASK_6BITS];
+                buf[pos++] = encodeTable[(x << 2) & MASK_6BITS];
+
+                if (encodeTable == STANDARD_ENCODE_TABLE) {
+                    buf[pos++] = PAD;
+                }
+                break;
+        }
+
+        if (lineLength > 0) {
+            System.arraycopy(
+                lineSeparator,
+                0,
+                buf,
+                pos,
+                lineSeparator.length
+            );
+            pos += lineSeparator.length;
+        }
+    } else {
+        for (int i = 0; i < inAvail; i++) {
+            if (buf == null || buf.length - pos < encodeSize) {
+                resizeBuf();
+            }
+
+            modulus = (++modulus) % 3;
+
+            int b = in[inPos++];
+
+            if (b < 0) {
+                b += 256;
+            }
+
+            x = (x << 8) + b;
+
+            if (0 == modulus) {
+                buf[pos++] = encodeTable[(x >> 18) & MASK_6BITS];
+                buf[pos++] = encodeTable[(x >> 12) & MASK_6BITS];
+                buf[pos++] = encodeTable[(x >> 6) & MASK_6BITS];
+                buf[pos++] = encodeTable[x & MASK_6BITS];
+
+                currentLinePos += 4;
+
+                if (lineLength > 0 && lineLength <= currentLinePos) {
+                    System.arraycopy(
+                        lineSeparator,
+                        0,
+                        buf,
+                        pos,
+                        lineSeparator.length
+                    );
+
+                    pos += lineSeparator.length;
+                    currentLinePos = 0;
+                }
+            }
+        }
+    }
+}
+
+==================================================
+BASE64OUTPUTSTREAM IMPLEMENTATION
+==================================================
+
+Relevant close behavior:
+
+public void close() throws IOException {
+    // Notify encoder of EOF (-1).
+    if (doEncode) {
+        base64.encode(singleByte, 0, -1);
+    } else {
+        base64.decode(singleByte, 0, -1);
+    }
+
+    flush();
+    out.close();
+}
+
+The write operation is:
+
+public void write(byte b[], int offset, int len) throws IOException {
+    if (b == null) {
+        throw new NullPointerException();
+    } else if (offset < 0 || len < 0 || offset + len < 0) {
+        throw new IndexOutOfBoundsException();
+    } else if (offset > b.length || offset + len > b.length) {
+        throw new IndexOutOfBoundsException();
+    } else if (len > 0) {
+        if (doEncode) {
+            base64.encode(b, offset, len);
+        } else {
+            base64.decode(b, offset, len);
+        }
+
+        flush(false);
+    }
+}
+
+==================================================
+TESTING TASK
+==================================================
+
+Analyze the provided bug information, existing test behavior, and production source.
+
+Generate ONE minimal regression test that directly targets Codec-2.
+
+The test should specifically exercise the empty-input streaming behavior and verify the correct EOF semantics.
+
+A good test should be able to distinguish:
+
+Buggy version 2b:
+- Empty input produces incorrect output / incorrect EOF behavior.
+
+Fixed version 2f:
+- Empty input behaves correctly.
+- EOF is returned as -1.
+- Repeated reads after EOF remain -1.
+
+Prefer testing the Base64InputStream encoding path because the existing triggering test directly exposes the EOF failure.
+
+Use the project's existing JUnit 3 style.
+
+The test should use real classes and APIs from the provided source.
+
+Do not assume JUnit 4 or JUnit 5.
+
+
+==================================================
+CRITICAL OUTPUT REQUIREMENTS
+==================================================
+
+The generated test MUST be a complete Java source file.
+
+The TEST CODE section MUST contain:
+1. A package declaration matching the existing test package.
+2. Required import statements.
+3. ONE public test class.
+4. ONE target test method.
+5. All code required for the test to compile.
+
+The public class name MUST be:
+Base64InputStreamTest
+
+The target test method MUST be:
+testBase64EmptyInputStreamEncodeReturnsEofImmediately
+
+The test class MUST be compatible with the existing
+org.apache.commons.codec.binary.Base64InputStreamTest
+JUnit 3 style.
+
+IMPORTANT:
+Do NOT output only a method.
+Do NOT omit the class declaration.
+Do NOT use placeholders.
+Do NOT use pseudocode.
+
+For CRLF, use valid Java syntax exactly:
+
+byte[] crlf = new byte[] { 13, 10 };
+
+Do NOT write escaped text such as:
+'\r\n'
+'\rlf'
+'\
+or any malformed character literal.
+
+The complete TEST CODE must be directly compilable as a .java file.
+
+Before producing the final answer, verify that:
+- The class declaration is syntactically valid Java.
+- The package declaration is correct.
+- The test method is inside the class.
+- All required imports are present.
+- The CRLF declaration is valid Java.
+
+==================================================
+OUTPUT FORMAT
+==================================================
+
+Return exactly these three sections:
+
+=== ANALYSIS ===
+
+Briefly explain:
+- What the defect is.
+- Why the test distinguishes 2b from 2f.
+- Which existing class/API is being tested.
+
+=== TEST CODE ===
+
+Provide the complete Java test class or the complete test method that can be copied directly into the project.
+
+=== TARGET TEST ===
+
+Provide the exact fully qualified test target in this format:
+
+org.apache.commons.codec.binary.<ClassName>::<testMethodName>
+
+Do not include markdown fences around the final target test name.
+
+==================================================
+IMPORTANT
+==================================================
+
+Do not modify production code.
+
+Do not create a test that merely duplicates the entire existing test suite.
+
+Do not rely on implementation details that are inaccessible from the public/test-facing API unless necessary.
+
+Do not claim that you executed the test.
+
+The test will be compiled and executed separately against Defects4J versions 2b and 2f.

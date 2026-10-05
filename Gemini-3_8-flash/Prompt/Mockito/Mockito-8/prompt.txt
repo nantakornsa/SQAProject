@@ -1,0 +1,84 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Mockito
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Mockito
+       Program: mockito
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/Mockito.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/mockito.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/active-bugs.csv
+Number of bugs: 38
+--------------------------------------------------------------------------------
+
+Summary for Bug: Mockito-8
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+5a03bf5d0c9aedac9cfbf074833167c1eca6439f
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2014-12-29 22:59:47 +0100
+--------------------------------------------------------------------------------
+Bug report id:
+114
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/mockito/mockito/issues/114
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.mockito.internal.util.reflection.GenericMetadataSupportTest::typeVariable_of_self_type
+   --> java.lang.StackOverflowError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.mockito.internal.util.reflection.GenericMetadataSupport
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.mockito.internal.util.reflection.GenericMetadataSupport ===
+diff --git a/src/org/mockito/internal/util/reflection/GenericMetadataSupport.java b/src/org/mockito/internal/util/reflection/GenericMetadataSupport.java
+index 152e9424e..8046052fd 100644
+--- a/src/org/mockito/internal/util/reflection/GenericMetadataSupport.java
++++ b/src/org/mockito/internal/util/reflection/GenericMetadataSupport.java
+@@ -76,7 +76,7 @@ public abstract class GenericMetadataSupport {
+ 
+             if (actualTypeArgument instanceof WildcardType) {
+                 contextualActualTypeParameters.put(typeParameter, boundsOf((WildcardType) actualTypeArgument));
+-            } else {
++            } else if (typeParameter != actualTypeArgument) {
+                 contextualActualTypeParameters.put(typeParameter, actualTypeArgument);
+             }
+             // logger.log("For '" + parameterizedType + "' found type variable : { '" + typeParameter + "(" + System.identityHashCode(typeParameter) + ")" + "' : '" + actualTypeArgument + "(" + System.identityHashCode(typeParameter) + ")" + "' }");
+
+
+=== TRIGGERING TEST METHOD ===
+    public void typeVariable_of_self_type() {
+        GenericMetadataSupport genericMetadata = inferFrom(GenericsSelfReference.class).resolveGenericReturnType(firstNamedMethod("self", GenericsSelfReference.class));
+
+        assertThat(genericMetadata.rawType()).isEqualTo(GenericsSelfReference.class);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

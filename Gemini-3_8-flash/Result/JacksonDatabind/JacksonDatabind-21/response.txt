@@ -1,0 +1,26 @@
+```java
+package com.fasterxml.jackson.databind.deser;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class EnumJsonPropertyRenameTest extends BaseMapTest {
+
+    protected enum EnumWithJsonProperty {
+        @JsonProperty("a")
+        A,
+        @JsonProperty("b")
+        B;
+    }
+
+    public void testEnumWithJsonPropertyRename() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        EnumWithJsonProperty resultA = mapper.readValue(quote("a"), EnumWithJsonProperty.class);
+        assertEquals(EnumWithJsonProperty.A, resultA);
+
+        EnumWithJsonProperty resultB = mapper.readValue(quote("b"), EnumWithJsonProperty.class);
+        assertEquals(EnumWithJsonProperty.B, resultB);
+    }
+}
+```

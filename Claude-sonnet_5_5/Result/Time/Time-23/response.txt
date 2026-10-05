@@ -1,0 +1,37 @@
+```java
+package org.joda.time;
+
+import java.util.TimeZone;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for Joda-Time bug 112: old-style JDK time zone IDs such as
+ * "WET" were converted to a different zone (Europe/London) instead of the
+ * matching "WET" zone that exists in the tz database.
+ */
+public class TestDateTimeZoneOldIdRegression extends TestCase {
+
+    private DateTimeZone originalDefault;
+
+    protected void setUp() throws Exception {
+        super.setUp();
+        originalDefault = DateTimeZone.getDefault();
+    }
+
+    protected void tearDown() throws Exception {
+        DateTimeZone.setDefault(originalDefault);
+        super.tearDown();
+    }
+
+    public void testForTimeZone_oldWET() {
+        TimeZone juZone = TimeZone.getTimeZone("WET");
+        DateTimeZone zone = DateTimeZone.forTimeZone(juZone);
+        assertEquals("WET", zone.getID());
+    }
+}
+```
+
+I haven't run this against the buggy or fixed source. Based on the reported failure (`expected:<[WET]> but was:<[Europe/London]>`), the buggy `getConvertedId` maps "WET" to "Europe/London", so the assertion fails there. The fixed version should return the "WET" zone, so the test should pass.
+
+I checked only the "WET" case, since that is the one named in the failure. I left out other old IDs like "ECT", "MET" and "EET" because I'm not certain what the fixed mapping returns for them at this commit.

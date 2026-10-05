@@ -1,0 +1,34 @@
+```java
+package com.fasterxml.jackson.databind.objectid;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class NullPropertyIdTest extends BaseMapTest {
+
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+    static class NullStringPropertyId {
+        public String id;
+        public String name;
+
+        public NullStringPropertyId() { }
+
+        public NullStringPropertyId(String id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+    }
+
+    private final ObjectMapper MAPPER = new ObjectMapper();
+
+    public void testNullStringPropertyId() throws Exception {
+        String json = "{\"id\":null,\"name\":\"test\"}";
+        NullStringPropertyId result = MAPPER.readValue(json, NullStringPropertyId.class);
+        assertNotNull(result);
+        assertNull(result.id);
+        assertEquals("test", result.name);
+    }
+}
+```

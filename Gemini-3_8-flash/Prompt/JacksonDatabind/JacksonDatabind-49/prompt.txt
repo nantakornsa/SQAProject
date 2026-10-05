@@ -1,0 +1,81 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-49
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+644487bf9b525b26734bfda1780b272b52631c5e
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-06-04 20:27:07 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1255
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1255
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.objectid.AlwaysAsReferenceFirstTest::testIssue1255
+   --> com.fasterxml.jackson.databind.deser.UnresolvedForwardReference: Unresolved forward references for: Object id [1] (for com.fasterxml.jackson.databind.objectid.AlwaysAsReferenceFirstTest$Bar) at [Source: {"bar1":1,"bar2":{"@id":2,"value":3}}; line: 1, column: 10].
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.ser.impl.WritableObjectId
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.ser.impl.WritableObjectId ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/ser/impl/WritableObjectId.java b/src/main/java/com/fasterxml/jackson/databind/ser/impl/WritableObjectId.java
+index af141e12a..d84269445 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/ser/impl/WritableObjectId.java
++++ b/src/main/java/com/fasterxml/jackson/databind/ser/impl/WritableObjectId.java
+@@ -47,7 +47,9 @@ public final class WritableObjectId
+         // 04-Jun-2016, tatu: As per [databind#1255], need to consider possibility of
+         //    id being generated for "alwaysAsId", but not being written as POJO; regardless,
+         //    need to use existing id if there is one:
++        if (id == null) {
+             id = generator.generateId(forPojo);
++        }
+         return id;
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testIssue1255() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

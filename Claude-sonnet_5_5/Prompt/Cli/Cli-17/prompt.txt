@@ -1,0 +1,76 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Cli
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Cli
+       Program: commons-cli
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/Cli.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-cli.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/active-bugs.csv
+Number of bugs: 39
+--------------------------------------------------------------------------------
+
+Summary for Bug: Cli-17
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+9c5ce3501938cff01d78b7a1fff10a60abe9e0cf
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-07-27 23:38:21 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CLI-163
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CLI-163
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.cli.PosixParserTest::testStopBursting
+   --> junit.framework.AssertionFailedError: Confirm  1 extra arg: 2
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.cli.PosixParser
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.cli.PosixParser ===
+diff --git a/src/java/org/apache/commons/cli/PosixParser.java b/src/java/org/apache/commons/cli/PosixParser.java
+index cafcede..1792c99 100644
+--- a/src/java/org/apache/commons/cli/PosixParser.java
++++ b/src/java/org/apache/commons/cli/PosixParser.java
+@@ -300,6 +300,7 @@ public class PosixParser extends Parser {
+             else if (stopAtNonOption)
+             {
+                 process(token.substring(i));
++                break;
+             }
+             else
+             {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testStopBursting() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

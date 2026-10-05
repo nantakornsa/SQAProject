@@ -1,0 +1,45 @@
+```java
+package org.joda.time.tz;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+/**
+ * Regression test for issue #18: ZoneInfoCompiler.verbose() fails with a
+ * NullPointerException on threads other than the one that initialised the
+ * static ThreadLocal.
+ */
+public class TestZoneInfoCompilerVerboseThread extends TestCase {
+
+    public static TestSuite suite() {
+        return new TestSuite(TestZoneInfoCompilerVerboseThread.class);
+    }
+
+    public TestZoneInfoCompilerVerboseThread(String name) {
+        super(name);
+    }
+
+    public void testVerboseInNewThread() throws Exception {
+        // call on the main thread first
+        assertFalse(ZoneInfoCompiler.verbose());
+
+        final Boolean[] result = new Boolean[1];
+        final Throwable[] error = new Throwable[1];
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    result[0] = Boolean.valueOf(ZoneInfoCompiler.verbose());
+                } catch (Throwable ex) {
+                    error[0] = ex;
+                }
+            }
+        });
+        t.start();
+        t.join();
+
+        assertNull("Unexpected exception in other thread: " + error[0], error[0]);
+        assertNotNull(result[0]);
+        assertFalse(result[0].booleanValue());
+    }
+}
+```

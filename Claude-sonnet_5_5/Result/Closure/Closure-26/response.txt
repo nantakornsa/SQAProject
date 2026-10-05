@@ -1,0 +1,48 @@
+This test runs the compiler with CommonJS processing on a module that has no exports. It asserts that the output contains no `module$exports` override. I haven't compiled or run it, so two API assumptions are unchecked. It uses the public `processCommonJSModules` field on `CompilerOptions`, and `JSSourceFile.fromCode` with the `Compiler.compile(extern, input, options)` overload.
+
+On the buggy version, `emitOptionalModuleExportsOverride` always emits the `module$exports` override, even for a module with no exports, so the output contains `module$exports` and the test fails. The fix only emits it when the module has exports, so the output is clean and the test passes.
+
+I did not reproduce `testTransformAMDAndProcessCJS` itself, because its exact expected output depends on the `CommandLineRunnerTest` setup.
+
+```java
+package com.google.javascript.jscomp;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test: modules without exports must not get a
+ * "module$exports" override emitted by ProcessCommonJSModules.
+ */
+public class ProcessCommonJSModulesNoExportsRegressionTest extends TestCase {
+
+  private String compile(String filename, String code) {
+    Compiler compiler = new Compiler();
+    CompilerOptions options = new CompilerOptions();
+    options.processCommonJSModules = true;
+
+    Result result = compiler.compile(
+        JSSourceFile.fromCode("externs.js", ""),
+        JSSourceFile.fromCode(filename, code),
+        options);
+    assertTrue("Compilation should succeed", result.success);
+    return compiler.toSource();
+  }
+
+  public void testModuleWithoutExportsHasNoModuleExportsOverride() {
+    String output = compile("test.js",
+        "var name = require('other'); name.call(); new name;");
+    assertFalse(
+        "Unexpected module$exports override in output: " + output,
+        output.contains("module$exports"));
+  }
+
+  public void testModuleWithoutExportsStillDeclaresModule() {
+    String output = compile("test.js", "var x = 1;");
+    assertTrue("Module object should still be declared: " + output,
+        output.contains("module$test"));
+    assertFalse(
+        "Unexpected module$exports override in output: " + output,
+        output.contains("module$exports"));
+  }
+}
+```

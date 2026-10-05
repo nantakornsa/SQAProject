@@ -1,0 +1,45 @@
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.Node;
+
+public class CheckGlobalThisTest extends CompilerTestCase {
+
+  public CheckGlobalThisTest() {
+    super("");
+  }
+
+  @Override
+  protected CompilerPass getProcessor(final Compiler compiler) {
+    return new CompilerPass() {
+      @Override
+      public void process(Node externs, Node root) {
+        NodeTraversal.traverse(compiler, root, new CheckGlobalThis(compiler));
+      }
+    };
+  }
+
+  @Override
+  public int getNumRepetitions() {
+    return 1;
+  }
+
+  public void testLendsAnnotation3() {
+    testSame("/** @constructor */ function F() {}" +
+        "dojo.declare(F, /** @lends {F.prototype} */ (" +
+        "    {foo: function() { return this.foo; }}));");
+  }
+
+  public void testLendsAnnotationWithPrototypeInObjectLiteralKey() {
+    testSame("/** @constructor */ function G() {}" +
+        "dojo.declare(G, /** @lends {G.prototype} */ (" +
+        "    {bar: function() { return this.bar; }}));");
+  }
+}
+```
+
+I wrote this from memory of the project's test class, so two things need checking before you run it:
+- The `CheckGlobalThis(compiler)` constructor signature may differ in this revision.
+- The `CompilerPass` wrapper that runs `NodeTraversal.traverse` may not match how the real `CheckGlobalThisTest` sets up its processor.
+
+I have not compiled or run it. `testLendsAnnotation3` is the triggering test from the bug report. The buggy version should fail it with `JSC_USED_GLOBAL_THIS`, and the fixed version should pass it. The second test is the same scenario with a different constructor and key name, so it should behave the same way.

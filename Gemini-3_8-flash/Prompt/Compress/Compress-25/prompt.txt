@@ -1,0 +1,90 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Compress
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Compress
+       Program: commons-compress
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/Compress.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-compress.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/active-bugs.csv
+Number of bugs: 47
+--------------------------------------------------------------------------------
+
+Summary for Bug: Compress-25
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+aed56110ff582b96aecf7675a9cfe5247ffa3e7d
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2014-02-21 14:21:12 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COMPRESS-264
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COMPRESS-264
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.compress.archivers.zip.ZipArchiveInputStreamTest::testReadingOfFirstStoredEntry
+   --> junit.framework.AssertionFailedError: arrays first differed at element [0]; expected:<100> but was:<0>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.compress.archivers.zip.ZipArchiveInputStream
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.compress.archivers.zip.ZipArchiveInputStream ===
+diff --git a/src/main/java/org/apache/commons/compress/archivers/zip/ZipArchiveInputStream.java b/src/main/java/org/apache/commons/compress/archivers/zip/ZipArchiveInputStream.java
+index 38ae9568..9a3aa37f 100644
+--- a/src/main/java/org/apache/commons/compress/archivers/zip/ZipArchiveInputStream.java
++++ b/src/main/java/org/apache/commons/compress/archivers/zip/ZipArchiveInputStream.java
+@@ -181,6 +181,7 @@ public class ZipArchiveInputStream extends ArchiveInputStream {
+         this.allowStoredEntriesWithDataDescriptor =
+             allowStoredEntriesWithDataDescriptor;
+         // haven't read anything so far
++        buf.limit(0);
+     }
+ 
+     public ZipArchiveEntry getNextZipEntry() throws IOException {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testReadingOfFirstStoredEntry() throws Exception {
+        ZipArchiveInputStream in = new ZipArchiveInputStream(new FileInputStream(getFile("COMPRESS-264.zip")));
+        
+        try {
+            ZipArchiveEntry ze = in.getNextZipEntry();
+            assertEquals(5, ze.getSize());
+            assertArrayEquals(new byte[] {'d', 'a', 't', 'a', '\n'},
+                              IOUtils.toByteArray(in));
+        } finally {
+            in.close();
+        }
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

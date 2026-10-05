@@ -1,0 +1,51 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791142493-NQC8zqDvR6VPDfKdgsTu","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing Jsoup Header Parsing**\n\nI'm currently focusing on a specific bug in Jsoup where identical headers (excluding \"Set-Cookie\") were only partially processed due to an incorrect index access. My current efforts involve refining the logic to correctly handle all values for such headers, ensuring comprehensive data extraction.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.jsoup.helper;\n\nimport org.junit.Test;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\nimport java.util.ArrayList;\nimport java.util.HashMap;\nimport java.util.List;\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"import java.util.Map;\n\nimport static org.junit.Assert.assertEquals;\n\npublic class HttpConnectionResponse"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Test {\n\n    @Test\n    public void sameHeadersCombineWithComma() {\n        Map<String, List<"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"String>> headers = new HashMap<String, List<String>>();\n        List<String> values = new ArrayList<"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"String>();\n        values.add(\"no-cache\");\n        values.add(\"no-store\");\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"headers.put(\"Cache-Control\", values);\n\n        HttpConnection.Response res = new HttpConnection.Response();"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        res.processResponseHeaders(headers);\n\n        assertEquals(\"no-cache, no-store\", res.header(\"Cache-Control"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\"));\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1156,"output_tokens":585,"output_tokens_details":{"thinking_tokens":384},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00306075,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00306075,"upstream_inference_prompt_cost":0.000867,"upstream_inference_completions_cost":0.00219375}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

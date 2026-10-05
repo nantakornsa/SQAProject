@@ -1,0 +1,90 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-33
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+8f675dd3cbfb8f552bdbbe1cfc646ba5b367983b
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-02-05 21:31:38 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-587
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-587
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang3.ClassUtilsTest::testToClass_object
+   --> java.lang.NullPointerException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang3.ClassUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang3.ClassUtils ===
+diff --git a/src/main/java/org/apache/commons/lang3/ClassUtils.java b/src/main/java/org/apache/commons/lang3/ClassUtils.java
+index 615e4a9ac..3998966a7 100644
+--- a/src/main/java/org/apache/commons/lang3/ClassUtils.java
++++ b/src/main/java/org/apache/commons/lang3/ClassUtils.java
+@@ -907,7 +907,7 @@ public class ClassUtils {
+         }
+         Class<?>[] classes = new Class[array.length];
+         for (int i = 0; i < array.length; i++) {
+-            classes[i] = array[i].getClass();
++            classes[i] = array[i] == null ? null : array[i].getClass();
+         }
+         return classes;
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testToClass_object() {
+        assertNull(ClassUtils.toClass(null));
+
+        assertSame(ArrayUtils.EMPTY_CLASS_ARRAY, ClassUtils.toClass(ArrayUtils.EMPTY_OBJECT_ARRAY));
+
+        assertTrue(Arrays.equals(new Class[] { String.class, Integer.class, Double.class },
+                ClassUtils.toClass(new Object[] { "Test", 1, 99d })));
+
+        assertTrue(Arrays.equals(new Class[] { String.class, null, Double.class },
+                ClassUtils.toClass(new Object[] { "Test", null, 99d })));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

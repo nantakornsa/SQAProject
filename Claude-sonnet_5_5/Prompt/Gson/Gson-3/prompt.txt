@@ -1,0 +1,110 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Gson
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Gson
+       Program: gson
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Gson/Gson.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/gson.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Gson/active-bugs.csv
+Number of bugs: 18
+--------------------------------------------------------------------------------
+
+Summary for Bug: Gson-3
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+64107353a37e623ed1f8fecb4422c24212cf6fe1
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-11-05 07:25:34 -0500
+--------------------------------------------------------------------------------
+Bug report id:
+624
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/google/gson/issues/624
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.gson.functional.MapTest::testConcurrentMap
+   --> java.lang.ClassCastException: java.util.LinkedHashMap cannot be cast to java.util.concurrent.ConcurrentMap
+ - com.google.gson.functional.MapTest::testConcurrentNavigableMap
+   --> java.lang.ClassCastException: java.util.TreeMap cannot be cast to java.util.concurrent.ConcurrentNavigableMap
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.gson.internal.ConstructorConstructor
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.gson.internal.ConstructorConstructor ===
+diff --git a/gson/src/main/java/com/google/gson/internal/ConstructorConstructor.java b/gson/src/main/java/com/google/gson/internal/ConstructorConstructor.java
+index a0384fa7..6fc9f2d3 100644
+--- a/gson/src/main/java/com/google/gson/internal/ConstructorConstructor.java
++++ b/gson/src/main/java/com/google/gson/internal/ConstructorConstructor.java
+@@ -33,6 +33,10 @@ import java.util.SortedMap;
+ import java.util.SortedSet;
+ import java.util.TreeMap;
+ import java.util.TreeSet;
++import java.util.concurrent.ConcurrentHashMap;
++import java.util.concurrent.ConcurrentMap;
++import java.util.concurrent.ConcurrentNavigableMap;
++import java.util.concurrent.ConcurrentSkipListMap;
+ 
+ import com.google.gson.InstanceCreator;
+ import com.google.gson.JsonIOException;
+@@ -172,7 +176,19 @@ public final class ConstructorConstructor {
+     }
+ 
+     if (Map.class.isAssignableFrom(rawType)) {
+-      if (SortedMap.class.isAssignableFrom(rawType)) {
++      if (ConcurrentNavigableMap.class.isAssignableFrom(rawType)) {
++        return new ObjectConstructor<T>() {
++          @Override public T construct() {
++            return (T) new ConcurrentSkipListMap<Object, Object>();
++          }
++        };
++      } else if (ConcurrentMap.class.isAssignableFrom(rawType)) {
++        return new ObjectConstructor<T>() {
++          @Override public T construct() {
++            return (T) new ConcurrentHashMap<Object, Object>();
++          }
++        };
++      } else if (SortedMap.class.isAssignableFrom(rawType)) {
+         return new ObjectConstructor<T>() {
+           @Override public T construct() {
+             return (T) new TreeMap<Object, Object>();
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testConcurrentMap() throws Exception {
+    Type typeOfMap = new TypeToken<ConcurrentMap<Integer, String>>() {}.getType();
+    ConcurrentMap<Integer, String> map = gson.fromJson("{\"123\":\"456\"}", typeOfMap);
+    assertEquals(1, map.size());
+    assertTrue(map.containsKey(123));
+    assertEquals("456", map.get(123));
+    String json = gson.toJson(map);
+    assertEquals("{\"123\":\"456\"}", json);
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,90 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-118
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+f17961ae4d3d7cf5ea291d82804239982d009ef7
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-08-26 10:00:28 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1024
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-1024.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.DisambiguatePropertiesTest::testOneType4
+   --> junit.framework.ComparisonFailure: expected:<{[]}> but was:<{[a=[[Foo.prototype]]]}>
+ - com.google.javascript.jscomp.DisambiguatePropertiesTest::testTwoTypes4
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.DisambiguateProperties
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.DisambiguateProperties ===
+diff --git a/src/com/google/javascript/jscomp/DisambiguateProperties.java b/src/com/google/javascript/jscomp/DisambiguateProperties.java
+index b34921edd..01293c989 100644
+--- a/src/com/google/javascript/jscomp/DisambiguateProperties.java
++++ b/src/com/google/javascript/jscomp/DisambiguateProperties.java
+@@ -492,6 +492,9 @@ class DisambiguateProperties<T> implements CompilerPass {
+           child != null;
+           child = child.getNext()) {
+         // Maybe STRING, GET, SET
++        if (child.isQuotedString()) {
++          continue;
++        }
+ 
+         // We should never see a mix of numbers and strings.
+         String name = child.getString();
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testOneType4() {
+    String js = ""
+        + "/** @constructor */ function Foo() {}\n"
+        + "Foo.prototype = {'a': 0};\n"
+        + "/** @type Foo */\n"
+        + "var F = new Foo;\n"
+        + "F['a'] = 0;";
+    String expected = "{}";
+    testSets(false, js, js, expected);
+    testSets(true, js, js, expected);
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

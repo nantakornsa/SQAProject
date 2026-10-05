@@ -1,0 +1,27 @@
+package com.google.javascript.rhino.jstype;
+
+public class RecordTypeLeastSupertypeRegressionTest extends BaseJSTypeTestCase {
+
+  public void testRecordTypeLeastSupertypeIsUnion() {
+    RecordTypeBuilder builder = new RecordTypeBuilder(registry);
+    builder.addProperty("a", NUMBER_TYPE, null);
+    builder.addProperty("b", STRING_TYPE, null);
+    JSType recordOne = builder.build();
+
+    builder = new RecordTypeBuilder(registry);
+    builder.addProperty("e", NUMBER_TYPE, null);
+    builder.addProperty("b", STRING_TYPE, null);
+    builder.addProperty("c", STRING_TYPE, null);
+    JSType recordTwo = builder.build();
+
+    JSType expected = registry.createUnionType(recordOne, recordTwo);
+    JSType actual = recordOne.getLeastSupertype(recordTwo);
+
+    assertTrue("Least supertype of distinct records should be a union, got: "
+        + actual, actual.isUnionType());
+    assertTrue("Expected: " + expected + " but was: " + actual,
+        expected.isEquivalentTo(actual));
+    assertTrue(recordOne.isSubtype(actual));
+    assertTrue(recordTwo.isSubtype(actual));
+  }
+}

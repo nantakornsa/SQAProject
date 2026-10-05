@@ -1,0 +1,91 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Cli
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Cli
+       Program: commons-cli
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/Cli.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-cli.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/active-bugs.csv
+Number of bugs: 39
+--------------------------------------------------------------------------------
+
+Summary for Bug: Cli-4
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+f78959477b207bf710049aa35730ef7659f0a1b9
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2007-06-05 04:01:08 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+cli-1
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CLI-1
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.cli.OptionsTest::testMissingOptionsException
+   --> junit.framework.ComparisonFailure: expected:<[Missing required options: ]fx> but was:<[]fx>
+ - org.apache.commons.cli.OptionsTest::testMissingOptionException
+   --> junit.framework.ComparisonFailure: expected:<[Missing required option: ]f> but was:<[]f>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.cli.Parser
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.cli.Parser ===
+diff --git a/src/java/org/apache/commons/cli/Parser.java b/src/java/org/apache/commons/cli/Parser.java
+index 35b025e..2843ef1 100644
+--- a/src/java/org/apache/commons/cli/Parser.java
++++ b/src/java/org/apache/commons/cli/Parser.java
+@@ -295,7 +295,9 @@ public abstract class Parser implements CommandLineParser {
+         if (requiredOptions.size() > 0)
+         {
+             Iterator iter = requiredOptions.iterator();
+-            StringBuffer buff = new StringBuffer();
++            StringBuffer buff = new StringBuffer("Missing required option");
++            buff.append(requiredOptions.size() == 1 ? "" : "s");
++            buff.append(": ");
+ 
+ 
+             // loop through the required options
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testMissingOptionsException() throws ParseException {
+        Options options = new Options();
+        options.addOption(OptionBuilder.isRequired().create("f"));
+        options.addOption(OptionBuilder.isRequired().create("x"));
+        try {
+            new PosixParser().parse(options, new String[0]);
+            fail("Expected MissingOptionException to be thrown");
+        } catch (MissingOptionException e) {
+            assertEquals("Missing required options: fx", e.getMessage());
+        }
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

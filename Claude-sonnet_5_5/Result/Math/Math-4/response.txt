@@ -1,0 +1,44 @@
+Two regression tests, one for each modified `SubLine`. They live in different packages, so they go in two files.
+
+**File 1: `src/test/java/org/apache/commons/math3/geometry/euclidean/threed/SubLineTest.java`** (add the test method to the existing class, or use this standalone class)
+
+```java
+package org.apache.commons.math3.geometry.euclidean.threed;
+
+import org.apache.commons.math3.exception.MathIllegalArgumentException;
+import org.junit.Assert;
+import org.junit.Test;
+
+public class SubLineTest {
+
+    @Test
+    public void testIntersectionNotIntersecting() throws MathIllegalArgumentException {
+        SubLine sub1 = new SubLine(new Vector3D(1, 1, 1), new Vector3D(1.5, 1, 1));
+        SubLine sub2 = new SubLine(new Vector3D(2, 3, 0), new Vector3D(2, 3, 0.5));
+        Assert.assertNull(sub1.intersection(sub2, true));
+        Assert.assertNull(sub1.intersection(sub2, false));
+    }
+}
+```
+
+**File 2: `src/test/java/org/apache/commons/math3/geometry/euclidean/twod/SubLineTest.java`** (add the test method to the existing class, or use this standalone class)
+
+```java
+package org.apache.commons.math3.geometry.euclidean.twod;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+public class SubLineTest {
+
+    @Test
+    public void testIntersectionParallel() {
+        SubLine sub1 = new SubLine(new Vector2D(0, 1), new Vector2D(0, 2));
+        SubLine sub2 = new SubLine(new Vector2D(1, 1), new Vector2D(1, 2));
+        Assert.assertNull(sub1.intersection(sub2, true));
+        Assert.assertNull(sub1.intersection(sub2, false));
+    }
+}
+```
+
+On the buggy version, `line.intersection(...)` returns `null` for skew (3D) or parallel (2D) lines. The code then passes that `null` to `toSubSpace`, which throws a `NullPointerException`. On the fixed version, `intersection` returns `null` as expected.

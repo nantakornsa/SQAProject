@@ -1,0 +1,41 @@
+package org.joda.time.format;
+
+import java.util.Locale;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.joda.time.DateTimeZone;
+import org.joda.time.MutableDateTime;
+
+/**
+ * Regression test for DateTimeFormatter.parseInto using the wrong default year
+ * when the instant's zone offset moves the local time into a different year.
+ */
+public class TestDateTimeFormatterFeb29Regression extends TestCase {
+
+    private static final DateTimeZone NEWYORK = DateTimeZone.forID("America/New_York");
+    private static final DateTimeZone TOKYO = DateTimeZone.forID("Asia/Tokyo");
+
+    public static TestSuite suite() {
+        return new TestSuite(TestDateTimeFormatterFeb29Regression.class);
+    }
+
+    public TestDateTimeFormatterFeb29Regression(String name) {
+        super(name);
+    }
+
+    public void testParseInto_monthDay_feb29_newYork_startOfYear() {
+        DateTimeFormatter f = DateTimeFormat.forPattern("M d").withLocale(Locale.UK);
+        MutableDateTime result = new MutableDateTime(2004, 1, 1, 0, 0, 0, 0, NEWYORK);
+        assertEquals(4, f.parseInto(result, "2 29", 0));
+        assertEquals(new MutableDateTime(2004, 2, 29, 0, 0, 0, 0, NEWYORK), result);
+    }
+
+    public void testParseInto_monthDay_feb29_tokyo_endOfYear() {
+        DateTimeFormatter f = DateTimeFormat.forPattern("M d").withLocale(Locale.UK);
+        MutableDateTime result = new MutableDateTime(2004, 12, 31, 23, 0, 0, 0, TOKYO);
+        assertEquals(4, f.parseInto(result, "2 29", 0));
+        assertEquals(new MutableDateTime(2004, 2, 29, 23, 0, 0, 0, TOKYO), result);
+    }
+}

@@ -1,0 +1,107 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-170
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+49f54b28376a4ed5f72ec52d314020bd1f6cf3c6
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-04-17 14:44:24 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+965
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-965.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.FlowSensitiveInlineVariablesTest::testVarAssinInsideHookIssue965
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.FlowSensitiveInlineVariables
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.FlowSensitiveInlineVariables ===
+diff --git a/src/com/google/javascript/jscomp/FlowSensitiveInlineVariables.java b/src/com/google/javascript/jscomp/FlowSensitiveInlineVariables.java
+index ecba09b19..d58f80cbe 100644
+--- a/src/com/google/javascript/jscomp/FlowSensitiveInlineVariables.java
++++ b/src/com/google/javascript/jscomp/FlowSensitiveInlineVariables.java
+@@ -479,19 +479,30 @@ class FlowSensitiveInlineVariables extends AbstractPostOrderCallback
+ 
+         @Override
+         public void visit(NodeTraversal t, Node n, Node parent) {
+-          if (n.isName() && n.getString().equals(varName) &&
++          if (n.isName() && n.getString().equals(varName)) {
+             // We make a special exception when the entire cfgNode is a chain
+             // of assignments, since in that case the assignment statements
+             // will happen after the inlining of the right hand side.
+             // TODO(blickly): Make the SIDE_EFFECT_PREDICATE check more exact
+             //   and remove this special case.
+-              !(parent.isAssign() &&
+-               (parent.getFirstChild() == n))) {
++            if (parent.isAssign() && (parent.getFirstChild() == n)
++                && isAssignChain(parent, cfgNode)) {
+               // Don't count lhs of top-level assignment chain
++              return;
++            } else {
+               numUsesWithinCfgNode++;
++            }
+           }
+         }
+ 
++        private boolean isAssignChain(Node child, Node ancestor) {
++          for (Node n = child; n != ancestor; n = n.getParent()) {
++            if (!n.isAssign()) {
++              return false;
++            }
++          }
++          return true;
++        }
+       };
+ 
+       NodeTraversal.traverse(compiler, cfgNode, gatherCb);
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testVarAssinInsideHookIssue965() {
+    noInline("var i = 0; return 1 ? (i = 5) : 0, i;");
+    noInline("var i = 0; return (1 ? (i = 5) : 0) ? i : 0;");
+    noInline("var i = 0; return (1 ? (i = 5) : 0) || i;");
+    noInline("var i = 0; return (1 ? (i = 5) : 0) * i;");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

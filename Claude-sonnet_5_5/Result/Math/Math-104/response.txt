@@ -1,0 +1,19 @@
+```java
+package org.apache.commons.math.special;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for MATH-166: the default epsilon used by the regularized
+ * Gamma function was too coarse (10e-9), giving results accurate to only
+ * about 1e-10.
+ */
+public class GammaRegressionTest extends TestCase {
+
+    public void testRegularizedGammaPPositivePositivePrecision() {
+        double expected = 0.632120558828558;
+        double actual = Gamma.regularizedGammaP(1.0, 1.0);
+        assertEquals(expected, actual, 10e-15);
+    }
+}
+```

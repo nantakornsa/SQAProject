@@ -1,0 +1,93 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791145756-36QZDkVeabMxkCZYIknw","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":2370,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" test below"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" cov"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ers both the positive and negative"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" overflow "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ranges of `cosh`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" and `sinh`. I"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" have not comp"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"iled or run it against"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" the buggy and fixed"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" versions.\n\nThe tests comp"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"are `FastMath` against `java.lang.Math` over the range where `exp(x)` overflows but `cosh(x)` and `sinh(x)` are"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" still finite. The buggy code returns `Infinity` there, so the error becomes infinite or NaN and the assertion fails. The fixed code uses `exp(0.5 * x)` squared, which"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" stays within a few ulps of the reference.\n\nI use `JUnit 4` (`org.junit.Test` and `org.junit.Assert`). Because `Math.cosh` and `Math.sinh` can"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" themselves return `Infinity` near the upper limit, I skip any point where the reference is infinite. This keeps the test from failing on the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" fixed version because of the reference value rather than `FastMath`.\n\n```java\npackage org.apache.commons.math3.util;\n\nimport org.junit.Assert;\nimport org.junit.Test;\n\npublic class F"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"astMathMath905RegressionTest {\n\n    @Test\n    public void testMath905LargePositive() {\n        final double start = StrictMath.log(Double.MAX_VALUE);\n        final double endT = StrictMath.sqrt(2) * StrictMath.sqrt(Double.M"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"AX_VALUE);\n        final double end = 2 * StrictMath.log(endT);\n\n        double maxErr = 0;\n        for (double x = start; x < end; x += 1e-3) {\n            final double tst = FastMath.cosh(x);\n            final double ref = Math.cosh(x);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n            if (Double.isInfinite(ref)) {\n                continue;\n            }\n            maxErr = FastMath.max(maxErr, FastMath.abs(ref - tst) / FastMath.ulp(ref));\n        }\n        Assert.assertEquals(0, ma"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"xErr, 3);\n\n        maxErr = 0;\n        for (double x = start; x < end; x += 1e-3) {\n            final double tst = FastMath.sinh(x);\n            final double ref = Math.sinh(x);\n            if (Double.isInfinite(ref)) {\n                continue;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n            }\n            maxErr = FastMath.max(maxErr, FastMath.abs(ref - tst) / FastMath.ulp(ref));\n        }\n        Assert.assertEquals(0, maxErr, 3);\n    }\n\n    @Test\n    public void testMath905LargeNegative"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"() {\n        final double start = -StrictMath.log(Double.MAX_VALUE);\n        final double endT = StrictMath.sqrt(2) * StrictMath.sqrt(Double.MAX_VALUE);\n        final double end = -2 * StrictMath.log(endT);\n\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"double maxErr = 0;\n        for (double x = start; x > end; x -= 1e-3) {\n            final double tst = FastMath.cosh(x);\n            final double ref = Math.cosh(x);\n            if (Double.isInfinite(ref)) {\n                continue;\n            }\n            max"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Err = FastMath.max(maxErr, FastMath.abs(ref - tst) / FastMath.ulp(ref));\n        }\n        Assert.assertEquals(0, maxErr, 3);\n\n        maxErr = 0;\n        for (double x = start; x > end; x -= 1e"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"-3) {\n            final double tst = FastMath.sinh(x);\n            final double ref = Math.sinh(x);\n            if (Double.isInfinite(ref)) {\n                continue;\n            }\n            maxErr = FastMath.max(maxErr, FastMath.abs(ref - tst"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":") / FastMath.ulp(ref));\n        }\n        Assert.assertEquals(0, maxErr, 3);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2370,"output_tokens":1246,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.0172,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0172,"upstream_inference_prompt_cost":0.00474,"upstream_inference_completions_cost":0.01246}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

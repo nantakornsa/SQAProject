@@ -1,0 +1,26 @@
+package org.apache.commons.math.complex;
+
+import java.text.ParsePosition;
+import java.util.Locale;
+
+
+public class ClaudeComplexFormatTest extends ComplexFormatAbstractTest {
+    protected char getDecimalCharacter() {
+        return '.';
+    }
+    
+    protected Locale getLocale() {
+        return Locale.US;
+    }
+
+    public void testParseMissingImaginaryCharacterAtEndOfInput() {
+        ComplexFormat format = ComplexFormat.getInstance(Locale.US);
+        ParsePosition pos = new ParsePosition(0);
+        // The imaginary character is missing and the input ends right after the
+        // imaginary part. The buggy version throws StringIndexOutOfBoundsException.
+        Complex result = format.parse("1 + 1", pos);
+        assertNull(result);
+        assertEquals(5, pos.getErrorIndex());
+        assertEquals(0, pos.getIndex());
+    }
+}

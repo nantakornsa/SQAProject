@@ -1,0 +1,96 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-94
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+6799f8f10cc78e9af6d443ed6982d00a13f2e7d2
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2018-02-10 19:22:01 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+1931
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1931
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.interop.IllegalTypesCheckTest::testC3P0Types
+   --> junit.framework.AssertionFailedError: Expected an exception with one of substrings ([Illegal type]): got one with message "Can not instantiate value of type [simple type, class com.mchange.v2.c3p0.jacksontest.ComboPooledDataSource] from String value ('/tmp/foobar.txt'); no single-String constructor/factory method
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.jsontype.impl.SubTypeValidator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.jsontype.impl.SubTypeValidator ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/jsontype/impl/SubTypeValidator.java b/src/main/java/com/fasterxml/jackson/databind/jsontype/impl/SubTypeValidator.java
+index 9865b1a20..777637a75 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/jsontype/impl/SubTypeValidator.java
++++ b/src/main/java/com/fasterxml/jackson/databind/jsontype/impl/SubTypeValidator.java
+@@ -20,6 +20,7 @@ public class SubTypeValidator
+ {
+     protected final static String PREFIX_SPRING = "org.springframework.";
+ 
++    protected final static String PREFIX_C3P0 = "com.mchange.v2.c3p0.";
+ 
+     /**
+      * Set of well-known "nasty classes", deserialization of which is considered dangerous
+@@ -95,12 +96,16 @@ public class SubTypeValidator
+                             || "AbstractApplicationContext".equals(name)) {
+                         break main_check;
+                     }
++                }
++            } else if (full.startsWith(PREFIX_C3P0)) {
+                 // [databind#1737]; more 3rd party
+                 // s.add("com.mchange.v2.c3p0.JndiRefForwardingDataSource");
+                 // s.add("com.mchange.v2.c3p0.WrapperConnectionPoolDataSource");
+                 // [databind#1931]; more 3rd party
+                 // com.mchange.v2.c3p0.ComboPooledDataSource
+                 // com.mchange.v2.c3p0.debug.AfterCloseLoggingComboPooledDataSource 
++                if (full.endsWith("DataSource")) {
++                    break main_check;
+                 }
+             }
+             return;
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testC3P0Types() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

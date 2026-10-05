@@ -1,0 +1,111 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-37
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+7e93d521cb67ce33018315234fafe8a5aa30ee1e
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-02-21 17:27:03 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+663
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-663.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.IntegrationTest::testIncompleteFunction
+   --> java.lang.RuntimeException: java.lang.RuntimeException: INTERNAL COMPILER ERROR.
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.NodeTraversal
+ - com.google.javascript.jscomp.parsing.IRFactory
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.NodeTraversal ===
+diff --git a/src/com/google/javascript/jscomp/NodeTraversal.java b/src/com/google/javascript/jscomp/NodeTraversal.java
+index 8201b41a3..435b4a8ca 100644
+--- a/src/com/google/javascript/jscomp/NodeTraversal.java
++++ b/src/com/google/javascript/jscomp/NodeTraversal.java
+@@ -538,7 +538,7 @@ public class NodeTraversal {
+ 
+     // Body
+     Preconditions.checkState(body.getNext() == null &&
+-            body.isBlock());
++            body.isBlock(), body);
+     traverseBranch(body, n);
+ 
+     popScope();
+
+=== MODIFIED SOURCE: com.google.javascript.jscomp.parsing.IRFactory ===
+diff --git a/src/com/google/javascript/jscomp/parsing/IRFactory.java b/src/com/google/javascript/jscomp/parsing/IRFactory.java
+index 4da408563..26cbc19bb 100644
+--- a/src/com/google/javascript/jscomp/parsing/IRFactory.java
++++ b/src/com/google/javascript/jscomp/parsing/IRFactory.java
+@@ -664,9 +664,13 @@ class IRFactory {
+       node.addChildToBack(lp);
+ 
+       Node bodyNode = transform(functionNode.getBody());
++      if (!bodyNode.isBlock()) {
+         // When in ideMode Rhino tries to parse some constructs the compiler
+         // doesn't support, repair it here. see Rhino's
+         // Parser#parseFunctionBodyExpr.
++        Preconditions.checkState(config.isIdeMode);
++        bodyNode = IR.block();
++      }
+       parseDirectives(bodyNode);
+       node.addChildToBack(bodyNode);
+      return node;
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIncompleteFunction() {
+    CompilerOptions options = createCompilerOptions();
+    options.ideMode = true;
+    DiagnosticType[] warnings = new DiagnosticType[]{
+        RhinoErrorReporter.PARSE_ERROR,
+        RhinoErrorReporter.PARSE_ERROR,
+        RhinoErrorReporter.PARSE_ERROR,
+        RhinoErrorReporter.PARSE_ERROR};
+    test(options,
+        new String[] { "var foo = {bar: function(e) }" },
+        new String[] { "var foo = {bar: function(e){}};" },
+        warnings
+    );
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

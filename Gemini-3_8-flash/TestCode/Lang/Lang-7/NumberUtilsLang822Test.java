@@ -1,0 +1,17 @@
+package org.apache.commons.lang3.math;
+
+import org.junit.Test;
+import static org.junit.Assert.fail;
+
+public class NumberUtilsLang822Test {
+
+    @Test(expected = NumberFormatException.class)
+    public void testCreateNumberLeadingDoubleNegative() {
+        NumberUtils.createNumber("--1.1E-700F");
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void testCreateBigDecimalLeadingDoubleNegative() {
+        NumberUtils.createBigDecimal("--1.23");
+    }
+}

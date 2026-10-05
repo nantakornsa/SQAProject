@@ -1,0 +1,19 @@
+package org.jsoup.nodes;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
+public class BooleanAttributeOutputTest {
+
+    @Test
+    public void testBooleanAttributeWithEmptyValueOutput() {
+        Document doc = Jsoup.parse("<img src=foo noshade='' nohref async=async autofocus=false>");
+        Element img = doc.selectFirst("img");
+
+        assertEquals("<img src=\"foo\" noshade nohref async autofocus=\"false\">", img.outerHtml());
+    }
+}

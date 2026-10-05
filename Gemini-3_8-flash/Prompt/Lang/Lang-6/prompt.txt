@@ -1,0 +1,87 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-6
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+52bcd9b8e82d4d1d287b0d75df1e161aff8c65ab
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-11-20 20:45:50 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-857
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-857
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang3.StringUtilsTest::testEscapeSurrogatePairs
+   --> java.lang.StringIndexOutOfBoundsException: String index out of range: 2
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang3.text.translate.CharSequenceTranslator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang3.text.translate.CharSequenceTranslator ===
+diff --git a/src/main/java/org/apache/commons/lang3/text/translate/CharSequenceTranslator.java b/src/main/java/org/apache/commons/lang3/text/translate/CharSequenceTranslator.java
+index 4d010eafd..050046046 100644
+--- a/src/main/java/org/apache/commons/lang3/text/translate/CharSequenceTranslator.java
++++ b/src/main/java/org/apache/commons/lang3/text/translate/CharSequenceTranslator.java
+@@ -92,7 +92,7 @@ public abstract class CharSequenceTranslator {
+ //          // contract with translators is that they have to understand codepoints 
+ //          // and they just took care of a surrogate pair
+             for (int pt = 0; pt < consumed; pt++) {
+-                pos += Character.charCount(Character.codePointAt(input, pos));
++                pos += Character.charCount(Character.codePointAt(input, pt));
+             }
+         }
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testEscapeSurrogatePairs() throws Exception {
+        assertEquals("\uD83D\uDE30", StringEscapeUtils.escapeCsv("\uD83D\uDE30"));
+        // Examples from https://en.wikipedia.org/wiki/UTF-16
+        assertEquals("\uD800\uDC00", StringEscapeUtils.escapeCsv("\uD800\uDC00"));
+        assertEquals("\uD834\uDD1E", StringEscapeUtils.escapeCsv("\uD834\uDD1E"));
+        assertEquals("\uDBFF\uDFFD", StringEscapeUtils.escapeCsv("\uDBFF\uDFFD"));
+        
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

@@ -1,0 +1,97 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-98
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+12f82c60782f05015336bb6305fd72c133a410b5
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2018-05-31 23:15:31 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1328
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1328
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.jsontype.ext.ExternalTypeIdWithEnum1328Test::testExample
+   --> com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Cannot construct instance of `com.fasterxml.jackson.databind.jsontype.ext.ExternalTypeIdWithEnum1328Test$AnimalAndType`, problem: argument type mismatch
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.deser.impl.ExternalTypeHandler
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.deser.impl.ExternalTypeHandler ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/deser/impl/ExternalTypeHandler.java b/src/main/java/com/fasterxml/jackson/databind/deser/impl/ExternalTypeHandler.java
+index 2a3fbaab1..9ff1c0b9e 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/deser/impl/ExternalTypeHandler.java
++++ b/src/main/java/com/fasterxml/jackson/databind/deser/impl/ExternalTypeHandler.java
+@@ -295,7 +295,16 @@ public class ExternalTypeHandler
+                 if ((typeProp != null) && (typeProp.getCreatorIndex() >= 0)) {
+                     // 31-May-2018, tatu: [databind#1328] if id is NOT plain `String`, need to
+                     //    apply deserializer... fun fun.
+-                    buffer.assignParameter(typeProp, typeId);
++                    final Object v;
++                    if (typeProp.getType().hasRawClass(String.class)) {
++                        v = typeId;
++                    } else {
++                        TokenBuffer tb = new TokenBuffer(p, ctxt);
++                        tb.writeString(typeId);
++                        v = typeProp.getValueDeserializer().deserialize(tb.asParserOnFirstToken(), ctxt);
++                        tb.close();
++                    }
++                    buffer.assignParameter(typeProp, v);
+                 }
+             }
+         }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testExample() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        
+        String json = mapper.writerWithDefaultPrettyPrinter()
+                .writeValueAsString(Arrays.asList(new AnimalAndType(AnimalType.Dog, new Dog())));
+        List<AnimalAndType> list = mapper.readerFor(new TypeReference<List<AnimalAndType>>() { })
+            .readValue(json);
+        assertNotNull(list);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

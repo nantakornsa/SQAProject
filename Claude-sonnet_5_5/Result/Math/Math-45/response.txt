@@ -1,0 +1,32 @@
+The test below constructs an `OpenMapRealMatrix` whose cell count (3 × `Integer.MAX_VALUE`) overflows `int`. The fixed version throws `NumberIsTooLargeException`, so the test passes there. The buggy version has no check in the constructor, so no exception is thrown and `fail()` makes the test fail. I have not compiled or run it against either version.
+
+The project uses JUnit 3 (`junit.framework.AssertionFailedError` in the bug report), so the test extends `TestCase` and uses a try/fail/catch pattern.
+
+```java
+package org.apache.commons.math.linear;
+
+import junit.framework.TestCase;
+
+import org.apache.commons.math.exception.NumberIsTooLargeException;
+
+public class OpenMapRealMatrixTest extends TestCase {
+
+    public void testMath679() {
+        try {
+            new OpenMapRealMatrix(3, Integer.MAX_VALUE);
+            fail("Expected NumberIsTooLargeException");
+        } catch (NumberIsTooLargeException e) {
+            // expected
+        }
+    }
+
+    public void testMath679LargeBothDimensions() {
+        try {
+            new OpenMapRealMatrix(Integer.MAX_VALUE, Integer.MAX_VALUE);
+            fail("Expected NumberIsTooLargeException");
+        } catch (NumberIsTooLargeException e) {
+            // expected
+        }
+    }
+}
+```

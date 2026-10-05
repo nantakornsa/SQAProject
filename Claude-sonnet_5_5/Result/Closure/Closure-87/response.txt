@@ -1,0 +1,33 @@
+```java
+package com.google.javascript.jscomp;
+
+public class PeepholeSubstituteAlternateSyntaxTest extends CompilerTestCase {
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+  }
+
+  @Override
+  public CompilerPass getProcessor(final Compiler compiler) {
+    CompilerPass peepholePass =
+        new PeepholeOptimizationsPass(compiler,
+            new PeepholeSubstituteAlternateSyntax());
+    return peepholePass;
+  }
+
+  public void testIssue291() {
+    fold("if (true) { f.onchange(); }", "if (1) f.onchange();");
+    foldSame("if (f) { f.onchange(); }");
+    foldSame("if (f) { f.bar(); } else { f.onchange(); }");
+    fold("if (f) { f.bonchange(); }", "f && f.bonchange();");
+    foldSame("if (f) { f['x'](); }");
+  }
+}
+```
+
+I have not compiled or run this against either version. Two things I wrote from memory of the project at that date, so they may need adjusting:
+- The `getProcessor` wiring assumes `PeepholeOptimizationsPass` accepts the optimizations as varargs.
+- It also assumes `PeepholeSubstituteAlternateSyntax` has a no-argument constructor.
+
+The assertions in `testIssue291` are copied from the triggering test.

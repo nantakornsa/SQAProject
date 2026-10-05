@@ -1,0 +1,85 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Cli
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Cli
+       Program: commons-cli
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/Cli.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-cli.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/active-bugs.csv
+Number of bugs: 39
+--------------------------------------------------------------------------------
+
+Summary for Bug: Cli-10
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+d72a578a8949e4b1c437ec55997d8786836f139c
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-05-29 13:35:20 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CLI-156
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CLI-156
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.cli.ParseRequiredTest::testReuseOptionsTwice
+   --> junit.framework.AssertionFailedError: MissingOptionException not thrown
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.cli.Parser
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.cli.Parser ===
+diff --git a/src/java/org/apache/commons/cli/Parser.java b/src/java/org/apache/commons/cli/Parser.java
+index cf53a90..16d0795 100644
+--- a/src/java/org/apache/commons/cli/Parser.java
++++ b/src/java/org/apache/commons/cli/Parser.java
+@@ -16,6 +16,7 @@
+  */
+ package org.apache.commons.cli;
+ 
++import java.util.ArrayList;
+ import java.util.Arrays;
+ import java.util.Enumeration;
+ import java.util.Iterator;
+@@ -43,7 +44,7 @@ public abstract class Parser implements CommandLineParser {
+ 
+     protected void setOptions(final Options options) {
+         this.options = options;
+-        this.requiredOptions = options.getRequiredOptions();
++        this.requiredOptions = new ArrayList(options.getRequiredOptions());
+     }
+ 
+     protected Options getOptions() {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testReuseOptionsTwice() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

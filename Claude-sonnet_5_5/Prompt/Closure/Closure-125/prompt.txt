@@ -1,0 +1,90 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-125
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+8cef00180a5cf67d047919c89668a6405030dbab
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-05-23 18:49:49 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1002
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-1002.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.TypeCheckTest::testIssue1002
+   --> java.lang.IllegalStateException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.TypeCheck
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.TypeCheck ===
+diff --git a/src/com/google/javascript/jscomp/TypeCheck.java b/src/com/google/javascript/jscomp/TypeCheck.java
+index 4e0532584..de14c04e7 100644
+--- a/src/com/google/javascript/jscomp/TypeCheck.java
++++ b/src/com/google/javascript/jscomp/TypeCheck.java
+@@ -1658,7 +1658,7 @@ public class TypeCheck implements NodeTraversal.Callback, CompilerPass {
+     JSType type = getJSType(constructor).restrictByNotNullOrUndefined();
+     if (type.isConstructor() || type.isEmptyType() || type.isUnknownType()) {
+       FunctionType fnType = type.toMaybeFunctionType();
+-      if (fnType != null) {
++      if (fnType != null && fnType.hasInstanceType()) {
+         visitParameterList(t, n, fnType);
+         ensureTyped(t, n, fnType.getInstanceType());
+       } else {
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue1002() throws Exception {
+    testTypes(
+        "/** @interface */" +
+        "var I = function() {};" +
+        "/** @constructor @implements {I} */" +
+        "var A = function() {};" +
+        "/** @constructor @implements {I} */" +
+        "var B = function() {};" +
+        "var f = function() {" +
+        "  if (A === B) {" +
+        "    new B();" +
+        "  }" +
+        "};");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

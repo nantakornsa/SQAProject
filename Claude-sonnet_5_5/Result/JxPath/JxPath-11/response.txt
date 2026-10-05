@@ -1,0 +1,51 @@
+```java
+package org.apache.commons.jxpath.ri.model.dom;
+
+import java.io.StringReader;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import junit.framework.TestCase;
+
+import org.apache.commons.jxpath.JXPathContext;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+
+/**
+ * Regression test for JXPATH-97: namespace prefixes used in attribute
+ * names must be resolved using the namespaces registered with the
+ * JXPathContext, not only those declared in the document.
+ */
+public class DOMAttributeNamespaceMappingTest extends TestCase {
+
+    public DOMAttributeNamespaceMappingTest(String name) {
+        super(name);
+    }
+
+    private Document parse(String xml) throws Exception {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        return builder.parse(new InputSource(new StringReader(xml)));
+    }
+
+    public void testAttributeNamespaceUsesContextMapping() throws Exception {
+        // The document uses prefix "p"; the context registers the same
+        // namespace URI under the different prefix "rate".
+        String xml =
+            "<vendor xmlns:p=\"urn:price\" xmlns:q=\"urn:other\">"
+                + "<p:amount q:discount=\"20%\" p:discount=\"10%\">0</p:amount>"
+                + "</vendor>";
+
+        Document doc = parse(xml);
+
+        JXPathContext context = JXPathContext.newContext(doc);
+        context.registerNamespace("rate", "urn:price");
+
+        assertEquals(
+            "10%",
+            context.getValue("vendor[1]/rate:amount[1]/@rate:discount"));
+    }
+}
+```

@@ -1,0 +1,90 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-81
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+084b868bc2fbf9d6d0319e5a362ade1d7f43f899
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-02-17 21:20:42 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+251
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-251.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.parsing.ParserTest::testUnnamedFunctionStatement
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.parsing.IRFactory
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.parsing.IRFactory ===
+diff --git a/src/com/google/javascript/jscomp/parsing/IRFactory.java b/src/com/google/javascript/jscomp/parsing/IRFactory.java
+index 4a733cda6..07761aa9a 100644
+--- a/src/com/google/javascript/jscomp/parsing/IRFactory.java
++++ b/src/com/google/javascript/jscomp/parsing/IRFactory.java
+@@ -514,6 +514,13 @@ public class IRFactory {
+       Name name = functionNode.getFunctionName();
+       Boolean isUnnamedFunction = false;
+       if (name == null) {
++        int functionType = functionNode.getFunctionType();
++        if (functionType != FunctionNode.FUNCTION_EXPRESSION) {
++          errorReporter.error(
++            "unnamed function statement",
++            sourceName,
++            functionNode.getLineno(), "", 0);
++        }
+         name = new Name();
+         name.setIdentifier("");
+         isUnnamedFunction = true;
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testUnnamedFunctionStatement() {
+    // Statements
+    parseError("function() {};", "unnamed function statement");
+    parseError("if (true) { function() {}; }", "unnamed function statement");
+    parse("function f() {};");
+    // Expressions
+    parse("(function f() {});");
+    parse("(function () {});");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,78 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791145826-hePbHzIVBMAgx329Qzvf","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1900,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" test below"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" reproduces the tri"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ggering test from the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" bug report, `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"testMath855`,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" as a stand"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"alone J"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Unit 4"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" class"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":". I did not comp"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ile or run it against the buggy and fixed versions.\n\nIt minimizes `sin(x)` plus a step function that dips to -1 just after 3π/2, using `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"BrentOptimizer(1e-8, 1e-100)`. On the buggy version the optimizer returns `current` instead of the best of `current` and `previous`, so the reported point is worse than the known good"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" point and the assertion fails. The fixed version returns the best point, so the assertion passes.\n\nThe imports assume the `org.apache.commons.math3` package layout used by"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" this bug. `Sin` and `StepFunction` come from the `analysis.function` package, and `FunctionUtils` from `analysis`.\n\n```java\npackage org.apache.commons.math3.optimization.univariate;\n\nimport org.apache.commons.math3."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"analysis.FunctionUtils;\nimport org.apache.commons.math3.analysis.UnivariateFunction;\nimport org.apache.commons.math3.analysis.function.Sin;\nimport org.apache.commons.math3.analysis.function.StepFunction;\nimport org.apache.commons."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"math3.optimization.GoalType;\nimport org.junit.Assert;\nimport org.junit.Test;\n\npublic class BrentOptimizerMath855Test {\n\n    @Test\n    public void testMath855() {\n        final double minSin = 3 * Math.PI / 2;\n        final double offset = 1e"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"-8;\n        final double delta = 1e-7;\n        final UnivariateFunction f1 = new Sin();\n        final UnivariateFunction f2 = new StepFunction(new double[] { minSin, minSin + offset, minSin + 5 * offset },\n                                                       new double[] { "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"0, -1, 0 });\n        final UnivariateFunction f = FunctionUtils.add(f1, f2);\n        final UnivariateOptimizer optimizer = new BrentOptimizer(1e-8, 1e-100);\n        final UnivariatePointValuePair result\n            = opt"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"imizer.optimize(200, f, GoalType.MINIMIZE, minSin - 6.789 * delta, minSin + 9.876 * delta);\n\n        final double sol = result.getPoint();\n        final double expected = 4.712389027602411;\n\n        Assert.assertTrue(\"Best point"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" not reported\", f.value(sol) <= f.value(expected));\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1900,"output_tokens":803,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.01183,"is_byok":false,"cost_details":{"upstream_inference_cost":0.01183,"upstream_inference_prompt_cost":0.0038,"upstream_inference_completions_cost":0.00803}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

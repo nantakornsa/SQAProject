@@ -1,0 +1,36 @@
+package com.google.javascript.jscomp;
+
+import junit.framework.TestCase;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
+/**
+ * Regression test: "--version" given as the last argument, with no
+ * following parameter, must be parsed as a boolean flag.
+ */
+public class CommandLineRunnerVersionFlagTest extends TestCase {
+
+  public void testVersionFlagAsLastArgument() {
+    ByteArrayOutputStream outReader = new ByteArrayOutputStream();
+    ByteArrayOutputStream errReader = new ByteArrayOutputStream();
+    PrintStream out = new PrintStream(outReader);
+    PrintStream err = new PrintStream(errReader);
+
+    CommandLineRunner runner = new CommandLineRunner(
+        new String[] { "--version" }, out, err);
+    try {
+      runner.run();
+    } catch (RuntimeException e) {
+      // The runner may fail after printing; only the printed output matters.
+    }
+    out.flush();
+    err.flush();
+
+    assertEquals(
+        0,
+        new String(errReader.toByteArray()).indexOf(
+            "Closure Compiler (http://code.google.com/closure/compiler)\n" +
+            "Version: "));
+  }
+}

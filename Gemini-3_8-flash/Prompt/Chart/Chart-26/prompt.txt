@@ -1,0 +1,142 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Chart
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Chart
+       Program: jfreechart
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Chart/Chart.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Svn
+    Repository: file:///Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jfreechart/trunk
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Chart/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Chart-26
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+103
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2007-07-06 04:03:52 -0700 
+--------------------------------------------------------------------------------
+Bug report id:
+UNKNOWN
+--------------------------------------------------------------------------------
+Bug report url:
+UNKNOWN
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jfree.chart.junit.AreaChartTests::testDrawWithNullInfo
+   --> junit.framework.AssertionFailedError
+ - org.jfree.chart.junit.BarChart3DTests::testDrawWithNullInfo
+   --> junit.framework.AssertionFailedError
+ - org.jfree.chart.junit.BarChartTests::testDrawWithNullInfo
+   --> junit.framework.AssertionFailedError
+ - org.jfree.chart.junit.GanttChartTests::testDrawWithNullInfo
+   --> junit.framework.AssertionFailedError
+ - org.jfree.chart.junit.GanttChartTests::testDrawWithNullInfo2
+   --> junit.framework.AssertionFailedError
+ - org.jfree.chart.junit.LineChart3DTests::testDrawWithNullInfo
+   --> junit.framework.AssertionFailedError
+ - org.jfree.chart.junit.LineChartTests::testDrawWithNullInfo
+   --> junit.framework.AssertionFailedError
+ - org.jfree.chart.junit.StackedAreaChartTests::testDrawWithNullInfo
+   --> junit.framework.AssertionFailedError
+ - org.jfree.chart.junit.StackedBarChart3DTests::testDrawWithNullInfo
+   --> junit.framework.AssertionFailedError
+ - org.jfree.chart.junit.StackedBarChartTests::testDrawWithNullInfo
+   --> junit.framework.AssertionFailedError
+ - org.jfree.chart.junit.WaterfallChartTests::testDrawWithNullInfo
+   --> junit.framework.AssertionFailedError
+ - org.jfree.chart.plot.junit.CategoryPlotTests::test1654215
+   --> junit.framework.AssertionFailedError
+ - org.jfree.chart.plot.junit.CategoryPlotTests::testSerialization3
+   --> junit.framework.AssertionFailedError
+ - org.jfree.chart.plot.junit.CategoryPlotTests::testSerialization4
+   --> junit.framework.AssertionFailedError
+ - org.jfree.chart.renderer.category.junit.BoxAndWhiskerRendererTests::testDrawWithNullInfo
+   --> junit.framework.AssertionFailedError
+ - org.jfree.chart.renderer.category.junit.GroupedStackedBarRendererTests::testDrawWithNullInfo
+   --> junit.framework.AssertionFailedError
+ - org.jfree.chart.renderer.category.junit.IntervalBarRendererTests::testDrawWithNullInfo
+   --> junit.framework.AssertionFailedError
+ - org.jfree.chart.renderer.category.junit.LayeredBarRendererTests::testDrawWithNullInfo
+   --> junit.framework.AssertionFailedError
+ - org.jfree.chart.renderer.category.junit.LevelRendererTests::testDrawWithNullInfo
+   --> junit.framework.AssertionFailedError
+ - org.jfree.chart.renderer.category.junit.MinMaxCategoryRendererTests::testDrawWithNullInfo
+   --> junit.framework.AssertionFailedError
+ - org.jfree.chart.renderer.category.junit.StatisticalBarRendererTests::testDrawWithNullInfo
+   --> junit.framework.AssertionFailedError
+ - org.jfree.chart.renderer.category.junit.StatisticalLineAndShapeRendererTests::testDrawWithNullInfo
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jfree.chart.axis.Axis
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jfree.chart.axis.Axis ===
+diff --git a/source/org/jfree/chart/axis/Axis.java b/source/org/jfree/chart/axis/Axis.java
+index 78a6c66..3f74811 100644
+--- a/source/org/jfree/chart/axis/Axis.java
++++ b/source/org/jfree/chart/axis/Axis.java
+@@ -1189,11 +1189,13 @@ public abstract class Axis implements Cloneable, Serializable {
+         }
+         if (plotState != null && hotspot != null) {
+             ChartRenderingInfo owner = plotState.getOwner();
++            if (owner != null) {
+                 EntityCollection entities = owner.getEntityCollection();
+                 if (entities != null) {
+                     entities.add(new AxisLabelEntity(this, hotspot, 
+                             this.labelToolTip, this.labelURL));
+                 }
++            }
+         }
+         return state;
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testDrawWithNullInfo() {
+        boolean success = false;
+        try {
+            BufferedImage image = new BufferedImage(200 , 100, 
+                    BufferedImage.TYPE_INT_RGB);
+            Graphics2D g2 = image.createGraphics();
+            this.chart.draw(g2, new Rectangle2D.Double(0, 0, 200, 100), null, 
+                    null);
+            g2.dispose();
+            success = true;
+        }
+        catch (Exception e) {
+            success = false;
+        }
+        assertTrue(success);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

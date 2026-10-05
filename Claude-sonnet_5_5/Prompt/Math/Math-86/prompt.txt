@@ -1,0 +1,98 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-86
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+6b547ba222e6d70b0351cfd354e1d3497da9e24f
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-06-04 20:07:29 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-274
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-274
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.linear.CholeskyDecompositionImplTest::testMath274
+   --> junit.framework.AssertionFailedError: Expected exception: org.apache.commons.math.linear.NotPositiveDefiniteMatrixException
+ - org.apache.commons.math.linear.CholeskyDecompositionImplTest::testNotPositiveDefinite
+   --> junit.framework.AssertionFailedError: Expected exception: org.apache.commons.math.linear.NotPositiveDefiniteMatrixException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.linear.CholeskyDecompositionImpl
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.linear.CholeskyDecompositionImpl ===
+diff --git a/src/java/org/apache/commons/math/linear/CholeskyDecompositionImpl.java b/src/java/org/apache/commons/math/linear/CholeskyDecompositionImpl.java
+index acd9222f6..67e372f20 100644
+--- a/src/java/org/apache/commons/math/linear/CholeskyDecompositionImpl.java
++++ b/src/java/org/apache/commons/math/linear/CholeskyDecompositionImpl.java
+@@ -111,9 +111,6 @@ public class CholeskyDecompositionImpl implements CholeskyDecomposition {
+ 
+             final double[] lI = lTData[i];
+ 
+-            if (lTData[i][i] < absolutePositivityThreshold) {
+-                throw new NotPositiveDefiniteMatrixException();
+-            }
+             // check off-diagonal elements (and reset them to 0)
+             for (int j = i + 1; j < order; ++j) {
+                 final double[] lJ = lTData[j];
+@@ -134,6 +131,9 @@ public class CholeskyDecompositionImpl implements CholeskyDecomposition {
+             final double[] ltI = lTData[i];
+ 
+             // check diagonal element
++            if (ltI[i] < absolutePositivityThreshold) {
++                throw new NotPositiveDefiniteMatrixException();
++            }
+ 
+             ltI[i] = Math.sqrt(ltI[i]);
+             final double inverse = 1.0 / ltI[i];
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testMath274() throws MathException {
+        new CholeskyDecompositionImpl(MatrixUtils.createRealMatrix(new double[][] {
+                { 0.40434286, -0.09376327, 0.30328980, 0.04909388 },
+                {-0.09376327,  0.10400408, 0.07137959, 0.04762857 },
+                { 0.30328980,  0.07137959, 0.30458776, 0.04882449 },
+                { 0.04909388,  0.04762857, 0.04882449, 0.07543265 }
+            
+        }));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

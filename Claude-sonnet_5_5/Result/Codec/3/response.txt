@@ -1,0 +1,32 @@
+=== ANALYSIS ===
+
+The defect is in the "GER" handling of the 'G' case (handleG) in DoubleMetaphone. For "Angier", the 'G' at index 2 is followed by "IER". The buggy code applies the "GER" rule (G before E or I, handled as K/J) in a way that yields 'K' in the alternate encoding. The reported failure shows the alternate result is ANKR, where the expected 'J' is replaced by 'K'. The J-handler code in the task description is only the context in which the J/K output is compared.
+
+"Angier" is a good minimal case because it is a single word that reaches the faulty branch, and the primary and alternate encodings differ (ANJ versus ANJR). That makes the alternate output a precise check on the defect.
+
+Expected alternate output: ANJR.
+Buggy output: ANKR.
+
+I have not executed this test.
+
+=== TEST CODE ===
+
+package org.apache.commons.codec.language;
+
+import junit.framework.TestCase;
+
+public class DoubleMetaphoneCodec3Test extends TestCase {
+
+    public DoubleMetaphoneCodec3Test(String name) {
+        super(name);
+    }
+
+    public void testDoubleMetaphoneAlternateAngier() {
+        DoubleMetaphone doubleMetaphone = new DoubleMetaphone();
+        assertEquals("ANJR", doubleMetaphone.doubleMetaphone("Angier", true));
+    }
+}
+
+=== TARGET TEST ===
+
+DoubleMetaphoneCodec3Test::testDoubleMetaphoneAlternateAngier

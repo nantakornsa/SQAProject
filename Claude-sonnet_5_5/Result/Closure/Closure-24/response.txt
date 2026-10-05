@@ -1,0 +1,49 @@
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.jscomp.CompilerOptions.AliasTransformationHandler;
+
+public class ScopedAliasesTest extends CompilerTestCase {
+
+  private AliasTransformationHandler transformationHandler =
+      CompilerOptions.NULL_ALIAS_TRANSFORMATION_HANDLER;
+
+  @Override
+  protected CompilerPass getProcessor(Compiler compiler) {
+    return new ScopedAliases(compiler, transformationHandler);
+  }
+
+  @Override
+  public int getNumRepetitions() {
+    return 1;
+  }
+
+  private void testScopedFailure(String code, DiagnosticType expectedError) {
+    test("goog.scope(function() {" + code + "});",
+        null, expectedError);
+  }
+
+  public void testFunctionDeclarationInScopeIsNonAliasLocal() {
+    testScopedFailure("function f() {}",
+        ScopedAliases.GOOG_SCOPE_NON_ALIAS_LOCAL);
+  }
+
+  public void testNonAliasLocal() {
+    testScopedFailure("var x = 10", ScopedAliases.GOOG_SCOPE_NON_ALIAS_LOCAL);
+    testScopedFailure("var x = goog.dom + 10",
+        ScopedAliases.GOOG_SCOPE_NON_ALIAS_LOCAL);
+    testScopedFailure("var x = goog['dom']",
+        ScopedAliases.GOOG_SCOPE_NON_ALIAS_LOCAL);
+    testScopedFailure("var x = goog.dom, y = 10",
+        ScopedAliases.GOOG_SCOPE_NON_ALIAS_LOCAL);
+    testScopedFailure("function f() {}",
+        ScopedAliases.GOOG_SCOPE_NON_ALIAS_LOCAL);
+  }
+}
+```
+
+I wrote this from memory of the project's `ScopedAliasesTest` and did not compile or run it. Two things could break it:
+- **Constructor and constant:** I assumed `ScopedAliases` takes `(compiler, transformationHandler)` and that `CompilerOptions.NULL_ALIAS_TRANSFORMATION_HANDLER` exists at this revision. If either differs, the test will not compile.
+- **Class replacement:** the class replaces the real `ScopedAliasesTest` rather than adding to it, so it only carries the helpers these two tests need.
+
+`testFunctionDeclarationInScopeIsNonAliasLocal` isolates the `function f() {}` case from the triggering test. On the buggy version the function declaration's parent is not a `var`, so no error is reported and the test fails with "There should be one error. expected:<1> but was:<0>". The fix adds the `GOOG_SCOPE_NON_ALIAS_LOCAL` report for that case, so the test passes there. `testNonAliasLocal` is the original triggering test and fails on the buggy version for the same reason.

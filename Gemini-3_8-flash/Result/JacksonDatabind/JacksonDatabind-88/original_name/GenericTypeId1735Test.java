@@ -1,0 +1,29 @@
+package com.fasterxml.jackson.databind.jsontype;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class GenericTypeId1735Test extends BaseMapTest
+{
+    static class Wrapper1735 {
+        public Payload1735 w;
+    }
+
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)
+    static class Payload1735 {
+    }
+
+    public void testNestedTypeCheck1735() throws Exception
+    {
+        ObjectMapper mapper = newObjectMapper();
+        String json = aposToQuotes("{'w':{'@class':'java.util.HashMap<java.lang.String,java.lang.String>'}}");
+        try {
+            mapper.readValue(json, Wrapper1735.class);
+            fail("Should not pass");
+        } catch (JsonMappingException e) {
+            verifyException(e, "not subtype of");
+        }
+    }
+}

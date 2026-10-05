@@ -1,0 +1,124 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Compress
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Compress
+       Program: commons-compress
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/Compress.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-compress.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/active-bugs.csv
+Number of bugs: 47
+--------------------------------------------------------------------------------
+
+Summary for Bug: Compress-41
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+f015344879f1bc3505bc616fc7ae517cf9f60838
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-12-09 23:01:42 +0100
+--------------------------------------------------------------------------------
+Bug report id:
+COMPRESS-367
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COMPRESS-367
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.compress.archivers.ZipTestCase::testListAllFilesWithNestedArchive
+   --> junit.framework.AssertionFailedError: expected:<1> but was:<0>
+ - org.apache.commons.compress.archivers.zip.ZipArchiveInputStreamTest::testThrowOnInvalidEntry
+   --> junit.framework.AssertionFailedError: IOException expected
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.compress.archivers.zip.ZipArchiveInputStream
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.compress.archivers.zip.ZipArchiveInputStream ===
+diff --git a/src/main/java/org/apache/commons/compress/archivers/zip/ZipArchiveInputStream.java b/src/main/java/org/apache/commons/compress/archivers/zip/ZipArchiveInputStream.java
+index 5d4c0a82..51b19304 100644
+--- a/src/main/java/org/apache/commons/compress/archivers/zip/ZipArchiveInputStream.java
++++ b/src/main/java/org/apache/commons/compress/archivers/zip/ZipArchiveInputStream.java
+@@ -244,9 +244,10 @@ public ZipArchiveEntry getNextZipEntry() throws IOException {
+         if (sig.equals(ZipLong.CFH_SIG) || sig.equals(ZipLong.AED_SIG)) {
+             hitCentralDirectory = true;
+             skipRemainderOfArchive();
++            return null;
+         }
+         if (!sig.equals(ZipLong.LFH_SIG)) {
+-            return null;
++            throw new ZipException(String.format("Unexpected record signature: 0X%X", sig.getValue()));
+         }
+ 
+         int off = WORD;
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testListAllFilesWithNestedArchive() throws Exception {
+        final File input = getFile("OSX_ArchiveWithNestedArchive.zip");
+
+        final List<String> results = new ArrayList<>();
+        final List<ZipException> expectedExceptions = new ArrayList<>();
+
+        final InputStream is = new FileInputStream(input);
+        ArchiveInputStream in = null;
+        try {
+            in = new ArchiveStreamFactory().createArchiveInputStream("zip", is);
+
+            ZipArchiveEntry entry = null;
+            while ((entry = (ZipArchiveEntry) in.getNextEntry()) != null) {
+                results.add(entry.getName());
+
+                final ArchiveInputStream nestedIn = new ArchiveStreamFactory().createArchiveInputStream("zip", in);
+                try {
+                    ZipArchiveEntry nestedEntry = null;
+                    while ((nestedEntry = (ZipArchiveEntry) nestedIn.getNextEntry()) != null) {
+                        results.add(nestedEntry.getName());
+                    }
+                } catch (ZipException ex) {
+                    // expected since you cannot create a final ArchiveInputStream from test3.xml
+                    expectedExceptions.add(ex);
+                }
+                // nested stream must not be closed here
+            }
+        } finally {
+            if (in != null) {
+                in.close();
+            }
+        }
+        is.close();
+
+        assertTrue(results.contains("NestedArchiv.zip"));
+        assertTrue(results.contains("test1.xml"));
+        assertTrue(results.contains("test2.xml"));
+        assertTrue(results.contains("test3.xml"));
+        assertEquals(1, expectedExceptions.size());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

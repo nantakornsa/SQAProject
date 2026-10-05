@@ -1,0 +1,23 @@
+The bug is in `Complex.equals`, which compared raw long bits. As a result, `0.0` and `-0.0` were treated as different.
+
+Multiplying `(0,1)` by `(-1,0)` gives real = `0*-1 - 1*0 = -0.0 - 0.0 = -0.0`, and imaginary = `0*0 + 1*-1 = -1`. The expected value `new Complex(0,-1)` has real `+0.0`. With raw bits the two differ, so the buggy version fails. With `==` comparison, `-0.0 == 0.0` is true, so the fixed version passes.
+
+The test uses JUnit 3 style, matching the project's `ComplexTest`. It adds a direct check on `equals` alongside the multiplication case.
+
+```java
+package org.apache.commons.math.complex;
+
+import junit.framework.TestCase;
+
+public class ComplexMath221RegressionTest extends TestCase {
+
+    public void testMath221() {
+        assertEquals(new Complex(0, -1), new Complex(0, 1).multiply(new Complex(-1, 0)));
+    }
+
+    public void testMath221SignedZeroEquals() {
+        assertTrue(new Complex(0.0, 1.0).equals(new Complex(-0.0, 1.0)));
+        assertTrue(new Complex(1.0, 0.0).equals(new Complex(1.0, -0.0)));
+    }
+}
+```

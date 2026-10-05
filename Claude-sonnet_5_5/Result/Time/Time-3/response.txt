@@ -1,0 +1,79 @@
+The test below targets the Time-3 bug, where adding zero to a `MutableDateTime` during a DST overlap shifts the offset from +01:00 to +02:00. I haven't compiled or run it against either version.
+
+The fix makes every `add*` method a no-op when the amount is zero. The test builds 2011-10-30T02:30 in Europe/Berlin, which occurs twice. It calls `addHours(1)` to reach the second occurrence (+01:00), then adds zero through each method and checks the offset is unchanged.
+
+The project uses JUnit 3 (`junit.framework.TestCase`), so the test follows that style.
+
+On the buggy version, `setMillis(field.add(millis, 0))` goes through the field's add, which resolves the local time to the earlier offset (+02:00). The assertions fail there and pass once the zero check is in place.
+
+```java
+package org.joda.time;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+/**
+ * Regression test: adding zero to a MutableDateTime must not change the
+ * instant, even during a DST overlap.
+ */
+public class TestMutableDateTimeAddZeroRegression extends TestCase {
+
+    private static final DateTimeZone BERLIN = DateTimeZone.forID("Europe/Berlin");
+    private static final String EXPECTED = "2011-10-30T02:30:00.000+01:00";
+
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
+
+    public static TestSuite suite() {
+        return new TestSuite(TestMutableDateTimeAddZeroRegression.class);
+    }
+
+    public TestMutableDateTimeAddZeroRegression(String name) {
+        super(name);
+    }
+
+    private MutableDateTime createOverlapSecondOccurrence() {
+        MutableDateTime test = new MutableDateTime(2011, 10, 30, 2, 30, 0, 0, BERLIN);
+        test.addHours(1);
+        assertEquals(EXPECTED, test.toString());
+        return test;
+    }
+
+    public void testAddYears_addZero_dstOverlapWinter() {
+        MutableDateTime test = createOverlapSecondOccurrence();
+        test.addYears(0);
+        assertEquals(EXPECTED, test.toString());
+    }
+
+    public void testAddMonths_addZero_dstOverlapWinter() {
+        MutableDateTime test = createOverlapSecondOccurrence();
+        test.addMonths(0);
+        assertEquals(EXPECTED, test.toString());
+    }
+
+    public void testAddWeeks_addZero_dstOverlapWinter() {
+        MutableDateTime test = createOverlapSecondOccurrence();
+        test.addWeeks(0);
+        assertEquals(EXPECTED, test.toString());
+    }
+
+    public void testAddDays_addZero_dstOverlapWinter() {
+        MutableDateTime test = createOverlapSecondOccurrence();
+        test.addDays(0);
+        assertEquals(EXPECTED, test.toString());
+    }
+
+    public void testAddWeekyears_addZero_dstOverlapWinter() {
+        MutableDateTime test = createOverlapSecondOccurrence();
+        test.addWeekyears(0);
+        assertEquals(EXPECTED, test.toString());
+    }
+
+    public void testAddDurationFieldType_addZero_dstOverlapWinter() {
+        MutableDateTime test = createOverlapSecondOccurrence();
+        test.add(DurationFieldType.days(), 0);
+        assertEquals(EXPECTED, test.toString());
+    }
+}
+```

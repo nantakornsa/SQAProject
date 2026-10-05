@@ -1,0 +1,25 @@
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.jstype.JSType;
+
+public class TypesUnderInequalityRegressionTest extends CompilerTypeTestCase {
+
+  public void testInequalityOfVoidWithVoidYieldsNoType() throws Exception {
+    JSType.TypePair pair = VOID_TYPE.getTypesUnderInequality(VOID_TYPE);
+    assertNotNull(pair);
+    assertNotNull(pair.typeA);
+    assertNotNull(pair.typeB);
+    assertEquals(NO_TYPE, pair.typeA);
+    assertEquals(NO_TYPE, pair.typeB);
+  }
+}
+```
+
+I did not compile or run this test. It rests on three assumptions about the codebase:
+
+- `CompilerTypeTestCase` exists in the `jscomp` test package and exposes `VOID_TYPE` and `NO_TYPE`, as `SemanticReverseAbstractInterpreterTest` uses them.
+- `getTypesUnderInequality` is public.
+- `TypePair` exposes public `typeA` and `typeB` fields.
+
+On the buggy version, `VOID_TYPE.getTypesUnderInequality(VOID_TYPE)` returns a `TypePair(null, null)`, so the `assertNotNull` checks fail. On the fixed version both fields are `NO_TYPE`, so the test passes.

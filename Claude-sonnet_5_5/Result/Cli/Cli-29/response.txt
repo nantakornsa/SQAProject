@@ -1,0 +1,41 @@
+This regression test goes in `UtilTest` in package `org.apache.commons.cli`. `Util` is package-private, so the test has to live in the same package. The project uses JUnit 3 (`junit.framework.TestCase`), so the test follows that style.
+
+The fixed `stripLeadingAndTrailingQuotes` removes the outer quotes only when the string starts and ends with a quote and has no other quote between them. The buggy version strips a leading quote and a trailing quote independently.
+
+Expected results on the fixed version, and what the buggy version returns instead:
+
+| Input | Fixed result | Buggy result |
+|---|---|---|
+| `"foo"` | `foo` | `foo` |
+| `foo "bar"` | `foo "bar"` | `foo "bar` |
+| `"foo" bar` | `"foo" bar` | `foo" bar` |
+| `"foo" "bar"` | `"foo" "bar"` | `foo" "bar` |
+| `"` | `"` | the single quote is stripped from the front, leaving an empty string |
+
+The `foo "bar"` case matches the reported failure (`expected:<foo "bar["]> but was:<foo "bar[]>`). Every row except the first fails on the buggy version, so the test fails there and passes on the fix.
+
+```java
+package org.apache.commons.cli;
+
+import junit.framework.TestCase;
+
+public class UtilTest extends TestCase
+{
+    public void testStripLeadingHyphens()
+    {
+        assertEquals("f", Util.stripLeadingHyphens("-f"));
+        assertEquals("foo", Util.stripLeadingHyphens("--foo"));
+        assertEquals("-foo", Util.stripLeadingHyphens("---foo"));
+        assertNull(Util.stripLeadingHyphens(null));
+    }
+
+    public void testStripLeadingAndTrailingQuotes()
+    {
+        assertEquals("foo", Util.stripLeadingAndTrailingQuotes("\"foo\""));
+        assertEquals("foo \"bar\"", Util.stripLeadingAndTrailingQuotes("foo \"bar\""));
+        assertEquals("\"foo\" bar", Util.stripLeadingAndTrailingQuotes("\"foo\" bar"));
+        assertEquals("\"foo\" \"bar\"", Util.stripLeadingAndTrailingQuotes("\"foo\" \"bar\""));
+        assertEquals("\"", Util.stripLeadingAndTrailingQuotes("\""));
+    }
+}
+```

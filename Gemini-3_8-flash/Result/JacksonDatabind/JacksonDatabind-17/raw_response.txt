@@ -1,0 +1,57 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791181191-aoKENqyXpneV1iLRKDq7","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing ObjectMapper Bug**\n\nI'm currently examining a specific bug within `ObjectMapper`, focusing on how it handles array types and non-concrete object mappings. My analysis centers on the `NON_CONCRETE_AND_ARRAYS` and `OBJECT_AND_NON_CONCRETE` cases, looking to understand the intended logic and where it diverges.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Refining Default Typing Logic**\n\nI've pinpointed the issue within default typing, specifically how it incorrectly includes `TreeNode` and its subtypes. The problematic `|| TreeNode.class.isAssignableFrom(t.getRawClass())` condition has been adjusted to `&& !TreeNode.class.isAssignableFrom(t.getRawClass())` to prevent erroneous type information embedding during serialization and deserialization of `JsonNode` structures.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".databind.jsontype;\n\nimport com.fasterxml.jackson.databind.BaseMapTest;\nimport com."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"fasterxml.jackson.databind.JsonNode;\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\npublic class Json"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"NodeDefaultTyping793Test extends BaseMapTest\n{\n    public void testArrayWithDefaultTyping()"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" throws Exception\n    {\n        ObjectMapper mapper = new ObjectMapper();\n        mapper.enableDefaultTyping(ObjectMapper.DefaultTyp"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ing.NON_CONCRETE_AND_ARRAYS);\n\n        String json = \"{\\\"items\\\":"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"[1, 2]}\";\n        JsonNode node = mapper.readTree(json);\n        assertNotNull(node);\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        assertTrue(node.has(\"items\"));\n\n        // Also verify round-trip serialization / deserialization as JsonNode\n        String serialized"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" = mapper.writeValueAsString(node);\n        JsonNode node2 = mapper.readValue(serialized, JsonNode."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"class);\n        assertEquals(node, node2);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1503,"output_tokens":630,"output_tokens_details":{"thinking_tokens":400},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.00348975,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00348975,"upstream_inference_prompt_cost":0.00112725,"upstream_inference_completions_cost":0.0023625}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

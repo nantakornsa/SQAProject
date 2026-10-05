@@ -1,0 +1,57 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791115155-fw2vznAehIalqqRhCtDS","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing Mockito Bug**\n\nI'm currently dissecting the Mockito-33 bug within `InvocationMatcher.hasSameMethod`. My analysis reveals the core issue lies in the previous reliance on `Method.equals` for comparison, which I've noted is rather comprehensive in its checks, including declaring class and method name.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.mockitousage.bugs;\n\nimport org.junit"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".Assert;\nimport org.junit.Test;\nimport org.mockito.Mockito;\nimport org.mock"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"itoutil.TestBase;\n\nimport java.util.Iterator;\n\npublic class InheritedGenericsPolymorphicCallTest extends TestBase"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" {\n\n    interface MyIterable<T> extends Iterable<T> {\n        Iterator<T> iterator();\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"}\n\n    @Test\n    public void shouldStubbingWorkWhenInvokedViaSuperType() {\n        MyIterable"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"<String> iterable = Mockito.mock(MyIterable.class);\n        Iterator<String> myIterator = Mockito.mock"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(Iterator.class);\n\n        Mockito.when(iterable.iterator()).thenReturn(myIterator);\n\n        Assert.assertNotNull(((Iterable<"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"String>) iterable).iterator());\n        Assert.assertNotNull(iterable.iterator());\n    }\n\n    @Test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n    public void shouldVerificationWorkWhenInvokedViaSuperType() {\n        MyIterable<String> iterable ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" Mockito.mock(MyIterable.class);\n\n        ((Iterable<String>) iterable).iterator();\n\n        Mockito."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"verify(iterable).iterator();\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1104,"output_tokens":614,"output_tokens_details":{"thinking_tokens":351},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.0031305,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0031305,"upstream_inference_prompt_cost":0.000828,"upstream_inference_completions_cost":0.0023025}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

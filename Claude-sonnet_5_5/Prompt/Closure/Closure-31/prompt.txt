@@ -1,0 +1,89 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-31
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+0a670cb51fd56c12c19f98884c9513792ebc3f76
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-04-09 22:00:50 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+703
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-703.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.CommandLineRunnerTest::testDependencySortingWhitespaceMode
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.Compiler
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.Compiler ===
+diff --git a/src/com/google/javascript/jscomp/Compiler.java b/src/com/google/javascript/jscomp/Compiler.java
+index b76bbb5cf..d98be4a68 100644
+--- a/src/com/google/javascript/jscomp/Compiler.java
++++ b/src/com/google/javascript/jscomp/Compiler.java
+@@ -1282,7 +1282,6 @@ public class Compiler extends AbstractCompiler {
+ 
+       // Check if the sources need to be re-ordered.
+       if (options.dependencyOptions.needsManagement() &&
+-          !options.skipAllPasses &&
+           options.closurePass) {
+         for (CompilerInput input : inputs) {
+           // Forward-declare all the provided types, so that they
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testDependencySortingWhitespaceMode() {
+    args.add("--manage_closure_dependencies");
+    args.add("--compilation_level=WHITESPACE_ONLY");
+    test(new String[] {
+          "goog.require('beer');",
+          "goog.provide('beer');\ngoog.require('hops');",
+          "goog.provide('hops');",
+         },
+         new String[] {
+          "goog.provide('hops');",
+          "goog.provide('beer');\ngoog.require('hops');",
+          "goog.require('beer');"
+         });
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

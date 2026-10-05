@@ -1,0 +1,28 @@
+```java
+package com.fasterxml.jackson.databind.node;
+
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class ConversionOfPojosTest extends BaseMapTest
+{
+    static class MyBean {
+        public int x = 1;
+        public int y = 2;
+    }
+
+    public void testValueToTreeWithPojo() throws Exception
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode node = mapper.valueToTree(new MyBean());
+
+        // In buggy version, TokenBuffer.writeObject() blindly stores VALUE_EMBEDDED_OBJECT,
+        // resulting in a POJONode instead of ObjectNode.
+        assertTrue("Expected ObjectNode, got: " + (node == null ? "null" : node.getClass().getName()),
+                node instanceof ObjectNode);
+        assertEquals(1, node.path("x").asInt());
+        assertEquals(2, node.path("y").asInt());
+    }
+}
+```

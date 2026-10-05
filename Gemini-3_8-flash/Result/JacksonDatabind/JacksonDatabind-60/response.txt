@@ -1,0 +1,37 @@
+```java
+package com.fasterxml.jackson.databind.jsontype;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class TestJsonValueWithTypeInfo extends BaseMapTest
+{
+    static class Bean1385 {
+        protected byte[] bytes;
+
+        @JsonCreator
+        public Bean1385(byte[] b) {
+            bytes = b;
+        }
+
+        @JsonValue
+        public byte[] getBytes() {
+            return bytes;
+        }
+    }
+
+    public void testWithCreatorAndJsonValue() throws Exception
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+
+        Bean1385 input = new Bean1385(new byte[] { 1, 2, 3 });
+        String json = mapper.writeValueAsString(input);
+
+        Object result = mapper.readValue(json, Object.class);
+        assertEquals(Bean1385.class, result.getClass());
+    }
+}
+```

@@ -1,0 +1,87 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonCore
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonCore
+       Program: jackson-core
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonCore/JacksonCore.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-core.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonCore/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonCore-8
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+11f0b4090937b2aa998734aa2bf032ee8c428e84
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-02-19 10:59:06 +0900
+--------------------------------------------------------------------------------
+Bug report id:
+182
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-core/issues/182
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.core.util.TestTextBuffer::testEmpty
+   --> java.lang.NullPointerException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.core.util.TextBuffer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.core.util.TextBuffer ===
+diff --git a/src/main/java/com/fasterxml/jackson/core/util/TextBuffer.java b/src/main/java/com/fasterxml/jackson/core/util/TextBuffer.java
+index e6f1cbc5..c67f3257 100644
+--- a/src/main/java/com/fasterxml/jackson/core/util/TextBuffer.java
++++ b/src/main/java/com/fasterxml/jackson/core/util/TextBuffer.java
+@@ -304,7 +304,7 @@ public final class TextBuffer
+             return (_resultArray = _resultString.toCharArray());
+         }
+         // Nope; but does it fit in just one segment?
+-        if (!_hasSegments)  return _currentSegment;
++        if (!_hasSegments && _currentSegment != null)  return _currentSegment;
+         // Nope, need to have/create a non-segmented array and return it
+         return contentsAsArray();
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testEmpty() {
+        TextBuffer tb = new TextBuffer(new BufferRecycler());
+        tb.resetWithEmpty();
+
+        assertTrue(tb.getTextBuffer().length == 0);
+        tb.contentsAsString();
+        assertTrue(tb.getTextBuffer().length == 0);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

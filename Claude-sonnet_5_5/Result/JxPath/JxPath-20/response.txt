@@ -1,0 +1,21 @@
+```java
+package org.apache.commons.jxpath.ri.compiler;
+
+import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.jxpath.JXPathTestCase;
+
+public class JXPath149Test extends JXPathTestCase {
+
+    public void testComplexOperationWithVariables() {
+        JXPathContext context = JXPathContext.newContext(null);
+        context.getVariables().declareVariable("a", Integer.valueOf(0));
+        context.getVariables().declareVariable("b", Integer.valueOf(0));
+        context.getVariables().declareVariable("c", Integer.valueOf(1));
+        assertXPathValue(context, "$a + $b <= $c", Boolean.TRUE);
+    }
+}
+```
+
+I haven't compiled or run this. It reuses the triggering test from the bug report, so it should fail on the buggy version and pass on the fixed one. In the buggy version, `CoreOperationRelationalExpression` calls `containsMatch((Iterator) right, left)` when the right operand is an iterator. That call swaps the operands, so `$a + $b <= $c` is evaluated as the reverse comparison and returns `false`. The fix adds a `containsMatch(Object value, Iterator it)` overload that keeps the original operand order.
+
+I assumed `assertXPathValue(JXPathContext, String, Object)` is inherited from `JXPathTestCase`, as the triggering test implies.

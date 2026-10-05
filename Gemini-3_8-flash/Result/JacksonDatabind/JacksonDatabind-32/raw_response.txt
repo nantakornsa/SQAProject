@@ -1,0 +1,63 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791184541-TSGR0unzqWs68xw1kMPh","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Jackson Bug**\n\nI'm currently digging into JacksonDatabind-32. My focus is on how `UntypedObjectDeserializer` handles advancing into an empty `Object` when the current token is `END_OBJECT`. I'm specifically examining the `testNestedUntyped989` case within `com.fasterxml.jackson.databind.deser.TestUntypedDeserial`.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing Jackson's Deserialize Behavior**\n\nI'm currently examining how `UntypedObjectDeserializer` behaves when advancing past an `END_OBJECT` token during deserialization of `Object.class`. My focus is on the `testNestedUntyped989` scenario, specifically tracing the `readValue` call's logic when the parser is positioned at the end of an empty inner object.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".jackson.databind.deser;\n\nimport java.io.IOException;\nimport java.util.Map;\n\nimport com.fasterxml"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".jackson.core.JsonParser;\nimport com.fasterxml.jackson.core.JsonToken;\nimport com"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".fasterxml.jackson.databind.BaseMapTest;\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\npublic class"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" UntypedDeserialization989Test extends BaseMapTest\n{\n    private final ObjectMapper MAPPER = newObjectMapper"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"();\n\n    public void testNestedUntyped989() throws IOException\n    {\n        final String JSON"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" = \"{\\\"stuff\\\":{}}\";\n        JsonParser p = MAPPER.getFactory().createParser(JSON"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":");\n        assertEquals(JsonToken.START_OBJECT, p.nextToken());\n        assertEquals(JsonToken.FIELD_NAME, p"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".nextToken());\n        assertEquals(JsonToken.START_OBJECT, p.nextToken());\n        assertEquals(JsonToken"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".END_OBJECT, p.nextToken());\n\n        Object ob = MAPPER.readValue(p, Object.class"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":");\n        assertNotNull(ob);\n        assertTrue(ob instanceof Map<?,?>);\n        assertTrue(((Map<?,?>) ob"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":").isEmpty());\n        p.close();\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1210,"output_tokens":755,"output_tokens_details":{"thinking_tokens":477},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.00373875,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00373875,"upstream_inference_prompt_cost":0.0009075,"upstream_inference_completions_cost":0.00283125}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

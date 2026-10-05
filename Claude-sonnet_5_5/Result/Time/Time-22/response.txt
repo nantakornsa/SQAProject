@@ -1,0 +1,62 @@
+```java
+package org.joda.time;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test: constructing a Period from a millisecond duration must
+ * only use the precise time fields, even when the default time zone is a
+ * fixed-offset zone (where days and weeks would otherwise be treated as precise).
+ */
+public class TestPeriodFixedZoneRegression extends TestCase {
+
+    public TestPeriodFixedZoneRegression(String name) {
+        super(name);
+    }
+
+    private long length() {
+        return (4L + (3L * 7L) + (2L * 30L) + 365L) * DateTimeConstants.MILLIS_PER_DAY +
+            5L * DateTimeConstants.MILLIS_PER_HOUR +
+            6L * DateTimeConstants.MILLIS_PER_MINUTE +
+            7L * DateTimeConstants.MILLIS_PER_SECOND + 8L;
+    }
+
+    public void testConstructor_long_fixedZone() throws Throwable {
+        DateTimeZone zone = DateTimeZone.getDefault();
+        try {
+            DateTimeZone.setDefault(DateTimeZone.forOffsetHours(2));
+            Period test = new Period(length());
+            // only time fields are precise in the standard type
+            assertEquals(0, test.getYears());
+            assertEquals(0, test.getMonths());
+            assertEquals(0, test.getWeeks());
+            assertEquals(0, test.getDays());
+            assertEquals((450 * 24) + 5, test.getHours());
+            assertEquals(6, test.getMinutes());
+            assertEquals(7, test.getSeconds());
+            assertEquals(8, test.getMillis());
+        } finally {
+            DateTimeZone.setDefault(zone);
+        }
+    }
+
+    public void testToPeriod_fixedZone() throws Throwable {
+        DateTimeZone zone = DateTimeZone.getDefault();
+        try {
+            DateTimeZone.setDefault(DateTimeZone.forOffsetHours(2));
+            Duration test = new Duration(length());
+            Period result = test.toPeriod();
+            assertEquals(0, result.getYears());
+            assertEquals(0, result.getMonths());
+            assertEquals(0, result.getWeeks());
+            assertEquals(0, result.getDays());
+            assertEquals((450 * 24) + 5, result.getHours());
+            assertEquals(6, result.getMinutes());
+            assertEquals(7, result.getSeconds());
+            assertEquals(8, result.getMillis());
+        } finally {
+            DateTimeZone.setDefault(zone);
+        }
+    }
+}
+```

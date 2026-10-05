@@ -1,0 +1,72 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791204504-Nlc8rteEqCBf2BPAox4i","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1519,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" test class is"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" `In"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"lineObjectLite"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ralsTest`, and"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" its exist"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ing `testLocal` hel"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"per w"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"raps the code"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" in a function and comp"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ares the output"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":". I haven't compiled or run this against the buggy and fixed versions.\n\nI reused the triggering test as the regression test. On the buggy version, `testLocal(\"var a = {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"}\", \"\")` throws an INTERNAL COMPILER ERROR because `nodes` is empty. The fixed version handles that case by emitting `true`.\n\nI can't see the real test file, so I wrote the class"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" to match the usual Closure layout. It extends `CompilerTestCase`, and I reconstructed `testLocal` from memory of the upstream test. The `getPro"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"cessor` and `setUp` details are the likely points of mismatch.\n\n```java\npackage com.google.javascript.jscomp;\n\npublic class InlineObjectLiteralsTest extends CompilerTestCase"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" {\n\n  public InlineObjectLiteralsTest() {\n    super(\"function _func(x) {}\", false);\n  }\n\n  @Override\n  protected CompilerPass getProcessor(Compiler compiler) {\n    return new InlineObj"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ectLiterals(\n        compiler, compiler.getUniqueNameIdSupplier());\n  }\n\n  @Override\n  protected int getNumRepetitions() {\n    return 1;\n  }\n\n  private"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" void testLocal(String js, String expected) {\n    test(\"function f() {\" + js + \"}\",\n         \"function f() {\" + expected + \"}\");\n  }\n\n  public void testBug545() {\n    testLocal(\"var a = {}\", \"\");\n    testLocal(\"var a; a = {}\","}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" \"true\");\n  }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1519,"output_tokens":525,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.008288,"is_byok":false,"cost_details":{"upstream_inference_cost":0.008288,"upstream_inference_prompt_cost":0.003038,"upstream_inference_completions_cost":0.00525}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

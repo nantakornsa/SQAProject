@@ -1,0 +1,83 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-19
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+686146c4de7d2bd985156ae15175365633dd0f94
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-07-03 04:13:14 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+769
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-769.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.TypeInferenceTest::testNoThisInference
+   --> java.lang.IllegalArgumentException: Node cannot be refined. 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.type.ChainableReverseAbstractInterpreter
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.type.ChainableReverseAbstractInterpreter ===
+diff --git a/src/com/google/javascript/jscomp/type/ChainableReverseAbstractInterpreter.java b/src/com/google/javascript/jscomp/type/ChainableReverseAbstractInterpreter.java
+index 0345c8552..752e04ff2 100644
+--- a/src/com/google/javascript/jscomp/type/ChainableReverseAbstractInterpreter.java
++++ b/src/com/google/javascript/jscomp/type/ChainableReverseAbstractInterpreter.java
+@@ -169,7 +169,9 @@ public abstract class ChainableReverseAbstractInterpreter
+         scope.inferQualifiedSlot(node, qualifiedName, origType, type);
+         break;
+ 
++      case Token.THIS:
+         // "this" references aren't currently modeled in the CFG.
++        break;
+ 
+       default:
+         throw new IllegalArgumentException("Node cannot be refined. \n" +
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testNoThisInference() {
+    JSType thisType = createNullableType(OBJECT_TYPE);
+    assumingThisType(thisType);
+    inFunction("var out = 3; if (goog.isNull(this)) out = this;");
+    verify("out", createUnionType(OBJECT_TYPE, NUMBER_TYPE));
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

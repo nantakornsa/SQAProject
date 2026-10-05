@@ -1,0 +1,39 @@
+The test below targets `NodeUtil.getPureBooleanValue`. It is a standalone JUnit 3 test class in the `com.google.javascript.jscomp` package, matching the project's existing style. I have not compiled or run it.
+
+- **Buggy version:** `getPureBooleanValue` returns `FALSE` for `void foo()` even though the call has side effects, so the first assertion fails.
+- **Fixed version:** it returns `UNKNOWN` when the operand may have side effects, and still returns `FALSE` for `void 0`.
+
+I built the nodes by hand instead of using `NodeUtilTest`'s parse helper, so the test does not depend on that class. I assumed `getPureBooleanValue` is at least package-private, which is enough here because the test is in the same package. I also assumed an unannotated `foo()` call counts as having side effects.
+
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.Node;
+import com.google.javascript.rhino.Token;
+import com.google.javascript.jscomp.NodeUtil.ValueType;
+
+import junit.framework.TestCase;
+
+public class NodeUtilVoidSideEffectsTest extends TestCase {
+
+  public void testPureBooleanValueOfVoidWithSideEffects() {
+    // void foo()
+    Node call = new Node(Token.CALL, Node.newString(Token.NAME, "foo"));
+    Node voidNode = new Node(Token.VOID, call);
+
+    // The operand has side effects, so the pure boolean value is unknown.
+    assertEquals(
+        com.google.javascript.rhino.jstype.TernaryValue.UNKNOWN,
+        NodeUtil.getPureBooleanValue(voidNode));
+  }
+
+  public void testPureBooleanValueOfVoidWithoutSideEffects() {
+    // void 0
+    Node voidNode = new Node(Token.VOID, Node.newNumber(0));
+
+    assertEquals(
+        com.google.javascript.rhino.jstype.TernaryValue.FALSE,
+        NodeUtil.getPureBooleanValue(voidNode));
+  }
+}
+```

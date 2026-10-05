@@ -1,0 +1,66 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791106661-802OQnUHEdtRDGzleSGL","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Refining Text Buffer Expansion**\n\nI'm currently zeroing in on a specific bug within `TextBuffer.expandCurrentSegment()`. The issue arises when the segment length hits `MAX_SEGMENT_LEN`, and the current logic for calculating the new length seems to have an edge case that needs addressing. I'm tracing the execution path to pinpoint the exact faulty calculation when `len` equals `MAX_SEGMENT_LEN`.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.core.util;\n\nimport org"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".junit.Test;\nimport static org.junit.Assert.*;\n\npublic class TextBufferExpandTest {\n\n    @Test\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"public void testExpandBeyondMaxSegmentLen() {\n        TextBuffer tb = new TextBuffer(new BufferRecycler());\n        char"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"[] buf = tb.getCurrentSegment();\n\n        while (buf.length < 262144) {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n            char[] old = buf;\n            buf = tb.expandCurrentSegment();\n            assertTrue(\"Expected buffer to expand\","}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" buf.length > old.length);\n        }\n\n        // At this point buf.length is 262144"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" (MAX_SEGMENT_LEN)\n        // Expand once: in buggy code, becomes 26214"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"5 (MAX_SEGMENT_LEN + 1)\n        char[] old = buf;\n        buf ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" tb.expandCurrentSegment();\n        assertTrue(\"Expected buffer to expand beyond MAX_SEGMENT_LEN\", buf.length > old."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"length);\n\n        // Expand again: in buggy code, fails because len != MAX_SEGMENT_LEN\n        // and"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" Math.min(MAX_SEGMENT_LEN, len + (len >> 1)) produces 262144 <="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" 262145\n        old = buf;\n        buf = tb.expandCurrentSegment();\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        assertTrue(\"Expected buffer of \" + old.length + \" to expand, did not, length now \" + buf"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".length,\n                buf.length > old.length);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1037,"output_tokens":788,"output_tokens_details":{"thinking_tokens":435},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00373275,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00373275,"upstream_inference_prompt_cost":0.00077775,"upstream_inference_completions_cost":0.002955}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

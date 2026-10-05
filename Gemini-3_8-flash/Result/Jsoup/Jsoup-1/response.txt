@@ -1,0 +1,20 @@
+```java
+package org.jsoup.parser;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
+public class ParserRegressionTest {
+
+    @Test
+    public void testCreatesStructureFromBodySnippet() {
+        // Text before HTML formatting tags should be prepended to body, not appended
+        String html = "foo <b>bar</b> baz";
+        Document doc = Jsoup.parse(html);
+        assertEquals("foo bar baz", doc.text());
+    }
+}
+```

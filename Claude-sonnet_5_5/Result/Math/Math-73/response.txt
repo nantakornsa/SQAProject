@@ -1,0 +1,46 @@
+The bug is in `BrentSolver.solve(f, min, max, initial)`. When the initial guess is not a root and neither sub-interval brackets one, the buggy version never checks that `[min, max]` brackets a root. It goes straight into the full Brent algorithm.
+
+The test uses `SinFunction` with `solve(f, 1, 1.5, 1.2)`.
+- sin(1) and sin(1.5) are both positive, so the interval does not bracket a root.
+- sin(1.2) is positive, so the initial guess is not a root.
+- The fix adds the `yMin * yMax > 0` check, so the fixed version throws `IllegalArgumentException`.
+
+This matches the project's JUnit 3 style (`TestCase`, `fail`). `SinFunction` lives in the same package (`org.apache.commons.math.analysis`), so I import it from there.
+
+```java
+package org.apache.commons.math.analysis.solvers;
+
+import junit.framework.TestCase;
+
+import org.apache.commons.math.analysis.SinFunction;
+import org.apache.commons.math.analysis.UnivariateRealFunction;
+
+/**
+ * Regression test for MATH-343: BrentSolver must reject non-bracketing
+ * intervals when an initial guess is supplied.
+ */
+public class BrentSolverNonBracketingRegressionTest extends TestCase {
+
+    public void testBadEndpointsWithInitialGuess() throws Exception {
+        UnivariateRealFunction f = new SinFunction();
+        UnivariateRealSolver solver = new BrentSolver();
+        try {  // no bracket, initial guess supplied
+            solver.solve(f, 1, 1.5, 1.2);
+            fail("Expecting IllegalArgumentException - non-bracketing");
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+    }
+
+    public void testBadEndpointsWithoutInitialGuess() throws Exception {
+        UnivariateRealFunction f = new SinFunction();
+        UnivariateRealSolver solver = new BrentSolver();
+        try {  // no bracket
+            solver.solve(f, 1, 1.5);
+            fail("Expecting IllegalArgumentException - non-bracketing");
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+    }
+}
+```

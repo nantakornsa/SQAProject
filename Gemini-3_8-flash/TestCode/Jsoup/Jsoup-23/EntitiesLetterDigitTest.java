@@ -1,0 +1,20 @@
+package org.jsoup.nodes;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
+public class EntitiesLetterDigitTest {
+
+    @Test
+    public void testLetterDigitEntities() {
+        String html = "<p>&sup1;&sup2;&sup3;&frac14;&frac12;&frac34;</p>";
+        Document doc = Jsoup.parse(html);
+        Element p = doc.select("p").first();
+        assertEquals("&sup1;&sup2;&sup3;&frac14;&frac12;&frac34;", p.html());
+        assertEquals("¹²³¼½¾", p.text());
+    }
+}

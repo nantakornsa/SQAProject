@@ -1,0 +1,39 @@
+The fix makes `CSVFormat.EXCEL` allow missing column names, so a header with several empty names no longer throws. The test parses such a header and also checks the format flag directly.
+
+```java
+package org.apache.commons.csv;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
+/**
+ * Regression test for CSV-128: CSVFormat.EXCEL should allow missing column names.
+ */
+public class CSVFormatExcelMissingColumnNamesTest {
+
+    @Test
+    public void testExcelAllowsMissingColumnNames() {
+        assertTrue(CSVFormat.EXCEL.getAllowMissingColumnNames());
+    }
+
+    @Test
+    public void testExcelHeaderWithMultipleEmptyNames() throws Exception {
+        final String code = "A,B,C,,\r\na,b,c,d,e\r\n";
+        final CSVParser parser = CSVParser.parse(code, CSVFormat.EXCEL.withHeader());
+        try {
+            int count = 0;
+            for (final CSVRecord record : parser.getRecords()) {
+                assertEquals("a", record.get("A"));
+                assertEquals("b", record.get("B"));
+                assertEquals("c", record.get("C"));
+                count++;
+            }
+            assertEquals(1, count);
+        } finally {
+            parser.close();
+        }
+    }
+}
+```

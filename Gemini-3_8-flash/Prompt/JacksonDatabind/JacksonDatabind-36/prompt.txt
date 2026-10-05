@@ -1,0 +1,97 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-36
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+c48e992652125eb74aea8ead8cbda5fd0b44976a
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-12-23 00:12:59 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+803
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/803
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.TestStdDateFormat::testLenient
+   --> java.lang.NullPointerException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.util.StdDateFormat
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.util.StdDateFormat ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/util/StdDateFormat.java b/src/main/java/com/fasterxml/jackson/databind/util/StdDateFormat.java
+index c788c62cb..3dddd771a 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/util/StdDateFormat.java
++++ b/src/main/java/com/fasterxml/jackson/databind/util/StdDateFormat.java
+@@ -247,7 +247,15 @@ public class StdDateFormat
+      * and not via underlying {@link Calendar} instance like base class
+      * does.
+      */
++    @Override // since 2.7
++    public void setLenient(boolean enabled) {
++        Boolean newValue = enabled;
++        if (_lenient != newValue) {
++            _lenient = newValue;
+             // and since leniency settings may have been used:
++            _clearFormats();
++        }
++    }
+ 
+     @Override // since 2.7
+     public boolean isLenient() {
+@@ -554,6 +562,9 @@ public class StdDateFormat
+                 df.setTimeZone(tz);
+             }
+         }
++        if (lenient != null) {
++            df.setLenient(lenient.booleanValue());
++        }
+         return df;
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testLenient() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

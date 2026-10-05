@@ -1,0 +1,82 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-57
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+f759f431d5a7a2261b44440bca9cfab93ae25302
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-08-15 23:20:43 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+530
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-530.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.ClosureCodingConventionTest::testRequire
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: foo
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.ClosureCodingConvention
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.ClosureCodingConvention ===
+diff --git a/src/com/google/javascript/jscomp/ClosureCodingConvention.java b/src/com/google/javascript/jscomp/ClosureCodingConvention.java
+index c507c9243..b5a3c1b20 100644
+--- a/src/com/google/javascript/jscomp/ClosureCodingConvention.java
++++ b/src/com/google/javascript/jscomp/ClosureCodingConvention.java
+@@ -194,7 +194,7 @@ public class ClosureCodingConvention extends DefaultCodingConvention {
+         String qualifiedName = callee.getQualifiedName();
+         if (functionName.equals(qualifiedName)) {
+           Node target = callee.getNext();
+-          if (target != null) {
++          if (target != null && target.getType() == Token.STRING) {
+             className = target.getString();
+           }
+         }
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testRequire() {
+    assertRequire("goog.require('foo')");
+    assertNotRequire("goog.require(foo)");
+    assertNotRequire("goog.require()");
+    assertNotRequire("foo()");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

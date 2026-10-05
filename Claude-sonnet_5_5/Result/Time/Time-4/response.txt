@@ -1,0 +1,48 @@
+```java
+package org.joda.time;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+/**
+ * Regression test for Partial.with() not validating a newly added field type.
+ */
+public class TestPartialWithValidationRegression extends TestCase {
+
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
+
+    public static TestSuite suite() {
+        return new TestSuite(TestPartialWithValidationRegression.class);
+    }
+
+    public TestPartialWithValidationRegression(String name) {
+        super(name);
+    }
+
+    private Partial createHourMinPartial() {
+        return new Partial(
+                new DateTimeFieldType[] {
+                    DateTimeFieldType.hourOfDay(),
+                    DateTimeFieldType.minuteOfHour()},
+                new int[] {10, 20});
+    }
+
+    public void testWithInvalidNewFieldTypeIsRejected() {
+        Partial test = createHourMinPartial();
+        try {
+            test.with(DateTimeFieldType.clockhourOfDay(), 6);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+        // original partial must be unchanged
+        assertEquals(2, test.size());
+        assertEquals(DateTimeFieldType.hourOfDay(), test.getFieldType(0));
+        assertEquals(DateTimeFieldType.minuteOfHour(), test.getFieldType(1));
+        assertEquals(10, test.getValue(0));
+        assertEquals(20, test.getValue(1));
+    }
+}
+```

@@ -1,0 +1,16 @@
+package org.jsoup.select;
+
+import org.junit.Test;
+
+public class QueryParserRegressionTest {
+
+    @Test(expected = Selector.SelectorParseException.class)
+    public void testParsesSingleQuoteInContains() {
+        QueryParser.parse("p:contains(One \" One)");
+    }
+
+    @Test(expected = Selector.SelectorParseException.class)
+    public void testExceptionOnUnclosedAttribute() {
+        QueryParser.parse("section > [data-attribute='foo");
+    }
+}

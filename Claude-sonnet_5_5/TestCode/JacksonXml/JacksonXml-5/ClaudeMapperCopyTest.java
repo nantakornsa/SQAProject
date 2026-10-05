@@ -1,0 +1,34 @@
+package com.fasterxml.jackson.dataformat.xml;
+
+import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class ClaudeMapperCopyTest extends XmlTestBase
+{
+    @JsonRootName("AnnotatedName")
+    static class Pojo282
+    {
+        public int a = 3;
+    }
+
+    // [dataformat-xml#282]
+    public void testCopyWith() throws Exception
+    {
+        final ObjectMapper xmlMapper = new XmlMapper();
+        // serialize first so that the root name is cached in the original mapper
+        String xml1 = xmlMapper.writeValueAsString(new Pojo282());
+
+        final ObjectMapper xmlMapperNoAnno = xmlMapper.copy()
+                .disable(MapperFeature.USE_ANNOTATIONS);
+
+        String xml2 = xmlMapperNoAnno.writeValueAsString(new Pojo282());
+
+        if (!xml1.contains("AnnotatedName")) {
+            fail("Should use name 'AnnotatedName', xml = " + xml1);
+        }
+        if (xml2.contains("AnnotatedName")) {
+            fail("Should NOT use name 'AnnotatedName' but 'Pojo282', xml = " + xml2);
+        }
+    }
+}

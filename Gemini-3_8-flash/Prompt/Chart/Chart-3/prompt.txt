@@ -1,0 +1,95 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Chart
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Chart
+       Program: jfreechart
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Chart/Chart.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Svn
+    Repository: file:///Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jfreechart/trunk
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Chart/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Chart-3
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+2227
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-08-31 13:54:18 -0700 
+--------------------------------------------------------------------------------
+Bug report id:
+UNKNOWN
+--------------------------------------------------------------------------------
+Bug report url:
+UNKNOWN
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jfree.data.time.junit.TimeSeriesTests::testCreateCopy3
+   --> junit.framework.AssertionFailedError: expected:<101.0> but was:<102.0>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jfree.data.time.TimeSeries
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jfree.data.time.TimeSeries ===
+diff --git a/source/org/jfree/data/time/TimeSeries.java b/source/org/jfree/data/time/TimeSeries.java
+index 795d791..72bb2ea 100644
+--- a/source/org/jfree/data/time/TimeSeries.java
++++ b/source/org/jfree/data/time/TimeSeries.java
+@@ -1054,6 +1054,8 @@ public class TimeSeries extends Series implements Cloneable, Serializable {
+             throw new IllegalArgumentException("Requires start <= end.");
+         }
+         TimeSeries copy = (TimeSeries) super.clone();
++        copy.minY = Double.NaN;
++        copy.maxY = Double.NaN;
+         copy.data = new java.util.ArrayList();
+         if (this.data.size() > 0) {
+             for (int index = start; index <= end; index++) {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testCreateCopy3() throws CloneNotSupportedException {
+        TimeSeries s1 = new TimeSeries("S1");
+        s1.add(new Year(2009), 100.0);
+        s1.add(new Year(2010), 101.0);
+        s1.add(new Year(2011), 102.0);
+        assertEquals(100.0, s1.getMinY(), EPSILON);
+        assertEquals(102.0, s1.getMaxY(), EPSILON);
+
+        TimeSeries s2 = s1.createCopy(0, 1);
+        assertEquals(100.0, s2.getMinY(), EPSILON);
+        assertEquals(101.0, s2.getMaxY(), EPSILON);
+
+        TimeSeries s3 = s1.createCopy(1, 2);
+        assertEquals(101.0, s3.getMinY(), EPSILON);
+        assertEquals(102.0, s3.getMaxY(), EPSILON);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

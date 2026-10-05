@@ -1,0 +1,75 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791147551-ylT6qSiHwjqCGxGb72WC","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1760,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" f"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ix changes the ex"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ception thrown for"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" a non"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"-positive mean from `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"IllegalArgument"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Exception` ("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"created via `MathRunt"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"imeException`) to `N"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"otStrictlyPosit"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"iveException`. The test therefore passes `-1` and `0` to the constructor and expects `NotStrictlyPositiveException`.\n\nOn the buggy version, the constructor throws an `I"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"llegalArgumentException` that is not a `NotStrictlyPositiveException`, so the catch block misses it and the test errors. On the fixed version the expected exception is caught and the test passes.\n\nI am ass"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"uming the existing test class extends `TestCase` (JUnit 3), which matches the triggering test's use of `fail` and `assertEquals`. `NotStrictlyPositiveException` is in `org.apache.commons.math.exception`."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" I also check that a valid mean of 10.0 is returned unchanged by `getMean()`.\n\n```java\npackage org.apache.commons.math.distribution;\n\nimport junit.framework.TestCase;\n\nimport org.apache.commons.math.ex"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ception.NotStrictlyPositiveException;\n\n/**\n * Regression test for MATH-349: the Poisson distribution constructor must\n * throw NotStrictlyPositiveException for a non-positive mean.\n */\npublic class PoissonDistributionMean"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"RegressionTest extends TestCase {\n\n    public void testMean() {\n        PoissonDistribution dist;\n        try {\n            dist = new PoissonDistributionImpl(-1);\n            fail(\"negative mean: NotStrictl"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"yPositiveException expected\");\n        } catch (NotStrictlyPositiveException ex) {\n            // Expected.\n        }\n\n        dist = new PoissonDistributionImpl(10.0);\n        assertEquals(10.0, dist.getMean(), 0.0);\n    }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n    public void testZeroMean() {\n        try {\n            new PoissonDistributionImpl(0.0);\n            fail(\"zero mean: NotStrictlyPositiveException expected\");\n        } catch (NotStrictlyPositiveException ex) {\n            // Expected.\n        }\n    }\n}"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1760,"output_tokens":690,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.01042,"is_byok":false,"cost_details":{"upstream_inference_cost":0.01042,"upstream_inference_prompt_cost":0.00352,"upstream_inference_completions_cost":0.0069}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

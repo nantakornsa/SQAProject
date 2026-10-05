@@ -1,0 +1,69 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791142455-YsaeGpUeHUG2tOLK9Jyx","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Developing Regression Test**\n\nI am currently focusing on creating a regression test to address Jsoup bug 43. The core of this bug lies in an incorrect equality check within `Element.indexInList`, where `equals` was used instead of the intended `==` comparison.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.jsoup.nodes;\n\nimport org"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".jsoup.Jsoup;\nimport org.jsoup.select.Elements;\nimport org.junit.Test;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\nimport static org.junit.Assert.assertEquals;\n\npublic class ElementRegressionTest {\n\n    @Test\n    public void testElementSibling"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"IndexSameContent() {\n        Document doc = Jsoup.parse(\"<div><p>One</p>..."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"<p>One</p>...<p>One</p></div>\");\n        Elements ps = doc."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"select(\"p\");\n\n        assertEquals(0, ps.get(0).elementSiblingIndex());\n        assertEquals("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"1, ps.get(1).elementSiblingIndex());\n        assertEquals(2, ps.get(2)."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"elementSiblingIndex());\n    }\n\n    @Test\n    public void testGetSiblingsWithDuplicateContent() {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        Document doc = Jsoup.parse(\"<div><p>same</p><p>same</p><p>same"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"</p></div>\");\n        Elements ps = doc.select(\"p\");\n\n        assertEquals(null, ps."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"get(0).previousElementSibling());\n        assertEquals(ps.get(1), ps.get(0).next"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ElementSibling());\n\n        assertEquals(ps.get(0), ps.get(1).previousElementSibling());\n        assertEquals(ps."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"get(2), ps.get(1).nextElementSibling());\n\n        assertEquals(ps.get(1), ps"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".get(2).previousElementSibling());\n        assertEquals(null, ps.get(2).nextElementSibling());\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1012,"output_tokens":598,"output_tokens_details":{"thinking_tokens":257},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.0030015,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0030015,"upstream_inference_prompt_cost":0.000759,"upstream_inference_completions_cost":0.0022425}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

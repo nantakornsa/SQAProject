@@ -1,0 +1,258 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Compress
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Compress
+       Program: commons-compress
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/Compress.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-compress.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/active-bugs.csv
+Number of bugs: 47
+--------------------------------------------------------------------------------
+
+Summary for Bug: Compress-2
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+d09177b98f4e956c1d366110f73c3341ea110bee
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-03-30 16:31:15 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COMPRESS-11
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COMPRESS-11
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.compress.archivers.ArTestCase::testArDelete
+   --> junit.framework.AssertionFailedError: expected:<1> but was:<0>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.compress.archivers.ar.ArArchiveInputStream
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.compress.archivers.ar.ArArchiveInputStream ===
+diff --git a/src/main/java/org/apache/commons/compress/archivers/ar/ArArchiveInputStream.java b/src/main/java/org/apache/commons/compress/archivers/ar/ArArchiveInputStream.java
+index acfe3279..76e28666 100644
+--- a/src/main/java/org/apache/commons/compress/archivers/ar/ArArchiveInputStream.java
++++ b/src/main/java/org/apache/commons/compress/archivers/ar/ArArchiveInputStream.java
+@@ -39,10 +39,12 @@ public class ArArchiveInputStream extends ArchiveInputStream {
+      * If getNextEnxtry has been called, the entry metadata is stored in
+      * currentEntry.
+      */
++    private ArArchiveEntry currentEntry = null;
+     /*
+      * The offset where the current entry started. -1 if no entry has been
+      * called
+      */
++    private long entryOffset = -1;
+ 
+     public ArArchiveInputStream( final InputStream pInput ) {
+         input = pInput;
+@@ -57,8 +59,18 @@ public class ArArchiveInputStream extends ArchiveInputStream {
+      *             if the entry could not be read
+      */
+     public ArArchiveEntry getNextArEntry() throws IOException {
++        if (currentEntry != null) {
++            final long entryEnd = entryOffset + currentEntry.getLength();
++            while (offset < entryEnd) {
++                int x = read();
++                if (x == -1) {
+                     // hit EOF before previous entry was complete
+                     // TODO: throw an exception instead?
++                    return null;
++                }
++            }
++            currentEntry = null;
++        }
+ 
+         if (offset == 0) {
+             final byte[] expected = ArArchiveEntry.HEADER.getBytes();
+@@ -74,15 +86,17 @@ public class ArArchiveInputStream extends ArchiveInputStream {
+             }
+         }
+ 
++        if (offset % 2 != 0) {
++            if (read() < 0) {
+                 // hit eof
++                return null;
++            }
++        }
+ 
+         if (input.available() == 0) {
+             return null;
+         }
+ 
+-        if (offset % 2 != 0) {
+-            read();
+-        }
+         final byte[] name = new byte[16];
+         final byte[] lastmodified = new byte[12];
+         final byte[] userid = new byte[6];
+@@ -111,9 +125,11 @@ public class ArArchiveInputStream extends ArchiveInputStream {
+             }
+         }
+ 
+-        return new ArArchiveEntry(new String(name).trim(),
++        entryOffset = offset;
++        currentEntry = new ArArchiveEntry(new String(name).trim(),
+                                           Long.parseLong(new String(length)
+                                                          .trim()));
++        return currentEntry;
+     }
+ 
+ 
+@@ -126,12 +142,13 @@ public class ArArchiveInputStream extends ArchiveInputStream {
+             closed = true;
+             input.close();
+         }
++        currentEntry = null;
+     }
+ 
+     public int read() throws IOException {
+-        final int ret = input.read();
+-        offset += (ret > 0 ? 1 : 0);
+-        return ret;
++        byte[] single = new byte[1];
++        int num = read(single, 0, 1);
++        return num == -1 ? -1 : single[0] & 0xff;
+     }
+ 
+     public int read(byte[] b) throws IOException {
+@@ -140,6 +157,14 @@ public class ArArchiveInputStream extends ArchiveInputStream {
+ 
+     public int read(byte[] b, final int off, final int len) throws IOException {
+         int toRead = len;
++        if (currentEntry != null) {
++            final long entryEnd = entryOffset + currentEntry.getLength();
++            if (len > 0 && entryEnd > offset) {
++                toRead = (int) Math.min(len, entryEnd - offset);
++            } else {
++                return -1;
++            }
++        }
+         final int ret = this.input.read(b, off, toRead);
+         offset += (ret > 0 ? ret : 0);
+         return ret;
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testArDelete() throws Exception {
+        final File output = new File(dir, "bla.ar");
+
+        final File file1 = getFile("test1.xml");
+        final File file2 = getFile("test2.xml");
+        {
+            // create
+
+            final OutputStream out = new FileOutputStream(output);
+            final ArchiveOutputStream os = new ArchiveStreamFactory().createArchiveOutputStream("ar", out);
+            os.putArchiveEntry(new ArArchiveEntry("test1.xml", file1.length()));
+            IOUtils.copy(new FileInputStream(file1), os);
+            os.closeArchiveEntry();
+
+            os.putArchiveEntry(new ArArchiveEntry("test2.xml", file2.length()));
+            IOUtils.copy(new FileInputStream(file2), os);
+            os.closeArchiveEntry();
+            os.close();
+            out.close();
+        }
+
+        assertEquals(8
+                     + 60 + file1.length() + (file1.length() % 2)
+                     + 60 + file2.length() + (file2.length() % 2),
+                     output.length());
+
+        final File output2 = new File(dir, "bla2.ar");
+
+        int copied = 0;
+        int deleted = 0;
+
+        {
+            // remove all but one file
+
+            final InputStream is = new FileInputStream(output);
+            final OutputStream os = new FileOutputStream(output2);
+            final ArchiveOutputStream aos = new ArchiveStreamFactory().createArchiveOutputStream("ar", os);
+            final ArchiveInputStream ais = new ArchiveStreamFactory().createArchiveInputStream(new BufferedInputStream(is));
+            while(true) {
+                final ArArchiveEntry entry = (ArArchiveEntry)ais.getNextEntry();
+                if (entry == null) {
+                    break;
+                }
+
+                if ("test1.xml".equals(entry.getName())) {
+                    aos.putArchiveEntry(entry);
+                    IOUtils.copy(ais, aos);
+                    aos.closeArchiveEntry();
+                    copied++;
+                } else {
+                    IOUtils.copy(ais, new ByteArrayOutputStream());
+                    deleted++;
+                }
+
+            }
+            ais.close();
+            aos.close();
+            is.close();
+            os.close();
+        }
+
+        assertEquals(1, copied);
+        assertEquals(1, deleted);
+        assertEquals(144, output2.length());
+
+        long files = 0;
+        long sum = 0;
+
+        {
+            final InputStream is = new FileInputStream(output2);
+            final ArchiveInputStream ais = new ArchiveStreamFactory().createArchiveInputStream(new BufferedInputStream(is));
+            while(true) {
+                final ArArchiveEntry entry = (ArArchiveEntry)ais.getNextEntry();
+                if (entry == null) {
+                    break;
+                }
+
+                IOUtils.copy(ais, new ByteArrayOutputStream());
+
+                sum +=  entry.getLength();
+                files++;
+            }
+            ais.close();
+            is.close();
+        }
+
+        assertEquals(1, files);
+        assertEquals(76, sum);
+
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

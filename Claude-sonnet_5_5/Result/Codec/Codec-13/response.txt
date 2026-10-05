@@ -1,0 +1,29 @@
+```java
+package org.apache.commons.codec.language;
+
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+
+/**
+ * Regression test for CODEC-184: isDoubleMetaphoneEqual threw a NullPointerException
+ * when both inputs encoded to null (for example, empty strings).
+ */
+public class DoubleMetaphoneCodec184Test {
+
+    @Test
+    public void testIsDoubleMetaphoneEqualEmptyStrings() {
+        final DoubleMetaphone doubleMetaphone = new DoubleMetaphone();
+        assertTrue(doubleMetaphone.isDoubleMetaphoneEqual("", "", false));
+        assertTrue(doubleMetaphone.isDoubleMetaphoneEqual("", "", true));
+        assertTrue(doubleMetaphone.isDoubleMetaphoneEqual("", ""));
+    }
+
+    @Test
+    public void testIsDoubleMetaphoneEqualNullValues() {
+        final DoubleMetaphone doubleMetaphone = new DoubleMetaphone();
+        assertTrue(doubleMetaphone.isDoubleMetaphoneEqual(null, null, false));
+        assertTrue(doubleMetaphone.isDoubleMetaphoneEqual(null, null, true));
+    }
+}
+```

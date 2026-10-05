@@ -1,0 +1,57 @@
+```java
+package org.apache.commons.cli;
+
+import java.io.File;
+import java.io.FileInputStream;
+
+import junit.framework.TestCase;
+
+public class PatternOptionBuilderExistingFileRegressionTest extends TestCase
+{
+    public void testExistingFilePatternReturnsFileInputStream() throws Exception
+    {
+        File tmp = File.createTempFile("cli274", ".file");
+        tmp.deleteOnExit();
+
+        Options options = PatternOptionBuilder.parsePattern("g<");
+        CommandLineParser parser = new PosixParser();
+        CommandLine line = parser.parse(options, new String[] { "-g", tmp.getAbsolutePath() });
+
+        Object parsed = line.getParsedOptionValue("g");
+        try
+        {
+            assertTrue("option g not FileInputStream", parsed instanceof FileInputStream);
+        }
+        finally
+        {
+            if (parsed instanceof FileInputStream)
+            {
+                ((FileInputStream) parsed).close();
+            }
+        }
+    }
+
+    public void testTypeHandlerCreateValueForExistingFile() throws Exception
+    {
+        File tmp = File.createTempFile("cli274", ".file");
+        tmp.deleteOnExit();
+
+        Object value = TypeHandler.createValue(tmp.getAbsolutePath(), PatternOptionBuilder.EXISTING_FILE_VALUE);
+        try
+        {
+            assertTrue("value not FileInputStream", value instanceof FileInputStream);
+        }
+        finally
+        {
+            if (value instanceof FileInputStream)
+            {
+                ((FileInputStream) value).close();
+            }
+        }
+    }
+}
+```
+
+I haven't compiled or run this against either version. Both tests create a temporary file and check that an existing-file option (`g<`) is turned into a `FileInputStream` rather than a plain `File`. On the buggy version `TypeHandler` calls `createFile`, so both tests should fail. On the fixed version it calls `openFile`, so both should pass.
+
+I left out a test for a non-existing file. The `testExistingFilePatternFileNotExist` trigger expects `getParsedOptionValue` to return null, and I couldn't confirm how the fixed code handles the `ParseException` that `openFile` throws.

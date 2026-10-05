@@ -1,0 +1,85 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-86
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+38c13b5ae97c294afb859c49ded903beb7b9b100
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2018-12-22 18:19:31 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+1139
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/1139
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.parser.XmlTreeBuilderTest::handlesLTinScript
+   --> java.lang.IndexOutOfBoundsException: Index: 0, Size: 0
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.nodes.Comment
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.nodes.Comment ===
+diff --git a/src/main/java/org/jsoup/nodes/Comment.java b/src/main/java/org/jsoup/nodes/Comment.java
+index d0669fef..d9833854 100644
+--- a/src/main/java/org/jsoup/nodes/Comment.java
++++ b/src/main/java/org/jsoup/nodes/Comment.java
+@@ -75,7 +75,7 @@ public class Comment extends LeafNode {
+         String data = getData();
+         Document doc = Jsoup.parse("<" + data.substring(1, data.length() -1) + ">", baseUri(), Parser.xmlParser());
+         XmlDeclaration decl = null;
+-        if (doc.childNodeSize() > 0) {
++        if (doc.children().size() > 0) {
+             Element el = doc.child(0);
+             decl = new XmlDeclaration(NodeUtils.parser(doc).settings().normalizeTag(el.tagName()), data.startsWith("!"));
+             decl.attributes().addAll(el.attributes());
+
+
+=== TRIGGERING TEST METHOD ===
+    public void handlesLTinScript() {
+        // https://github.com/jhy/jsoup/issues/1139
+        String html = "<script> var a=\"<?\"; var b=\"?>\"; </script>";
+        Document doc = Jsoup.parse(html, "", Parser.xmlParser());
+        assertEquals("<script> var a=\"\n <!--?\"; var b=\"?-->\"; </script>", doc.html()); // converted from pseudo xmldecl to comment
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

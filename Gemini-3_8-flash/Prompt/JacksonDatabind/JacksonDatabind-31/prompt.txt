@@ -1,0 +1,252 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-31
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+fe25f7e14d92f5d4746549e7df22e9af35fdf54b
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-10-28 16:32:31 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+984
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/984
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.util.TestTokenBuffer::testOutputContext
+   --> junit.framework.AssertionFailedError: Expected name 'b' (JsonParser), TokenBuffer had 'a'
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.util.TokenBuffer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.util.TokenBuffer ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/util/TokenBuffer.java b/src/main/java/com/fasterxml/jackson/databind/util/TokenBuffer.java
+index b7cec0b80..fcf0c3b93 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/util/TokenBuffer.java
++++ b/src/main/java/com/fasterxml/jackson/databind/util/TokenBuffer.java
+@@ -669,7 +669,7 @@ sb.append("NativeObjectIds=").append(_hasNativeObjectIds).append(",");
+         if (text == null) {
+             writeNull();
+         } else {
+-            _append(JsonToken.VALUE_STRING, text);
++            _appendValue(JsonToken.VALUE_STRING, text);
+         }
+     }
+ 
+@@ -683,7 +683,7 @@ sb.append("NativeObjectIds=").append(_hasNativeObjectIds).append(",");
+         if (text == null) {
+             writeNull();
+         } else {
+-            _append(JsonToken.VALUE_STRING, text);
++            _appendValue(JsonToken.VALUE_STRING, text);
+         }
+     }
+     
+@@ -728,7 +728,7 @@ sb.append("NativeObjectIds=").append(_hasNativeObjectIds).append(",");
+ 
+     @Override
+     public void writeRawValue(String text) throws IOException {
+-        _append(JsonToken.VALUE_EMBEDDED_OBJECT, new RawValue(text));
++        _appendValue(JsonToken.VALUE_EMBEDDED_OBJECT, new RawValue(text));
+     }
+ 
+     @Override
+@@ -736,12 +736,12 @@ sb.append("NativeObjectIds=").append(_hasNativeObjectIds).append(",");
+         if (offset > 0 || len != text.length()) {
+             text = text.substring(offset, offset+len);
+         }
+-        _append(JsonToken.VALUE_EMBEDDED_OBJECT, new RawValue(text));
++        _appendValue(JsonToken.VALUE_EMBEDDED_OBJECT, new RawValue(text));
+     }
+ 
+     @Override
+     public void writeRawValue(char[] text, int offset, int len) throws IOException {
+-        _append(JsonToken.VALUE_EMBEDDED_OBJECT, new String(text, offset, len));
++        _appendValue(JsonToken.VALUE_EMBEDDED_OBJECT, new String(text, offset, len));
+     }
+ 
+     /*
+@@ -752,27 +752,27 @@ sb.append("NativeObjectIds=").append(_hasNativeObjectIds).append(",");
+ 
+     @Override
+     public void writeNumber(short i) throws IOException {
+-        _append(JsonToken.VALUE_NUMBER_INT, Short.valueOf(i));
++        _appendValue(JsonToken.VALUE_NUMBER_INT, Short.valueOf(i));
+     }
+ 
+     @Override
+     public void writeNumber(int i) throws IOException {
+-        _append(JsonToken.VALUE_NUMBER_INT, Integer.valueOf(i));
++        _appendValue(JsonToken.VALUE_NUMBER_INT, Integer.valueOf(i));
+     }
+ 
+     @Override
+     public void writeNumber(long l) throws IOException {
+-        _append(JsonToken.VALUE_NUMBER_INT, Long.valueOf(l));
++        _appendValue(JsonToken.VALUE_NUMBER_INT, Long.valueOf(l));
+     }
+ 
+     @Override
+     public void writeNumber(double d) throws IOException {
+-        _append(JsonToken.VALUE_NUMBER_FLOAT, Double.valueOf(d));
++        _appendValue(JsonToken.VALUE_NUMBER_FLOAT, Double.valueOf(d));
+     }
+ 
+     @Override
+     public void writeNumber(float f) throws IOException {
+-        _append(JsonToken.VALUE_NUMBER_FLOAT, Float.valueOf(f));
++        _appendValue(JsonToken.VALUE_NUMBER_FLOAT, Float.valueOf(f));
+     }
+ 
+     @Override
+@@ -780,7 +780,7 @@ sb.append("NativeObjectIds=").append(_hasNativeObjectIds).append(",");
+         if (dec == null) {
+             writeNull();
+         } else {
+-            _append(JsonToken.VALUE_NUMBER_FLOAT, dec);
++            _appendValue(JsonToken.VALUE_NUMBER_FLOAT, dec);
+         }
+     }
+ 
+@@ -789,7 +789,7 @@ sb.append("NativeObjectIds=").append(_hasNativeObjectIds).append(",");
+         if (v == null) {
+             writeNull();
+         } else {
+-            _append(JsonToken.VALUE_NUMBER_INT, v);
++            _appendValue(JsonToken.VALUE_NUMBER_INT, v);
+         }
+     }
+ 
+@@ -798,17 +798,17 @@ sb.append("NativeObjectIds=").append(_hasNativeObjectIds).append(",");
+         /* 03-Dec-2010, tatu: related to [JACKSON-423], should try to keep as numeric
+          *   identity as long as possible
+          */
+-        _append(JsonToken.VALUE_NUMBER_FLOAT, encodedValue);
++        _appendValue(JsonToken.VALUE_NUMBER_FLOAT, encodedValue);
+     }
+ 
+     @Override
+     public void writeBoolean(boolean state) throws IOException {
+-        _append(state ? JsonToken.VALUE_TRUE : JsonToken.VALUE_FALSE);
++        _appendValue(state ? JsonToken.VALUE_TRUE : JsonToken.VALUE_FALSE);
+     }
+ 
+     @Override
+     public void writeNull() throws IOException {
+-        _append(JsonToken.VALUE_NULL);
++        _appendValue(JsonToken.VALUE_NULL);
+     }
+ 
+     /*
+@@ -826,7 +826,7 @@ sb.append("NativeObjectIds=").append(_hasNativeObjectIds).append(",");
+         }
+         Class<?> raw = value.getClass();
+         if (raw == byte[].class || (value instanceof RawValue)) {
+-            _append(JsonToken.VALUE_EMBEDDED_OBJECT, value);
++            _appendValue(JsonToken.VALUE_EMBEDDED_OBJECT, value);
+             return;
+         }
+         if (_objectCodec == null) {
+@@ -834,7 +834,7 @@ sb.append("NativeObjectIds=").append(_hasNativeObjectIds).append(",");
+              *   err out, or just embed? For now, do latter.
+              */
+ //          throw new JsonMappingException("No ObjectCodec configured for TokenBuffer, writeObject() called");
+-            _append(JsonToken.VALUE_EMBEDDED_OBJECT, value);
++            _appendValue(JsonToken.VALUE_EMBEDDED_OBJECT, value);
+         } else {
+             _objectCodec.writeValue(this, value);
+         }
+@@ -850,7 +850,7 @@ sb.append("NativeObjectIds=").append(_hasNativeObjectIds).append(",");
+ 
+         if (_objectCodec == null) {
+             // as with 'writeObject()', is codec optional?
+-            _append(JsonToken.VALUE_EMBEDDED_OBJECT, node);
++            _appendValue(JsonToken.VALUE_EMBEDDED_OBJECT, node);
+         } else {
+             _objectCodec.writeTree(this, node);
+         }
+@@ -1088,6 +1088,19 @@ sb.append("NativeObjectIds=").append(_hasNativeObjectIds).append(",");
+      *
+      * @since 2.6.4
+      */
++    protected final void _appendValue(JsonToken type)
++    {
++        _writeContext.writeValue();
++        Segment next = _hasNativeId
++                ? _last.append(_appendAt, type, _objectId, _typeId)
++                : _last.append(_appendAt, type);
++        if (next == null) {
++            ++_appendAt;
++        } else {
++            _last = next;
++            _appendAt = 1; // since we added first at 0
++        }
++    }
+ 
+     /**
+      * Similar to {@link #_append(JsonToken,Object)} but also updates context with
+@@ -1095,6 +1108,19 @@ sb.append("NativeObjectIds=").append(_hasNativeObjectIds).append(",");
+      *
+      * @since 2.6.4
+      */
++    protected final void _appendValue(JsonToken type, Object value)
++    {
++        _writeContext.writeValue();
++        Segment next = _hasNativeId
++                ? _last.append(_appendAt, type, value, _objectId, _typeId)
++                : _last.append(_appendAt, type, value);
++        if (next == null) {
++            ++_appendAt;
++        } else {
++            _last = next;
++            _appendAt = 1;
++        }
++    }
+     
+     protected final void _appendRaw(int rawType, Object value)
+     {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testOutputContext() throws IOException
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

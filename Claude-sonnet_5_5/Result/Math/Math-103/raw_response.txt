@@ -1,0 +1,69 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791148187-I9FKHuSZ1dxodjPDpZyn","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1766,"output_tokens":8,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"```java\npackage org.apache"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".commons.math.distrib"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ution;\n\nimport jun"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"it.framework.TestC"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ase;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n/**\n * Regression"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" test for M"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ATH-167: N"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ormalDistributionImp"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"l.cumulativePro"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"bability\n * must"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" not throw a MaxIterationsExceededException for extreme values.\n */\npublic class NormalDistributionExtremeValuesRegressionTest extends TestCase {\n\n    public NormalDistributionExtremeValuesRegressionTest(String name) {\n        super(name);\n    }\n\n    public void test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ExtremeValues() throws Exception {\n        NormalDistribution distribution = new NormalDistributionImpl();\n        distribution.setMean(0);\n        distribution.setStandardDeviation(1);\n        for (int i = 0; i < 100; i += 5) { // make sure no convergence"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" exception\n            double lowerTail = distribution.cumulativeProbability((double) -i);\n            double upperTail = distribution.cumulativeProbability((double) i);\n            if (i < 10) { // make sure not top-coded\n                assertTrue(lowerTail > 0.0d);\n                ass"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ertTrue(upperTail < 1.0d);\n            } else { // make sure top coding not reversed\n                assertTrue(lowerTail < 0.00001);\n                assertTrue(upperTail > 0.99999);\n            }\n        }\n    }\n\n    public void testExtreme"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ValuesNonStandardParameters() throws Exception {\n        NormalDistribution distribution = new NormalDistributionImpl();\n        distribution.setMean(5);\n        distribution.setStandardDeviation(2);\n        assertEquals(0"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".0d, distribution.cumulativeProbability(5 - 2 * 60), 1e-10);\n        assertEquals(1.0d, distribution.cumulativeProbability(5 + 2 * 60), 1e-10);\n    }\n}"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1766,"output_tokens":613,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.009662,"is_byok":false,"cost_details":{"upstream_inference_cost":0.009662,"upstream_inference_prompt_cost":0.003532,"upstream_inference_completions_cost":0.00613}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

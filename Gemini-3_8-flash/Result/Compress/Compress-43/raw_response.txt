@@ -1,0 +1,147 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791120343-E1qeWgBME0zBKPoL6n2Z","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing Archive Entry Logic**\n\nI'm currently focused on resolving Compress-43. The issue lies within `addRawArchiveEntry` when `channel` is null and the method is DEFLATED; it erroneously sets the Data Descriptor flag in the LFH and CDH. This flag is unnecessary for raw/phased entries as no data descriptor is actually written.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.apache.commons.compress.archivers."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"zip;\n\nimport org.junit.Rule;\nimport org.junit.Test;\nimport org.junit.rules.Temporary"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Folder;\n\nimport java.io.ByteArrayOutputStream;\nimport java.io.File;\nimport java.io"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".FileOutputStream;\nimport java.io.IOException;\nimport java.util.Arrays;\n\nimport static org."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"junit.Assert.assertArrayEquals;\nimport static org.junit.Assert.assertEquals;\nimport static org.junit.Assert.assert"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"NotEquals;\n\npublic class Compress43Test {\n\n    @Rule\n    public TemporaryFolder folder = new Temporary"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Folder();\n\n    @Test\n    public void doesntWriteDataDescriptorWhenAddingRawEntries() throws IOException {\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ByteArrayOutputStream init = new ByteArrayOutputStream();\n        try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(init"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":")) {\n            zos.putArchiveEntry(new ZipArchiveEntry(\"test1.txt\"));\n            zos."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"write(\"foo\".getBytes(\"UTF-8\"));\n            zos.closeArchiveEntry();\n        }\n\n        File"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" f = folder.newFile(\"test.zip\");\n        try (FileOutputStream fos = new FileOutputStream(f))"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" {\n            fos.write(init.toByteArray());\n        }\n\n        ByteArrayOutputStream o = new ByteArrayOutputStream();"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        ZipArchiveEntry zae;\n        try (ZipFile zf = new ZipFile(f);\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"             ZipArchiveOutputStream zos = new ZipArchiveOutputStream(o)) {\n            zae = zf.get"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Entry(\"test1.txt\");\n            zos.addRawArchiveEntry(zae, zf.getRaw"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"InputStream(zae));\n        }\n\n        byte[] data = o.toByteArray();\n        byte[] versionIn"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"LFH = Arrays.copyOfRange(data, 4, 6);\n        // still 2.0"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" because of Deflate\n        assertArrayEquals(new byte[] { 20, 0 }, versionInLF"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"H);\n        byte[] gpbInLFH = Arrays.copyOfRange(data, 6, 8"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":");\n        // no DD but EFS flag (bit 11 set => byte 0 is 0,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" byte 1 is 8)\n        assertArrayEquals(new byte[] { 0, 8 }, g"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"pbInLFH);\n\n        int cdhStart = findCentralDirectory(data);\n        byte[] versionIn"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"CDH = Arrays.copyOfRange(data, cdhStart + 6, cdhStart + 8);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        assertArrayEquals(new byte[] { 20, 0 }, versionInCDH);\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"byte[] gpbInCDH = Arrays.copyOfRange(data, cdhStart + 8, cdh"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Start + 10);\n        assertArrayEquals(new byte[] { 0, 8 }, gpbInCDH);\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        int ddStart = cdhStart - 16;\n        assertNotEquals(ZipLong.DD_"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"SIG, new ZipLong(data, ddStart));\n        long crcFromLFH = ZipLong.getValue("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"data, 14);\n        long cSizeFromLFH = ZipLong.getValue(data, 1"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"8);\n        long sizeFromLFH = ZipLong.getValue(data, 22);\n        assertEquals"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(3, sizeFromLFH);\n\n        long crcFromCDH = ZipLong.getValue(data, cdhStart + 1"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"6);\n        assertEquals(crcFromLFH, crcFromCDH);\n        long cSizeFromCDH"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" = ZipLong.getValue(data, cdhStart + 20);\n        assertEquals(cSizeFromLF"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"H, cSizeFromCDH);\n        long sizeFromCDH = ZipLong.getValue(data, c"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"dhStart + 24);\n        assertEquals(sizeFromLFH, sizeFromCDH);\n    }\n\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"private int findCentralDirectory(byte[] data) {\n        byte[] cdhSig = ZipArchiveOutputStream.CFH"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"_SIG;\n        for (int i = 0; i < data.length - cdhSig.length; i++)"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" {\n            boolean match = true;\n            for (int j = 0; j < cdhSig."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"length; j++) {\n                if (data[i + j] != cdhSig[j]) {\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"                    match = false;\n                    break;\n                }\n            }\n            if (match) {\n                "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"return i;\n            }\n        }\n        return -1;\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2101,"output_tokens":1211,"output_tokens_details":{"thinking_tokens":214},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.006117,"is_byok":false,"cost_details":{"upstream_inference_cost":0.006117,"upstream_inference_prompt_cost":0.00157575,"upstream_inference_completions_cost":0.00454125}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

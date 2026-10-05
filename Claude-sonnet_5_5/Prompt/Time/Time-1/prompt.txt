@@ -1,0 +1,162 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Time
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Time
+       Program: joda-time
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/Time.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/joda-time.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Time-1
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+9a62b06be5d0df8e833ff8583398cca386608cac
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-12-02 21:11:47 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+93
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/JodaOrg/joda-time/issues/93
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.joda.time.TestPartial_Constructors::testConstructorEx7_TypeArray_intArray
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.joda.time.field.UnsupportedDurationField
+ - org.joda.time.Partial
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.joda.time.field.UnsupportedDurationField ===
+diff --git a/src/main/java/org/joda/time/field/UnsupportedDurationField.java b/src/main/java/org/joda/time/field/UnsupportedDurationField.java
+index 7e0ce57a..bf44e013 100644
+--- a/src/main/java/org/joda/time/field/UnsupportedDurationField.java
++++ b/src/main/java/org/joda/time/field/UnsupportedDurationField.java
+@@ -224,9 +224,6 @@ public final class UnsupportedDurationField extends DurationField implements Ser
+      * @return zero always
+      */
+     public int compareTo(DurationField durationField) {
+-        if (durationField.isSupported()) {
+-            return 1;
+-        }
+         return 0;
+     }
+ 
+
+=== MODIFIED SOURCE: org.joda.time.Partial ===
+diff --git a/src/main/java/org/joda/time/Partial.java b/src/main/java/org/joda/time/Partial.java
+index 3b84fdc6..6ff27718 100644
+--- a/src/main/java/org/joda/time/Partial.java
++++ b/src/main/java/org/joda/time/Partial.java
+@@ -214,11 +214,20 @@ public final class Partial
+             DateTimeFieldType loopType = types[i];
+             DurationField loopUnitField = loopType.getDurationType().getField(iChronology);
+             if (i > 0) {
++                if (loopUnitField.isSupported() == false) {
++                    if (lastUnitField.isSupported()) {
++                        throw new IllegalArgumentException("Types array must be in order largest-smallest: " +
++                                        types[i - 1].getName() + " < " + loopType.getName());
++                    } else {
++                        throw new IllegalArgumentException("Types array must not contain duplicate unsupported: " +
++                                        types[i - 1].getName() + " and " + loopType.getName());
++                    }
++                }
+                 int compare = lastUnitField.compareTo(loopUnitField);
+                 if (compare < 0) {
+                     throw new IllegalArgumentException("Types array must be in order largest-smallest: " +
+                             types[i - 1].getName() + " < " + loopType.getName());
+-                } else if (compare == 0) {
++                } else if (compare == 0 && lastUnitField.equals(loopUnitField)) {
+                     if (types[i - 1].getRangeDurationType() == null) {
+                         if (loopType.getRangeDurationType() == null) {
+                             throw new IllegalArgumentException("Types array must not contain duplicate: " +
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testConstructorEx7_TypeArray_intArray() throws Throwable {
+        int[] values = new int[] {1, 1, 1};
+        DateTimeFieldType[] types = new DateTimeFieldType[] {
+            DateTimeFieldType.dayOfMonth(), DateTimeFieldType.year(), DateTimeFieldType.monthOfYear() };
+        try {
+            new Partial(types, values);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            assertMessageContains(ex, "must be in order", "largest-smallest");
+        }
+        
+        types = new DateTimeFieldType[] {
+            DateTimeFieldType.year(), DateTimeFieldType.dayOfMonth(), DateTimeFieldType.monthOfYear() };
+        try {
+            new Partial(types, values);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            assertMessageContains(ex, "must be in order", "largest-smallest");
+        }
+        
+        types = new DateTimeFieldType[] {
+            DateTimeFieldType.year(), DateTimeFieldType.era(), DateTimeFieldType.monthOfYear() };
+        try {
+            new Partial(types, values);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            assertMessageContains(ex, "must be in order", "largest-smallest");
+        }
+        
+        types = new DateTimeFieldType[] {
+            DateTimeFieldType.year(), DateTimeFieldType.dayOfMonth(), DateTimeFieldType.era() };
+        try {
+            new Partial(types, values);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            assertMessageContains(ex, "must be in order", "largest-smallest");
+        }
+        
+        types = new DateTimeFieldType[] {
+            DateTimeFieldType.year(), DateTimeFieldType.dayOfMonth(), DateTimeFieldType.dayOfYear() };
+        try {
+            new Partial(types, values);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            assertMessageContains(ex, "must be in order", "largest-smallest");
+        }
+        
+        types = new DateTimeFieldType[] {
+            DateTimeFieldType.yearOfEra(), DateTimeFieldType.year(), DateTimeFieldType.dayOfYear() };
+        try {
+            new Partial(types, values);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            assertMessageContains(ex, "must be in order", "largest-smallest");
+        }
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

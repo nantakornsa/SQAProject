@@ -1,0 +1,42 @@
+package org.joda.time.chrono;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDate;
+
+/**
+ * Regression test: GJChronology must reject cutovers earlier than 0001-01-01.
+ */
+public class TestGJDate extends TestCase {
+
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
+
+    public static TestSuite suite() {
+        return new TestSuite(TestGJDate.class);
+    }
+
+    public void test_cutoverPreZero() {
+        DateTime cutover = new LocalDate(-2, 6, 30, ISOChronology.getInstanceUTC()).toDateTimeAtStartOfDay(DateTimeZone.UTC);
+        try {
+            GJChronology.getInstance(DateTimeZone.UTC, cutover);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+    }
+
+    public void test_cutoverYearZero() {
+        DateTime cutover = new LocalDate(0, 6, 30, ISOChronology.getInstanceUTC()).toDateTimeAtStartOfDay(DateTimeZone.UTC);
+        try {
+            GJChronology.getInstance(DateTimeZone.UTC, cutover);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+    }
+}

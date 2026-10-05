@@ -1,0 +1,126 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-104
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+83c7c4347055c3a70a3115fa106aa69c9cb56456
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2018-11-22 17:43:25 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+2167
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/2167
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.ser.jdk.DateSerializationTest::testDateISO8601_10k
+   --> org.junit.ComparisonFailure: expected:<"[+10]204-01-01T00:00:00.0...> but was:<"[:]204-01-01T00:00:00.0...>
+ - com.fasterxml.jackson.databind.ser.jdk.DateSerializationTest::testDateISO8601_BCE
+   --> org.junit.ComparisonFailure: expected:<"[+0000]-01-01T00:00:00.000+...> but was:<"[0001]-01-01T00:00:00.000+...>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.util.StdDateFormat
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.util.StdDateFormat ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/util/StdDateFormat.java b/src/main/java/com/fasterxml/jackson/databind/util/StdDateFormat.java
+index 5ea467d0d..02afe5fce 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/util/StdDateFormat.java
++++ b/src/main/java/com/fasterxml/jackson/databind/util/StdDateFormat.java
+@@ -438,12 +438,19 @@ public class StdDateFormat
+         final int year = cal.get(Calendar.YEAR);
+ 
+         // Assuming GregorianCalendar, special handling needed for BCE (aka BC)
++        if (cal.get(Calendar.ERA) == GregorianCalendar.BC) {
++            _formatBCEYear(buffer, year);
++        } else {
++            if (year > 9999) {
+                 // 22-Nov-2018, tatu: Handling beyond 4-digits is not well specified wrt ISO-8601, but
+                 //   it seems that plus prefix IS mandated. Padding is an open question, but since agreeement
+                 //   for max length would be needed, we ewould need to limit to arbitrary length
+                 //   like five digits (erroring out if beyond or padding to that as minimum).
+                 //   Instead, let's just print number out as is and let decoder try to make sense of it.
++                buffer.append('+');
++            }
+             pad4(buffer, year);
++        }
+         buffer.append('-');
+         pad2(buffer, cal.get(Calendar.MONTH) + 1);
+         buffer.append('-');
+@@ -480,11 +487,20 @@ public class StdDateFormat
+         }
+     }
+ 
++    protected void _formatBCEYear(StringBuffer buffer, int bceYearNoSign) {
+         // Ok. First of all, BCE 1 output (given as value `1` in era BCE) needs to become
+         // "+0000", but rest (from `2` up, in that era) need minus sign.
++        if (bceYearNoSign == 1) {
++            buffer.append("+0000");
++            return;
++        }
++        final int isoYear = bceYearNoSign - 1;
++        buffer.append('-');
+         // as with CE, 4 digit variant needs padding; beyond that not (although that part is
+         // open to debate, needs agreement with receiver)
+         // But `pad4()` deals with "big" numbers now so:
++        pad4(buffer, isoYear);
++    }
+ 
+     private static void pad2(StringBuffer buffer, int value) {
+         int tens = value / 10;
+@@ -513,7 +529,11 @@ public class StdDateFormat
+         if (h == 0) {
+             buffer.append('0').append('0');
+         } else {
++            if (h > 99) { // [databind#2167]: handle above 9999 correctly
++                buffer.append(h);
++            } else {
+                 pad2(buffer, h);
++            }
+             value -= (100 * h);
+         }
+         pad2(buffer, value);
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testDateISO8601_10k() throws IOException
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

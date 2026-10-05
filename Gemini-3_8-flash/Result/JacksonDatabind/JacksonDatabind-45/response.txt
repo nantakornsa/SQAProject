@@ -1,0 +1,29 @@
+```java
+package com.fasterxml.jackson.databind.ser;
+
+import java.util.Date;
+import java.util.TimeZone;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class DateDefaultShapeTest extends BaseMapTest
+{
+    static class DateWithPattern {
+        @JsonFormat(pattern = "yyyy-MM-dd", timezone = "UTC")
+        public Date date;
+
+        public DateWithPattern(long millis) {
+            date = new Date(millis);
+        }
+    }
+
+    public void testDateDefaultShapeWithPattern() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String json = mapper.writeValueAsString(new DateWithPattern(0L));
+        assertEquals("{\"date\":\"1970-01-01\"}", json);
+    }
+}
+```

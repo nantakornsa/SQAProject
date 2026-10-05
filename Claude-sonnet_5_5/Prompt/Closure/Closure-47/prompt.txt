@@ -1,0 +1,167 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-47
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+aedce35970673f20696d5721acba13e986cc764c
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-11-14 23:03:35 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+575
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-575.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.debugging.sourcemap.SourceMapGeneratorV3Test::testParseSourceMetaMap
+   --> junit.framework.AssertionFailedError: expected:<5> but was:<4>
+ - com.google.debugging.sourcemap.SourceMapGeneratorV3Test::testGoldenOutput0a
+   --> junit.framework.ComparisonFailure: expected:<...t":1,
+ - com.google.debugging.sourcemap.SourceMapGeneratorV3Test::testMultilineMapping
+   --> junit.framework.AssertionFailedError: expected:<10> but was:<9>
+ - com.google.debugging.sourcemap.SourceMapGeneratorV3Test::testMultiFunctionMapping
+   --> junit.framework.AssertionFailedError: expected:<10> but was:<9>
+ - com.google.debugging.sourcemap.SourceMapGeneratorV3Test::testLiteralMappingsGoldenOutput
+   --> junit.framework.ComparisonFailure: expected:<...t":1,
+ - com.google.debugging.sourcemap.SourceMapGeneratorV3Test::testMultilineMapping2
+   --> junit.framework.AssertionFailedError: expected:<10> but was:<9>
+ - com.google.debugging.sourcemap.SourceMapGeneratorV3Test::testBasicMappingGoldenOutput
+   --> junit.framework.ComparisonFailure: expected:<...t":1,
+ - com.google.debugging.sourcemap.SourceMapGeneratorV3Test::testSourceMapMerging
+   --> junit.framework.AssertionFailedError: expected:<5> but was:<4>
+ - com.google.debugging.sourcemap.SourceMapGeneratorV3Test::testLiteralMappings
+   --> junit.framework.AssertionFailedError: expected:<10> but was:<9>
+ - com.google.debugging.sourcemap.SourceMapGeneratorV3Test::testBasicMapping1
+   --> junit.framework.AssertionFailedError: expected:<10> but was:<9>
+ - com.google.debugging.sourcemap.SourceMapGeneratorV3Test::testBasicMapping2
+   --> junit.framework.AssertionFailedError: expected:<10> but was:<9>
+ - com.google.debugging.sourcemap.SourceMapGeneratorV3Test::testGoldenOutput1
+   --> junit.framework.ComparisonFailure: expected:<...t":1,
+ - com.google.debugging.sourcemap.SourceMapGeneratorV3Test::testGoldenOutput2
+   --> junit.framework.ComparisonFailure: expected:<...t":1,
+ - com.google.debugging.sourcemap.SourceMapGeneratorV3Test::testGoldenOutput3
+   --> junit.framework.ComparisonFailure: expected:<...t":1,
+ - com.google.debugging.sourcemap.SourceMapGeneratorV3Test::testGoldenOutput4
+   --> junit.framework.ComparisonFailure: expected:<...t":1,
+ - com.google.debugging.sourcemap.SourceMapGeneratorV3Test::testGoldenOutput5
+   --> junit.framework.ComparisonFailure: expected:<...
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.debugging.sourcemap.SourceMapConsumerV3
+ - com.google.javascript.jscomp.SourceMap
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.debugging.sourcemap.SourceMapConsumerV3 ===
+diff --git a/src/com/google/debugging/sourcemap/SourceMapConsumerV3.java b/src/com/google/debugging/sourcemap/SourceMapConsumerV3.java
+index d67dc106f..5ee9108cc 100644
+--- a/src/com/google/debugging/sourcemap/SourceMapConsumerV3.java
++++ b/src/com/google/debugging/sourcemap/SourceMapConsumerV3.java
+@@ -486,8 +486,8 @@ public class SourceMapConsumerV3 implements SourceMapConsumer,
+       // Adjust the line/column here to be start at 1.
+       Builder x = OriginalMapping.newBuilder()
+         .setOriginalFile(sources[entry.getSourceFileId()])
+-        .setLineNumber(entry.getSourceLine())
+-        .setColumnPosition(entry.getSourceColumn());
++        .setLineNumber(entry.getSourceLine() + 1)
++        .setColumnPosition(entry.getSourceColumn() + 1);
+       if (entry.getNameId() != UNMAPPED) {
+         x.setIdentifier(names[entry.getNameId()]);
+       }
+
+=== MODIFIED SOURCE: com.google.javascript.jscomp.SourceMap ===
+diff --git a/src/com/google/javascript/jscomp/SourceMap.java b/src/com/google/javascript/jscomp/SourceMap.java
+index 835dfa496..719240815 100644
+--- a/src/com/google/javascript/jscomp/SourceMap.java
++++ b/src/com/google/javascript/jscomp/SourceMap.java
+@@ -135,10 +135,15 @@ public class SourceMap {
+     // zero based.
+     // We don't change this for the v1 or v2 source maps but for
+     // v3 we make them both 0 based.
++    int lineBaseOffset = 1;
++    if (generator instanceof SourceMapGeneratorV1
++        || generator instanceof SourceMapGeneratorV2) {
++      lineBaseOffset = 0;
++    }
+ 
+     generator.addMapping(
+         sourceFile, originalName,
+-        new FilePosition(node.getLineno(), node.getCharno()),
++        new FilePosition(node.getLineno() - lineBaseOffset, node.getCharno()),
+         outputStartPosition, outputEndPosition);
+   }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testParseSourceMetaMap() throws Exception {
+    final String INPUT1 = "file1";
+    final String INPUT2 = "file2";
+    LinkedHashMap<String, String> inputs = Maps.newLinkedHashMap();
+    inputs.put(INPUT1, "var __FOO__ = 1;");
+    inputs.put(INPUT2, "var __BAR__ = 2;");
+    RunResult result1 = compile(inputs.get(INPUT1), INPUT1);
+    RunResult result2 = compile(inputs.get(INPUT2), INPUT2);
+
+    final String MAP1 = "map1";
+    final String MAP2 = "map2";
+    final LinkedHashMap<String, String> maps = Maps.newLinkedHashMap();
+    maps.put(MAP1, result1.sourceMapFileContent);
+    maps.put(MAP2, result2.sourceMapFileContent);
+
+    List<SourceMapSection> sections = Lists.newArrayList();
+
+    StringBuilder output = new StringBuilder();
+    FilePosition offset = appendAndCount(output, result1.generatedSource);
+    sections.add(SourceMapSection.forURL(MAP1, 0, 0));
+    output.append(result2.generatedSource);
+    sections.add(
+        SourceMapSection.forURL(MAP2, offset.getLine(), offset.getColumn()));
+
+    SourceMapGeneratorV3 generator = new SourceMapGeneratorV3();
+    StringBuilder mapContents = new StringBuilder();
+    generator.appendIndexMapTo(mapContents, "out.js", sections);
+
+    check(inputs, output.toString(), mapContents.toString(),
+      new SourceMapSupplier() {
+        @Override
+        public String getSourceMap(String url){
+          return maps.get(url);
+      }});
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

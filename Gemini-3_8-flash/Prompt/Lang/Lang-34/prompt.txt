@@ -1,0 +1,150 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-34
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+a2bb711aee6621b21cdd22e6d7e4bff2f7236235
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-02-04 21:57:58 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-586
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-586
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testObjectCycle
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testReflectionHierarchy
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testSelfInstanceTwoVarsReflectionObjectCycle
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testReflectionArrayCycle
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testReflectionLongArrayArray
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testReflectionArrayArrayCycle
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testReflectionFloatArray
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testReflectionDoubleArrayArray
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testReflectionBooleanArray
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testReflectionyteArray
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testReflectionDoubleArray
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testReflectionIntArrayArray
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testReflectionLongArray
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testReflectionhortArrayArray
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testReflectionObjectArray
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testReflectionObjectCycle
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testReflectionBooleanArrayArray
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testSimpleReflectionObjectCycle
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testReflectionByteArrayArray
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testReflectionArrayCycleLevel2
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testReflectionArrayAndObjectCycle
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testReflectionCharArrayArray
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testReflectionShortArray
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testSelfInstanceVarReflectionObjectCycle
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testReflectionIntArray
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testReflectionCharArray
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+ - org.apache.commons.lang3.builder.ToStringBuilderTest::testReflectionFloatArrayArray
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: {}
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang3.builder.ToStringStyle
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang3.builder.ToStringStyle ===
+diff --git a/src/main/java/org/apache/commons/lang3/builder/ToStringStyle.java b/src/main/java/org/apache/commons/lang3/builder/ToStringStyle.java
+index aa1f448f5..26214ed41 100644
+--- a/src/main/java/org/apache/commons/lang3/builder/ToStringStyle.java
++++ b/src/main/java/org/apache/commons/lang3/builder/ToStringStyle.java
+@@ -145,7 +145,7 @@ public abstract class ToStringStyle implements Serializable {
+      * @return Set the registry of objects being traversed
+      */
+     static Map<Object, Object> getRegistry() {
+-        return REGISTRY.get() != null ? REGISTRY.get() : Collections.<Object, Object>emptyMap();
++        return REGISTRY.get();
+     }
+ 
+     /**
+@@ -161,7 +161,7 @@ public abstract class ToStringStyle implements Serializable {
+      */
+     static boolean isRegistered(Object value) {
+         Map<Object, Object> m = getRegistry();
+-        return m.containsKey(value);
++        return m != null && m.containsKey(value);
+     }
+ 
+     /**
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testObjectCycle() {
+        ObjectCycle a = new ObjectCycle();
+        ObjectCycle b = new ObjectCycle();
+        a.obj = b;
+        b.obj = a;
+
+        String expected = toBaseString(a) + "[" + toBaseString(b) + "[" + toBaseString(a) + "]]";
+        assertEquals(expected, a.toString());
+        validateNullToStringStyleRegistry();
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

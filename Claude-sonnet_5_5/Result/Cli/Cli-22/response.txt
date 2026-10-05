@@ -1,0 +1,53 @@
+```java
+package org.apache.commons.cli;
+
+import junit.framework.TestCase;
+
+public class PosixParserStopAtExpectedArgRegressionTest extends TestCase
+{
+    public void testStopAtNonOptionKeepsArgumentOfPrecedingOption() throws Exception
+    {
+        Options options = new Options();
+        options.addOption("a", "enable-a", false, "enable a");
+        options.addOption("b", "bar", true, "set b");
+
+        Parser parser = new PosixParser();
+        CommandLine cl = parser.parse(options, new String[] { "-b", "foo" }, true);
+
+        assertTrue("Confirm -b is set", cl.hasOption("b"));
+        assertEquals("Confirm -b is set", "foo", cl.getOptionValue("b"));
+        assertTrue("Confirm no extra args", cl.getArgList().isEmpty());
+    }
+
+    public void testStopAtNonOptionWithArgContainingSpaces() throws Exception
+    {
+        Options options = new Options();
+        options.addOption(OptionBuilder.withArgName("script")
+            .hasArg()
+            .withDescription("specify a command line script")
+            .create('e'));
+        options.addOption("v", "version", false, "version");
+
+        Parser parser = new PosixParser();
+        CommandLine line = parser.parse(options, new String[] { "-e", "println 'hello'" }, true);
+
+        assertTrue(line.hasOption('e'));
+        assertEquals("println 'hello'", line.getOptionValue('e'));
+    }
+
+    public void testStopAtNonOptionStillStopsAfterFlag() throws Exception
+    {
+        Options options = new Options();
+        options.addOption("a", "enable-a", false, "enable a");
+        options.addOption("b", "bar", true, "set b");
+
+        Parser parser = new PosixParser();
+        CommandLine cl = parser.parse(options, new String[] { "-a", "foo", "-b", "bar" }, true);
+
+        assertTrue(cl.hasOption("a"));
+        assertFalse(cl.hasOption("b"));
+        assertEquals(3, cl.getArgList().size());
+        assertEquals("foo", cl.getArgList().get(0));
+    }
+}
+```

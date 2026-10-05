@@ -1,0 +1,17 @@
+The test goes in `CodePrinterTest`, which already has the `assertPrint` helper. I did not run it. It is based on the triggering test from the bug report.
+
+The failure message shows the buggy printer producing `alert(/ //[]/ /)` where `alert(/ // / /)` is expected, so the space between the two slashes is lost. The fix in `CodeConsumer` appends a space when a `/` follows a `/`. Both assertions are the triggering test's own inputs. The first parses the regexp, a division and a regexp; the second is the already-printed form, and both must print as `alert(/ // / /)`.
+
+```java
+package com.google.javascript.jscomp;
+
+public class CodePrinterTest extends CodePrinterTestBase {
+
+  public void testIssue620() {
+    assertPrint("alert(/ / / / /);", "alert(/ // / /)");
+    assertPrint("alert(/ // / /);", "alert(/ // / /)");
+  }
+}
+```
+
+The real `CodePrinterTest` has many other tests and helpers. In practice, add only the `testIssue620` method to the existing class, since replacing the file would drop them. If `assertPrint` is defined directly in `CodePrinterTest` rather than in a base class, keep it as is.

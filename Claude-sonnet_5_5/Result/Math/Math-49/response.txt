@@ -1,0 +1,55 @@
+```java
+package org.apache.commons.math.linear;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
+
+/**
+ * Regression test for MATH-645: OpenMapRealVector element-by-element
+ * operations modified the map they were iterating over.
+ */
+public class OpenMapRealVectorConcurrentModificationTest extends TestCase {
+
+    public void testEbeOperationsDoNotCauseConcurrentModification() {
+        final RealVector u = new OpenMapRealVector(3, 1e-6);
+        u.setEntry(0, 1);
+        u.setEntry(1, 0);
+        u.setEntry(2, 2);
+
+        final RealVector v1 = new OpenMapRealVector(3, 1e-6);
+        final double[] v2 = new double[3];
+        v1.setEntry(0, 0);
+        v2[0] = 0;
+        v1.setEntry(1, 3);
+        v2[1] = 3;
+        v1.setEntry(2, 0);
+        v2[2] = 0;
+
+        RealVector w;
+
+        w = u.ebeMultiply(v1);
+        Assert.assertEquals(3, w.getDimension());
+        for (int i = 0; i < 3; i++) {
+            Assert.assertEquals(0.0, w.getEntry(i), 0.0);
+        }
+
+        w = u.ebeMultiply(v2);
+        Assert.assertEquals(3, w.getDimension());
+        for (int i = 0; i < 3; i++) {
+            Assert.assertEquals(0.0, w.getEntry(i), 0.0);
+        }
+
+        w = u.ebeDivide(v1);
+        Assert.assertEquals(3, w.getDimension());
+        Assert.assertTrue(Double.isInfinite(w.getEntry(0)));
+        Assert.assertEquals(0.0, w.getEntry(1), 0.0);
+        Assert.assertTrue(Double.isInfinite(w.getEntry(2)));
+
+        w = u.ebeDivide(v2);
+        Assert.assertEquals(3, w.getDimension());
+        Assert.assertTrue(Double.isInfinite(w.getEntry(0)));
+        Assert.assertEquals(0.0, w.getEntry(1), 0.0);
+        Assert.assertTrue(Double.isInfinite(w.getEntry(2)));
+    }
+}
+```

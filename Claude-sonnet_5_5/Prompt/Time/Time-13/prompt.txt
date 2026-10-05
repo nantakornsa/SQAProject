@@ -1,0 +1,113 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Time
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Time
+       Program: joda-time
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/Time.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/joda-time.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Time-13
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+5d08a1cdbfa6ce86a0baf637493c464e91e91968
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-09-03 12:00:13 +0100
+--------------------------------------------------------------------------------
+Bug report id:
+160
+--------------------------------------------------------------------------------
+Bug report url:
+https://sourceforge.net/p/joda-time/bugs/160
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.joda.time.format.TestISOPeriodFormat::testFormatStandard_negative
+   --> junit.framework.ComparisonFailure: expected:<PT[-]0.008S> but was:<PT[]0.008S>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.joda.time.format.PeriodFormatterBuilder
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.joda.time.format.PeriodFormatterBuilder ===
+diff --git a/src/main/java/org/joda/time/format/PeriodFormatterBuilder.java b/src/main/java/org/joda/time/format/PeriodFormatterBuilder.java
+index 6c8e9c60..29b0872c 100644
+--- a/src/main/java/org/joda/time/format/PeriodFormatterBuilder.java
++++ b/src/main/java/org/joda/time/format/PeriodFormatterBuilder.java
+@@ -1095,7 +1095,7 @@ public class PeriodFormatterBuilder {
+             if (iFieldType >= SECONDS_MILLIS) {
+                 // valueLong contains the seconds and millis fields
+                 // the minimum output is 0.000, which is 4 or 5 digits with a negative
+-                sum = Math.max(sum, 4);
++                sum = (valueLong < 0 ? Math.max(sum, 5) : Math.max(sum, 4));
+                 // plus one for the decimal point
+                 sum++;
+                 if (iFieldType == SECONDS_OPTIONAL_MILLIS &&
+@@ -1130,6 +1130,7 @@ public class PeriodFormatterBuilder {
+             if (iPrefix != null) {
+                 iPrefix.printTo(buf, value);
+             }
++            int bufLen = buf.length();
+             int minDigits = iMinPrintedDigits;
+             if (minDigits <= 1) {
+                 FormatUtils.appendUnpaddedInteger(buf, value);
+@@ -1139,6 +1140,9 @@ public class PeriodFormatterBuilder {
+             if (iFieldType >= SECONDS_MILLIS) {
+                 int dp = (int) (Math.abs(valueLong) % DateTimeConstants.MILLIS_PER_SECOND);
+                 if (iFieldType == SECONDS_MILLIS || dp > 0) {
++                    if (valueLong < 0 && valueLong > -DateTimeConstants.MILLIS_PER_SECOND) {
++                        buf.insert(bufLen, '-');
++                    }
+                     buf.append('.');
+                     FormatUtils.appendPaddedInteger(buf, dp, 3);
+                 }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testFormatStandard_negative() {
+        Period p = new Period(-1, -2, -3, -4, -5, -6, -7, -8);
+        assertEquals("P-1Y-2M-3W-4DT-5H-6M-7.008S", ISOPeriodFormat.standard().print(p));
+        
+        p = Period.years(-54);
+        assertEquals("P-54Y", ISOPeriodFormat.standard().print(p));
+        
+        p = Period.seconds(4).withMillis(-8);
+        assertEquals("PT3.992S", ISOPeriodFormat.standard().print(p));
+        
+        p = Period.seconds(-4).withMillis(8);
+        assertEquals("PT-3.992S", ISOPeriodFormat.standard().print(p));
+        
+        p = Period.seconds(-23);
+        assertEquals("PT-23S", ISOPeriodFormat.standard().print(p));
+        
+        p = Period.millis(-8);
+        assertEquals("PT-0.008S", ISOPeriodFormat.standard().print(p));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

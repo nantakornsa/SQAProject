@@ -1,0 +1,99 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Collections
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Collections
+       Program: commons-collections
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/Collections.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-collections.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/active-bugs.csv
+Number of bugs: 28
+--------------------------------------------------------------------------------
+
+Summary for Bug: Collections-23
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+72784c46f6a7d7644398db5c7ac8bd3822c523d4
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-11-11 16:30:14 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COLLECTIONS-495
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COLLECTIONS-495
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.collections4.TrieUtilsTest::testUnmodifiableTrie
+   --> junit.framework.AssertionFailedError: UnmodifiableTrie shall not be decorated expected same:<Trie[0]={
+ - org.apache.commons.collections4.trie.UnmodifiableTrieTest::testDecorateFactory
+   --> junit.framework.AssertionFailedError: expected same:<Trie[18]={
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.collections4.trie.UnmodifiableTrie
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.collections4.trie.UnmodifiableTrie ===
+diff --git a/src/main/java/org/apache/commons/collections4/trie/UnmodifiableTrie.java b/src/main/java/org/apache/commons/collections4/trie/UnmodifiableTrie.java
+index 3d78550c..feb47d63 100644
+--- a/src/main/java/org/apache/commons/collections4/trie/UnmodifiableTrie.java
++++ b/src/main/java/org/apache/commons/collections4/trie/UnmodifiableTrie.java
+@@ -51,7 +51,12 @@ public class UnmodifiableTrie<K, V> implements Trie<K, V>, Serializable, Unmodif
+      * @return a new unmodifiable trie
+      * @throws IllegalArgumentException if trie is null
+      */
+-    public static <K, V> UnmodifiableTrie<K, V> unmodifiableTrie(final Trie<K, ? extends V> trie) {
++    public static <K, V> Trie<K, V> unmodifiableTrie(final Trie<K, ? extends V> trie) {
++        if (trie instanceof Unmodifiable) {
++            @SuppressWarnings("unchecked") // safe to upcast
++            final Trie<K, V> tmpTrie = (Trie<K, V>) trie;
++            return tmpTrie;
++        }
+         return new UnmodifiableTrie<K, V>(trie);
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testUnmodifiableTrie() {
+        Trie<String, Object> trie = TrieUtils.unmodifiableTrie(new PatriciaTrie<Object>());
+        assertTrue("Returned object should be an UnmodifiableTrie.",
+            trie instanceof UnmodifiableTrie);
+        try {
+            TrieUtils.unmodifiableTrie(null);
+            fail("Expecting IllegalArgumentException for null trie.");
+        } catch (final IllegalArgumentException ex) {
+            // expected
+        }
+        
+        assertSame("UnmodifiableTrie shall not be decorated", trie, TrieUtils.unmodifiableTrie(trie));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

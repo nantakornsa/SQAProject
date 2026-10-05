@@ -1,0 +1,49 @@
+```java
+package org.jfree.chart.renderer.junit;
+
+import java.awt.Color;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.jfree.chart.renderer.GrayPaintScale;
+
+/**
+ * Tests for the {@link GrayPaintScale} class.
+ */
+public class GrayPaintScaleTests extends TestCase {
+
+    /**
+     * Returns the tests as a test suite.
+     *
+     * @return The test suite.
+     */
+    public static Test suite() {
+        return new TestSuite(GrayPaintScaleTests.class);
+    }
+
+    /**
+     * Constructs a new set of tests.
+     *
+     * @param name  the name of the tests.
+     */
+    public GrayPaintScaleTests(String name) {
+        super(name);
+    }
+
+    /**
+     * Test that getPaint works correctly when the value is outside the
+     * lower and upper bounds.
+     */
+    public void testGetPaint() {
+        GrayPaintScale gps = new GrayPaintScale(10.0, 20.0);
+        
+        // Value lower than lowerBound should be clamped to lowerBound (black)
+        Color c = (Color) gps.getPaint(5.0);
+        assertEquals(new Color(0, 0, 0), c);
+
+        // Value higher than upperBound should be clamped to upperBound (white)
+        c = (Color) gps.getPaint(25.0);
+        assertEquals(new Color(255, 255, 255), c);
+    }
+}
+```

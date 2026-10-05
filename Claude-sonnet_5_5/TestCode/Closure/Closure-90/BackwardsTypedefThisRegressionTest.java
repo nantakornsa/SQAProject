@@ -1,0 +1,39 @@
+package com.google.javascript.jscomp;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for a @this type that refers to a typedef of a nullable
+ * or undefined-able object type declared after its use.
+ */
+public class BackwardsTypedefThisRegressionTest extends TestCase {
+
+  public void testBackwardsTypedefUseAsThisType() throws Exception {
+    // Technically, this isn't quite right, because the JS runtime
+    // will coerce null -> the global object. But we'll punt on that for now.
+    String js =
+        "/** @param {!Array} x */ function g(x) {}" +
+        "/** @this {goog.MyTypedef} */ function f() { g(this); }" +
+        "var goog = {};" +
+        "/** @typedef {(Array|null|undefined)} */ goog.MyTypedef;";
+
+    CompilerOptions options = new CompilerOptions();
+    options.checkTypes = true;
+
+    Compiler compiler = new Compiler();
+    compiler.compile(
+        JSSourceFile.fromCode("externs", ""),
+        JSSourceFile.fromCode("input", js),
+        options);
+
+    StringBuilder sb = new StringBuilder();
+    for (JSError e : compiler.getErrors()) {
+      sb.append(e.toString()).append("\n");
+    }
+    for (JSError w : compiler.getWarnings()) {
+      sb.append(w.toString()).append("\n");
+    }
+    assertEquals("unexpected warning(s) or error(s): " + sb,
+        0, compiler.getErrorCount() + compiler.getWarningCount());
+  }
+}

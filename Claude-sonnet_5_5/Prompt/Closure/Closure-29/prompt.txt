@@ -1,0 +1,147 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-29
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+6924915efab89f921fd0779fe200fecc1bf80847
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-05-11 20:35:50 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+724
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-724.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.InlineObjectLiteralsTest::testObject10
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.InlineObjectLiteralsTest::testObject12
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.InlineObjectLiteralsTest::testObject22
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.InlineObjectLiteralsTest::testIssue724
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.IntegrationTest::testIssue724
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.InlineObjectLiterals
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.InlineObjectLiterals ===
+diff --git a/src/com/google/javascript/jscomp/InlineObjectLiterals.java b/src/com/google/javascript/jscomp/InlineObjectLiterals.java
+index 9f5c60725..8c3159d6d 100644
+--- a/src/com/google/javascript/jscomp/InlineObjectLiterals.java
++++ b/src/com/google/javascript/jscomp/InlineObjectLiterals.java
+@@ -154,6 +154,7 @@ class InlineObjectLiterals implements CompilerPass {
+      */
+     private boolean isInlinableObject(List<Reference> refs) {
+       boolean ret = false;
++      Set<String> validProperties = Sets.newHashSet();
+       for (Reference ref : refs) {
+         Node name = ref.getNode();
+         Node parent = ref.getParent();
+@@ -178,6 +179,14 @@ class InlineObjectLiterals implements CompilerPass {
+           // We short-circuit this problem by bailing out if we see a reference
+           // to a property that isn't defined on the object literal. This
+           // isn't a perfect algorithm, but it should catch most cases.
++          String propName = parent.getLastChild().getString();
++          if (!validProperties.contains(propName)) {
++            if (NodeUtil.isVarOrSimpleAssignLhs(parent, gramps)) {
++              validProperties.add(propName);
++            } else {
++              return false;
++            }
++          }
+           continue;
+         }
+ 
+@@ -213,6 +222,7 @@ class InlineObjectLiterals implements CompilerPass {
+             return false;
+           }
+ 
++          validProperties.add(child.getString());
+ 
+           Node childVal = child.getFirstChild();
+           // Check if childVal is the parent of any of the passed in
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testObject10() {
+    testLocal("var x; var b = f(); x = {a:a, b:b}; if(x.a) g(x.b);",
+         "var JSCompiler_object_inline_a_0;" +
+         "var JSCompiler_object_inline_b_1;" +
+         "var b = f();" +
+         "JSCompiler_object_inline_a_0=a,JSCompiler_object_inline_b_1=b,true;" +
+         "if(JSCompiler_object_inline_a_0) g(JSCompiler_object_inline_b_1)");
+    testLocal("var x = {}; var b = f(); x = {a:a, b:b}; if(x.a) g(x.b) + x.c",
+         "var x = {}; var b = f(); x = {a:a, b:b}; if(x.a) g(x.b) + x.c");
+    testLocal("var x; var b = f(); x = {a:a, b:b}; x.c = c; if(x.a) g(x.b) + x.c",
+         "var JSCompiler_object_inline_a_0;" +
+         "var JSCompiler_object_inline_b_1;" +
+         "var JSCompiler_object_inline_c_2;" +
+         "var b = f();" +
+         "JSCompiler_object_inline_a_0 = a,JSCompiler_object_inline_b_1 = b, " +
+         "  JSCompiler_object_inline_c_2=void 0,true;" +
+         "JSCompiler_object_inline_c_2 = c;" +
+         "if (JSCompiler_object_inline_a_0)" +
+         "  g(JSCompiler_object_inline_b_1) + JSCompiler_object_inline_c_2;");
+    testLocal("var x = {a:a}; if (b) x={b:b}; f(x.a||x.b);",
+         "var JSCompiler_object_inline_a_0 = a;" +
+         "var JSCompiler_object_inline_b_1;" +
+         "if(b) JSCompiler_object_inline_b_1 = b," +
+         "      JSCompiler_object_inline_a_0 = void 0," +
+         "      true;" +
+         "f(JSCompiler_object_inline_a_0 || JSCompiler_object_inline_b_1)");
+    testLocal("var x; var y = 5; x = {a:a, b:b, c:c}; if (b) x={b:b}; f(x.a||x.b);",
+         "var JSCompiler_object_inline_a_0;" +
+         "var JSCompiler_object_inline_b_1;" +
+         "var JSCompiler_object_inline_c_2;" +
+         "var y=5;" +
+         "JSCompiler_object_inline_a_0=a," +
+         "JSCompiler_object_inline_b_1=b," +
+         "JSCompiler_object_inline_c_2=c," +
+         "true;" +
+         "if (b) JSCompiler_object_inline_b_1=b," +
+         "       JSCompiler_object_inline_a_0=void 0," +
+         "       JSCompiler_object_inline_c_2=void 0," +
+         "       true;" +
+         "f(JSCompiler_object_inline_a_0||JSCompiler_object_inline_b_1)");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

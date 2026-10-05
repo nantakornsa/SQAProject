@@ -1,0 +1,38 @@
+```java
+package com.fasterxml.jackson.databind.ser.std;
+
+import java.math.BigDecimal;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatVisitorWrapper;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonNumberFormatVisitor;
+
+public class NumberSerializerTest extends BaseMapTest
+{
+    static class NumberVisitor extends JsonFormatVisitorWrapper.Base
+    {
+        public JsonParser.NumberType numberType;
+
+        @Override
+        public JsonNumberFormatVisitor expectNumberFormat(JavaType type) {
+            return new JsonNumberFormatVisitor.Base() {
+                @Override
+                public void numberType(JsonParser.NumberType type) {
+                    numberType = type;
+                }
+            };
+        }
+    }
+
+    public void testBigDecimalNumberType() throws Exception
+    {
+        NumberSerializer serializer = new NumberSerializer(BigDecimal.class);
+        NumberVisitor visitor = new NumberVisitor();
+        serializer.acceptJsonFormatVisitor(visitor, null);
+
+        assertEquals(JsonParser.NumberType.BIG_DECIMAL, visitor.numberType);
+    }
+}
+```

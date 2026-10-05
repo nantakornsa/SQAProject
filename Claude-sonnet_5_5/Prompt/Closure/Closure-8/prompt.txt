@@ -1,0 +1,87 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-8
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+6300a43566d4adcf8828128267808a8740edc835
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-09-28 17:52:12 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+820
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-820.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.CollapseVariableDeclarationsTest::testIssue820
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.CollapseVariableDeclarations
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.CollapseVariableDeclarations ===
+diff --git a/src/com/google/javascript/jscomp/CollapseVariableDeclarations.java b/src/com/google/javascript/jscomp/CollapseVariableDeclarations.java
+index f2d36f54f..e0466eac7 100644
+--- a/src/com/google/javascript/jscomp/CollapseVariableDeclarations.java
++++ b/src/com/google/javascript/jscomp/CollapseVariableDeclarations.java
+@@ -201,10 +201,14 @@ class CollapseVariableDeclarations implements CompilerPass {
+       Var var = s.getVar(lhs.getString());
+       return var != null
+           && var.getScope() == s
++          && !isNamedParameter(var)
+           && !blacklistedVars.contains(var);
+     }
+   }
+ 
++  private boolean isNamedParameter(Var v) {
++    return v.getParentNode().isParamList();
++  }
+ 
+   private void applyCollapses() {
+     for (Collapse collapse : collapses) {
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue820() throws Exception {
+    // Don't redeclare function parameters, this is incompatible with
+    // strict mode.
+    testSame("function f(a){ var b=1; a=2; var c; }");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

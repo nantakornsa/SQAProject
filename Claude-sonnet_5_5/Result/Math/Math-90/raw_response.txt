@@ -1,0 +1,72 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791148065-rXCx7hZGABFuJqcaVQjM","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1539,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" bu"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ggy `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"addValue(Object)`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" has"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" no c"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ast to"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" `Comparable`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":", so a"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" non"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"-com"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"parable argument ends up in the `TreeMap`. In the buggy version the first call with an `Object` is fine,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" but once a value is present the second call throws `IllegalArgumentException` instead of `ClassCastException`. The fixed version casts `(Comparable<?>) v` first, so both calls throw `Class"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"CastException`.\n\nThe test calls `f.addValue(new Object())`, which compiles against the deprecated `addValue(Object)` overload. It expects `ClassCastException` at both points, so it fails on the buggy version and passes on the fixed"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" one.\n\nI haven't compiled or run this against either version.\n\n```java\npackage org.apache.commons.math.stat;\n\nimport junit.framework.Test;\nimport junit.framework.TestCase;\nimport junit.framework.TestSuite;\n\n/"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"**\n * Regression test for MATH-259: Frequency.addValue(Object) with a\n * non-comparable value should throw ClassCastException.\n */\npublic final class FrequencyTest"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" extends TestCase {\n\n    private Frequency f = null;\n\n    public FrequencyTest(String name) {\n        super(name);\n    }\n\n    @Override\n    public void setUp() {\n        f = new Frequency();\n    }\n\n    public static Test suite() {\n        TestSuite suite"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" = new TestSuite(FrequencyTest.class);\n        suite.setName(\"Frequency Tests\");\n        return suite;\n    }\n\n    public void testAddNonComparable() {\n        try {\n            f.addValue(new Object());\n            fail(\"Expected ClassCastException\");\n        } catch (Cl"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"assCastException expected) {\n            // expected\n        }\n        f.clear();\n        f.addValue(1);\n        try {\n            f.addValue(new Object());\n            fail(\"Expected ClassCastException\");\n        } catch (ClassCastException expected) {\n            // expected\n        }\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1539,"output_tokens":627,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.009348,"is_byok":false,"cost_details":{"upstream_inference_cost":0.009348,"upstream_inference_prompt_cost":0.003078,"upstream_inference_completions_cost":0.00627}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

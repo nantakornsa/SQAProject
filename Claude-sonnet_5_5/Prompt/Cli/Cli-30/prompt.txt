@@ -1,0 +1,283 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Cli
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Cli
+       Program: commons-cli
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/Cli.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-cli.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/active-bugs.csv
+Number of bugs: 39
+--------------------------------------------------------------------------------
+
+Summary for Bug: Cli-30
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+324b7f901b91614927926a5bab1d9e0e2325f018
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-06-17 07:57:38 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CLI-203
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CLI-203
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.cli.BasicParserTest::testPropertyOptionGroup
+   --> org.apache.commons.cli.AlreadySelectedException: The option 'b' was specified but an option from this group has already been selected: 'a'
+ - org.apache.commons.cli.BasicParserTest::testPropertyOptionUnexpected
+   --> java.lang.NullPointerException
+ - org.apache.commons.cli.DefaultParserTest::testPropertyOptionGroup
+   --> org.apache.commons.cli.AlreadySelectedException: The option 'b' was specified but an option from this group has already been selected: 'a'
+ - org.apache.commons.cli.DefaultParserTest::testPropertyOptionUnexpected
+   --> java.lang.NullPointerException
+ - org.apache.commons.cli.GnuParserTest::testPropertyOptionGroup
+   --> org.apache.commons.cli.AlreadySelectedException: The option 'b' was specified but an option from this group has already been selected: 'a'
+ - org.apache.commons.cli.GnuParserTest::testPropertyOptionUnexpected
+   --> java.lang.NullPointerException
+ - org.apache.commons.cli.OptionGroupTest::testTwoOptionsFromGroupWithProperties
+   --> org.apache.commons.cli.AlreadySelectedException: The option 'd' was specified but an option from this group has already been selected: 'f'
+ - org.apache.commons.cli.PosixParserTest::testPropertyOptionGroup
+   --> org.apache.commons.cli.AlreadySelectedException: The option 'b' was specified but an option from this group has already been selected: 'a'
+ - org.apache.commons.cli.PosixParserTest::testPropertyOptionUnexpected
+   --> java.lang.NullPointerException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.cli.DefaultParser
+ - org.apache.commons.cli.Parser
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.cli.DefaultParser ===
+diff --git a/src/main/java/org/apache/commons/cli/DefaultParser.java b/src/main/java/org/apache/commons/cli/DefaultParser.java
+index bfea0e4..2f957b1 100644
+--- a/src/main/java/org/apache/commons/cli/DefaultParser.java
++++ b/src/main/java/org/apache/commons/cli/DefaultParser.java
+@@ -147,12 +147,18 @@ public class DefaultParser implements CommandLineParser
+         {
+             String option = e.nextElement().toString();
+             
+-            if (!cmd.hasOption(option))
++            Option opt = options.getOption(option);
++            if (opt == null)
+             {
+-                Option opt = options.getOption(option);
++                throw new UnrecognizedOptionException("Default option wasn't defined", option);
++            }
+             
+             // if the option is part of a group, check if another option of the group has been selected
++            OptionGroup group = options.getOptionGroup(opt);
++            boolean selected = group != null && group.getSelected() != null;
+             
++            if (!cmd.hasOption(option) && !selected)
++            {
+                 // get the value from the properties
+                 String value = properties.getProperty(option);
+                 
+
+=== MODIFIED SOURCE: org.apache.commons.cli.Parser ===
+diff --git a/src/main/java/org/apache/commons/cli/Parser.java b/src/main/java/org/apache/commons/cli/Parser.java
+index 913922d..ba4b6bc 100644
+--- a/src/main/java/org/apache/commons/cli/Parser.java
++++ b/src/main/java/org/apache/commons/cli/Parser.java
+@@ -260,12 +260,18 @@ public abstract class Parser implements CommandLineParser
+         {
+             String option = e.nextElement().toString();
+             
+-            if (!cmd.hasOption(option))
++            Option opt = options.getOption(option);
++            if (opt == null)
+             {
+-                Option opt = getOptions().getOption(option);
++                throw new UnrecognizedOptionException("Default option wasn't defined", option);
++            }
+             
+             // if the option is part of a group, check if another option of the group has been selected
++            OptionGroup group = options.getOptionGroup(opt);
++            boolean selected = group != null && group.getSelected() != null;
+             
++            if (!cmd.hasOption(option) && !selected)
++            {
+                 // get the value from the properties instance
+                 String value = properties.getProperty(option);
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.apache.commons.cli;
+
+/**
+ * @author Emmanuel Bourg
+ * @version $Revision$, $Date$
+ */
+public class BasicParserTest extends ParserTestCase
+{
+    public void setUp()
+    {
+        super.setUp();
+        parser = new BasicParser();
+    }
+
+    public void testDoubleDash2() throws Exception
+    {
+        // not supported by the BasicParser
+    }
+
+    public void testLongWithoutEqualSingleDash() throws Exception
+    {
+        // not supported by the BasicParser
+    }
+    
+    public void testAmbiguousLongWithoutEqualSingleDash() throws Exception
+    {
+        // not supported by the basicParser
+    }
+    
+    public void testNegativeOption() throws Exception
+    {
+        // not supported by the BasicParser (CLI-184)
+    }
+
+    public void testPropertiesOption1() throws Exception
+    {
+        // not supported by the BasicParser
+    }
+
+    public void testPropertiesOption2() throws Exception
+    {
+        // not supported by the BasicParser
+    }    
+
+    public void testShortWithEqual() throws Exception
+    {
+        // not supported by the BasicParser
+    }
+
+    public void testShortWithoutEqual() throws Exception
+    {
+        // not supported by the BasicParser
+    }
+
+    public void testLongWithEqualDoubleDash() throws Exception
+    {
+        // not supported by the BasicParser
+    }
+
+    public void testLongWithEqualSingleDash() throws Exception
+    {
+        // not supported by the BasicParser
+    }
+    
+    public void testUnambiguousPartialLongOption1() throws Exception
+    {
+        // not supported by the BasicParser
+    }
+
+    public void testUnambiguousPartialLongOption2() throws Exception
+    {
+        // not supported by the BasicParser
+    }
+
+    public void testUnambiguousPartialLongOption3() throws Exception
+    {
+        // not supported by the BasicParser
+    }
+
+    public void testUnambiguousPartialLongOption4() throws Exception
+    {
+        // not supported by the BasicParser
+    }
+
+    public void testAmbiguousPartialLongOption1() throws Exception
+    {
+        // not supported by the BasicParser
+    }
+
+    public void testAmbiguousPartialLongOption2() throws Exception
+    {
+        // not supported by the BasicParser
+    }
+
+    public void testAmbiguousPartialLongOption3() throws Exception
+    {
+        // not supported by the BasicParser
+    }
+
+    public void testAmbiguousPartialLongOption4() throws Exception
+    {
+        // not supported by the BasicParser
+    }
+
+    public void testPartialLongOptionSingleDash() throws Exception
+    {
+        // not supported by the BasicParser
+    }
+
+    public void testBursting() throws Exception
+    {
+        // not supported by the BasicParser
+    }
+
+    public void testUnrecognizedOptionWithBursting() throws Exception
+    {
+        // not supported by the BasicParser
+    }
+
+    public void testMissingArgWithBursting() throws Exception
+    {
+        // not supported by the BasicParser
+    }
+
+    public void testStopBursting() throws Exception
+    {
+        // not supported by the BasicParser
+    }
+
+    public void testStopBursting2() throws Exception
+    {
+        // not supported by the BasicParser
+    }
+}
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

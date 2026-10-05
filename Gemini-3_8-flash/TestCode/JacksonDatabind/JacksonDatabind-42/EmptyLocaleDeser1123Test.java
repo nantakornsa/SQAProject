@@ -1,0 +1,21 @@
+package com.fasterxml.jackson.databind.deser;
+
+import java.io.IOException;
+import java.util.Locale;
+
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+/**
+ * Regression test for [databind#1123]: deserializing empty String as Locale.
+ */
+public class EmptyLocaleDeser1123Test extends BaseMapTest
+{
+    private final ObjectMapper MAPPER = newObjectMapper();
+
+    public void testEmptyStringToLocale() throws IOException
+    {
+        Locale loc = MAPPER.readValue(quote(""), Locale.class);
+        assertSame(Locale.ROOT, loc);
+    }
+}

@@ -1,0 +1,78 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791106729-jZOAiT8FYi8WsPRYwXRs","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Jackson Core Bug**\n\nI'm currently pinpointing the source of character/byte offset discrepancies during object field parsing in `ReaderBasedJsonParser` and `UTF8StreamJsonParser`. The test `testOffsetWithObjectFieldsUsingReader` in `com.fasterxml.jackson.core.json.LocationInObject` is a key focus.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Refining Parser Location Logic**\n\nI'm diving deeper into `ReaderBasedJsonParser`'s location tracking, specifically how `_currToken == JsonToken.FIELD_NAME` impacts `getTokenLocation()`. It seems the character offset was being reported post-separator rather than at the field name's start.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.core.json;\n\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" com.fasterxml.jackson.core.JsonFactory;\nimport com.fasterxml.jackson.core.JsonLocation;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\nimport com.fasterxml.jackson.core.JsonParser;\nimport com.fasterxml.jackson.core.Json"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Token;\nimport org.junit.Assert;\nimport org.junit.Test;\n\nimport java.io.StringReader"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\n\npublic class LocationInObjectTest {\n\n    @Test\n    public void testOffsetWithObjectFieldsUsingReader"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"() throws Exception {\n        JsonFactory f = new JsonFactory();\n        final String DOC = \"{ \\\"a\\\": 1,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" \\\"b\\\": 2 }\";\n\n        JsonParser p = f.createParser(new StringReader(DOC));\n\n        Assert.assertEquals"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(JsonToken.START_OBJECT, p.nextToken());\n        Assert.assertEquals(0, p.getTokenLocation"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"().getCharOffset());\n\n        Assert.assertEquals(JsonToken.FIELD_NAME, p.nextToken());\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Assert.assertEquals(\"a\", p.getCurrentName());\n        Assert.assertEquals(2, p.getTokenLocation().getCharOffset"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"());\n\n        Assert.assertEquals(JsonToken.VALUE_NUMBER_INT, p.nextToken());\n        Assert.assertEquals("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"1, p.getIntValue());\n        Assert.assertEquals(7, p.getTokenLocation().getCharOffset());\n\n        Assert.assertEquals"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(JsonToken.FIELD_NAME, p.nextToken());\n        Assert.assertEquals(\"b\", p.getCurrentName"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"());\n        Assert.assertEquals(11, p.getTokenLocation().getCharOffset());\n\n        Assert.assertEquals(JsonToken."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"VALUE_NUMBER_INT, p.nextToken());\n        Assert.assertEquals(2, p.getIntValue());\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        Assert.assertEquals(16, p.getTokenLocation().getCharOffset());\n\n        Assert.assertEquals(JsonToken"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".END_OBJECT, p.nextToken());\n\n        p.close();\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2086,"output_tokens":1017,"output_tokens_details":{"thinking_tokens":594},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.00537825,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00537825,"upstream_inference_prompt_cost":0.0015645,"upstream_inference_completions_cost":0.00381375}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

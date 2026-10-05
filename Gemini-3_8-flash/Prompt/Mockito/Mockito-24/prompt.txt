@@ -1,0 +1,93 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Mockito
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Mockito
+       Program: mockito
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/Mockito.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/mockito.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/active-bugs.csv
+Number of bugs: 38
+--------------------------------------------------------------------------------
+
+Summary for Bug: Mockito-24
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+c17169c2cbb0b3d055d64ec2c4859122ca919c42
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2014-01-08 13:13:43 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+467
+--------------------------------------------------------------------------------
+Bug report url:
+https://code.google.com/archive/p/mockito/issues/467
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.mockito.internal.stubbing.defaultanswers.ReturnsEmptyValuesTest::should_return_zero_if_mock_is_compared_to_itself
+   --> junit.framework.AssertionFailedError: expected:<0> but was:<1>
+ - org.mockitousage.bugs.ShouldMocksCompareToBeConsistentWithEqualsTest::should_compare_to_be_consistent_with_equals_when_comparing_the_same_reference
+   --> junit.framework.AssertionFailedError: expected:<1> but was:<2>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.mockito.internal.stubbing.defaultanswers.ReturnsEmptyValues
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.mockito.internal.stubbing.defaultanswers.ReturnsEmptyValues ===
+diff --git a/src/org/mockito/internal/stubbing/defaultanswers/ReturnsEmptyValues.java b/src/org/mockito/internal/stubbing/defaultanswers/ReturnsEmptyValues.java
+index 4c00f50b1..d19fcda2d 100644
+--- a/src/org/mockito/internal/stubbing/defaultanswers/ReturnsEmptyValues.java
++++ b/src/org/mockito/internal/stubbing/defaultanswers/ReturnsEmptyValues.java
+@@ -73,7 +73,7 @@ public class ReturnsEmptyValues implements Answer<Object>, Serializable {
+             //see issue 184.
+             //mocks by default should return 0 if references are the same, otherwise some other value because they are not the same. Hence we return 1 (anything but 0 is good).
+             //Only for compareTo() method by the Comparable interface
+-            return 1;
++            return invocation.getMock() == invocation.getArguments()[0] ? 0 : 1;
+         }
+         
+         Class<?> returnType = invocation.getMethod().getReturnType();
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void should_return_zero_if_mock_is_compared_to_itself() {
+        //given
+        Date d = mock(Date.class);
+        d.compareTo(d);
+        Invocation compareTo = this.getLastInvocation();
+
+        //when
+        Object result = values.answer(compareTo);
+
+        //then
+        assertEquals(0, result);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

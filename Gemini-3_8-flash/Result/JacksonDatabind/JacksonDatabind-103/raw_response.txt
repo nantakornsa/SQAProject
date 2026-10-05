@@ -1,0 +1,69 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791189439-3WwW8heVsUF5pugtJiE3","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Refining Error Messaging**\n\nI'm currently focused on addressing JacksonDatabind-103, specifically ticket #2128. My aim is to eliminate redundant location data within exception messages, particularly when `JsonProcessingException` is nested or its message is incorporated elsewhere.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Test Failures**\n\nI'm diving into why `testLocationAddition` is failing. It seems to be generating duplicate \"at [\" markers in exception messages, which points to an issue with how location data is being appended in nested or incorporated exception contexts.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Clarifying Exception Formatting**\n\nI'm examining how `JsonProcessingException` generates its messages, particularly concerning the duplication of location markers like \"at [\" when exceptions are nested. My current hypothesis is that calling `e.getMessage()` on an already formed `JsonMappingException` might be the source of this redundancy, as it appears to re-append location data that's already present. I'm setting up a test to isolate and verify this behavior.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"package com.fasterxml.jackson.databind.exc;\n\nimport java.util.Map;\n\nimport com.fasterxml.jackson"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".core.type.TypeReference;\nimport com.fasterxml.jackson.databind.BaseMapTest;\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" com.fasterxml.jackson.databind.JsonMappingException;\nimport com.fasterxml.jackson.databind.ObjectMapper;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\npublic class LocationDuplicationTest extends BaseMapTest\n{\n    protected enum ABC { A, B, C; }\n\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"private final ObjectMapper MAPPER = newJsonMapper();\n\n    public void testNoDuplicateLocationInMessage() throws Exception\n    {\n        try"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" {\n            MAPPER.readValue(\"{\\\"value\\\" : 3}\", new TypeReference<Map<ABC, Integer>>() {});"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n            fail(\"Should not pass\");\n        } catch (JsonMappingException e) {\n            String msg ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" e.getMessage();\n            int ix = msg.indexOf(\" at [\");\n            if (ix < 0"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":") {\n                fail(\"Should have 'at [' marker: \" + msg);\n            }\n            int ix2"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" = msg.indexOf(\" at [\", ix + 1);\n            if (ix2 > 0) {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n                fail(\"Should only get one 'at [' marker, got 2, source: \" + msg);\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"            }\n        }\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":6305,"output_tokens":1054,"output_tokens_details":{"thinking_tokens":761},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00868125,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00868125,"upstream_inference_prompt_cost":0.00472875,"upstream_inference_completions_cost":0.0039525}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

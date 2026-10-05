@@ -1,0 +1,29 @@
+package org.mockito.internal.util.reflection;
+
+import org.junit.Test;
+import org.mockitoutil.TestBase;
+
+import java.lang.reflect.Field;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+
+public class GenericMasterRegressionTest extends TestBase {
+
+    private GenericMaster genericMaster = new GenericMaster();
+
+    private List<Set<String>> nestedGenerics;
+    private List<Map<String, List<String>>> deepNestedGenerics;
+
+    private Field field(String fieldName) throws NoSuchFieldException {
+        return this.getClass().getDeclaredField(fieldName);
+    }
+
+    @Test
+    public void shouldDealWithNestedGenerics() throws Exception {
+        assertEquals(Set.class, genericMaster.getGenericType(field("nestedGenerics")));
+        assertEquals(Map.class, genericMaster.getGenericType(field("deepNestedGenerics")));
+    }
+}

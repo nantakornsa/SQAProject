@@ -1,0 +1,48 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791141673-b88a9ejhgyPPOnuEYbEe","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Buggy Code**\n\nI've pinpointed the issue to `Cleaner.java` within Jsoup-30. My current focus is analyzing the `copySafeNodes` method in the faulty version, examining the loop that iterates through source nodes.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing Node Handling**\n\nI've identified a specific oversight: non-Element and non-TextNode source children, like comments, are being ignored. They aren't counted towards discarded items nor are they processed, which seems to be a critical gap.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.jsoup.safety;\n\nimport org.jsoup.Jsoup;\nimport org.junit.Test;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert.assertTrue;\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"public class CleanerRegressionTest {\n\n    @Test\n    public void testIsValidWithComments() {\n        String ok ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" \"<p>Test <b><a href='http://example.com/'>OK</a></b></p>\";\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        String nokComment = \"<!-- comment --><p>Not OK</p>\";\n\n        assertTrue(Jsoup.isValid(ok,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" Whitelist.basic()));\n        assertFalse(Jsoup.isValid(nokComment, Whitelist.basic()));\n    }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1650,"output_tokens":719,"output_tokens_details":{"thinking_tokens":561},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00393375,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00393375,"upstream_inference_prompt_cost":0.0012375,"upstream_inference_completions_cost":0.00269625}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

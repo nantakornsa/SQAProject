@@ -1,0 +1,121 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-55
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+2936ba525b22c3aabbb2fc914d1a191938b2375b
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-08-15 22:19:04 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1322
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1322
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.ser.TestEnumSerialization::testEnumsWithJsonPropertyAsKey
+   --> junit.framework.ComparisonFailure: expected:<{"[aleph]":"b"}> but was:<{"[A]":"b"}>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.ser.std.StdKeySerializers
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.ser.std.StdKeySerializers ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/ser/std/StdKeySerializers.java b/src/main/java/com/fasterxml/jackson/databind/ser/std/StdKeySerializers.java
+index 7f55a3f29..7afcc55f6 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/ser/std/StdKeySerializers.java
++++ b/src/main/java/com/fasterxml/jackson/databind/ser/std/StdKeySerializers.java
+@@ -7,6 +7,7 @@ import java.util.Date;
+ import com.fasterxml.jackson.core.*;
+ import com.fasterxml.jackson.databind.*;
+ import com.fasterxml.jackson.databind.ser.impl.PropertySerializerMap;
++import com.fasterxml.jackson.databind.util.EnumValues;
+ 
+ @SuppressWarnings("serial")
+ public class StdKeySerializers
+@@ -79,7 +80,8 @@ public class StdKeySerializers
+                 return new Dynamic();
+             }
+             if (rawKeyType.isEnum()) {
+-                return new Default(Default.TYPE_ENUM, rawKeyType);
++                return EnumKeySerializer.construct(rawKeyType,
++                        EnumValues.constructFromName(config, (Class<Enum<?>>) rawKeyType));
+             }
+         }
+         return DEFAULT_KEY_SERIALIZER;
+@@ -212,7 +214,31 @@ public class StdKeySerializers
+      *
+      * @since 2.8
+      */
++    public static class EnumKeySerializer extends StdSerializer<Object>
++    {
++        protected final EnumValues _values;
+ 
++        protected EnumKeySerializer(Class<?> enumType, EnumValues values) {
++            super(enumType, false);
++            _values = values;
++        }
+ 
++        public static EnumKeySerializer construct(Class<?> enumType,
++                EnumValues enumValues)
++        {
++            return new EnumKeySerializer(enumType, enumValues);
++        }
+         
++        @Override
++        public void serialize(Object value, JsonGenerator g, SerializerProvider serializers)
++                throws IOException
++        {
++            if (serializers.isEnabled(SerializationFeature.WRITE_ENUMS_USING_TO_STRING)) {
++                g.writeFieldName(value.toString());
++                return;
++            }
++            Enum<?> en = (Enum<?>) value;
++            g.writeFieldName(_values.serializedValueFor(en));
++        }
++    }
+ }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testEnumsWithJsonPropertyAsKey() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

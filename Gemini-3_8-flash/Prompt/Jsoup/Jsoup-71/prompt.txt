@@ -1,0 +1,135 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-71
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+1d7e6fa1c5fb974bdae7abeabbb1e5a48dc00967
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-11-12 18:38:20 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+550
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/550
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.select.SelectorTest::splitOnBr
+   --> org.jsoup.select.Selector$SelectorParseException: Could not parse query 'p:matchText': unexpected token at ':matchText'
+ - org.jsoup.select.SelectorTest::textAsElements
+   --> org.jsoup.select.Selector$SelectorParseException: Could not parse query 'p:matchText:first-child': unexpected token at ':matchText:first-child'
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.nodes.PseudoTextElement
+ - org.jsoup.select.Evaluator
+ - org.jsoup.select.QueryParser
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.select.Evaluator ===
+diff --git a/src/main/java/org/jsoup/select/Evaluator.java b/src/main/java/org/jsoup/select/Evaluator.java
+index 87b1d481..735606f2 100644
+--- a/src/main/java/org/jsoup/select/Evaluator.java
++++ b/src/main/java/org/jsoup/select/Evaluator.java
+@@ -6,6 +6,8 @@ import org.jsoup.nodes.Document;
+ import org.jsoup.nodes.DocumentType;
+ import org.jsoup.nodes.Element;
+ import org.jsoup.nodes.Node;
++import org.jsoup.nodes.PseudoTextElement;
++import org.jsoup.nodes.TextNode;
+ import org.jsoup.nodes.XmlDeclaration;
+ 
+ import java.util.List;
+@@ -751,6 +753,26 @@ public abstract class Evaluator {
+         }
+     }
+ 
++    public static final class MatchText extends Evaluator {
+ 
++        @Override
++        public boolean matches(Element root, Element element) {
++            if (element instanceof PseudoTextElement)
++                return true;
++
++            List<TextNode> textNodes = element.textNodes();
++            for (TextNode textNode : textNodes) {
++                PseudoTextElement pel = new PseudoTextElement(
++                    org.jsoup.parser.Tag.valueOf(element.tagName()), element.baseUri(), element.attributes());
++                textNode.replaceWith(pel);
++                pel.appendChild(textNode);
++            }
++            return false;
++        }
+ 
++        @Override
++        public String toString() {
++            return ":matchText";
++        }
++    }
+ }
+
+=== MODIFIED SOURCE: org.jsoup.select.QueryParser ===
+diff --git a/src/main/java/org/jsoup/select/QueryParser.java b/src/main/java/org/jsoup/select/QueryParser.java
+index e00f46ea..99e51473 100644
+--- a/src/main/java/org/jsoup/select/QueryParser.java
++++ b/src/main/java/org/jsoup/select/QueryParser.java
+@@ -200,6 +200,8 @@ public class QueryParser {
+         	evals.add(new Evaluator.IsEmpty());
+         else if (tq.matchChomp(":root"))
+         	evals.add(new Evaluator.IsRoot());
++        else if (tq.matchChomp(":matchText"))
++            evals.add(new Evaluator.MatchText());
+ 		else // unhandled
+             throw new Selector.SelectorParseException("Could not parse query '%s': unexpected token at '%s'", query, tq.remainder());
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void splitOnBr() {
+        String html = "<div><p>One<br>Two<br>Three</p></div>";
+        Document doc = Jsoup.parse(html);
+
+        Elements els = doc.select("p:matchText");
+        assertEquals(3, els.size());
+        assertEquals("One", els.get(0).text());
+        assertEquals("Two", els.get(1).text());
+        assertEquals("Three", els.get(2).toString());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

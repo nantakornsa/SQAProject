@@ -1,0 +1,35 @@
+```java
+package org.apache.commons.math.stat.regression;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+/**
+ * Regression test for MATH-85: getSumSquaredErrors() must never return a
+ * negative value, even when floating point round-off makes
+ * sumYY - sumXY * sumXY / sumXX slightly negative.
+ */
+public class SimpleRegressionSSENonNegativeTest extends TestCase {
+
+    public SimpleRegressionSSENonNegativeTest(String name) {
+        super(name);
+    }
+
+    public static Test suite() {
+        TestSuite suite = new TestSuite(SimpleRegressionSSENonNegativeTest.class);
+        suite.setName("SimpleRegression SSE Non-Negative Tests");
+        return suite;
+    }
+
+    public void testSSENonNegative() {
+        double[] y = { 8915.102, 8919.302, 8923.502 };
+        double[] x = { 1.107178495E2, 1.107264895E2, 1.107351295E2 };
+        SimpleRegression reg = new SimpleRegression();
+        for (int i = 0; i < x.length; i++) {
+            reg.addData(x[i], y[i]);
+        }
+        assertTrue(reg.getSumSquaredErrors() >= 0.0);
+    }
+}
+```

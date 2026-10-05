@@ -1,0 +1,112 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-60
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+5fe9b36c454f8a38416a96455da6ffeadbbe8a37
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-11-30 11:55:22 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-414
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-414
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.distribution.NormalDistributionTest::testExtremeValues
+   --> org.apache.commons.math.ConvergenceException: Continued fraction diverged to NaN for value ∞
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.distribution.NormalDistributionImpl
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.distribution.NormalDistributionImpl ===
+diff --git a/src/main/java/org/apache/commons/math/distribution/NormalDistributionImpl.java b/src/main/java/org/apache/commons/math/distribution/NormalDistributionImpl.java
+index 0e124d852..0d7ce7da3 100644
+--- a/src/main/java/org/apache/commons/math/distribution/NormalDistributionImpl.java
++++ b/src/main/java/org/apache/commons/math/distribution/NormalDistributionImpl.java
+@@ -123,18 +123,11 @@ public class NormalDistributionImpl extends AbstractContinuousDistribution
+      */
+     public double cumulativeProbability(double x) throws MathException {
+         final double dev = x - mean;
+-        try {
++        if (FastMath.abs(dev) > 40 * standardDeviation) { 
++            return dev < 0 ? 0.0d : 1.0d;
++        }
+         return 0.5 * (1.0 + Erf.erf((dev) /
+                     (standardDeviation * FastMath.sqrt(2.0))));
+-        } catch (MaxIterationsExceededException ex) {
+-            if (x < (mean - 20 * standardDeviation)) { // JDK 1.5 blows at 38
+-                return 0;
+-            } else if (x > (mean + 20 * standardDeviation)) {
+-                return 1;
+-            } else {
+-                throw ex;
+-            }
+-        }
+     }
+ 
+     /**
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testExtremeValues() throws Exception {
+        NormalDistribution distribution = new NormalDistributionImpl(0, 1);
+        for (int i = 0; i < 100; i++) { // make sure no convergence exception
+            double lowerTail = distribution.cumulativeProbability(-i);
+            double upperTail = distribution.cumulativeProbability(i);
+            if (i < 9) { // make sure not top-coded 
+                // For i = 10, due to bad tail precision in erf (MATH-364), 1 is returned
+                // TODO: once MATH-364 is resolved, replace 9 with 30
+                assertTrue(lowerTail > 0.0d);
+                assertTrue(upperTail < 1.0d);
+            }
+            else { // make sure top coding not reversed
+                assertTrue(lowerTail < 0.00001);
+                assertTrue(upperTail > 0.99999);
+            }
+        }
+        
+        assertEquals(distribution.cumulativeProbability(Double.MAX_VALUE), 1, 0);
+        assertEquals(distribution.cumulativeProbability(-Double.MAX_VALUE), 0, 0);
+        assertEquals(distribution.cumulativeProbability(Double.POSITIVE_INFINITY), 1, 0);
+        assertEquals(distribution.cumulativeProbability(Double.NEGATIVE_INFINITY), 0, 0);
+        
+   }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

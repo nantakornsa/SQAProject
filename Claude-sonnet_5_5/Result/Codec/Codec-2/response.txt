@@ -1,0 +1,29 @@
+=== ANALYSIS ===
+The defect (CODEC-77) is in `Base64`'s streaming encoder. When a `Base64InputStream` in encode mode reads an empty source, `in.read(buf)` returns -1 and `encode(buf, 0, -1)` is called. In the buggy version, the EOF handling still appends a line separator when `lineLength > 0`, even though no data was encoded (`modulus == 0`). That is why the failure reads "EOF expected:<-1> but was:<13>": the stream returns CR (13) from the line separator instead of EOF. In the fixed version, the EOF handling emits nothing for empty input, so the first `read()` returns -1.
+
+The test wraps an empty `ByteArrayInputStream` in `new Base64InputStream(in, true, 76, crlf)`. It asserts that `read()` returns -1 immediately and again on a repeated read. Version 2b fails the first assertion with 13. Version 2f passes. The classes under test are `Base64InputStream` and `Base64`.
+
+=== TEST CODE ===
+```java
+package org.apache.commons.codec.binary;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
+import junit.framework.TestCase;
+
+public class Base64InputStreamTest extends TestCase {
+
+    public void testBase64EmptyInputStreamEncodeReturnsEofImmediately() throws Exception {
+        byte[] crlf = new byte[] { 13, 10 };
+        InputStream in = new ByteArrayInputStream(new byte[0]);
+        in = new Base64InputStream(in, true, 76, crlf);
+
+        assertEquals("EOF expected immediately for empty input", -1, in.read());
+        assertEquals("Still EOF", -1, in.read());
+    }
+}
+```
+
+=== TARGET TEST ===
+org.apache.commons.codec.binary.Base64InputStreamTest::testBase64EmptyInputStreamEncodeReturnsEofImmediately

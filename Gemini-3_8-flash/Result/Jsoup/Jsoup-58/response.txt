@@ -1,0 +1,25 @@
+```java
+package org.jsoup.safety;
+
+import org.jsoup.Jsoup;
+import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+public class CleanerRegressionTest {
+
+    @Test
+    public void testIsValidBodyHtmlWithInvalidHtml() {
+        String ok = "<p>Test <b><a href='http://example.com/' rel='nofollow'>OK</a></b></p>";
+        String nokWithHead = "<html><head>Foo</head><body><b>OK</b></body></html>";
+        String nokUnclosedTag = "<p>Test <b><a href='http://example.com/'>OK</b></p>";
+        String nokOrphanCloseTag = "</div>What";
+
+        assertTrue(Jsoup.isValid(ok, Whitelist.basic()));
+        assertFalse(Jsoup.isValid(nokWithHead, Whitelist.basic()));
+        assertFalse(Jsoup.isValid(nokUnclosedTag, Whitelist.basic()));
+        assertFalse(Jsoup.isValid(nokOrphanCloseTag, Whitelist.basic()));
+    }
+}
+```

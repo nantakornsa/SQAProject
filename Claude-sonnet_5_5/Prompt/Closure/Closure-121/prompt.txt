@@ -1,0 +1,85 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-121
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+2aee36e667526ff8b0b5e6dad66506acee920ea6
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-08-12 16:08:47 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1053
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-1053.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.InlineVariablesTest::testExternalIssue1053
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.InlineVariables
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.InlineVariables ===
+diff --git a/src/com/google/javascript/jscomp/InlineVariables.java b/src/com/google/javascript/jscomp/InlineVariables.java
+index 376abd401..5c9df618a 100644
+--- a/src/com/google/javascript/jscomp/InlineVariables.java
++++ b/src/com/google/javascript/jscomp/InlineVariables.java
+@@ -301,10 +301,12 @@ class InlineVariables implements CompilerPass {
+       if (!maybeModifiedArguments &&
+           !staleVars.contains(v) &&
+           referenceInfo.isWellDefined() &&
+-          referenceInfo.isAssignedOnceInLifetime()) {
++          referenceInfo.isAssignedOnceInLifetime() &&
+           // Inlining the variable based solely on well-defined and assigned
+           // once is *NOT* correct. We relax the correctness requirement if
+           // the variable is declared constant.
++          (isInlineableDeclaredConstant(v, referenceInfo) ||
++           referenceInfo.isOnlyAssignmentSameScopeAsDeclaration())) {
+         List<Reference> refs = referenceInfo.references;
+         for (int i = 1 /* start from a read */; i < refs.size(); i++) {
+           Node nameNode = refs.get(i).getNode();
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testExternalIssue1053() {
+    testSame(
+        "var u; function f() { u = Random(); var x = u; f(); alert(x===u)}");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

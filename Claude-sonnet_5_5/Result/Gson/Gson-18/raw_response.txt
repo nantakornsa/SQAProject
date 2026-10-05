@@ -1,0 +1,72 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791054542-5jT7Cn2UjwKniatNvZeO","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1619,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" classes `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"BigClass` and `S"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"mallClass` are not"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" sh"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"own in the bug information"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":". In"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" the upstream"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Gson fix they"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" are decl"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ared in"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" `CollectionTest` as follows:\n\n```java\nprivate static class SmallClass {\n  String inSmall;\n}\nprivate static class BigClass {\n  Map<String, ? extends List<SmallClass>> inBig;\n}\n```\n\nThe test is self-contained:"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" it defines its own nested classes and does not touch production code. Because the field type is `Map<String, ? extends List<SmallClass>>`, the buggy `getSupertype` receives a `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"WildcardType` as context. It then fails to resolve the element type, so the list elements are deserialized as `LinkedTreeMap` and the access throws a `ClassCastException`.\n\n```java\npackage com.google.gson."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"functional;\n\nimport com.google.gson.Gson;\nimport java.util.List;\nimport java.util.Map;\nimport junit.framework.TestCase;\n\n/**\n * Regression test for issue 1107: wildcard types must be"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" resolved to their\n * upper bound when looking up supertypes.\n */\npublic class WildcardSupertypeRegressionTest extends TestCase {\n\n  private static class SmallClass {\n    String inSmall;\n  }\n\n  private static class BigClass {\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Map<String, ? extends List<SmallClass>> inBig;\n  }\n\n  public void testIssue1107() {\n    String json = \"{\\n\" +\n            \"  \\\"inBig\\\": {\\n\" +\n            \"    \\\"key\\\": [\\n\" +\n            \"      { \\\"inSmall\\\": \\\"hello\\\""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" }\\n\" +\n            \"    ]\\n\" +\n            \"  }\\n\" +\n            \"}\";\n    BigClass bigClass = new Gson().fromJson(json, BigClass.class);\n    SmallClass small = bigClass.inBig.get(\"key\").get(0);\n    assertNotNull(small);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n    assertEquals(\"hello\", small.inSmall);\n  }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1619,"output_tokens":625,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.009488,"is_byok":false,"cost_details":{"upstream_inference_cost":0.009488,"upstream_inference_prompt_cost":0.003238,"upstream_inference_completions_cost":0.00625}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

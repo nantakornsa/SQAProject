@@ -1,0 +1,79 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonXml
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonXml
+       Program: jackson-dataformat-xml
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonXml/JacksonXml.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-dataformat-xml.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonXml/active-bugs.csv
+Number of bugs: 6
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonXml-3
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+79a4b57f2bbe08ce46e6dabb0a8b76f4a787141c
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-08-18 15:07:01 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+204
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-dataformat-xml/issues/204
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.dataformat.xml.stream.XmlParserNextXxxTest::testXmlAttributesWithNextTextValue
+   --> junit.framework.ComparisonFailure: expected:<7> but was:<null>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.dataformat.xml.deser.FromXmlParser ===
+diff --git a/src/main/java/com/fasterxml/jackson/dataformat/xml/deser/FromXmlParser.java b/src/main/java/com/fasterxml/jackson/dataformat/xml/deser/FromXmlParser.java
+index 7b163edf..c71cd1dd 100644
+--- a/src/main/java/com/fasterxml/jackson/dataformat/xml/deser/FromXmlParser.java
++++ b/src/main/java/com/fasterxml/jackson/dataformat/xml/deser/FromXmlParser.java
+@@ -666,9 +666,8 @@ public class FromXmlParser
+             }
+             break;
+         case XmlTokenStream.XML_ATTRIBUTE_VALUE:
+-            _currText = _xmlTokens.getText();
+             _currToken = JsonToken.VALUE_STRING;
+-            break;
++            return (_currText = _xmlTokens.getText());
+         case XmlTokenStream.XML_TEXT:
+             _currText = _xmlTokens.getText();
+             if (_mayBeLeaf) {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testXmlAttributesWithNextTextValue() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

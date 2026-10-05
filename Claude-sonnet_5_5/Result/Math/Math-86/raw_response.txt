@@ -1,0 +1,78 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791148039-HnPBKc0TCeThJpjlodPu","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1855,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" test below"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" uses the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" matrix from M"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ATH-274. It is sym"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"metric but"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" not positive definite. On"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" the buggy version the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" di"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"agonal check run"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"s before"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" the elimination step, so the negative pivot is never caught and no exception is thrown. The fix moves the check to after the elimination, so it throws `NotPositiveDef"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"initeMatrixException`.\n\nI have not compiled or run this test against either version. The `MathException` in the `throws` clause matches the triggering test, since `N"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"otPositiveDefiniteMatrixException` extends it in that era.\n\n```java\npackage org.apache.commons.math.linear;\n\nimport junit.framework.TestCase;\n\nimport org.apache.commons.math.MathException;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\npublic class CholeskyDecompositionMath274RegressionTest extends TestCase {\n\n    public void testMath274NotPositiveDefinite() throws MathException {\n        RealMatrix matrix = MatrixUtils.createRealMatrix"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"(new double[][] {\n                { 0.40434286, -0.09376327, 0.30328980, 0.04909388 },\n                {-0.09376327,  0.10400408, 0.07137959, 0.04762857 },\n                { 0.30328980,  0.07137959, 0.30458776, "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"0.04882449 },\n                { 0.04909388,  0.04762857, 0.04882449, 0.07543265 }\n        });\n        try {\n            new CholeskyDecompositionImpl(matrix);\n            fail(\"Expected NotPositiveDefiniteMatrixException\");"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n        } catch (NotPositiveDefiniteMatrixException e) {\n            // expected\n        }\n    }\n\n    public void testNotPositiveDefiniteSimple() throws MathException {\n        RealMatrix matrix = MatrixUtils.createRealMatrix("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"new double[][] {\n                { 14, 11,  13, 15, 24 },\n                { 11, 34,  13, 8,  25"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" },\n                { 13, 13, -76, 17, 21 },\n                { 15, 8,   17, 63, 1  },\n                { 24, 25,  21, 1,  57"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" }\n        });\n        try {\n            new CholeskyDecompositionImpl(matrix);\n            fail(\"Expected NotPositiveDefiniteMatrixException\");\n        } catch (NotPositiveDefiniteMatrixException e) {\n            // expected\n        }\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1855,"output_tokens":772,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.01143,"is_byok":false,"cost_details":{"upstream_inference_cost":0.01143,"upstream_inference_prompt_cost":0.00371,"upstream_inference_completions_cost":0.00772}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

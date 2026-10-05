@@ -1,0 +1,81 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791140840-sTYcM6XRpeYjdXXYzdq1","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing Locale Bug**\n\nI've identified a bug in `FastDateFormat`. The `getDateInstance` and `getDateTimeInstance` methods weren't incorporating the default `Locale` into the cache key when it was `null`. This led to incorrect cache lookups before the default locale was applied.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.apache.commons.lang.time;\n\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" java.util.Locale;\nimport junit.framework.TestCase;\n\npublic class FastDateFormatBugLang50Test extends TestCase {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\n    public void testChangeDefaultLocaleDateInstance() {\n        Locale realDefaultLocale = Locale.getDefault();\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        try {\n            Locale.setDefault(Locale.US);\n            FastDateFormat format1 = FastDateFormat.getDate"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Instance(FastDateFormat.FULL, Locale.GERMANY);\n            FastDateFormat format2 = FastDateFormat.getDateInstance"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(FastDateFormat.FULL);\n            Locale.setDefault(Locale.GERMANY);\n            FastDateFormat format3 ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" FastDateFormat.getDateInstance(FastDateFormat.FULL);\n\n            assertSame(Locale.GERMANY, format1.get"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Locale());\n            assertSame(Locale.US, format2.getLocale());\n            assertSame(Locale.GERMANY"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":", format3.getLocale());\n            assertTrue(format1 != format2);\n            assertTrue(format2 !="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" format3);\n        } finally {\n            Locale.setDefault(realDefaultLocale);\n        }\n    }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\n    public void testChangeDefaultLocaleDateTimeInstance() {\n        Locale realDefaultLocale = Locale.getDefault();\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        try {\n            Locale.setDefault(Locale.US);\n            FastDateFormat format1 = FastDateFormat.get"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"DateTimeInstance(FastDateFormat.FULL, FastDateFormat.FULL, Locale.GERMANY);\n            FastDateFormat format2"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" = FastDateFormat.getDateTimeInstance(FastDateFormat.FULL, FastDateFormat.FULL);\n            Locale.setDefault("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Locale.GERMANY);\n            FastDateFormat format3 = FastDateFormat.getDateTimeInstance(FastDateFormat.FULL,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" FastDateFormat.FULL);\n\n            assertSame(Locale.GERMANY, format1.getLocale());\n            assertSame("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Locale.US, format2.getLocale());\n            assertSame(Locale.GERMANY, format3.getLocale"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"());\n            assertTrue(format1 != format2);\n            assertTrue(format2 != format3);\n        }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" finally {\n            Locale.setDefault(realDefaultLocale);\n        }\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1461,"output_tokens":578,"output_tokens_details":{"thinking_tokens":129},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.00326325,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00326325,"upstream_inference_prompt_cost":0.00109575,"upstream_inference_completions_cost":0.0021675}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

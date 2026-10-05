@@ -1,0 +1,20 @@
+package org.apache.commons.compress.archivers.zip;
+
+import junit.framework.TestCase;
+
+public class ZipArchiveEntryEqualsTest extends TestCase {
+
+    public void testNullCommentEqualsEmptyComment() {
+        ZipArchiveEntry entry1 = new ZipArchiveEntry("foo");
+        ZipArchiveEntry entry2 = new ZipArchiveEntry("foo");
+        ZipArchiveEntry entry3 = new ZipArchiveEntry("foo");
+        entry1.setComment(null);
+        entry2.setComment("");
+        entry3.setComment("bar");
+
+        assertEquals(entry1, entry2);
+        assertEquals(entry2, entry1);
+        assertFalse(entry1.equals(entry3));
+        assertFalse(entry2.equals(entry3));
+    }
+}

@@ -1,0 +1,49 @@
+The fix changes `fa * fb >= 0.0` to `fa * fb > 0.0` in `UnivariateRealSolverUtils.bracket`. On the buggy version, a bracket whose endpoint is exactly a root (`f(b) = 0`) is wrongly rejected with a `ConvergenceException`.
+
+The simplest regression test is the triggering one, `NormalDistributionTest.testMath280`. I also add a direct test of `UnivariateRealSolverUtils.bracket`, which fails on the buggy version for the same reason.
+
+For the direct test, take f(x) = x - 2 with initial = 1, lower = 0 and upper = 10.
+- The bracket loop starts with a = 1 and b = 1, so fa = fb = -1.
+- Each iteration does a = max(a - 1, lower) and b = min(b + 1, upper). The first iteration gives a = 0 and b = 2, so fa = -2 and fb = 0.
+- The loop stops because fa * fb = 0, which is not > 0.
+- Buggy: `fa * fb >= 0` is true, so it throws.
+- Fixed: `fa * fb > 0` is false, so it returns the bracket.
+
+I am assuming the `bracket(UnivariateRealFunction, double initial, double lower, double upper)` signature, which exists in this version. I use an anonymous class implementing `UnivariateRealFunction`, whose `value` method throws `MathException`.
+
+I put both tests in the one test class, `NormalDistributionTest`, so the file below is a complete replacement for it. It extends `TestCase` (JUnit 3), as in the project's style.
+
+```java
+package org.apache.commons.math.distribution;
+
+import org.apache.commons.math.MathException;
+import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.analysis.solvers.UnivariateRealSolverUtils;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for MATH-280.
+ */
+public class NormalDistributionTest extends TestCase {
+
+    public void testMath280() throws MathException {
+        NormalDistribution normal = new NormalDistributionImpl(0, 1);
+        double result = normal.inverseCumulativeProbability(0.9772498680518209);
+        assertEquals(2.0, result, 1.0e-12);
+    }
+
+    public void testBracketEndpointIsRoot() throws MathException {
+        UnivariateRealFunction f = new UnivariateRealFunction() {
+            public double value(double x) throws MathException {
+                return x - 2.0;
+            }
+        };
+        double[] bracket = UnivariateRealSolverUtils.bracket(f, 1.0, 0.0, 10.0);
+        assertNotNull(bracket);
+        assertEquals(2, bracket.length);
+        assertTrue(bracket[0] <= 2.0);
+        assertTrue(bracket[1] >= 2.0);
+    }
+}
+```

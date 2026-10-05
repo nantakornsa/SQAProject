@@ -1,0 +1,96 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-14
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+dfa6882a3b9ae6d17c386312ad5e5902d852fb4e
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-01-23 17:47:21 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-786
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-786
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang3.StringUtilsEqualsIndexOfTest::testEquals
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang3.StringUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang3.StringUtils ===
+diff --git a/src/main/java/org/apache/commons/lang3/StringUtils.java b/src/main/java/org/apache/commons/lang3/StringUtils.java
+index 535a3f247..4733b7e91 100644
+--- a/src/main/java/org/apache/commons/lang3/StringUtils.java
++++ b/src/main/java/org/apache/commons/lang3/StringUtils.java
+@@ -785,7 +785,10 @@ public class StringUtils {
+         if (cs1 == null || cs2 == null) {
+             return false;
+         }
++        if (cs1 instanceof String && cs2 instanceof String) {
+             return cs1.equals(cs2);
++        }
++        return CharSequenceUtils.regionMatches(cs1, false, 0, cs2, 0, Math.max(cs1.length(), cs2.length()));
+     }
+ 
+     /**
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testEquals() {
+        final CharSequence fooCs = FOO, barCs = BAR, foobarCs = FOOBAR;
+        assertTrue(StringUtils.equals(null, null));
+        assertTrue(StringUtils.equals(fooCs, fooCs));
+        assertTrue(StringUtils.equals(fooCs, (CharSequence) new StringBuilder(FOO)));
+        assertTrue(StringUtils.equals(fooCs, (CharSequence) new String(new char[] { 'f', 'o', 'o' })));
+        assertTrue(StringUtils.equals(fooCs, (CharSequence) new CustomCharSequence(FOO)));
+        assertTrue(StringUtils.equals((CharSequence) new CustomCharSequence(FOO), fooCs));
+        assertFalse(StringUtils.equals(fooCs, (CharSequence) new String(new char[] { 'f', 'O', 'O' })));
+        assertFalse(StringUtils.equals(fooCs, barCs));
+        assertFalse(StringUtils.equals(fooCs, null));
+        assertFalse(StringUtils.equals(null, fooCs));
+        assertFalse(StringUtils.equals(fooCs, foobarCs));
+        assertFalse(StringUtils.equals(foobarCs, fooCs));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

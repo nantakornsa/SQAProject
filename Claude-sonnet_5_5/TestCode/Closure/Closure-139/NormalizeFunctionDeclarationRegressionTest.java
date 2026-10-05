@@ -1,0 +1,32 @@
+package com.google.javascript.jscomp;
+
+public class NormalizeFunctionDeclarationRegressionTest
+    extends CompilerTestCase {
+
+  public NormalizeFunctionDeclarationRegressionTest() {
+    super("function alert() {}");
+  }
+
+  @Override
+  protected CompilerPass getProcessor(final Compiler compiler) {
+    return new Normalize(compiler, false);
+  }
+
+  public void testNormalizeFunctionDeclarations() throws Exception {
+    testSame("function f() {}");
+    testSame("var f = function () {}");
+    testSame("var f = function g() {}");
+    test("a:function g() {}",
+         "a:{ var g = function () {} }");
+    test("{function g() {}}",
+         "{var g = function () {}}");
+    testSame("if (function g() {}) {}");
+    test("if (true) {function g() {}}",
+         "if (true) {var g = function () {}}");
+    test("if (true) {} else {function g() {}}",
+         "if (true) {} else {var g = function () {}}");
+    testSame("switch (function g() {}) {}");
+    test("switch (1) { case 1: function g() {}}",
+         "switch (1) { case 1: var g = function () {}}");
+  }
+}

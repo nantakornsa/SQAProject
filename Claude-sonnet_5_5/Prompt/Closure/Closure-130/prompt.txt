@@ -1,0 +1,86 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-130
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+9fac3ccd2fa9e6137584f079db1a6f5962a65cf4
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-02-27 15:08:53 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+931
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-931.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.CollapsePropertiesTest::testIssue931
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.CollapseProperties
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.CollapseProperties ===
+diff --git a/src/com/google/javascript/jscomp/CollapseProperties.java b/src/com/google/javascript/jscomp/CollapseProperties.java
+index ab2d2c7cf..f86625f70 100644
+--- a/src/com/google/javascript/jscomp/CollapseProperties.java
++++ b/src/com/google/javascript/jscomp/CollapseProperties.java
+@@ -169,7 +169,7 @@ class CollapseProperties implements CompilerPass {
+         continue;
+       }
+ 
+-      if (name.globalSets == 1 && name.localSets == 0 &&
++      if (!name.inExterns && name.globalSets == 1 && name.localSets == 0 &&
+           name.aliasingGets > 0) {
+         // {@code name} meets condition (b). Find all of its local aliases
+         // and try to inline them.
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue931() {
+    collapsePropertiesOnExternTypes = true;
+    testSame(
+      "function f() {\n" +
+      "  return function () {\n" +
+      "    var args = arguments;\n" +
+      "    setTimeout(function() { alert(args); }, 0);\n" +
+      "  }\n" +
+      "};\n");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

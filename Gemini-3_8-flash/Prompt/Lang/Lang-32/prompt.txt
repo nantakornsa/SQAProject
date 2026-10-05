@@ -1,0 +1,151 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-32
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+1f35e7c99b66b8d46c4ad96558e694a10aa38062
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-02-07 03:14:09 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-586
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-586
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang3.builder.HashCodeBuilderTest::testReflectionObjectCycle
+   --> junit.framework.AssertionFailedError: Expected: <null> but was: []
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang3.builder.HashCodeBuilder
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang3.builder.HashCodeBuilder ===
+diff --git a/src/main/java/org/apache/commons/lang3/builder/HashCodeBuilder.java b/src/main/java/org/apache/commons/lang3/builder/HashCodeBuilder.java
+index 4ae351da5..9f7e8903b 100644
+--- a/src/main/java/org/apache/commons/lang3/builder/HashCodeBuilder.java
++++ b/src/main/java/org/apache/commons/lang3/builder/HashCodeBuilder.java
+@@ -101,12 +101,7 @@ public class HashCodeBuilder {
+      * 
+      * @since 2.3
+      */
+-    private static final ThreadLocal<Set<IDKey>> REGISTRY = new ThreadLocal<Set<IDKey>>() {
+-        @Override
+-        protected Set<IDKey> initialValue() {
+-            return new HashSet<IDKey>();
+-        }
+-    };
++    private static final ThreadLocal<Set<IDKey>> REGISTRY = new ThreadLocal<Set<IDKey>>();
+ 
+     /*
+      * N.B. we cannot store the actual objects in a HashSet, as that would use the very hashCode()
+@@ -149,7 +144,8 @@ public class HashCodeBuilder {
+      * @since 2.3
+      */
+     static boolean isRegistered(Object value) {
+-        return getRegistry().contains(new IDKey(value));
++        Set<IDKey> registry = getRegistry();
++        return registry != null && registry.contains(new IDKey(value));
+     }
+ 
+     /**
+@@ -519,6 +515,11 @@ public class HashCodeBuilder {
+      *            The object to register.
+      */
+     static void register(Object value) {
++        synchronized (HashCodeBuilder.class) {
++            if (getRegistry() == null) {
++                REGISTRY.set(new HashSet<IDKey>());
++            }
++        }
+         getRegistry().add(new IDKey(value));
+     }
+ 
+@@ -535,7 +536,15 @@ public class HashCodeBuilder {
+      * @since 2.3
+      */
+     static void unregister(Object value) {
+-        getRegistry().remove(new IDKey(value));
++        Set<IDKey> s = getRegistry();
++        if (s != null) {
++            s.remove(new IDKey(value));
++            synchronized (HashCodeBuilder.class) {
++                if (s.isEmpty()) {
++                    REGISTRY.remove();
++                }
++            }
++        }
+     }
+ 
+     /**
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testReflectionObjectCycle() {
+        ReflectionTestCycleA a = new ReflectionTestCycleA();
+        ReflectionTestCycleB b = new ReflectionTestCycleB();
+        a.b = b;
+        b.a = a;
+        
+        // Used to caused:
+        // java.lang.StackOverflowError
+        // at java.lang.ClassLoader.getCallerClassLoader(Native Method)
+        // at java.lang.Class.getDeclaredFields(Class.java:992)
+        // at org.apache.commons.lang.builder.HashCodeBuilder.reflectionAppend(HashCodeBuilder.java:373)
+        // at org.apache.commons.lang.builder.HashCodeBuilder.reflectionHashCode(HashCodeBuilder.java:349)
+        // at org.apache.commons.lang.builder.HashCodeBuilder.reflectionHashCode(HashCodeBuilder.java:155)
+        // at
+        // org.apache.commons.lang.builder.HashCodeBuilderTest$ReflectionTestCycleB.hashCode(HashCodeBuilderTest.java:53)
+        // at org.apache.commons.lang.builder.HashCodeBuilder.append(HashCodeBuilder.java:422)
+        // at org.apache.commons.lang.builder.HashCodeBuilder.reflectionAppend(HashCodeBuilder.java:383)
+        // at org.apache.commons.lang.builder.HashCodeBuilder.reflectionHashCode(HashCodeBuilder.java:349)
+        // at org.apache.commons.lang.builder.HashCodeBuilder.reflectionHashCode(HashCodeBuilder.java:155)
+        // at
+        // org.apache.commons.lang.builder.HashCodeBuilderTest$ReflectionTestCycleA.hashCode(HashCodeBuilderTest.java:42)
+        // at org.apache.commons.lang.builder.HashCodeBuilder.append(HashCodeBuilder.java:422)
+
+        a.hashCode();
+        assertNull(HashCodeBuilder.getRegistry());
+        b.hashCode();
+        assertNull(HashCodeBuilder.getRegistry());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

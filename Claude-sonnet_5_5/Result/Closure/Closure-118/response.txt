@@ -1,0 +1,58 @@
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.jscomp.CheckLevel;
+import com.google.javascript.rhino.Node;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Regression test: quoted property names in object literal assignments to a
+ * prototype must not be recorded by DisambiguateProperties.
+ */
+public class DisambiguatePropertiesQuotedPrototypeTest extends CompilerTestCase {
+  private DisambiguateProperties<?> lastPass;
+
+  public DisambiguatePropertiesQuotedPrototypeTest() {
+    super("");
+  }
+
+  @Override
+  public void setUp() throws Exception {
+    super.setUp();
+    super.enableNormalize();
+    super.enableTypeCheck(CheckLevel.WARNING);
+  }
+
+  @Override
+  protected int getNumRepetitions() {
+    return 1;
+  }
+
+  @Override
+  protected CompilerPass getProcessor(final Compiler compiler) {
+    return new CompilerPass() {
+      @Override
+      public void process(Node externs, Node root) {
+        Map<String, CheckLevel> propertiesToErrorFor =
+            new HashMap<String, CheckLevel>();
+        lastPass = DisambiguateProperties.forJSTypeSystem(
+            compiler, propertiesToErrorFor);
+        lastPass.process(externs, root);
+      }
+    };
+  }
+
+  public void testQuotedPrototypePropertyIsNotRecorded() {
+    String js = ""
+        + "/** @constructor */ function Foo() {}\n"
+        + "Foo.prototype = {'a': 0};\n"
+        + "/** @type Foo */\n"
+        + "var F = new Foo;\n"
+        + "F['a'] = 0;";
+    test(js, js);
+    assertEquals("{}", String.valueOf(lastPass.getRenamedTypesForTesting()));
+  }
+}
+```

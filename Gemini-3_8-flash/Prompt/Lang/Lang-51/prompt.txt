@@ -1,0 +1,119 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-51
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+796b898281af571a510d96487dcd95699ac1e435
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2007-10-27 05:07:45 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-365
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-365
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang.BooleanUtilsTest::test_toBoolean_String
+   --> java.lang.StringIndexOutOfBoundsException: String index out of range: 3
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang.BooleanUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang.BooleanUtils ===
+diff --git a/src/java/org/apache/commons/lang/BooleanUtils.java b/src/java/org/apache/commons/lang/BooleanUtils.java
+index 3fda4ecc1..8b5028c4b 100644
+--- a/src/java/org/apache/commons/lang/BooleanUtils.java
++++ b/src/java/org/apache/commons/lang/BooleanUtils.java
+@@ -679,6 +679,7 @@ public class BooleanUtils {
+                         (str.charAt(1) == 'E' || str.charAt(1) == 'e') &&
+                         (str.charAt(2) == 'S' || str.charAt(2) == 's');
+                 }
++                return false;
+             }
+             case 4: {
+                 char ch = str.charAt(0);
+
+
+=== TRIGGERING TEST METHOD ===
+    public void test_toBoolean_String() {
+        assertEquals(false, BooleanUtils.toBoolean((String) null));
+        assertEquals(false, BooleanUtils.toBoolean(""));
+        assertEquals(false, BooleanUtils.toBoolean("off"));
+        assertEquals(false, BooleanUtils.toBoolean("oof"));
+        assertEquals(false, BooleanUtils.toBoolean("yep"));
+        assertEquals(false, BooleanUtils.toBoolean("trux"));
+        assertEquals(false, BooleanUtils.toBoolean("false"));
+        assertEquals(false, BooleanUtils.toBoolean("a"));
+        assertEquals(true, BooleanUtils.toBoolean("true")); // interned handled differently
+        assertEquals(true, BooleanUtils.toBoolean(new StringBuffer("tr").append("ue").toString()));
+        assertEquals(true, BooleanUtils.toBoolean("truE"));
+        assertEquals(true, BooleanUtils.toBoolean("trUe"));
+        assertEquals(true, BooleanUtils.toBoolean("trUE"));
+        assertEquals(true, BooleanUtils.toBoolean("tRue"));
+        assertEquals(true, BooleanUtils.toBoolean("tRuE"));
+        assertEquals(true, BooleanUtils.toBoolean("tRUe"));
+        assertEquals(true, BooleanUtils.toBoolean("tRUE"));
+        assertEquals(true, BooleanUtils.toBoolean("TRUE"));
+        assertEquals(true, BooleanUtils.toBoolean("TRUe"));
+        assertEquals(true, BooleanUtils.toBoolean("TRuE"));
+        assertEquals(true, BooleanUtils.toBoolean("TRue"));
+        assertEquals(true, BooleanUtils.toBoolean("TrUE"));
+        assertEquals(true, BooleanUtils.toBoolean("TrUe"));
+        assertEquals(true, BooleanUtils.toBoolean("TruE"));
+        assertEquals(true, BooleanUtils.toBoolean("True"));
+        assertEquals(true, BooleanUtils.toBoolean("on"));
+        assertEquals(true, BooleanUtils.toBoolean("oN"));
+        assertEquals(true, BooleanUtils.toBoolean("On"));
+        assertEquals(true, BooleanUtils.toBoolean("ON"));
+        assertEquals(true, BooleanUtils.toBoolean("yes"));
+        assertEquals(true, BooleanUtils.toBoolean("yeS"));
+        assertEquals(true, BooleanUtils.toBoolean("yEs"));
+        assertEquals(true, BooleanUtils.toBoolean("yES"));
+        assertEquals(true, BooleanUtils.toBoolean("Yes"));
+        assertEquals(true, BooleanUtils.toBoolean("YeS"));
+        assertEquals(true, BooleanUtils.toBoolean("YEs"));
+        assertEquals(true, BooleanUtils.toBoolean("YES"));
+        assertEquals(false, BooleanUtils.toBoolean("yes?"));
+        assertEquals(false, BooleanUtils.toBoolean("tru"));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

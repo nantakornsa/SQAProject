@@ -1,0 +1,93 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-47
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+ebadfd25ed1244b170f7af2414c35673eb055a29
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-05-19 15:36:04 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1231
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1231
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.ser.TestJsonSerialize::testBrokenAnnotation
+   --> junit.framework.AssertionFailedError: Expected an exception with one of substrings ([types not related]): got one with message "Failed to widen type [simple type, class java.lang.Long] with annotation (value java.lang.String), from 'getValue': Class java.lang.String not a super-type of [simple type, class java.lang.Long]"
+ - com.fasterxml.jackson.databind.ser.TestJsonSerializeAs::testSpecializedAsIntermediate
+   --> com.fasterxml.jackson.databind.JsonMappingException: Failed to widen type [simple type, class com.fasterxml.jackson.databind.ser.TestJsonSerializeAs$Bean1178Base] with annotation (value com.fasterxml.jackson.databind.ser.TestJsonSerializeAs$Bean1178Abstract), from 'value': Class com.fasterxml.jackson.databind.ser.TestJsonSerializeAs$Bean1178Abstract not a super-type of [simple type, class com.fasterxml.jackson.databind.ser.TestJsonSerializeAs$Bean1178Base]
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.AnnotationIntrospector
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.AnnotationIntrospector ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/AnnotationIntrospector.java b/src/main/java/com/fasterxml/jackson/databind/AnnotationIntrospector.java
+index dab32273e..3966997e9 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/AnnotationIntrospector.java
++++ b/src/main/java/com/fasterxml/jackson/databind/AnnotationIntrospector.java
+@@ -813,10 +813,19 @@ public abstract class AnnotationIntrospector
+                 //    static typing this way
+                 type = type.withStaticTyping();
+             } else {
++                Class<?> currRaw = type.getRawClass();
+                 try {
+                     // 11-Oct-2015, tatu: For deser, we call `TypeFactory.constructSpecializedType()`,
+                     //   may be needed here too in future?
++                    if (serClass.isAssignableFrom(currRaw)) { // common case
+                         type = tf.constructGeneralizedType(type, serClass);
++                    } else if (currRaw.isAssignableFrom(serClass)) { // specialization, ok as well
++                        type = tf.constructSpecializedType(type, serClass);
++                    } else {
++                        throw new JsonMappingException(null,
++                                String.format("Can not refine serialization type %s into %s; types not related",
++                                        type, serClass.getName()));
++                    }
+                 } catch (IllegalArgumentException iae) {
+                     throw new JsonMappingException(null,
+                             String.format("Failed to widen type %s with annotation (value %s), from '%s': %s",
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testBrokenAnnotation() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

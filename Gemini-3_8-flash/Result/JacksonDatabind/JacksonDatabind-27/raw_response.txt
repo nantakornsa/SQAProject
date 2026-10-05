@@ -1,0 +1,75 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791181285-eInzRvEXwKZTpb7ECFzC","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating JacksonDatabind-27**\n\nI've narrowed the focus to JacksonDatabind bug 27. My current efforts are concentrated on understanding the specifics of the triggering test case, `testInverseExternalId928` within `com.fasterxml.jackson.databind.jsontype.TestExternalId`, and delving into the details of the underlying issue 928 to pinpoint the root cause.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing JacksonDatabind-27**\n\nI'm now specifically examining JacksonDatabind bug 27, focusing on the `testInverseExternalId928` test case. My primary goal is to fully comprehend how the external type ID interacts with property-based creators when property order varies, aiming to pinpoint the core issue.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind.jsontype;\n\nimport com.fasterxml.jackson."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"annotation.JsonCreator;\nimport com.fasterxml.jackson.annotation.JsonProperty;\nimport com.fasterxml.jackson"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".annotation.JsonSubTypes;\nimport com.fasterxml.jackson.annotation.JsonTypeInfo;\nimport com"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".fasterxml.jackson.databind.BaseMapTest;\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\npublic class"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" ExternalTypeId928Test extends BaseMapTest {\n\n    static class Server928 {\n        @JsonTypeInfo"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXTERNAL_PROPERTY, property"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" = \"type\")\n        @JsonSubTypes({\n            @JsonSubTypes.Type(value = BasePayload"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"928.class, name = \"base\"),\n        })\n        public Payload928 payload;\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        @JsonCreator\n        public Server928(@JsonProperty(\"payload\") Payload928 payload) {\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"            this.payload = payload;\n        }\n    }\n\n    static class Payload928 { }\n\n    static class BasePayload"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"928 extends Payload928 {\n        public int a;\n    }\n\n    public void testInverse"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ExternalId928() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n        Server928 server = mapper"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".readValue(\"{\\\"payload\\\":{\\\"a\\\":1},\\\"type\\\":\\\"base\\\"}\", Server928.class);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        assertNotNull(server);\n        assertNotNull(server.payload);\n        assertEquals(BasePayload92"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"8.class, server.payload.getClass());\n        assertEquals(1, ((BasePayload928) server"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".payload).a);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1025,"output_tokens":934,"output_tokens_details":{"thinking_tokens":551},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.00427125,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00427125,"upstream_inference_prompt_cost":0.00076875,"upstream_inference_completions_cost":0.0035025}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

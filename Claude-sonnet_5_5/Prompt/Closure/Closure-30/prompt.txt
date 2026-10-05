@@ -1,0 +1,128 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-30
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+38e2b8f247423734adec3dbd76fa22da1a3561a8
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-04-16 22:28:43 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+698
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-698.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.FlowSensitiveInlineVariablesTest::testInlineAcrossSideEffect1
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.FlowSensitiveInlineVariablesTest::testCanInlineAcrossNoSideEffect
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.FlowSensitiveInlineVariablesTest::testIssue698
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.FlowSensitiveInlineVariables
+ - com.google.javascript.jscomp.MustBeReachingVariableDef
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.FlowSensitiveInlineVariables ===
+diff --git a/src/com/google/javascript/jscomp/FlowSensitiveInlineVariables.java b/src/com/google/javascript/jscomp/FlowSensitiveInlineVariables.java
+index d53a8f8a1..3f39c07e0 100644
+--- a/src/com/google/javascript/jscomp/FlowSensitiveInlineVariables.java
++++ b/src/com/google/javascript/jscomp/FlowSensitiveInlineVariables.java
+@@ -154,7 +154,7 @@ class FlowSensitiveInlineVariables extends AbstractPostOrderCallback
+ 
+   @Override
+   public void process(Node externs, Node root) {
+-    (new NodeTraversal(compiler, this)).traverse(root);
++    (new NodeTraversal(compiler, this)).traverseRoots(externs, root);
+   }
+ 
+   @Override
+
+=== MODIFIED SOURCE: com.google.javascript.jscomp.MustBeReachingVariableDef ===
+diff --git a/src/com/google/javascript/jscomp/MustBeReachingVariableDef.java b/src/com/google/javascript/jscomp/MustBeReachingVariableDef.java
+index 1487af33b..589f67367 100644
+--- a/src/com/google/javascript/jscomp/MustBeReachingVariableDef.java
++++ b/src/com/google/javascript/jscomp/MustBeReachingVariableDef.java
+@@ -68,6 +68,7 @@ final class MustBeReachingVariableDef extends
+   private static class Definition {
+     final Node node;
+     final Set<Var> depends = Sets.newHashSet();
++    private boolean unknownDependencies = false;
+ 
+     Definition(Node node) {
+       this.node = node;
+@@ -393,9 +394,13 @@ final class MustBeReachingVariableDef extends
+         new AbstractCfgNodeTraversalCallback() {
+       @Override
+       public void visit(NodeTraversal t, Node n, Node parent) {
+-        if (n.isName() && jsScope.isDeclared(n.getString(), true)) {
++        if (n.isName()) {
+           Var dep = jsScope.getVar(n.getString());
++          if (dep == null) {
++            def.unknownDependencies = true;
++          } else {
+             def.depends.add(dep);
++          }
+         }
+       }
+     });
+@@ -427,6 +432,9 @@ final class MustBeReachingVariableDef extends
+     GraphNode<Node, Branch> n = getCfg().getNode(useNode);
+     FlowState<MustDef> state = n.getAnnotation();
+     Definition def = state.getIn().reachingDef.get(jsScope.getVar(name));
++    if (def.unknownDependencies) {
++      return true;
++    }
+ 
+     for (Var s : def.depends) {
+       if (s.scope != jsScope) {
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testInlineAcrossSideEffect1() {
+    // This can't be inlined because print() has side-effects and might change
+    // the definition of noSFX.
+    //
+    // noSFX must be both const and pure in order to inline it.
+    noInline("var y; var x = noSFX(y); print(x)");
+    //inline("var y; var x = noSFX(y); print(x)", "var y;var x;print(noSFX(y))");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

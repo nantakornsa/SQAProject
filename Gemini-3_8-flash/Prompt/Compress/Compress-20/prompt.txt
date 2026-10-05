@@ -1,0 +1,137 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Compress
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Compress
+       Program: commons-compress
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/Compress.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-compress.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/active-bugs.csv
+Number of bugs: 47
+--------------------------------------------------------------------------------
+
+Summary for Bug: Compress-20
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+040e42d0f0bebc15ca80cb80fb6db53804b2e082
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-08-08 16:18:45 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COMPRESS-236
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COMPRESS-236
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.compress.archivers.cpio.CpioArchiveInputStreamTest::testCpioUnarchiveCreatedByRedlineRpm
+   --> java.lang.IllegalArgumentException: Unknown mode. Full: 1a4 Masked: 0
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.compress.archivers.cpio.CpioArchiveInputStream
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.compress.archivers.cpio.CpioArchiveInputStream ===
+diff --git a/src/main/java/org/apache/commons/compress/archivers/cpio/CpioArchiveInputStream.java b/src/main/java/org/apache/commons/compress/archivers/cpio/CpioArchiveInputStream.java
+index 934eb0aa..664d0e6d 100644
+--- a/src/main/java/org/apache/commons/compress/archivers/cpio/CpioArchiveInputStream.java
++++ b/src/main/java/org/apache/commons/compress/archivers/cpio/CpioArchiveInputStream.java
+@@ -328,7 +328,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
+ 
+         ret.setInode(readAsciiLong(8, 16));
+         long mode = readAsciiLong(8, 16);
+-        if (mode != 0){
++        if (CpioUtil.fileType(mode) != 0){ // mode is initialised to 0
+             ret.setMode(mode);
+         }
+         ret.setUID(readAsciiLong(8, 16));
+@@ -344,7 +344,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
+         ret.setChksum(readAsciiLong(8, 16));
+         String name = readCString((int) namesize);
+         ret.setName(name);
+-        if (mode == 0 && !name.equals(CPIO_TRAILER)){
++        if (CpioUtil.fileType(mode) == 0 && !name.equals(CPIO_TRAILER)){
+             throw new IOException("Mode 0 only allowed in the trailer. Found entry name: "+name + " Occured at byte: " + getBytesRead());
+         }
+         skip(ret.getHeaderPadCount());
+@@ -358,7 +358,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
+         ret.setDevice(readAsciiLong(6, 8));
+         ret.setInode(readAsciiLong(6, 8));
+         final long mode = readAsciiLong(6, 8);
+-        if (mode != 0) {
++        if (CpioUtil.fileType(mode) != 0) {
+             ret.setMode(mode);
+         }
+         ret.setUID(readAsciiLong(6, 8));
+@@ -370,7 +370,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
+         ret.setSize(readAsciiLong(11, 8));
+         final String name = readCString((int) namesize);
+         ret.setName(name);
+-        if (mode == 0 && !name.equals(CPIO_TRAILER)){
++        if (CpioUtil.fileType(mode) == 0 && !name.equals(CPIO_TRAILER)){
+             throw new IOException("Mode 0 only allowed in the trailer. Found entry: "+ name + " Occured at byte: " + getBytesRead());
+         }
+ 
+@@ -384,7 +384,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
+         ret.setDevice(readBinaryLong(2, swapHalfWord));
+         ret.setInode(readBinaryLong(2, swapHalfWord));
+         final long mode = readBinaryLong(2, swapHalfWord);
+-        if (mode != 0){
++        if (CpioUtil.fileType(mode) != 0){
+             ret.setMode(mode);
+         }
+         ret.setUID(readBinaryLong(2, swapHalfWord));
+@@ -396,7 +396,7 @@ public class CpioArchiveInputStream extends ArchiveInputStream implements
+         ret.setSize(readBinaryLong(4, swapHalfWord));
+         final String name = readCString((int) namesize);
+         ret.setName(name);
+-        if (mode == 0 && !name.equals(CPIO_TRAILER)){
++        if (CpioUtil.fileType(mode) == 0 && !name.equals(CPIO_TRAILER)){
+             throw new IOException("Mode 0 only allowed in the trailer. Found entry: "+name + "Occured at byte: " + getBytesRead());
+         }
+         skip(ret.getHeaderPadCount());
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testCpioUnarchiveCreatedByRedlineRpm() throws Exception {
+        CpioArchiveInputStream in =
+            new CpioArchiveInputStream(new FileInputStream(getFile("redline.cpio")));
+        CpioArchiveEntry entry= null;
+
+        int count = 0;
+        while ((entry = (CpioArchiveEntry) in.getNextEntry()) != null) {
+            count++;
+        }
+        in.close();
+
+        assertEquals(count, 1);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

@@ -1,0 +1,59 @@
+package org.jfree.data.time.junit;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.jfree.data.time.SimpleTimePeriod;
+import org.jfree.data.time.TimePeriodValues;
+
+/**
+ * Tests for the {@link TimePeriodValues} class to reproduce the issue where
+ * getMaxMiddleIndex() references minMiddleIndex instead of maxMiddleIndex.
+ */
+public class TimePeriodValuesBugTest extends TestCase {
+
+    /**
+     * Returns the test suite.
+     *
+     * @return The test suite.
+     */
+    public static Test suite() {
+        return new TestSuite(TimePeriodValuesBugTest.class);
+    }
+
+    /**
+     * Constructs a new test case.
+     *
+     * @param name  the test name.
+     */
+    public TimePeriodValuesBugTest(String name) {
+        super(name);
+    }
+
+    /**
+     * Test that getMaxMiddleIndex() correctly updates and returns the index
+     * of the item with the maximum middle time period.
+     */
+    public void testGetMaxMiddleIndex() {
+        TimePeriodValues s = new TimePeriodValues("Test");
+        assertEquals(-1, s.getMaxMiddleIndex());
+
+        // Middle: 150 (index 0)
+        s.add(new SimpleTimePeriod(100L, 200L), 1.0);
+        assertEquals(0, s.getMaxMiddleIndex());
+
+        // Middle: 350 (index 1) -> max
+        s.add(new SimpleTimePeriod(300L, 400L), 2.0);
+        assertEquals(1, s.getMaxMiddleIndex());
+
+        // Middle: 25 (index 2) -> minMiddleIndex becomes 2
+        s.add(new SimpleTimePeriod(0L, 50L), 3.0);
+        assertEquals(1, s.getMaxMiddleIndex());
+
+        // Middle: 175 (index 3). In the buggy version, 175 is compared against
+        // minMiddle (25) instead of maxMiddle (350), causing maxMiddleIndex
+        // to incorrectly update to 3.
+        s.add(new SimpleTimePeriod(150L, 200L), 4.0);
+        assertEquals(1, s.getMaxMiddleIndex());
+    }
+}

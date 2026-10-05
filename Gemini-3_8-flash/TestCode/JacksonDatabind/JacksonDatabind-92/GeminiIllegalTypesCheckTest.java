@@ -1,0 +1,34 @@
+package com.fasterxml.jackson.databind.interop;
+
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+/**
+ * Test checking that types added to the blacklist in databind#1737
+ * cannot be deserialized via default typing.
+ */
+public class GeminiIllegalTypesCheckTest extends BaseMapTest
+{
+    static class Authentication1737 {
+        public Object authentication;
+    }
+
+    public void testJDKTypes1737() throws Exception
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.enableDefaultTyping();
+
+        // Testing java.util.logging.FileHandler which is in the standard JDK
+        String json = aposToQuotes(
+                "{'authentication':['java.util.logging.FileHandler', {}]}"
+        );
+        try {
+            mapper.readValue(json, Authentication1737.class);
+            fail("Should not pass");
+        } catch (JsonMappingException e) {
+            verifyException(e, "Illegal type");
+            verifyException(e, "prevented for security reasons");
+        }
+    }
+}

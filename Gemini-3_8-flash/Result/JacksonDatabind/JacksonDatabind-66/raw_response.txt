@@ -1,0 +1,72 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791185905-Fb6FmE0w6vZ34Phvh1Ad","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing Jackson's Deserialization**\n\nI've identified the core of JacksonDatabind-66: the `StdKeyDeserializer.DelegatingKD` was mishandling key deserialization by directly passing the context parser instead of utilizing a `TokenBuffer`. I'm implementing the fix to correctly create and pass a `TokenBuffer` with the key string to the delegate.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind.module;\n\nimport java.io.IOException;\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"import java.util.Map;\n\nimport com.fasterxml.jackson.annotation.JsonSubTypes;\nimport com."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"fasterxml.jackson.annotation.JsonTypeInfo;\nimport com.fasterxml.jackson.core.type.TypeReference;\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" com.fasterxml.jackson.databind.BaseMapTest;\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\npublic class Custom"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"EnumKeyDeserializer1441Test extends BaseMapTest\n{\n    @JsonTypeInfo(use = JsonTypeInfo.Id"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".NAME, property = \"type\")\n    @JsonSubTypes({\n        @JsonSubTypes.Type(value = SubTypeEnum"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".class, name = \"sub\")\n    })\n    interface SuperTypeEnum {\n    }\n\n    enum"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" SubTypeEnum implements SuperTypeEnum {\n        FOO,\n        BAR\n    }\n\n    public void test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"CustomEnumKeySerializerWithPolymorphic() throws IOException\n    {\n        ObjectMapper mapper = new ObjectMapper();\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"SimpleModule module = new SimpleModule(\"test\");\n        module.addKeyDeserializer(SuperTypeEnum.class,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" new KeyDeserializer() {\n            @Override\n            public Object deserializeKey(String key, com.fasterxml.jackson.databind"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".DeserializationContext ctxt)\n                throws IOException\n            {\n                return SubTypeEnum.valueOf(key);\n            "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"}\n        });\n        mapper.registerModule(module);\n\n        TypeReference<Map<SuperTypeEnum, String"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":">> typeRef =\n            new TypeReference<Map<SuperTypeEnum, String>>() {};\n\n        Map<SuperTypeEnum, String>"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" result = mapper.readValue(\"{\\\"FOO\\\": \\\"val\\\"}\", typeRef);\n        assertNotNull(result);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        assertEquals(\"val\", result.get(SubTypeEnum.FOO));\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1330,"output_tokens":617,"output_tokens_details":{"thinking_tokens":204},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00331125,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00331125,"upstream_inference_prompt_cost":0.0009975,"upstream_inference_completions_cost":0.00231375}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

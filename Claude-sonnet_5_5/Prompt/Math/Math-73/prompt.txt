@@ -1,0 +1,100 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-73
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+f6dd42b4fc01d1bef5392b6f19b6bcbafee27637
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-02-23 21:01:38 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-343
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-343
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.analysis.solvers.BrentSolverTest::testBadEndpoints
+   --> junit.framework.AssertionFailedError: Expecting IllegalArgumentException - non-bracketing
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.analysis.solvers.BrentSolver
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.analysis.solvers.BrentSolver ===
+diff --git a/src/main/java/org/apache/commons/math/analysis/solvers/BrentSolver.java b/src/main/java/org/apache/commons/math/analysis/solvers/BrentSolver.java
+index 8142b5edb..e0cb42714 100644
+--- a/src/main/java/org/apache/commons/math/analysis/solvers/BrentSolver.java
++++ b/src/main/java/org/apache/commons/math/analysis/solvers/BrentSolver.java
+@@ -133,6 +133,10 @@ public class BrentSolver extends UnivariateRealSolverImpl {
+             return solve(f, initial, yInitial, max, yMax, initial, yInitial);
+         }
+ 
++        if (yMin * yMax > 0) {
++            throw MathRuntimeException.createIllegalArgumentException(
++                  NON_BRACKETING_MESSAGE, min, max, yMin, yMax);
++        }
+ 
+         // full Brent algorithm starting with provided initial guess
+         return solve(f, min, yMin, max, yMax, initial, yInitial);
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testBadEndpoints() throws Exception {
+        UnivariateRealFunction f = new SinFunction();
+        UnivariateRealSolver solver = new BrentSolver();
+        try {  // bad interval
+            solver.solve(f, 1, -1);
+            fail("Expecting IllegalArgumentException - bad interval");
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+        try {  // no bracket
+            solver.solve(f, 1, 1.5);
+            fail("Expecting IllegalArgumentException - non-bracketing");
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+        try {  // no bracket
+            solver.solve(f, 1, 1.5, 1.2);
+            fail("Expecting IllegalArgumentException - non-bracketing");
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

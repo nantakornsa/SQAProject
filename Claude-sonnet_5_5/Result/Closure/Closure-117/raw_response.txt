@@ -1,0 +1,69 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791208078-YQXZcf1ot63hctC1jvRT","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1936,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" test below"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" go"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"es in"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" `T"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ypeCheckTest`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":", which extends `C"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ompilerTyp"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"eTestCase` and u"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ses the `testTypes`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" helper. It"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" is the triggering test from the bug report. I have not run it against either version.\n\nOn the buggy version, `getReadableJSTypeName` walks the GETPROP's ow"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ner chain before it looks at the dereferenced type. For `this.c2_.prop` that produces `C3.c2_` instead of `C2`, which mat"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ches the `ComparisonFailure` in the report. The fix computes the dereferenced type first and returns its name when it is a constructor instance, so the message becomes \"Property prop never defined on C2\".\n\n```java\npackage com.google.javascript."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"jscomp;\n\npublic class TypeCheckTest extends CompilerTypeTestCase {\n\n  public void testIssue1047() throws Exception {\n    testTypes(\n        \"/**\\n\" +\n        \" * @constructor\\n\" +\n        \" */\\n\" +\n        \"function C2() {}\\n\""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" +\n        \"\\n\" +\n        \"/**\\n\" +\n        \" * @constructor\\n\" +\n        \" */\\n\" +\n        \"function C3(c2) {\\n\" +\n        \"  /**\\n\" +\n        \"   * @type {C2} \\n\" +\n        \"   * @private\\n\" +\n        \"   */\\n\""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" +\n        \"  this.c2_;\\n\" +\n        \"\\n\" +\n        \"  var x = this.c2_.prop;\\n\" +\n        \"}\",\n        \"Property prop never defined on C2\");\n  }\n}\n```\n\nThe class declaration and package are"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" placeholders for the real file. In the project this method is added to the existing `TypeCheckTest` class, which already provides `testTypes`."}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1936,"output_tokens":534,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.009212,"is_byok":false,"cost_details":{"upstream_inference_cost":0.009212,"upstream_inference_prompt_cost":0.003872,"upstream_inference_completions_cost":0.00534}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

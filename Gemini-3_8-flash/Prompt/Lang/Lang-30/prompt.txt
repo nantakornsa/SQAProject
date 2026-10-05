@@ -1,0 +1,221 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-30
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+bc52782cd84f4356d2984e1aa01806f81754eb08
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-03-16 00:37:07 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-607
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-607
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang3.StringUtilsEqualsIndexOfTest::testContainsNone_CharArrayWithSupplementaryChars
+   --> junit.framework.AssertionFailedError: expected:<true> but was:<false>
+ - org.apache.commons.lang3.StringUtilsEqualsIndexOfTest::testContainsNone_StringWithSupplementaryChars
+   --> junit.framework.AssertionFailedError: expected:<true> but was:<false>
+ - org.apache.commons.lang3.StringUtilsEqualsIndexOfTest::testContainsAny_StringCharArrayWithBadSupplementaryChars
+   --> junit.framework.AssertionFailedError: expected:<false> but was:<true>
+ - org.apache.commons.lang3.StringUtilsEqualsIndexOfTest::testIndexOfAnyBut_StringStringWithSupplementaryChars
+   --> junit.framework.AssertionFailedError: expected:<2> but was:<3>
+ - org.apache.commons.lang3.StringUtilsEqualsIndexOfTest::testContainsAny_StringWithBadSupplementaryChars
+   --> junit.framework.AssertionFailedError: expected:<false> but was:<true>
+ - org.apache.commons.lang3.StringUtilsEqualsIndexOfTest::testIndexOfAny_StringCharArrayWithSupplementaryChars
+   --> junit.framework.AssertionFailedError: expected:<2> but was:<0>
+ - org.apache.commons.lang3.StringUtilsEqualsIndexOfTest::testIndexOfAnyBut_StringCharArrayWithSupplementaryChars
+   --> junit.framework.AssertionFailedError: expected:<2> but was:<3>
+ - org.apache.commons.lang3.StringUtilsEqualsIndexOfTest::testContainsNone_StringWithBadSupplementaryChars
+   --> junit.framework.AssertionFailedError: expected:<true> but was:<false>
+ - org.apache.commons.lang3.StringUtilsEqualsIndexOfTest::testIndexOfAny_StringStringWithSupplementaryChars
+   --> junit.framework.AssertionFailedError: expected:<2> but was:<0>
+ - org.apache.commons.lang3.StringUtilsEqualsIndexOfTest::testContainsNone_CharArrayWithBadSupplementaryChars
+   --> junit.framework.AssertionFailedError: expected:<true> but was:<false>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang3.StringUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang3.StringUtils ===
+diff --git a/src/main/java/org/apache/commons/lang3/StringUtils.java b/src/main/java/org/apache/commons/lang3/StringUtils.java
+index dd2f5cf10..da86fdb1a 100644
+--- a/src/main/java/org/apache/commons/lang3/StringUtils.java
++++ b/src/main/java/org/apache/commons/lang3/StringUtils.java
+@@ -1373,13 +1373,21 @@ public class StringUtils {
+             return INDEX_NOT_FOUND;
+         }
+         int csLen = cs.length();
++        int csLast = csLen - 1;
+         int searchLen = searchChars.length;
++        int searchLast = searchLen - 1;
+         for (int i = 0; i < csLen; i++) {
+             char ch = cs.charAt(i);
+             for (int j = 0; j < searchLen; j++) {
+                 if (searchChars[j] == ch) {
++                    if (i < csLast && j < searchLast && Character.isHighSurrogate(ch)) {
+                         // ch is a supplementary character
++                        if (searchChars[j + 1] == cs.charAt(i + 1)) {
++                            return i;
++                        }
++                    } else {
+                         return i;
++                    }
+                 }
+             }
+         }
+@@ -1440,7 +1448,7 @@ public class StringUtils {
+      * <code>false</code> if no match or null input
+      * @since 2.4
+      */
+-    public static boolean containsAny(CharSequence cs, char[] searchChars) {
++    public static boolean containsAny(String cs, char[] searchChars) {
+         if (isEmpty(cs) || ArrayUtils.isEmpty(searchChars)) {
+             return false;
+         }
+@@ -1452,9 +1460,12 @@ public class StringUtils {
+             char ch = cs.charAt(i);
+             for (int j = 0; j < searchLength; j++) {
+                 if (searchChars[j] == ch) {
+-                    if (i < csLast && j < searchLast && ch >= Character.MIN_HIGH_SURROGATE && ch <= Character.MAX_HIGH_SURROGATE) {
++                    if (Character.isHighSurrogate(ch)) {
++                        if (j == searchLast) {
+                             // missing low surrogate, fine, like String.indexOf(String)
+-                        if (searchChars[j + 1] == cs.charAt(i + 1)) {
++                            return true;
++                        }
++                        if (i < csLast && searchChars[j + 1] == cs.charAt(i + 1)) {
+                             return true;
+                         }
+                     } else {
+@@ -1494,7 +1505,7 @@ public class StringUtils {
+      * @return the <code>true</code> if any of the chars are found, <code>false</code> if no match or null input
+      * @since 2.4
+      */
+-    public static boolean containsAny(CharSequence cs, String searchChars) {
++    public static boolean containsAny(String cs, String searchChars) {
+         if (searchChars == null) {
+             return false;
+         }
+@@ -1530,13 +1541,21 @@ public class StringUtils {
+             return INDEX_NOT_FOUND;
+         }
+         int csLen = cs.length();
++        int csLast = csLen - 1;
+         int searchLen = searchChars.length;
++        int searchLast = searchLen - 1;
+         outer:
+         for (int i = 0; i < csLen; i++) {
+             char ch = cs.charAt(i);
+             for (int j = 0; j < searchLen; j++) {
+                 if (searchChars[j] == ch) {
++                    if (i < csLast && j < searchLast && Character.isHighSurrogate(ch)) {
++                        if (searchChars[j + 1] == cs.charAt(i + 1)) {
++                            continue outer;
++                        }
++                    } else {
+                         continue outer;
++                    }
+                 }
+             }
+             return i;
+@@ -1573,8 +1592,16 @@ public class StringUtils {
+         int strLen = str.length();
+         for (int i = 0; i < strLen; i++) {
+             char ch = str.charAt(i);
+-            if (searchChars.indexOf(ch) < 0) {
++            boolean chFound = searchChars.indexOf(ch) >= 0;
++            if (i + 1 < strLen && Character.isHighSurrogate(ch)) {
++                char ch2 = str.charAt(i + 1);
++                if (chFound && searchChars.indexOf(ch2) < 0) {
+                     return i;
++                }
++            } else {
++                if (!chFound) {
++                    return i;
++                }
+             }
+         }
+         return INDEX_NOT_FOUND;
+@@ -1675,14 +1702,25 @@ public class StringUtils {
+             return true;
+         }
+         int csLen = cs.length();
++        int csLast = csLen - 1;
+         int searchLen = searchChars.length;
++        int searchLast = searchLen - 1;
+         for (int i = 0; i < csLen; i++) {
+             char ch = cs.charAt(i);
+             for (int j = 0; j < searchLen; j++) {
+                 if (searchChars[j] == ch) {
++                    if (Character.isHighSurrogate(ch)) {
++                        if (j == searchLast) {
+                             // missing low surrogate, fine, like String.indexOf(String)
++                            return false;
++                        }
++                        if (i < csLast && searchChars[j + 1] == cs.charAt(i + 1)) {
++                            return false;
++                        }
++                    } else {
+                         // ch is in the Basic Multilingual Plane
+                         return false;
++                    }
+                 }
+             }
+         }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testContainsNone_CharArrayWithSupplementaryChars() {
+        assertEquals(false, StringUtils.containsNone(CharU20000 + CharU20001, CharU20000.toCharArray()));
+        assertEquals(false, StringUtils.containsNone(CharU20000 + CharU20001, CharU20001.toCharArray()));
+        assertEquals(false, StringUtils.containsNone(CharU20000, CharU20000.toCharArray()));
+        // Sanity check:
+        assertEquals(-1, CharU20000.indexOf(CharU20001));
+        assertEquals(0, CharU20000.indexOf(CharU20001.charAt(0)));
+        assertEquals(-1, CharU20000.indexOf(CharU20001.charAt(1)));
+        // Test:
+        assertEquals(true, StringUtils.containsNone(CharU20000, CharU20001.toCharArray()));
+        assertEquals(true, StringUtils.containsNone(CharU20001, CharU20000.toCharArray()));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

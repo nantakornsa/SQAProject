@@ -1,0 +1,157 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Compress
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Compress
+       Program: commons-compress
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/Compress.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-compress.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/active-bugs.csv
+Number of bugs: 47
+--------------------------------------------------------------------------------
+
+Summary for Bug: Compress-43
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+d75b89856ef29bbec6784cd6aa714eafe0eeb312
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-05-22 18:11:06 +0200
+--------------------------------------------------------------------------------
+Bug report id:
+COMPRESS-394
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COMPRESS-394
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.compress.archivers.zip.DataDescriptorTest::doesntWriteDataDescriptorWhenAddingRawEntries
+   --> junit.framework.AssertionFailedError: arrays first differed at element [0]; expected:<0> but was:<8>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream ===
+diff --git a/src/main/java/org/apache/commons/compress/archivers/zip/ZipArchiveOutputStream.java b/src/main/java/org/apache/commons/compress/archivers/zip/ZipArchiveOutputStream.java
+index df1f63ce..63aeba72 100644
+--- a/src/main/java/org/apache/commons/compress/archivers/zip/ZipArchiveOutputStream.java
++++ b/src/main/java/org/apache/commons/compress/archivers/zip/ZipArchiveOutputStream.java
+@@ -1031,7 +1031,7 @@ private void writeLocalFileHeader(final ZipArchiveEntry ze, final boolean phased
+ 
+         final long localHeaderStart = streamCompressor.getTotalBytesWritten();
+         final byte[] localHeader = createLocalFileHeader(ze, name, encodable, phased, localHeaderStart);
+-        metaData.put(ze, new EntryMetaData(localHeaderStart, usesDataDescriptor(ze.getMethod())));
++        metaData.put(ze, new EntryMetaData(localHeaderStart, usesDataDescriptor(ze.getMethod(), phased)));
+         entry.localDataStart = localHeaderStart + LFH_CRC_OFFSET; // At crc offset
+         writeCounted(localHeader);
+         entry.dataStart = streamCompressor.getTotalBytesWritten();
+@@ -1072,7 +1072,7 @@ private byte[] createLocalFileHeader(final ZipArchiveEntry ze, final ByteBuffer
+ 
+         //store method in local variable to prevent multiple method calls
+         final int zipMethod = ze.getMethod();
+-        final boolean dataDescriptor = usesDataDescriptor(zipMethod);
++        final boolean dataDescriptor = usesDataDescriptor(zipMethod, phased);
+ 
+         putShort(versionNeededToExtract(zipMethod, hasZip64Extra(ze), dataDescriptor), buf, LFH_VERSION_NEEDED_OFFSET);
+ 
+@@ -1168,7 +1168,7 @@ private void addUnicodeExtraFields(final ZipArchiveEntry ze, final boolean encod
+      * @throws IOException on error
+      */
+     protected void writeDataDescriptor(final ZipArchiveEntry ze) throws IOException {
+-        if (ze.getMethod() != DEFLATED || channel != null) {
++        if (!usesDataDescriptor(ze.getMethod(), false)) {
+             return;
+         }
+         writeCounted(DD_SIG);
+@@ -1489,8 +1489,8 @@ private int versionNeededToExtract(final int zipMethod, final boolean zip64, fin
+         return versionNeededToExtractMethod(zipMethod);
+     }
+ 
+-    private boolean usesDataDescriptor(final int zipMethod) {
+-        return zipMethod == DEFLATED && channel == null;
++    private boolean usesDataDescriptor(final int zipMethod, boolean phased) {
++        return !phased && zipMethod == DEFLATED && channel == null;
+     }
+ 
+     private int versionNeededToExtractMethod(int zipMethod) {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void doesntWriteDataDescriptorWhenAddingRawEntries() throws IOException {
+        ByteArrayOutputStream init = new ByteArrayOutputStream();
+        try (ZipArchiveOutputStream zos = new ZipArchiveOutputStream(init)) {
+            zos.putArchiveEntry(new ZipArchiveEntry("test1.txt"));
+            zos.write("foo".getBytes("UTF-8"));
+            zos.closeArchiveEntry();
+        }
+
+        File f = new File(dir, "test.zip");
+        try (FileOutputStream fos = new FileOutputStream(f)) {
+            fos.write(init.toByteArray());
+        }
+
+        ByteArrayOutputStream o = new ByteArrayOutputStream();
+        ZipArchiveEntry zae;
+        try (ZipFile zf = new ZipFile(f);
+             ZipArchiveOutputStream zos = new ZipArchiveOutputStream(o)) {
+            zae = zf.getEntry("test1.txt");
+            zos.addRawArchiveEntry(zae, zf.getRawInputStream(zae));
+        }
+
+        byte[] data = o.toByteArray();
+        byte[] versionInLFH = Arrays.copyOfRange(data, 4, 6);
+        // still 2.0 because of Deflate
+        assertArrayEquals(new byte[] { 20, 0 }, versionInLFH);
+        byte[] gpbInLFH = Arrays.copyOfRange(data, 6, 8);
+        // no DD but EFS flag
+        assertArrayEquals(new byte[] { 0, 8 }, gpbInLFH);
+
+        int cdhStart = findCentralDirectory(data);
+        byte[] versionInCDH = Arrays.copyOfRange(data, cdhStart + 6, cdhStart + 8);
+        assertArrayEquals(new byte[] { 20, 0 }, versionInCDH);
+        byte[] gpbInCDH = Arrays.copyOfRange(data, cdhStart + 8, cdhStart + 10);
+        assertArrayEquals(new byte[] { 0, 8 }, gpbInCDH);
+
+        int ddStart = cdhStart - 16;
+        assertNotEquals(ZipLong.DD_SIG, new ZipLong(data, ddStart));
+        long crcFromLFH = ZipLong.getValue(data, 14);
+        long cSizeFromLFH = ZipLong.getValue(data, 18);
+        long sizeFromLFH = ZipLong.getValue(data, 22);
+        assertEquals(3, sizeFromLFH);
+
+        long crcFromCDH = ZipLong.getValue(data, cdhStart + 16);
+        assertEquals(crcFromLFH, crcFromCDH);
+        long cSizeFromCDH = ZipLong.getValue(data, cdhStart + 20);
+        assertEquals(cSizeFromLFH, cSizeFromCDH);
+        long sizeFromCDH = ZipLong.getValue(data, cdhStart + 24);
+        assertEquals(sizeFromLFH, sizeFromCDH);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

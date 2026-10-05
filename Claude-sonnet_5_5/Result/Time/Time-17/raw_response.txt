@@ -1,0 +1,93 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791099575-OhIL5jepvB6H7fwQwzVB","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":2263,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" test below"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" re"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"produces the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Sao Paulo overl"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ap scenario from"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" the triggering test. I"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" have not"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" comp"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"iled or run it against"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" either"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" version. It is written to fail on the buggy `adjustOffset` and pass on the fixed one.\n\nThe Sao Paulo DST ended on 2012-02-26 "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"at 00:00 local time, when clocks went back to 23:00 on 02-25. That makes 23:15 occur twice on 25 February:"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" first at -02:00, then at -03:00. The test checks these cases:\n\n- 22:15 is outside the overlap, so both"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" `withEarlierOffsetAtOverlap()` and `withLaterOffsetAtOverlap()` should return the same instance.\n- The first 23:15 (-02:00) should stay itself for"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" the earlier offset and move to the second 23:15 (-03:00) for the later offset.\n- The second 23:15 should stay itself for the later offset and move back to the first 23:15 for the earlier offset.\n- Both offsets and inst"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ants are asserted, including the expected local-time strings.\n\nThe test uses JUnit 3 style (`TestCase`), matching the project's existing tests.\n\n```java\npackage org.joda.time;\n\nimport junit.framework.Test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Case;\nimport junit.framework.TestSuite;\n\n/**\n * Regression test for adjustOffset overlap handling (Time-17).\n */\npublic class TestDateTimeZoneAdjustOffsetR"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"egression extends TestCase {\n\n    public static void main(String[] args) {\n        junit.textui.TestRunner.run(suite());\n    }\n\n    public static TestSuite suite() {\n        return new TestSuite(TestDateTimeZoneAdjustOffsetReg"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ression.class);\n    }\n\n    public TestDateTimeZoneAdjustOffsetRegression(String name) {\n        super(name);\n    }\n\n    public void testBug3476684_adjustOffset() {\n        final DateTimeZone zone = DateTimeZone.forID(\"America/Sao_Pa"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ulo\");\n        DateTime base = new DateTime(2012, 2, 25, 22, 15, zone);\n        DateTime baseBefore = base.plusHours(1);  // 23:15 (first)\n        DateTime baseAfter = base.plusHours(2);  // 23:15 (second"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":")\n\n        assertSame(base, base.withEarlierOffsetAtOverlap());\n        assertSame(base, base.withLaterOffsetAtOverlap());\n\n        assertSame(baseBefore, baseBefore.withEarlierOffsetAtOverlap());\n        assertEquals"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"(baseAfter, baseBefore.withLaterOffsetAtOverlap());\n\n        assertSame(baseAfter, baseAfter.withLaterOffsetAtOverlap());\n        assertEquals(baseBefore, baseAfter.withEarlierOffsetAtOverl"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ap());\n\n        // explicit offset checks\n        assertEquals(\"2012-02-25T23:15:00.000-02:00\", baseBefore.toString());\n        assertEquals(\"2012-02-25T23:15:00.000-03:00\", baseAfter.toString());\n        assertEqu"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"als(\"2012-02-25T23:15:00.000-03:00\",\n                baseBefore.withLaterOffsetAtOverlap().toString());\n        assertEquals(\"2012-02-25T23:15:00.000-02:00\",\n                baseAfter.withEarlierOffsetAtOverl"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ap().toString());\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2263,"output_tokens":1125,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.015776,"is_byok":false,"cost_details":{"upstream_inference_cost":0.015776,"upstream_inference_prompt_cost":0.004526,"upstream_inference_completions_cost":0.01125}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,108 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-110
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+83264a7e377bd3399f0b550460077959aaece16d
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2019-03-02 17:39:43 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+2265
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/2265
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.deser.jdk.UtilCollectionsTypesTest::testUnmodifiableListFromLinkedList
+   --> com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Cannot construct instance of `java.util.Collections$UnmodifiableList` (no Creators, like default construct, exist): no default no-arguments constructor found
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.deser.impl.JavaUtilCollectionsDeserializers
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.deser.impl.JavaUtilCollectionsDeserializers ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/deser/impl/JavaUtilCollectionsDeserializers.java b/src/main/java/com/fasterxml/jackson/databind/deser/impl/JavaUtilCollectionsDeserializers.java
+index 3228bacda..f16d95e42 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/deser/impl/JavaUtilCollectionsDeserializers.java
++++ b/src/main/java/com/fasterxml/jackson/databind/deser/impl/JavaUtilCollectionsDeserializers.java
+@@ -44,6 +44,7 @@ public abstract class JavaUtilCollectionsDeserializers
+     /* 02-Mar-2019, tatu: for [databind#2265], need to consider possible alternate type...
+      *    which we essentially coerce into the other one
+      */
++    private final static Class<?> CLASS_UNMODIFIABLE_LIST_ALIAS;
+     private final static Class<?> CLASS_UNMODIFIABLE_MAP;
+ 
+     static {
+@@ -55,6 +56,7 @@ public abstract class JavaUtilCollectionsDeserializers
+         CLASS_SINGLETON_LIST = list.getClass();
+         CLASS_UNMODIFIABLE_LIST = Collections.unmodifiableList(list).getClass();
+         // for [databind#2265]
++        CLASS_UNMODIFIABLE_LIST_ALIAS = Collections.unmodifiableList(new LinkedList<Object>()).getClass();
+         
+         Map<?,?> map = Collections.singletonMap("a", "b");
+         CLASS_SINGLETON_MAP = map.getClass();
+@@ -75,7 +77,7 @@ public abstract class JavaUtilCollectionsDeserializers
+         } else if (type.hasRawClass(CLASS_SINGLETON_SET)) {
+             conv = converter(TYPE_SINGLETON_SET, type, Set.class);
+         // [databind#2265]: we may have another impl type for unmodifiable Lists, check both
+-        } else if (type.hasRawClass(CLASS_UNMODIFIABLE_LIST)) {
++        } else if (type.hasRawClass(CLASS_UNMODIFIABLE_LIST) || type.hasRawClass(CLASS_UNMODIFIABLE_LIST_ALIAS)) {
+             conv = converter(TYPE_UNMODIFIABLE_LIST, type, List.class);
+         } else if (type.hasRawClass(CLASS_UNMODIFIABLE_SET)) {
+             conv = converter(TYPE_UNMODIFIABLE_SET, type, Set.class);
+
+
+=== TRIGGERING TEST METHOD ===
+   public void testUnmodifiableListFromLinkedList() throws Exception {
+       final List<String> input = new LinkedList<>();
+       input.add("first");
+       input.add("second");
+
+       // Can't use simple "_verifyCollection" as type may change; instead use
+       // bit more flexible check:
+       Collection<?> act = _writeReadCollection(Collections.unmodifiableList(input));
+       assertEquals(input, act);
+
+       // and this check may be bit fragile (may need to revisit), but is good enough for now:
+       assertEquals(Collections.unmodifiableList(new ArrayList<>(input)).getClass(), act.getClass());
+   }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

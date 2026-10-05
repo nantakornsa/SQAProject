@@ -1,0 +1,42 @@
+```java
+package com.google.javascript.jscomp;
+
+import junit.framework.TestCase;
+
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Regression test: a function with an explicit {@code this} type must be
+ * called through a GETPROP or GETELEM, not as a bare call.
+ */
+public class ThisTypeOfFunctionRegressionTest extends TestCase {
+
+  private JSError[] compileAndGetWarnings(String js) {
+    Compiler compiler = new Compiler();
+    CompilerOptions options = new CompilerOptions();
+    options.checkTypes = true;
+    options.setWarningLevel(DiagnosticGroups.CHECK_TYPES, CheckLevel.WARNING);
+
+    List<JSSourceFile> externs = Collections.singletonList(
+        JSSourceFile.fromCode("externs", ""));
+    List<JSSourceFile> inputs = Collections.singletonList(
+        JSSourceFile.fromCode("input", js));
+
+    compiler.compile(externs, inputs, options);
+    return compiler.getWarnings();
+  }
+
+  public void testThisTypeOfFunction2() throws Exception {
+    JSError[] warnings = compileAndGetWarnings(
+        "/** @constructor */ function F() {}" +
+        "/** @type {function(this:F)} */ function f() {}" +
+        "f();");
+
+    assertEquals("expected a warning", 1, warnings.length);
+    assertTrue(warnings[0].description,
+        warnings[0].description.contains(
+            "\"function (this:F): ?\" must be called with a \"this\" type"));
+  }
+}
+```

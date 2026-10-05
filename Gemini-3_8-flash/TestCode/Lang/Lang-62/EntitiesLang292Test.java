@@ -1,0 +1,14 @@
+package org.apache.commons.lang;
+
+import junit.framework.TestCase;
+
+public class EntitiesLang292Test extends TestCase {
+
+    public void testNumberOverflow() throws Exception {
+        Entities entities = Entities.XML;
+        assertEquals("&#12345678;", entities.unescape("&#12345678;"));
+        assertEquals("x&#12345678;y", entities.unescape("x&#12345678;y"));
+        assertEquals("&#x12345678;", entities.unescape("&#x12345678;"));
+        assertEquals("x&#x12345678;y", entities.unescape("x&#x12345678;y"));
+    }
+}

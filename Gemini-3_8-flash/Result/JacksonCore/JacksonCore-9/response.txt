@@ -1,0 +1,35 @@
+```java
+package com.fasterxml.jackson.core.json;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import org.junit.Assert;
+import org.junit.Test;
+
+public class TestGetValueAsTextDefects4J {
+    @Test
+    public void testGetValueAsTextBytes() throws Exception {
+        JsonFactory f = new JsonFactory();
+        String json = "{\"a\":1}";
+        JsonParser p = f.createParser(json.getBytes("UTF-8"));
+        Assert.assertToken(JsonToken.START_OBJECT, p.nextToken());
+        Assert.assertToken(JsonToken.FIELD_NAME, p.nextToken());
+        Assert.assertEquals("a", p.getText());
+        Assert.assertEquals("a", p.getValueAsString());
+        p.close();
+    }
+
+    @Test
+    public void testGetValueAsTextChars() throws Exception {
+        JsonFactory f = new JsonFactory();
+        String json = "{\"a\":1}";
+        JsonParser p = f.createParser(json);
+        Assert.assertToken(JsonToken.START_OBJECT, p.nextToken());
+        Assert.assertToken(JsonToken.FIELD_NAME, p.nextToken());
+        Assert.assertEquals("a", p.getText());
+        Assert.assertEquals("a", p.getValueAsString());
+        p.close();
+    }
+}
+```

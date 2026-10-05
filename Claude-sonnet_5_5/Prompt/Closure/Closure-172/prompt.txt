@@ -1,0 +1,111 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-172
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+ce86cc8e460060e1280f365f22ccd5c375e2f5ed
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-07-15 16:08:34 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1042
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-1042.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.TypeCheckTest::testIssue1024
+   --> junit.framework.AssertionFailedError: unexpected warnings(s):
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.TypedScopeCreator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.TypedScopeCreator ===
+diff --git a/src/com/google/javascript/jscomp/TypedScopeCreator.java b/src/com/google/javascript/jscomp/TypedScopeCreator.java
+index d5a594767..4acb363ac 100644
+--- a/src/com/google/javascript/jscomp/TypedScopeCreator.java
++++ b/src/com/google/javascript/jscomp/TypedScopeCreator.java
+@@ -1667,7 +1667,13 @@ final class TypedScopeCreator implements ScopeCreator {
+ 
+       // Prototypes of constructors and interfaces are always declared.
+       if (qName != null && qName.endsWith(".prototype")) {
++        String className = qName.substring(0, qName.lastIndexOf(".prototype"));
++        Var slot = scope.getSlot(className);
++        JSType classType = slot == null ? null : slot.getType();
++        if (classType != null
++            && (classType.isConstructor() || classType.isInterface())) {
+           return false;
++        }
+       }
+ 
+       boolean inferred = true;
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue1024() throws Exception {
+     testTypes(
+        "/** @param {Object} a */\n" +
+        "function f(a) {\n" +
+        "  a.prototype = '__proto'\n" +
+        "}\n" +
+        "/** @param {Object} b\n" +
+        " *  @return {!Object}\n" +
+        " */\n" +
+        "function g(b) {\n" +
+        "  return b.prototype\n" +
+        "}\n");
+     /* TODO(blickly): Make this warning go away.
+      * This is old behavior, but it doesn't make sense to warn about since
+      * both assignments are inferred.
+      */
+     testTypes(
+        "/** @param {Object} a */\n" +
+        "function f(a) {\n" +
+        "  a.prototype = {foo:3};\n" +
+        "}\n" +
+        "/** @param {Object} b\n" +
+        " */\n" +
+        "function g(b) {\n" +
+        "  b.prototype = function(){};\n" +
+        "}\n",
+        "assignment to property prototype of Object\n" +
+        "found   : {foo: number}\n" +
+        "required: function (): undefined");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,83 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-119
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+046e0b226e963bc584c2a6cd3c2b471777c5cc53
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-08-26 12:47:25 -0400
+--------------------------------------------------------------------------------
+Bug report id:
+1070
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-1070.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.CheckGlobalNamesTest::testGlobalCatch
+   --> junit.framework.AssertionFailedError: Unexpected warning(s): JSC_UNDEFINED_NAME. e is never defined at testcode line 1 : 48
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.GlobalNamespace
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.GlobalNamespace ===
+diff --git a/src/com/google/javascript/jscomp/GlobalNamespace.java b/src/com/google/javascript/jscomp/GlobalNamespace.java
+index 639318df0..0e9c4d331 100644
+--- a/src/com/google/javascript/jscomp/GlobalNamespace.java
++++ b/src/com/google/javascript/jscomp/GlobalNamespace.java
+@@ -363,6 +363,7 @@ class GlobalNamespace
+                 isSet = true;
+                 type = Name.Type.FUNCTION;
+                 break;
++              case Token.CATCH:
+               case Token.INC:
+               case Token.DEC:
+                 isSet = true;
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testGlobalCatch() throws Exception {
+    testSame(
+        "try {" +
+        "  throw Error();" +
+        "} catch (e) {" +
+        "  console.log(e.name)" +
+        "}");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,99 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-51
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+334c01e6eba6ef9ce263577f63f2094fc98c2c81
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-08-06 22:26:55 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-631
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-631
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.analysis.solvers.RegulaFalsiSolverTest::testIssue631
+   --> org.apache.commons.math.exception.TooManyEvaluationsException: illegal state: maximal count (3,624) exceeded: evaluations
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.analysis.solvers.BaseSecantSolver
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.analysis.solvers.BaseSecantSolver ===
+diff --git a/src/main/java/org/apache/commons/math/analysis/solvers/BaseSecantSolver.java b/src/main/java/org/apache/commons/math/analysis/solvers/BaseSecantSolver.java
+index e258c68c6..b3a23a1d4 100644
+--- a/src/main/java/org/apache/commons/math/analysis/solvers/BaseSecantSolver.java
++++ b/src/main/java/org/apache/commons/math/analysis/solvers/BaseSecantSolver.java
+@@ -182,10 +182,19 @@ public abstract class BaseSecantSolver
+                 case PEGASUS:
+                     f0 *= f1 / (f1 + fx);
+                     break;
++                case REGULA_FALSI:
++                    if (x == x1) {
++                        final double delta = FastMath.max(rtol * FastMath.abs(x1),
++                                                          atol);
+                         // Update formula cannot make any progress: Update the
+                         // search interval.
++                        x0 = 0.5 * (x0 + x1 - delta);
++                        f0 = computeObjectiveValue(x0);
++                    }
++                    break;
+                 default:
+                     // Should never happen.
++                    throw new MathInternalError();
+                 }
+             }
+             // Update from [x0, x1] to [x0, x].
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testIssue631() {
+        final UnivariateRealFunction f = new UnivariateRealFunction() {
+                @Override
+                public double value(double x) {
+                    return Math.exp(x) - Math.pow(Math.PI, 3.0);
+                }
+            };
+
+        final UnivariateRealSolver solver = new RegulaFalsiSolver();
+        final double root = solver.solve(3624, f, 1, 10);
+        Assert.assertEquals(3.4341896575482003, root, 1e-15);
+	}
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

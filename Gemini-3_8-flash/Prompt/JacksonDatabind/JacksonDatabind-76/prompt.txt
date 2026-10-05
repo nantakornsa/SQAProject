@@ -1,0 +1,117 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-76
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+e08dafef4faa7d71330160dafcbe77536d90e809
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-03-27 22:05:43 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1573
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1573
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.deser.builder.BuilderWithUnwrappedTest::testWithUnwrappedAndCreatorSingleParameterAtBeginning
+   --> junit.framework.ComparisonFailure: expected:<John> but was:<null>
+ - com.fasterxml.jackson.databind.deser.builder.BuilderWithUnwrappedTest::testWithUnwrappedAndCreatorMultipleParametersAtBeginning
+   --> junit.framework.ComparisonFailure: expected:<John> but was:<null>
+ - com.fasterxml.jackson.databind.deser.builder.BuilderWithUnwrappedTest::testWithUnwrappedAndCreatorSingleParameterInMiddle
+   --> junit.framework.AssertionFailedError: expected:<30> but was:<0>
+ - com.fasterxml.jackson.databind.deser.builder.BuilderWithUnwrappedTest::testWithUnwrappedAndCreatorMultipleParametersInMiddle
+   --> junit.framework.AssertionFailedError: expected:<30> but was:<0>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.deser.BuilderBasedDeserializer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.deser.BuilderBasedDeserializer ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/deser/BuilderBasedDeserializer.java b/src/main/java/com/fasterxml/jackson/databind/deser/BuilderBasedDeserializer.java
+index 1629a42be..817e29ec4 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/deser/BuilderBasedDeserializer.java
++++ b/src/main/java/com/fasterxml/jackson/databind/deser/BuilderBasedDeserializer.java
+@@ -580,27 +580,7 @@ public class BuilderBasedDeserializer
+             // creator property?
+             SettableBeanProperty creatorProp = creator.findCreatorProperty(propName);
+             if (creatorProp != null) {
+-                if (buffer.assignParameter(creatorProp, creatorProp.deserialize(p, ctxt))) {
+-                    t = p.nextToken();
+-                    Object bean;
+-                    try {
+-                        bean = creator.build(ctxt, buffer);
+-                    } catch (Exception e) {
+-                        wrapAndThrow(e, _beanType.getRawClass(), propName, ctxt);
+-                        continue;
+-                    }
+-                    while (t == JsonToken.FIELD_NAME) {
+-                        p.nextToken();
+-                        tokens.copyCurrentStructure(p);
+-                        t = p.nextToken();
+-                    }
+-                    tokens.writeEndObject();
+-                    if (bean.getClass() != _beanType.getRawClass()) {
+-                        ctxt.reportMappingException("Can not create polymorphic instances with unwrapped values");
+-                        return null;
+-                    }
+-                    return _unwrappedPropertyHandler.processUnwrapped(p, ctxt, bean, tokens);
+-                }
++                buffer.assignParameter(creatorProp, creatorProp.deserialize(p, ctxt));
+                 continue;
+             }
+             // Object Id property?
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testWithUnwrappedAndCreatorSingleParameterAtBeginning() throws Exception {
+        final String json = aposToQuotes("{'person_id':1234,'first_name':'John','last_name':'Doe','years_old':30,'living':true}");
+
+        final ObjectMapper mapper = new ObjectMapper();
+        Person person = mapper.readValue(json, Person.class);
+        assertEquals(1234, person.getId());
+        assertNotNull(person.getName());
+        assertEquals("John", person.getName().getFirst());
+        assertEquals("Doe", person.getName().getLast());
+        assertEquals(30, person.getAge());
+        assertEquals(true, person.isAlive());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

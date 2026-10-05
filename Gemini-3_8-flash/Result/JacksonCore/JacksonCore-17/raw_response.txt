@@ -1,0 +1,93 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791106767-buGXlmYHInB3WXkfZiNM","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Encoding Flaws**\n\nI'm currently diving deep into a specific bug, JacksonCore-17, within `UTF8JsonGenerator`. My focus is on the `writeRaw(String, int, int)` method and how it mishandles surrogate pairs when string chunks are split.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing Surrogate Pair Splitting**\n\nI'm investigating how the `UTF8JsonGenerator.writeRaw(String, int, int)` method might fail when surrogate pairs are split across buffer boundaries during string chunk processing. I'm examining the `getChars` usage and its interaction with buffer sizes to pinpoint the exact scenario.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Identifying Surrogate Boundary**\n\nI've pinpointed a critical scenario where a single surrogate pair straddles the chunk boundary, specifically when the buffer size, like `CHAR_CONCAT_BUFFER` (2000), is even and the split occurs at the halfway mark. The leading \"a\" in my test string confirms this, placing the high surrogate at the end of the first chunk.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Resolving Surrogate Pair Issues**\n\nI'm now focusing on the exact exception thrown in `writeRaw(char[] cbuf, int offset, int len)` when encountering a split surrogate, specifically the `_reportError(\"Split surrogate on writeRaw() input (last character)\")`. I'm verifying how the proposed fix, with its `maxChunk` and `maxBytes` calculations, prevents this error.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"An issue in `UTF8JsonGenerator."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"writeRaw(String text, int offset, int len)` causes a `JsonGenerationException` when raw text containing surrogate pairs"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" spans across internal chunk boundaries, leaving a high surrogate as the last character of a chunk.\n\nHere is the regression test case"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" reproducing this bug.\n\n```java\npackage com.fasterxml.jackson.core.json;\n\nimport java.io.ByteArrayOutputStream;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\nimport com.fasterxml.jackson.core.JsonFactory;\nimport com.fasterxml.jackson.core.JsonGenerator"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\nimport org.junit.Test;\n\nimport static org.junit.Assert.assertArrayEquals;\n\npublic class UTF"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"8JsonGeneratorRawSurrogatesTest {\n\n    @Test\n    public void testRawWithSurrogatesString() throws"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" Exception {\n        JsonFactory f = new JsonFactory();\n        ByteArrayOutputStream out = new ByteArrayOutputStream();\n\n        //"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" Construct a surrogate pair: Emoji grinning face U+1F600 (\\uD83D\\uDE00)"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        String surrogatePair = \"\\uD83D\\uDE00\";\n\n        // Generate a string large"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" enough to exceed generator buffer sizes,\n        // testing various alignments so that a surrogate pair is split across chunk boundaries.\n        for"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" (int padding = 0; padding < 4; padding++) {\n            out.reset();\n            JsonGenerator gen ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" f.createGenerator(out);\n\n            StringBuilder sb = new StringBuilder();\n            for (int i = 0; i < padding"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"; i++) {\n                sb.append('a');\n            }\n            for (int i = 0"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"; i < 4000; i++) {\n                sb.append(surrogatePair);\n            }\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"            String rawString = sb.toString();\n\n            gen.writeStartArray();\n            gen.writeRaw(rawString);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n            gen.writeEndArray();\n            gen.close();\n\n            // Verify output matches expected UTF-8 bytes\n            ByteArray"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"OutputStream expectedOut = new ByteArrayOutputStream();\n            expectedOut.write('[');\n            expectedOut.write(rawString.getBytes"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(\"UTF-8\"));\n            expectedOut.write(']');\n\n            assertArrayEquals(expectedOut.toByteArray(), out"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".toByteArray());\n        }\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1811,"output_tokens":1829,"output_tokens_details":{"thinking_tokens":1336},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.008217,"is_byok":false,"cost_details":{"upstream_inference_cost":0.008217,"upstream_inference_prompt_cost":0.00135825,"upstream_inference_completions_cost":0.00685875}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

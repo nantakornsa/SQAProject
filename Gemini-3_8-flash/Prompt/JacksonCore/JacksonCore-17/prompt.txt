@@ -1,0 +1,150 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonCore
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonCore
+       Program: jackson-core
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonCore/JacksonCore.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-core.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonCore/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonCore-17
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+554f8db0f940b2a53f974852a2af194739d65200
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-08-18 23:09:52 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+307
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-core/issues/307
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.core.json.RawValueWithSurrogatesTest::testRawWithSurrogatesString
+   --> com.fasterxml.jackson.core.JsonGenerationException: Split surrogate on writeRaw() input (last character)
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.core.json.UTF8JsonGenerator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.core.json.UTF8JsonGenerator ===
+diff --git a/src/main/java/com/fasterxml/jackson/core/json/UTF8JsonGenerator.java b/src/main/java/com/fasterxml/jackson/core/json/UTF8JsonGenerator.java
+index 4f4394c8..a638519a 100644
+--- a/src/main/java/com/fasterxml/jackson/core/json/UTF8JsonGenerator.java
++++ b/src/main/java/com/fasterxml/jackson/core/json/UTF8JsonGenerator.java
+@@ -525,17 +525,33 @@ public class UTF8JsonGenerator
+         final char[] buf = _charBuffer;
+ 
+         // minor optimization: see if we can just get and copy
++        if (len <= buf.length) {
++            text.getChars(offset, offset+len, buf, 0);
++            _writeRawSegment(buf, 0, len);
++            return;
++        }
+ 
+         // If not, need segmented approach. For speed, let's also use input buffer
+         // size that is guaranteed to fit in output buffer; each char can expand to
+         // at most 3 bytes, so at most 1/3 of buffer size.
++        final int maxChunk = (_outputEnd >> 2) + (_outputEnd >> 4); // == (1/4 + 1/16) == 5/16
++        final int maxBytes = maxChunk * 3;
+ 
+         while (len > 0) {
+-            int len2 = Math.min(buf.length, len);
++            int len2 = Math.min(maxChunk, len);
+             text.getChars(offset, offset+len2, buf, 0);
+-            writeRaw(buf, 0, len2);
++            if ((_outputTail + maxBytes) > _outputEnd) {
++                _flushBuffer();
++            }
+             // If this is NOT the last segment and if the last character looks like
+             // split surrogate second half, drop it
++            if (len > 0) {
++                char ch = buf[len2-1];
++                if ((ch >= SURR1_FIRST) && (ch <= SURR1_LAST)) {
++                    --len2;
++                }
++            }
++            _writeRawSegment(buf, 0, len2);
+             offset += len2;
+             len -= len2;
+         }
+@@ -669,6 +685,30 @@ public class UTF8JsonGenerator
+      *
+      * @since 2.8.2
+      */
++    private void _writeRawSegment(char[] cbuf, int offset, int end) throws IOException
++    {
++        main_loop:
++        while (offset < end) {
++            inner_loop:
++            while (true) {
++                int ch = (int) cbuf[offset];
++                if (ch > 0x7F) {
++                    break inner_loop;
++                }
++                _outputBuffer[_outputTail++] = (byte) ch;
++                if (++offset >= end) {
++                    break main_loop;
++                }
++            }
++            char ch = cbuf[offset++];
++            if (ch < 0x800) { // 2-byte?
++                _outputBuffer[_outputTail++] = (byte) (0xc0 | (ch >> 6));
++                _outputBuffer[_outputTail++] = (byte) (0x80 | (ch & 0x3f));
++            } else {
++                offset = _outputRawMultiByteChar(ch, cbuf, offset, end);
++            }
++        }
++    }
+ 
+     /*
+     /**********************************************************
+@@ -1884,7 +1924,8 @@ public class UTF8JsonGenerator
+             if (ch <= SURR2_LAST) { // yes, outside of BMP
+                 // Do we have second part?
+                 if (inputOffset >= inputEnd || cbuf == null) { // nope... have to note down
+-                    _reportError("Split surrogate on writeRaw() input (last character)");
++                    _reportError(String.format(
++"Split surrogate on writeRaw() input (last character): first character 0x%4x", ch));
+                 }
+                 _outputSurrogates(ch, cbuf[inputOffset]);
+                 return inputOffset+1;
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testRawWithSurrogatesString() throws Exception {
+        _testRawWithSurrogatesString(false);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

@@ -1,0 +1,91 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-105
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+69903aeb290415809bfaf6a2e18ec6cb2141fc5a
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2018-12-06 21:35:10 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+2197
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/2197
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.deser.jdk.JDKScalarsTest::testVoidDeser
+   --> com.fasterxml.jackson.databind.exc.MismatchedInputException: Cannot construct instance of `java.lang.Void` (although at least one Creator exists): no int/Int-argument constructor/factory method to deserialize from Number value (123)
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.deser.std.JdkDeserializers
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.deser.std.JdkDeserializers ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/deser/std/JdkDeserializers.java b/src/main/java/com/fasterxml/jackson/databind/deser/std/JdkDeserializers.java
+index c4c0ed93f..7743deae2 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/deser/std/JdkDeserializers.java
++++ b/src/main/java/com/fasterxml/jackson/databind/deser/std/JdkDeserializers.java
+@@ -19,7 +19,8 @@ public class JdkDeserializers
+                 UUID.class,
+                 AtomicBoolean.class,
+                 StackTraceElement.class,
+-                ByteBuffer.class
++                ByteBuffer.class,
++                Void.class
+         };
+         for (Class<?> cls : types) { _classNames.add(cls.getName()); }
+         for (Class<?> cls : FromStringDeserializer.types()) { _classNames.add(cls.getName()); }
+@@ -45,6 +46,9 @@ public class JdkDeserializers
+             if (rawType == ByteBuffer.class) {
+                 return new ByteBufferDeserializer();
+             }
++            if (rawType == Void.class) {
++                return NullifyingDeserializer.instance;
++            }
+         }
+         return null;
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testVoidDeser() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

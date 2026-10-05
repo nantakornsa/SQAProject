@@ -1,0 +1,40 @@
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.Node;
+
+import junit.framework.TestCase;
+
+public class CodePrinterNumericKeyRegressionTest extends TestCase {
+
+  private static String print(String js) {
+    Compiler compiler = new Compiler();
+    CompilerOptions options = new CompilerOptions();
+    compiler.initOptions(options);
+    Node root = compiler.parseTestCode(js);
+    assertEquals(0, compiler.getErrorCount());
+    return compiler.toSource(root);
+  }
+
+  public void testNumericKeys() {
+    // A quoted key with a leading zero must stay quoted, otherwise the
+    // property name would change from "010" to "10".
+    String result = print("var x = {'010': 1};");
+    assertTrue("Unexpected output: " + result,
+        result.contains("{\"010\":1}"));
+    assertFalse("Unexpected output: " + result,
+        result.contains("{10:1}"));
+
+    // Octal literal key is the number 8.
+    result = print("var x = {010: 1};");
+    assertTrue("Unexpected output: " + result, result.contains("{8:1}"));
+
+    // Hex literal key is the number 16; quoted hex string stays a string.
+    result = print("var x = {0x10: 1};");
+    assertTrue("Unexpected output: " + result, result.contains("{16:1}"));
+    result = print("var x = {'0x10': 1};");
+    assertTrue("Unexpected output: " + result,
+        result.contains("{\"0x10\":1}"));
+  }
+}
+```

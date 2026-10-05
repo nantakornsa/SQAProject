@@ -1,0 +1,21 @@
+package org.apache.commons.compress.archivers.tar;
+
+import org.junit.Test;
+import static org.junit.Assert.fail;
+
+public class TarUtilsRegressionTest {
+
+    @Test
+    public void testParseOctalWithEmbeddedNul() {
+        // A buffer with an embedded NUL byte in the middle of octal digits:
+        // " 01\02 " - trailing space is trimmed, leading space trimmed,
+        // but '0', '1', 0, '2' contains an embedded NUL.
+        byte[] buffer = new byte[] { ' ', '0', '1', 0, '2', ' ' };
+        try {
+            TarUtils.parseOctal(buffer, 0, buffer.length);
+            fail("Expected IllegalArgumentException - embedded NUL");
+        } catch (IllegalArgumentException expected) {
+            // Expected exception
+        }
+    }
+}

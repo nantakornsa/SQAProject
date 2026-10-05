@@ -1,0 +1,30 @@
+package org.mockitousage.matchers;
+
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+
+import java.util.Arrays;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
+public class VarargsCaptureRegressionTest {
+
+    interface VarargMock {
+        void mixedVarargs(int a, String... b);
+    }
+
+    @Test
+    public void should_capture_vararg_arguments_correctly() {
+        VarargMock mock = mock(VarargMock.class);
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+
+        mock.mixedVarargs(42, "a", "b", "c");
+
+        verify(mock).mixedVarargs(anyInt(), captor.capture());
+
+        assertEquals(Arrays.asList("a", "b", "c"), captor.getAllValues());
+    }
+}

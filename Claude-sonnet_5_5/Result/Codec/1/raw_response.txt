@@ -1,0 +1,78 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791042024-BEDnxiSBURDjQss9WQJC","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":3173,"output_tokens":8,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"=== ANALYSI"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"S ===\n`Caver"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"phone.caverphone`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" calls `txt.toL"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"owerCase()` with"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" the J"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"VM default locale."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Under the Turkish locale"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":", `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\"I\".toLowerC"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ase()` retur"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ns the dotless `ı` (U+0131) instead of `i`. The next step, `replaceAll(\"[^a-z]\", \"\")`, then strips that character, so the result for \"I\" bec"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"omes \"1111111111\". Under English, \"I\" lowercases to \"i\", which becomes a vowel, and the result is \"A111111111\". The result"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" for \"I\" therefore depends on the default locale.\n\nThe test encodes \"I\" with the default locale set to English, then sets it to Turkish and encodes again. It asserts that the two results are equal. On the buggy version they"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" differ (\"A111111111\" vs \"1111111111\"), so the test fails. On the fixed version the code uses `Locale.ENGLISH`, so the results match and the test passes. The original locale is restored in a `finally` block.\n\n="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"== TEST CODE ===\n```java\npackage org.apache.commons.codec.language;\n\nimport java.util.Locale;\n\nimport junit.framework.Test;\nimport junit.framework.TestSuite;\n\nimport org.apache.commons.codec.StringEncoder;\nimport org.ap"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ache.commons.codec.StringEncoderAbstractTest;\n\npublic class CaverphoneTest extends StringEncoderAbstractTest {\n\n    public static Test suite() {\n        return new TestSuite(CaverphoneTest.class);\n    }\n\n    public CaverphoneTest(String name)"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" {\n        super(name);\n    }\n\n    protected StringEncoder makeEncoder() {\n        return new Caverphone();\n    }\n\n    public void testLocaleIndependence() throws Exception {\n        StringEncoder encoder = makeEncoder();\n        String[] data = { \"I\", \"i\""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" };\n        Locale orig = Locale.getDefault();\n        try {\n            for (int i = 0; i < data.length; i++) {\n                Locale.setDefault(Locale.ENGLISH);\n                String ref = encoder.encode(data[i]);\n\n                Locale.setDefault(new Loc"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ale(\"tr\"));\n                String cur = encoder.encode(data[i]);\n\n                assertEquals(\"Locale tr, input \" + data[i] + \": \", ref, cur);\n            }\n        } finally {\n            Locale.setDefault(orig);\n        }\n    }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n}\n```\n\n=== TARGET TEST ===\n`org.apache.commons.codec.language.CaverphoneTest::testLocaleIndependence`"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":3173,"output_tokens":823,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.014576,"is_byok":false,"cost_details":{"upstream_inference_cost":0.014576,"upstream_inference_prompt_cost":0.006346,"upstream_inference_completions_cost":0.00823}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

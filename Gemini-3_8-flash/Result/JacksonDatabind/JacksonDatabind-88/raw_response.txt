@@ -1,0 +1,66 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791186151-mleEp9gu1I3d5IfNcekG","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Jackson Bug**\n\nI'm currently digging into JacksonDatabind-88. Specifically, I'm analyzing the `_typeFromId` method and how it handles canonical type construction. My focus is on the scenario where a type ID contains a '<' character and the potential issues arising from not validating the constructed JavaType afterwards.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Validating Subtype Logic**\n\nI've been examining the `isTypeOrSubTypeOf` check, particularly after type IDs containing '<'. My analysis now includes the newly added validation that throws an `IllegalArgumentException` when the constructed type isn't a subtype of the expected base type, as demonstrated by `GenericTypeId1735Test`.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Testing Type ID Parsing**\n\nMy recent focus has been on validating the parsing of type IDs, especially when they involve generic types like `HashMap<String, String>`. I'm observing how the system handles cases where such a type ID is provided for a field expecting a different base type, like `Payload1735`, and verifying the expected `IllegalArgumentException` is thrown.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".fasterxml.jackson.databind.jsontype;\n\nimport com.fasterxml.jackson.annotation.JsonTypeInfo"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\nimport com.fasterxml.jackson.databind.BaseMapTest;\nimport com.fasterxml.jackson.databind"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".JsonMappingException;\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\npublic class GenericTypeId17"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"35Test extends BaseMapTest\n{\n    static class Wrapper1735 {\n        public Payload173"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"5 w;\n    }\n\n    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS)\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    static class Payload1735 {\n    }\n\n    public void testNestedTypeCheck1735"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"() throws Exception\n    {\n        ObjectMapper mapper = newObjectMapper();\n        String json = aposToQuotes(\"{'"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"w':{'@class':'java.util.HashMap<java.lang.String,java.lang.String>'"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"}}\");\n        try {\n            mapper.readValue(json, Wrapper1735.class);\n            "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"fail(\"Should not pass\");\n        } catch (JsonMappingException e) {\n            verifyException(e,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" \"not subtype of\");\n        }\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1184,"output_tokens":980,"output_tokens_details":{"thinking_tokens":718},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.004563,"is_byok":false,"cost_details":{"upstream_inference_cost":0.004563,"upstream_inference_prompt_cost":0.000888,"upstream_inference_completions_cost":0.003675}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

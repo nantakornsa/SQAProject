@@ -1,0 +1,197 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-30
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+ca6c3fc55eb74e21fe90e18da33723fb99b22f21
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-10-10 16:41:58 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+965
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/965
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.jsontype.TestExternalId::testBigDecimal965
+   --> junit.framework.AssertionFailedError: Expected BigDecimal = -10000000000.0000000001; got back BigDecimal = -1.0E+10
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.ObjectMapper
+ - com.fasterxml.jackson.databind.util.TokenBuffer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.ObjectMapper ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/ObjectMapper.java b/src/main/java/com/fasterxml/jackson/databind/ObjectMapper.java
+index 8b67ad745..2fd10fb56 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/ObjectMapper.java
++++ b/src/main/java/com/fasterxml/jackson/databind/ObjectMapper.java
+@@ -671,7 +671,7 @@ public class ObjectMapper
+ 
+     /*
+     /**********************************************************
+-    /* com.fasterxml.jackson.databind.Module registration, discovery
++    /* Module registration, discovery
+     /**********************************************************
+      */
+ 
+@@ -680,7 +680,7 @@ public class ObjectMapper
+      * provided by this mapper; for example, by adding providers for
+      * custom serializers and deserializers.
+      * 
+-     * @param module com.fasterxml.jackson.databind.Module to register
++     * @param module Module to register
+      */
+     public ObjectMapper registerModule(Module module)
+     {
+@@ -900,7 +900,7 @@ public class ObjectMapper
+      * 
+      * @since 2.2
+      */
+-    public ObjectMapper registerModules(Iterable<com.fasterxml.jackson.databind.Module> modules)
++    public ObjectMapper registerModules(Iterable<Module> modules)
+     {
+         for (Module module : modules) {
+             registerModule(module);
+@@ -917,7 +917,7 @@ public class ObjectMapper
+      * 
+      * @since 2.2
+      */
+-    public static List<com.fasterxml.jackson.databind.Module> findModules() {
++    public static List<Module> findModules() {
+         return findModules(null);
+     }
+ 
+@@ -930,10 +930,10 @@ public class ObjectMapper
+      * 
+      * @since 2.2
+      */
+-    public static List<com.fasterxml.jackson.databind.Module> findModules(ClassLoader classLoader)
++    public static List<Module> findModules(ClassLoader classLoader)
+     {
+-        ArrayList<com.fasterxml.jackson.databind.Module> modules = new ArrayList<Module>();
+-        ServiceLoader<com.fasterxml.jackson.databind.Module> loader = (classLoader == null) ?
++        ArrayList<Module> modules = new ArrayList<Module>();
++        ServiceLoader<Module> loader = (classLoader == null) ?
+                 ServiceLoader.load(Module.class) : ServiceLoader.load(Module.class, classLoader);
+         for (Module module : loader) {
+             modules.add(module);
+@@ -2507,6 +2507,9 @@ public class ObjectMapper
+     {
+         if (fromValue == null) return null;
+         TokenBuffer buf = new TokenBuffer(this, false);
++        if (isEnabled(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS)) {
++            buf = buf.forceUseOfBigDecimal(true);
++        }
+         JsonNode result;
+         try {
+             writeValue(buf, fromValue);
+@@ -3423,6 +3426,9 @@ public class ObjectMapper
+         
+         // Then use TokenBuffer, which is a JsonGenerator:
+         TokenBuffer buf = new TokenBuffer(this, false);
++        if (isEnabled(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS)) {
++            buf = buf.forceUseOfBigDecimal(true);
++        }
+         try {
+             // inlined 'writeValue' with minor changes:
+             // first: disable wrapping when writing
+
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.util.TokenBuffer ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/util/TokenBuffer.java b/src/main/java/com/fasterxml/jackson/databind/util/TokenBuffer.java
+index 39d9e7186..fc3600ad9 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/util/TokenBuffer.java
++++ b/src/main/java/com/fasterxml/jackson/databind/util/TokenBuffer.java
+@@ -77,6 +77,7 @@ public class TokenBuffer
+      *
+      * @since 2.7
+      */
++    protected boolean _forceBigDecimal;
+     
+     /*
+     /**********************************************************
+@@ -185,11 +186,17 @@ public class TokenBuffer
+         _hasNativeTypeIds = p.canReadTypeId();
+         _hasNativeObjectIds = p.canReadObjectId();
+         _mayHaveNativeIds = _hasNativeTypeIds | _hasNativeObjectIds;
++        _forceBigDecimal = (ctxt == null) ? false
++                : ctxt.isEnabled(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
+     }
+ 
+     /**
+      * @since 2.7
+      */
++    public TokenBuffer forceUseOfBigDecimal(boolean b) {
++        _forceBigDecimal = b;
++        return this;
++    }
+ 
+     @Override
+     public Version version() {
+@@ -956,11 +963,14 @@ sb.append("NativeObjectIds=").append(_hasNativeObjectIds).append(",");
+             }
+             break;
+         case VALUE_NUMBER_FLOAT:
++            if (_forceBigDecimal) {
+                 /* 10-Oct-2015, tatu: Ideally we would first determine whether underlying
+                  *   number is already decoded into a number (in which case might as well
+                  *   access as number); or is still retained as text (in which case we
+                  *   should further defer decoding that may not need BigDecimal):
+                  */
++                writeNumber(p.getDecimalValue());
++            } else {
+                 switch (p.getNumberType()) {
+                 case BIG_DECIMAL:
+                     writeNumber(p.getDecimalValue());
+@@ -970,6 +980,7 @@ sb.append("NativeObjectIds=").append(_hasNativeObjectIds).append(",");
+                     break;
+                 default:
+                     writeNumber(p.getDoubleValue());
++                }
+             }
+             break;
+         case VALUE_TRUE:
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testBigDecimal965() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

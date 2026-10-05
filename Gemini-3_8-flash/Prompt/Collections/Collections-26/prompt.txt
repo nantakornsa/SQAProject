@@ -1,0 +1,80 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Collections
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Collections
+       Program: commons-collections
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/Collections.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-collections.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/active-bugs.csv
+Number of bugs: 28
+--------------------------------------------------------------------------------
+
+Summary for Bug: Collections-26
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+f8bd75d37ca12c5d49c1b628c33c0b45e2d082eb
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-09-28 08:53:44 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COLLECTIONS-576
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COLLECTIONS-576
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.collections4.keyvalue.MultiKeyTest::testEqualsAfterSerializationOfDerivedClass
+   --> junit.framework.AssertionFailedError: expected:<3> but was:<0>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.collections4.keyvalue.MultiKey
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.collections4.keyvalue.MultiKey ===
+diff --git a/src/main/java/org/apache/commons/collections4/keyvalue/MultiKey.java b/src/main/java/org/apache/commons/collections4/keyvalue/MultiKey.java
+index 794677c5..2b08d8a7 100644
+--- a/src/main/java/org/apache/commons/collections4/keyvalue/MultiKey.java
++++ b/src/main/java/org/apache/commons/collections4/keyvalue/MultiKey.java
+@@ -274,7 +274,7 @@ public class MultiKey<K> implements Serializable {
+      * only stable for the same process).
+      * @return the instance with recalculated hash code
+      */
+-    private Object readResolve() {
++    protected Object readResolve() {
+         calculateHashCode(keys);
+         return this;
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testEqualsAfterSerializationOfDerivedClass() throws IOException, ClassNotFoundException
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

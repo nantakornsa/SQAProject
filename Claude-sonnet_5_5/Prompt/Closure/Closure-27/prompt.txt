@@ -1,0 +1,111 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-27
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+7a8983042131c5a9c2b5421ae42075cbb8ef1aeb
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-05-14 21:03:20 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+727
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-727.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.rhino.IRTest::testIssue727_1
+   --> java.lang.IllegalStateException
+ - com.google.javascript.rhino.IRTest::testIssue727_2
+   --> java.lang.IllegalStateException
+ - com.google.javascript.rhino.IRTest::testIssue727_3
+   --> java.lang.IllegalStateException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.rhino.IR
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.rhino.IR ===
+diff --git a/src/com/google/javascript/rhino/IR.java b/src/com/google/javascript/rhino/IR.java
+index 081f01f5a..002acd6c3 100644
+--- a/src/com/google/javascript/rhino/IR.java
++++ b/src/com/google/javascript/rhino/IR.java
+@@ -108,6 +108,9 @@ public class IR {
+     return block;
+   }
+ 
++  private static Node blockUnchecked(Node stmt) {
++    return new Node(Token.BLOCK, stmt);
++  }
+ 
+   public static Node script(Node ... stmts) {
+     // TODO(johnlenz): finish setting up the SCRIPT node
+@@ -221,8 +224,8 @@ public class IR {
+   }
+ 
+   public static Node tryFinally(Node tryBody, Node finallyBody) {
+-    Preconditions.checkState(tryBody.isLabelName());
+-    Preconditions.checkState(finallyBody.isLabelName());
++    Preconditions.checkState(tryBody.isBlock());
++    Preconditions.checkState(finallyBody.isBlock());
+     Node catchBody = block().copyInformationFrom(tryBody);
+     return new Node(Token.TRY, tryBody, catchBody, finallyBody);
+   }
+@@ -230,7 +233,7 @@ public class IR {
+   public static Node tryCatch(Node tryBody, Node catchNode) {
+     Preconditions.checkState(tryBody.isBlock());
+     Preconditions.checkState(catchNode.isCatch());
+-    Node catchBody = block(catchNode).copyInformationFrom(catchNode);
++    Node catchBody = blockUnchecked(catchNode).copyInformationFrom(catchNode);
+     return new Node(Token.TRY, tryBody, catchBody);
+   }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue727_1() {
+    testIR(
+        IR.tryFinally(
+            IR.block(),
+            IR.block()),
+        "TRY\n" +
+        "    BLOCK\n" +
+        "    BLOCK\n" +
+        "    BLOCK\n");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

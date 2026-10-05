@@ -1,0 +1,90 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-92
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+8980b60033b1c6853cbca593ec89d3d332adf7dc
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-10-15 17:51:45 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+261
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-261.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.ProcessClosurePrimitivesTest::testProvideInIndependentModules4
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.ProcessClosurePrimitives
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.ProcessClosurePrimitives ===
+diff --git a/src/com/google/javascript/jscomp/ProcessClosurePrimitives.java b/src/com/google/javascript/jscomp/ProcessClosurePrimitives.java
+index c929a3637..1d738b524 100644
+--- a/src/com/google/javascript/jscomp/ProcessClosurePrimitives.java
++++ b/src/com/google/javascript/jscomp/ProcessClosurePrimitives.java
+@@ -786,7 +786,7 @@ class ProcessClosurePrimitives extends AbstractPostOrderCallback
+         } else {
+           // In this case, the name was implicitly provided by two independent
+           // modules. We need to move this code up to a common module.
+-          int indexOfDot = namespace.indexOf('.');
++          int indexOfDot = namespace.lastIndexOf('.');
+           if (indexOfDot == -1) {
+             // Any old place is fine.
+             compiler.getNodeForCodeInsertion(minimumModule)
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testProvideInIndependentModules4() {
+    // Regression test for bug 261:
+    // http://code.google.com/p/closure-compiler/issues/detail?id=261
+    test(
+        createModuleStar(
+            "goog.provide('apps');",
+            "goog.provide('apps.foo.bar.B');",
+            "goog.provide('apps.foo.bar.C');"),
+        new String[] {
+            "var apps = {};apps.foo = {};apps.foo.bar = {}",
+            "apps.foo.bar.B = {};",
+            "apps.foo.bar.C = {};",
+        });
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

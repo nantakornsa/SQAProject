@@ -1,0 +1,50 @@
+package org.apache.commons.cli.bug;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
+import junit.framework.TestCase;
+
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+
+/**
+ * Regression test for CLI-162: HelpFormatter threw a RuntimeException
+ * ("Text too long for line - throwing exception to avoid infinite loop")
+ * when the option column was wider than the configured line width.
+ */
+public class BugCLI162RegressionTest extends TestCase
+{
+    private Options createOptions()
+    {
+        Options options = new Options();
+        options.addOption(new Option("x", "very-long-option-name-exceeding-the-width", false,
+                                     "looooong description"));
+        options.addOption(new Option("e", "example-option-with-long-name", true,
+                                     "used if omited. Example: -e \"Runs such and such\""));
+        return options;
+    }
+
+    public void testInfiniteLoopDoesNotThrow()
+    {
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.setWidth(20);
+        formatter.printHelp("app", createOptions()); // used to hang & crash
+    }
+
+    public void testLongOptionColumnWithNarrowWidth()
+    {
+        HelpFormatter formatter = new HelpFormatter();
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+
+        formatter.printHelp(pw, 20, "app", null, createOptions(),
+                            formatter.getLeftPadding(), formatter.getDescPadding(), null, false);
+        pw.flush();
+
+        String output = sw.toString();
+        assertTrue("description should be printed", output.indexOf("looooong") != -1);
+        assertTrue("description should be printed", output.indexOf("description") != -1);
+    }
+}

@@ -1,0 +1,21 @@
+```java
+package org.jsoup.parser;
+
+import org.jsoup.helper.StringUtil;
+import org.jsoup.nodes.Document;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
+public class CaseSensitiveEndTagTest {
+
+    @Test
+    public void testCaseSensitiveEndTagInHtmlParser() {
+        String html = "<r><X>A</X><y>B</y></r>";
+        Parser parser = Parser.htmlParser();
+        parser.settings(ParseSettings.preserveCase);
+        Document doc = parser.parseInput(html, "");
+        assertEquals("<r> <X> A </X> <y> B </y> </r>", StringUtil.normaliseWhitespace(doc.body().html()));
+    }
+}
+```

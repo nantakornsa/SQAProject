@@ -1,0 +1,86 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Codec
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Codec
+       Program: commons-codec
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Codec/Codec.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-codec.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Codec/active-bugs.csv
+Number of bugs: 18
+--------------------------------------------------------------------------------
+
+Summary for Bug: Codec-8
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+2c13032a16e37b7bc9e0272d25fc185b5c82b42e
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-01-24 00:46:09 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CODEC-105
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CODEC-105
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.codec.binary.Base64InputStreamTest::testCodec105
+   --> java.lang.ArrayIndexOutOfBoundsException: 2
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.codec.binary.Base64
+ - org.apache.commons.codec.binary.Base64InputStream
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+diff --git a/src/java/org/apache/commons/codec/binary/Base64.java b/src/java/org/apache/commons/codec/binary/Base64.java
+index 76f14f50..2521c27b 100644
+--- a/src/java/org/apache/commons/codec/binary/Base64.java
++++ b/src/java/org/apache/commons/codec/binary/Base64.java
+@@ -416,13 +416,6 @@ public class Base64 implements BinaryEncoder, BinaryDecoder {
+         return eof ? -1 : 0;
+     }
+ 
+-    void setInitialBuffer(byte[] out, int outPos, int outAvail) {
+-        if (out != null && out.length == outAvail) {
+-            buffer = out;
+-            pos = outPos;
+-            readPos = outPos;
+-        }
+-    }
+     /**
+      * <p>
+      * Encodes all of the provided data, starting at inPos, for inAvail bytes. Must be called at least twice: once with
+
+=== TRIGGERING TEST METHOD ===
+    public void testCodec105() throws IOException {
+        Base64InputStream in = new Base64InputStream(new Codec105ErrorInputStream(), true, 0, null);
+        for (int i = 0; i < 5; i++) {
+            in.read();
+        }
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,177 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-22
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+2270d830fda743de1ce8a61e33b9542cb39a0f4b
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-01-17 04:30:05 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-662
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-662
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang3.math.FractionTest::testReducedFactory_int_int
+   --> junit.framework.AssertionFailedError: expected:<-1073741824> but was:<-2147483648>
+ - org.apache.commons.lang3.math.FractionTest::testReduce
+   --> junit.framework.AssertionFailedError: expected:<-1073741824> but was:<-2147483648>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang3.math.Fraction
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang3.math.Fraction ===
+diff --git a/src/main/java/org/apache/commons/lang3/math/Fraction.java b/src/main/java/org/apache/commons/lang3/math/Fraction.java
+index b36a156a4..bf15a494c 100644
+--- a/src/main/java/org/apache/commons/lang3/math/Fraction.java
++++ b/src/main/java/org/apache/commons/lang3/math/Fraction.java
+@@ -580,8 +580,14 @@ public final class Fraction extends Number implements Comparable<Fraction> {
+      */
+     private static int greatestCommonDivisor(int u, int v) {
+         // From Commons Math:
++        if ((u == 0) || (v == 0)) {
++            if ((u == Integer.MIN_VALUE) || (v == Integer.MIN_VALUE)) {
++                throw new ArithmeticException("overflow: gcd is 2^31");
++            }
++            return Math.abs(u) + Math.abs(v);
++        }
+         //if either operand is abs 1, return 1:
+-        if (Math.abs(u) <= 1 || Math.abs(v) <= 1) {
++        if (Math.abs(u) == 1 || Math.abs(v) == 1) {
+             return 1;
+         }
+         // keep u and v negative, as negative integers range down to
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testReducedFactory_int_int() {
+        Fraction f = null;
+        
+        // zero
+        f = Fraction.getReducedFraction(0, 1);
+        assertEquals(0, f.getNumerator());
+        assertEquals(1, f.getDenominator());
+        
+        // normal
+        f = Fraction.getReducedFraction(1, 1);
+        assertEquals(1, f.getNumerator());
+        assertEquals(1, f.getDenominator());
+        
+        f = Fraction.getReducedFraction(2, 1);
+        assertEquals(2, f.getNumerator());
+        assertEquals(1, f.getDenominator());
+        
+        // improper
+        f = Fraction.getReducedFraction(22, 7);
+        assertEquals(22, f.getNumerator());
+        assertEquals(7, f.getDenominator());
+        
+        // negatives
+        f = Fraction.getReducedFraction(-6, 10);
+        assertEquals(-3, f.getNumerator());
+        assertEquals(5, f.getDenominator());
+        
+        f = Fraction.getReducedFraction(6, -10);
+        assertEquals(-3, f.getNumerator());
+        assertEquals(5, f.getDenominator());
+        
+        f = Fraction.getReducedFraction(-6, -10);
+        assertEquals(3, f.getNumerator());
+        assertEquals(5, f.getDenominator());
+        
+        // zero denominator
+        try {
+            f = Fraction.getReducedFraction(1, 0);
+            fail("expecting ArithmeticException");
+        } catch (ArithmeticException ex) {}
+        
+        try {
+            f = Fraction.getReducedFraction(2, 0);
+            fail("expecting ArithmeticException");
+        } catch (ArithmeticException ex) {}
+        
+        try {
+            f = Fraction.getReducedFraction(-3, 0);
+            fail("expecting ArithmeticException");
+        } catch (ArithmeticException ex) {}
+
+        // reduced        
+        f = Fraction.getReducedFraction(0, 2);
+        assertEquals(0, f.getNumerator());
+        assertEquals(1, f.getDenominator());
+        
+        f = Fraction.getReducedFraction(2, 2);
+        assertEquals(1, f.getNumerator());
+        assertEquals(1, f.getDenominator());
+        
+        f = Fraction.getReducedFraction(2, 4);
+        assertEquals(1, f.getNumerator());
+        assertEquals(2, f.getDenominator());
+        
+        f = Fraction.getReducedFraction(15, 10);
+        assertEquals(3, f.getNumerator());
+        assertEquals(2, f.getDenominator());
+        
+        f = Fraction.getReducedFraction(121, 22);
+        assertEquals(11, f.getNumerator());
+        assertEquals(2, f.getDenominator());
+        
+        // Extreme values 
+        // OK, can reduce before negating
+        f = Fraction.getReducedFraction(-2, Integer.MIN_VALUE);
+        assertEquals(1, f.getNumerator());
+        assertEquals(-(Integer.MIN_VALUE / 2), f.getDenominator());
+        
+        // Can't reduce, negation will throw
+        try { 
+            f = Fraction.getReducedFraction(-7, Integer.MIN_VALUE);  
+            fail("Expecting ArithmeticException");
+        } catch (ArithmeticException ex) {}      
+
+        // LANG-662
+        f = Fraction.getReducedFraction(Integer.MIN_VALUE, 2);
+        assertEquals(Integer.MIN_VALUE / 2, f.getNumerator());
+        assertEquals(1, f.getDenominator());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

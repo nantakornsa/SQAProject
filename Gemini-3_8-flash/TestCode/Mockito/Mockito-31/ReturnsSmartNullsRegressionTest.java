@@ -1,0 +1,24 @@
+package org.mockito.internal.stubbing.defaultanswers;
+
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import static org.junit.Assert.assertEquals;
+
+public class ReturnsSmartNullsRegressionTest {
+
+    interface Foo {
+        Bar withArgs(String arg1, String arg2);
+    }
+
+    interface Bar {
+    }
+
+    @Test
+    public void shouldPrintTheParametersWhenCallingAMethodWithArgs() {
+        Foo mock = Mockito.mock(Foo.class, Mockito.RETURNS_SMART_NULLS);
+        Bar smartNull = mock.withArgs("oompa", "lumpa");
+
+        assertEquals("SmartNull returned by unstubbed withArgs(oompa, lumpa) method on mock", smartNull + "");
+    }
+}

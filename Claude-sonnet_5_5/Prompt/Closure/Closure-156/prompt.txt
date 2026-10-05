@@ -1,0 +1,184 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-156
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+f39bbdd39c9ec2136f0a58a677bd2fdae77075a2
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-03-29 23:46:31 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+389
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-389.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.CollapsePropertiesTest::testAliasedTopLevelEnum
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.CollapsePropertiesTest::testIssue389
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.CollapseProperties
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.CollapseProperties ===
+diff --git a/src/com/google/javascript/jscomp/CollapseProperties.java b/src/com/google/javascript/jscomp/CollapseProperties.java
+index 01295cd83..abe015951 100644
+--- a/src/com/google/javascript/jscomp/CollapseProperties.java
++++ b/src/com/google/javascript/jscomp/CollapseProperties.java
+@@ -452,8 +452,8 @@ class CollapseProperties implements CompilerPass {
+     boolean canCollapseChildNames = n.canCollapseUnannotatedChildNames();
+ 
+     // Handle this name first so that nested object literals get unrolled.
+-    if (n.canCollapse() && canCollapseChildNames) {
+-      updateObjLitOrFunctionDeclaration(n, alias);
++    if (n.canCollapse()) {
++      updateObjLitOrFunctionDeclaration(n, alias, canCollapseChildNames);
+     }
+ 
+     if (n.props != null) {
+@@ -571,7 +571,8 @@ class CollapseProperties implements CompilerPass {
+    *     this name. (This is mostly passed for convenience; it's equivalent to
+    *     n.canCollapseChildNames()).
+    */
+-  private void updateObjLitOrFunctionDeclaration(Name n, String alias) {
++  private void updateObjLitOrFunctionDeclaration(
++      Name n, String alias, boolean canCollapseChildNames) {
+     if (n.declaration == null) {
+       // Some names do not have declarations, because they
+       // are only defined in local scopes.
+@@ -586,13 +587,14 @@ class CollapseProperties implements CompilerPass {
+ 
+     switch (n.declaration.node.getParent().getType()) {
+       case Token.ASSIGN:
+-        updateObjLitOrFunctionDeclarationAtAssignNode(n, alias);
++        updateObjLitOrFunctionDeclarationAtAssignNode(
++            n, alias, canCollapseChildNames);
+         break;
+       case Token.VAR:
+-        updateObjLitOrFunctionDeclarationAtVarNode(n);
++        updateObjLitOrFunctionDeclarationAtVarNode(n, canCollapseChildNames);
+         break;
+       case Token.FUNCTION:
+-        updateFunctionDeclarationAtFunctionNode(n);
++        updateFunctionDeclarationAtFunctionNode(n, canCollapseChildNames);
+         break;
+     }
+   }
+@@ -606,7 +608,7 @@ class CollapseProperties implements CompilerPass {
+    * @param alias The flattened name for {@code n} (e.g. "a", "a$b$c")
+    */
+   private void updateObjLitOrFunctionDeclarationAtAssignNode(
+-      Name n, String alias) {
++      Name n, String alias, boolean canCollapseChildNames) {
+     // NOTE: It's important that we don't add additional nodes
+     // (e.g. a var node before the exprstmt) because the exprstmt might be
+     // the child of an if statement that's not inside a block).
+@@ -650,13 +652,15 @@ class CollapseProperties implements CompilerPass {
+       insertedVarNode = true;
+     }
+ 
+-    if (isObjLit) {
++    if (canCollapseChildNames) {
++      if (isObjLit) {
+         declareVarsForObjLitValues(
+             n, alias, rvalue,
+             varNode, varParent.getChildBefore(varNode), varParent);
++      }
+ 
+-    }
+       addStubsForUndeclaredProperties(n, alias, varParent, varNode);
++    }
+ 
+     if (insertedVarNode) {
+       if (!varNode.hasChildren()) {
+@@ -696,7 +700,11 @@ class CollapseProperties implements CompilerPass {
+    *
+    * @param n An object representing a global name (e.g. "a")
+    */
+-  private void updateObjLitOrFunctionDeclarationAtVarNode(Name n) {
++  private void updateObjLitOrFunctionDeclarationAtVarNode(
++      Name n, boolean canCollapseChildNames) {
++    if (!canCollapseChildNames) {
++      return;
++    }
+ 
+     Ref ref = n.declaration;
+     String name = ref.node.getString();
+@@ -739,7 +747,11 @@ class CollapseProperties implements CompilerPass {
+    *
+    * @param n An object representing a global name (e.g. "a")
+    */
+-  private void updateFunctionDeclarationAtFunctionNode(Name n) {
++  private void updateFunctionDeclarationAtFunctionNode(
++      Name n, boolean canCollapseChildNames) {
++    if (!canCollapseChildNames) {
++      return;
++    }
+ 
+     Ref ref = n.declaration;
+     String fnName = ref.node.getString();
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testAliasedTopLevelEnum() {
+    test(
+        "function alias() {}" +
+        "var dojo = {};" +
+        "dojo.gfx = {};" +
+        "dojo.declare = function() {};" +
+        "/** @enum {number} */" +
+        "dojo.gfx.Shape = {SQUARE: 2};" +
+        "dojo.gfx.Shape = dojo.declare('dojo.gfx.Shape');" +
+        "alias(dojo);" +
+        "alias(dojo.gfx.Shape.SQUARE);",
+        "function alias() {}" +
+        "var dojo = {};" +
+        "dojo.gfx = {};" +
+        "dojo.declare = function() {};" +
+        "/** @constructor */" +
+        "var dojo$gfx$Shape = {SQUARE: 2};" +
+        "dojo$gfx$Shape = dojo.declare('dojo.gfx.Shape');" +
+        "alias(dojo);" +
+        "alias(dojo$gfx$Shape.SQUARE);",
+        null,
+        CollapseProperties.UNSAFE_NAMESPACE_WARNING);
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

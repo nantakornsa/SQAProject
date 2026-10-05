@@ -1,0 +1,127 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-74
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+03fee32a06ccf8257b2da67b9034270be38805ae
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-04-08 19:27:37 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+413
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-413.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.PeepholeFoldConstantsTest::testFoldComparison3
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.PeepholeFoldConstantsTest::testInvertibleOperators
+   --> junit.framework.ComparisonFailure: Expressions did not fold the same
+ - com.google.javascript.jscomp.PeepholeFoldConstantsTest::testCommutativeOperators
+   --> junit.framework.ComparisonFailure: Expressions did not fold the same
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.PeepholeFoldConstants
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.PeepholeFoldConstants ===
+diff --git a/src/com/google/javascript/jscomp/PeepholeFoldConstants.java b/src/com/google/javascript/jscomp/PeepholeFoldConstants.java
+index a61bb6c86..9d2f97a54 100644
+--- a/src/com/google/javascript/jscomp/PeepholeFoldConstants.java
++++ b/src/com/google/javascript/jscomp/PeepholeFoldConstants.java
+@@ -904,8 +904,8 @@ class PeepholeFoldConstants extends AbstractPeepholeOptimization {
+           && right.getString().equals("undefined"))
+           || (Token.VOID == right.getType()
+               && NodeUtil.isLiteralValue(right.getFirstChild(), false)));
+-    int lhType = left.getType();
+-    int rhType = right.getType();
++    int lhType = getNormalizedNodeType(left);
++    int rhType = getNormalizedNodeType(right);
+     switch (lhType) {
+       case Token.VOID:
+         if (!NodeUtil.isLiteralValue(left.getFirstChild(), false)) {
+@@ -1071,6 +1071,19 @@ class PeepholeFoldConstants extends AbstractPeepholeOptimization {
+   /**
+    * @return Translate NOT expressions into TRUE or FALSE when possible.
+    */
++  private int getNormalizedNodeType(Node n) {
++    int type = n.getType();
++    if (type == Token.NOT) {
++      TernaryValue value = NodeUtil.getPureBooleanValue(n);
++      switch (value) {
++        case TRUE:
++          return Token.TRUE;
++        case FALSE:
++          return Token.FALSE;
++      }
++    }
++    return type;
++  }
+ 
+   /**
+    * The result of the comparison as a Boolean or null if the
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testFoldComparison3() {
+    fold("x = !1 == !0", "x = false");
+
+    fold("x = !0 == !0", "x = true");
+    fold("x = !1 == !1", "x = true");
+    fold("x = !1 == null", "x = false");
+    fold("x = !1 == !0", "x = false");
+    fold("x = !0 == null", "x = false");
+
+    fold("!0 == !0", "true");
+    fold("!1 == null", "false");
+    fold("!1 == !0", "false");
+    fold("!0 == null", "false");
+
+    fold("x = !0 === !0", "x = true");
+    fold("x = !1 === !1", "x = true");
+    fold("x = !1 === null", "x = false");
+    fold("x = !1 === !0", "x = false");
+    fold("x = !0 === null", "x = false");
+
+    fold("!0 === !0", "true");
+    fold("!1 === null", "false");
+    fold("!1 === !0", "false");
+    fold("!0 === null", "false");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

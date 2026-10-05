@@ -1,0 +1,69 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791056139-1PPigZ7ajdo3FpXPdvkB","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1645,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" test below"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" goes in"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" `org."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"apache.commons.jx"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"path.ri.compi"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ler`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" and mirrors the tri"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ggering test. I"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" ha"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ven't comp"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"iled or run it. It is written in JUnit 3 style (`TestCase`), which matches the project's `VariableTest`.\n\nThe union `$var | /MAIN/A` mixes a variable pointer with node pointers from a"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" DOM tree. On the buggy version, comparing them throws `JXPathException: Cannot compare pointers that do not belong to the same tree`. On the fixed version, `compareNodePointers`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" returns 0 in that case, so the union succeeds and yields 3 pointers: the variable plus the two `A` nodes.\n\n```java\npackage org.apache.commons.jxpath.ri.compiler;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\nimport java.io.StringReader;\nimport java.util.Iterator;\n\nimport javax.xml.parsers.DocumentBuilderFactory;\n\nimport junit.framework.TestCase;\n\nimport org.apache.commons.jxpath.JXPathContext;\nimport org.w3c.dom.Document;\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" org.xml.sax.InputSource;\n\npublic class VariableUnionRegressionTest extends TestCase {\n\n    public void testUnionOfVariableAndNode() throws Exception {\n        Document doc = DocumentBuilderFactory.newInstance()\n                .newDoc"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"umentBuilder().parse(\n                        new InputSource(new StringReader(\n                                \"<MAIN><A/><A/></MAIN>\")));\n\n        JXPathContext context = JXPathContext.newContext(doc);\n        context.getVariables().declareVariable(\"var\", \"varValue\");\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"int sz = 0;\n        for (Iterator ptrs = context.iteratePointers(\"$var | /MAIN/A\"); ptrs.hasNext(); sz++) {\n            ptrs.next();\n        }\n        assertEquals(3, sz);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1645,"output_tokens":615,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.00944,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00944,"upstream_inference_prompt_cost":0.00329,"upstream_inference_completions_cost":0.00615}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

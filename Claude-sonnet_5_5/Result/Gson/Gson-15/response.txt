@@ -1,0 +1,34 @@
+```java
+package com.google.gson.stream;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import junit.framework.TestCase;
+
+public final class JsonWriterLenientNonFiniteRegressionTest extends TestCase {
+
+  public void testNonFiniteDoublesWhenLenient() throws IOException {
+    StringWriter stringWriter = new StringWriter();
+    JsonWriter jsonWriter = new JsonWriter(stringWriter);
+    jsonWriter.setLenient(true);
+    jsonWriter.beginArray();
+    jsonWriter.value(Double.NaN);
+    jsonWriter.value(Double.NEGATIVE_INFINITY);
+    jsonWriter.value(Double.POSITIVE_INFINITY);
+    jsonWriter.endArray();
+    assertEquals("[NaN,-Infinity,Infinity]", stringWriter.toString());
+  }
+
+  public void testNonFiniteDoublesWhenNotLenientStillRejected() throws IOException {
+    StringWriter stringWriter = new StringWriter();
+    JsonWriter jsonWriter = new JsonWriter(stringWriter);
+    jsonWriter.beginArray();
+    try {
+      jsonWriter.value(Double.NaN);
+      fail();
+    } catch (IllegalArgumentException expected) {
+      assertEquals("Numeric values must be finite, but was NaN", expected.getMessage());
+    }
+  }
+}
+```

@@ -1,0 +1,57 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791143315-Ao7MRy3q22WUPWV8aiLR","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Parsing Logic**\n\nI'm currently dissecting Jsoup-58, specifically examining how `Jsoup.isValid` handles malformed HTML. My focus is on the `Cleaner`'s interaction with `parseBodyFragment` and its potential oversight of parsing errors and structural issues.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.jsoup.safety;\n\nimport org.jsoup.Jsoup;\nimport org.junit"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".Test;\n\nimport static org.junit.Assert.assertFalse;\nimport static org.junit.Assert."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"assertTrue;\n\npublic class CleanerRegressionTest {\n\n    @Test\n    public void testIsValidBodyHtmlWithInvalidHtml"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"() {\n        String ok = \"<p>Test <b><a href='http://example.com/' rel='nofollow'>OK</a>"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"</b></p>\";\n        String nokWithHead = \"<html><head>Foo</head><body><b>OK</b></body></html>\";"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        String nokUnclosedTag = \"<p>Test <b><a href='http://example.com/"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"'>OK</b></p>\";\n        String nokOrphanCloseTag = \"</div>What\";\n\n        assertTrue(Jsoup."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"isValid(ok, Whitelist.basic()));\n        assertFalse(Jsoup.isValid(nokWithHead, Wh"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"itelist.basic()));\n        assertFalse(Jsoup.isValid(nokUnclosedTag, Whitelist.basic()));"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        assertFalse(Jsoup.isValid(nokOrphanCloseTag, Whitelist.basic()));\n    }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2076,"output_tokens":609,"output_tokens_details":{"thinking_tokens":355},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.00384075,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00384075,"upstream_inference_prompt_cost":0.001557,"upstream_inference_completions_cost":0.00228375}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

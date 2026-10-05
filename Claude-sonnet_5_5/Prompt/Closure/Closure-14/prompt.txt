@@ -1,0 +1,85 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-14
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+4b15b25f400335b6e2820cb690430324748372f9
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-07-24 21:04:32 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+779
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-779.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.CheckMissingReturnTest::testIssue779
+   --> junit.framework.AssertionFailedError: Unexpected error(s): JSC_MISSING_RETURN_STATEMENT. Missing return statement. Function expected to return number. at testcode line 1 : 24 expected:<0> but was:<1>
+ - com.google.javascript.jscomp.ControlFlowAnalysisTest::testDeepNestedFinally
+   --> junit.framework.AssertionFailedError: No cross edges found
+ - com.google.javascript.jscomp.ControlFlowAnalysisTest::testDeepNestedBreakwithFinally
+   --> junit.framework.AssertionFailedError: No cross edges found
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.ControlFlowAnalysis
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.ControlFlowAnalysis ===
+diff --git a/src/com/google/javascript/jscomp/ControlFlowAnalysis.java b/src/com/google/javascript/jscomp/ControlFlowAnalysis.java
+index 5c6927f9c..980deff1d 100644
+--- a/src/com/google/javascript/jscomp/ControlFlowAnalysis.java
++++ b/src/com/google/javascript/jscomp/ControlFlowAnalysis.java
+@@ -764,7 +764,7 @@ final class ControlFlowAnalysis implements Callback, CompilerPass {
+         } else if (parent.getLastChild() == node){
+           if (cfa != null) {
+             for (Node finallyNode : cfa.finallyMap.get(parent)) {
+-              cfa.createEdge(fromNode, Branch.UNCOND, finallyNode);
++              cfa.createEdge(fromNode, Branch.ON_EX, finallyNode);
+             }
+           }
+           return computeFollowNode(fromNode, parent, cfa);
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue779() {
+    testNotMissing(
+        "var a = f(); try { alert(); if (a > 0) return 1; }" +
+        "finally { a = 5; } return 2;");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

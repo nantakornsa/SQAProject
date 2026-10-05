@@ -1,0 +1,91 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-11
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+4a65cb8da23d6667ac6f91775309b4da9b315d95
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-06-10 12:40:48 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-807
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-807
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang3.RandomStringUtilsTest::testLANG807
+   --> junit.framework.AssertionFailedError: Message (bound must be positive) must contain 'start'
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang3.RandomStringUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang3.RandomStringUtils ===
+diff --git a/src/main/java/org/apache/commons/lang3/RandomStringUtils.java b/src/main/java/org/apache/commons/lang3/RandomStringUtils.java
+index a79905754..9dfee222b 100644
+--- a/src/main/java/org/apache/commons/lang3/RandomStringUtils.java
++++ b/src/main/java/org/apache/commons/lang3/RandomStringUtils.java
+@@ -242,6 +242,10 @@ public class RandomStringUtils {
+                     start = ' ';                
+                 }
+             }
++        } else {
++            if (end <= start) {
++                throw new IllegalArgumentException("Parameter end (" + end + ") must be greater than start (" + start + ")");
++            }
+         }
+ 
+         char[] buffer = new char[count];
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testLANG807() {
+        try {
+            RandomStringUtils.random(3,5,5,false,false);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException ex) { // distinguish from Random#nextInt message
+            final String msg = ex.getMessage();
+            assertTrue("Message (" + msg + ") must contain 'start'", msg.contains("start"));
+            assertTrue("Message (" + msg + ") must contain 'end'", msg.contains("end"));
+        }
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

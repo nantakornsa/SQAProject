@@ -1,0 +1,156 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-58
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+f44d6e64ac97d4a5c119e3e22f22f4d87c94b7e1
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-11-24 14:36:13 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+245
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/245
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.safety.CleanerTest::testIsValidBodyHtml
+   --> junit.framework.AssertionFailedError
+ - org.jsoup.safety.CleanerTest::testIsValidDocument
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.Jsoup
+ - org.jsoup.parser.Parser
+ - org.jsoup.safety.Cleaner
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.Jsoup ===
+diff --git a/src/main/java/org/jsoup/Jsoup.java b/src/main/java/org/jsoup/Jsoup.java
+index d25c1869..84a5e34e 100644
+--- a/src/main/java/org/jsoup/Jsoup.java
++++ b/src/main/java/org/jsoup/Jsoup.java
+@@ -247,7 +247,7 @@ public class Jsoup {
+      @see #clean(String, org.jsoup.safety.Whitelist) 
+      */
+     public static boolean isValid(String bodyHtml, Whitelist whitelist) {
+-        return new Cleaner(whitelist).isValid(parseBodyFragment(bodyHtml, ""));
++        return new Cleaner(whitelist).isValidBodyHtml(bodyHtml);
+     }
+     
+ }
+
+=== MODIFIED SOURCE: org.jsoup.parser.Parser ===
+diff --git a/src/main/java/org/jsoup/parser/Parser.java b/src/main/java/org/jsoup/parser/Parser.java
+index 197219b1..0751c229 100644
+--- a/src/main/java/org/jsoup/parser/Parser.java
++++ b/src/main/java/org/jsoup/parser/Parser.java
+@@ -126,6 +126,10 @@ public class Parser {
+      *
+      * @return list of nodes parsed from the input HTML. Note that the context element, if supplied, is not modified.
+      */
++    public static List<Node> parseFragment(String fragmentHtml, Element context, String baseUri, ParseErrorList errorList) {
++        HtmlTreeBuilder treeBuilder = new HtmlTreeBuilder();
++        return treeBuilder.parseFragment(fragmentHtml, context, baseUri, errorList, treeBuilder.defaultSettings());
++    }
+ 
+     /**
+      * Parse a fragment of XML into a list of nodes.
+
+=== MODIFIED SOURCE: org.jsoup.safety.Cleaner ===
+diff --git a/src/main/java/org/jsoup/safety/Cleaner.java b/src/main/java/org/jsoup/safety/Cleaner.java
+index 7e0eb28d..1223bbe8 100644
+--- a/src/main/java/org/jsoup/safety/Cleaner.java
++++ b/src/main/java/org/jsoup/safety/Cleaner.java
+@@ -14,6 +14,7 @@ import org.jsoup.parser.Tag;
+ import org.jsoup.select.NodeTraversor;
+ import org.jsoup.select.NodeVisitor;
+ 
++import java.util.List;
+ 
+ 
+ /**
+@@ -75,9 +76,19 @@ public class Cleaner {
+ 
+         Document clean = Document.createShell(dirtyDocument.baseUri());
+         int numDiscarded = copySafeNodes(dirtyDocument.body(), clean.body());
+-        return numDiscarded == 0;
++        return numDiscarded == 0
++            && dirtyDocument.head().childNodes().size() == 0; // because we only look at the body, but we start from a shell, make sure there's nothing in the head
+     }
+ 
++    public boolean isValidBodyHtml(String bodyHtml) {
++        Document clean = Document.createShell("");
++        Document dirty = Document.createShell("");
++        ParseErrorList errorList = ParseErrorList.tracking(1);
++        List<Node> nodes = Parser.parseFragment(bodyHtml, dirty.body(), "", errorList);
++        dirty.body().insertChildren(0, nodes);
++        int numDiscarded = copySafeNodes(dirty.body(), clean.body());
++        return numDiscarded == 0 && errorList.size() == 0;
++    }
+ 
+     /**
+      Iterates the input and copies trusted nodes (tags, attributes, text) into the destination.
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void testIsValidBodyHtml() {
+        String ok = "<p>Test <b><a href='http://example.com/' rel='nofollow'>OK</a></b></p>";
+        String ok1 = "<p>Test <b><a href='http://example.com/'>OK</a></b></p>"; // missing enforced is OK because still needs run thru cleaner
+        String nok1 = "<p><script></script>Not <b>OK</b></p>";
+        String nok2 = "<p align=right>Test Not <b>OK</b></p>";
+        String nok3 = "<!-- comment --><p>Not OK</p>"; // comments and the like will be cleaned
+        String nok4 = "<html><head>Foo</head><body><b>OK</b></body></html>"; // not body html
+        String nok5 = "<p>Test <b><a href='http://example.com/' rel='nofollowme'>OK</a></b></p>";
+        String nok6 = "<p>Test <b><a href='http://example.com/'>OK</b></p>"; // missing close tag
+        String nok7 = "</div>What";
+        assertTrue(Jsoup.isValid(ok, Whitelist.basic()));
+        assertTrue(Jsoup.isValid(ok1, Whitelist.basic()));
+        assertFalse(Jsoup.isValid(nok1, Whitelist.basic()));
+        assertFalse(Jsoup.isValid(nok2, Whitelist.basic()));
+        assertFalse(Jsoup.isValid(nok3, Whitelist.basic()));
+        assertFalse(Jsoup.isValid(nok4, Whitelist.basic()));
+        assertFalse(Jsoup.isValid(nok5, Whitelist.basic()));
+        assertFalse(Jsoup.isValid(nok6, Whitelist.basic()));
+        assertFalse(Jsoup.isValid(ok, Whitelist.none()));
+        assertFalse(Jsoup.isValid(nok7, Whitelist.basic()));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

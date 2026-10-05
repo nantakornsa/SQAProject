@@ -1,0 +1,46 @@
+```java
+package com.google.javascript.jscomp;
+
+/**
+ * Regression test for Closure issue 284: NameAnalyzer crashed (or failed to
+ * remove code) when a class-defining call such as goog.inherits referenced an
+ * undeclared nested name.
+ */
+public class NameAnalyzerIssue284Test extends CompilerTestCase {
+
+  public NameAnalyzerIssue284Test() {
+    super("var window;");
+  }
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+  }
+
+  @Override
+  protected CompilerPass getProcessor(Compiler compiler) {
+    return new NameAnalyzer(compiler, true);
+  }
+
+  public void testIssue284() {
+    test(
+        "var goog = {};" +
+        "goog.inherits = function(x, y) {};" +
+        "var ns = {};" +
+        "/** @constructor */" +
+        "ns.PageSelectionModel = function() {};" +
+        "/** @constructor */" +
+        "ns.PageSelectionModel.FooEvent = function() {};" +
+        "/** @constructor */" +
+        "ns.PageSelectionModel.SelectEvent = function() {};" +
+        "goog.inherits(ns.PageSelectionModel.ChangeEvent," +
+        "    ns.PageSelectionModel.FooEvent);",
+        "");
+  }
+}
+```
+
+I wrote this from memory of the upstream test and did not compile or run it. Two things could stop it compiling or behaving as expected:
+
+- **Constructor and externs:** the `NameAnalyzer(compiler, true)` constructor and the minimal `"var window;"` externs are guesses at what the upstream `NameAnalyzerTest` uses.
+- **Normalization:** I left out `enableNormalize()` in case it does not exist in this version. If the pass needs normalized input, the test may need that call added.

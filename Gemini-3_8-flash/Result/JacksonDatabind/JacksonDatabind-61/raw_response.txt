@@ -1,0 +1,72 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791184793-h73zd1KXIM7XpaXexWXo","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Jackson Bug**\n\nI'm currently examining JacksonDatabind bug #1395. The core of the issue seems to revolve around how default typing interacts with primitive types, especially when default typing is activated with options like `NON_FINAL` or `OBJECT_AND_NON_CONCRETE`. I'm trying to reproduce this with the `com` test.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing Default Typing Interactions**\n\nI'm digging into bug #1395, focusing on default typing with primitives. The exception `Class java.lang.Long not subtype of [simple type, class long]` is key. It appears the interaction between `NON_FINAL` or `OBJECT_AND_NON_CONCRETE` and primitive `long` fields, especially within nested structures like `HashMap`, is the culprit. I'm attempting to replicate this using the `com` test case.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Clarifying Primitive Finality**\n\nI'm re-evaluating `t.isFinal()` for primitives. It seems `Modifier.isFinal()` incorrectly reports primitives as non-final. This is crucial because the bug fix specifically added a check for `t.isPrimitive()`. I need to understand why `t.isFinal()` was failing for `long`.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating `Modifier.isFinal`**\n\nI'm focusing on why `t.isFinal()` was failing for primitives. It appears `Modifier.isFinal()` returns true for primitive types like `long` in the JDK. My current hypothesis is that the issue might stem from a misunderstanding of how `isPrimitive()` interacts with the finality check in the specific test case.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Discovering Abstraction Nuance**\n\nI've realized primitives are marked as `ABSTRACT` in Java reflection. This causes `t.isConcrete()` to return `false`, meaning `OBJECT_AND_NON_CONCRETE` and `NON_CONCRETE_AND_ARRAYS` incorrectly treat them as non-concrete. This seems to be the core of why the default typing logic was misapplying to `long`.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind.jsontype;\n\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" java.util.HashMap;\nimport java.util.Map;\n\nimport com.fasterxml.jackson.databind."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"BaseMapTest;\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\npublic class DefaultTypingWithPrimitives"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Test extends BaseMapTest\n{\n    static class Data {\n        public long key;\n\n        public Data()"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" { }\n\n        public Data(long key) {\n            this.key = key;\n        }\n    }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\n    public void testDefaultTypingWithLong() throws Exception\n    {\n        ObjectMapper mapper = new ObjectMapper();"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_CONCRETE_AND_ARRA"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"YS);\n\n        Map<String, Object> map = new HashMap<String, Object>();\n        map.put"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(\"longAsField\", new Data(123L));\n\n        String json = mapper.writeValueAsString(map);\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        Map<?, ?> result = mapper.readValue(json, Map.class);\n        assertNotNull(result);\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Object dataObj = result.get(\"longAsField\");\n        assertTrue(dataObj instanceof Data);\n        assertEquals"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(123L, ((Data) dataObj).key);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1974,"output_tokens":1719,"output_tokens_details":{"thinking_tokens":1436},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00792675,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00792675,"upstream_inference_prompt_cost":0.0014805,"upstream_inference_completions_cost":0.00644625}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

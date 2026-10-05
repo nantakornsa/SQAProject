@@ -1,0 +1,91 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-27
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+8963e2ac79a97e694c388622e935a0471267e9eb
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-07-18 22:33:01 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+215
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/215
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.helper.DataUtilTest::testCharset
+   --> junit.framework.AssertionFailedError: expected:<[utf]-8> but was:<[UTF]-8>
+ - org.jsoup.helper.DataUtilTest::testQuotedCharset
+   --> junit.framework.AssertionFailedError: expected:<[utf]-8> but was:<[UTF]-8>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.helper.DataUtil
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.helper.DataUtil ===
+diff --git a/src/main/java/org/jsoup/helper/DataUtil.java b/src/main/java/org/jsoup/helper/DataUtil.java
+index f978141e..a4d4f516 100644
+--- a/src/main/java/org/jsoup/helper/DataUtil.java
++++ b/src/main/java/org/jsoup/helper/DataUtil.java
+@@ -129,8 +129,9 @@ public class DataUtil {
+         Matcher m = charsetPattern.matcher(contentType);
+         if (m.find()) {
+             String charset = m.group(1).trim();
++            if (Charset.isSupported(charset)) return charset;
+             charset = charset.toUpperCase(Locale.ENGLISH);
+-            return charset;
++            if (Charset.isSupported(charset)) return charset;
+         }
+         return null;
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testCharset() {
+        assertEquals("utf-8", DataUtil.getCharsetFromContentType("text/html;charset=utf-8 "));
+        assertEquals("UTF-8", DataUtil.getCharsetFromContentType("text/html; charset=UTF-8"));
+        assertEquals("ISO-8859-1", DataUtil.getCharsetFromContentType("text/html; charset=ISO-8859-1"));
+        assertEquals(null, DataUtil.getCharsetFromContentType("text/html"));
+        assertEquals(null, DataUtil.getCharsetFromContentType(null));
+        assertEquals(null, DataUtil.getCharsetFromContentType("text/html;charset=Unknown"));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

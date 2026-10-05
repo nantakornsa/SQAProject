@@ -1,0 +1,103 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-69
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+f75f47397836ba2127f06c8390a87eada369f7cc
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-11-13 00:57:36 +0100
+--------------------------------------------------------------------------------
+Bug report id:
+429
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/429
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.nodes.FormElementTest::removeFormElement
+   --> junit.framework.AssertionFailedError: expected:<2> but was:<3>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.nodes.FormElement
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.nodes.FormElement ===
+diff --git a/src/main/java/org/jsoup/nodes/FormElement.java b/src/main/java/org/jsoup/nodes/FormElement.java
+index e498975d..f5c59d33 100644
+--- a/src/main/java/org/jsoup/nodes/FormElement.java
++++ b/src/main/java/org/jsoup/nodes/FormElement.java
+@@ -46,6 +46,11 @@ public class FormElement extends Element {
+         return this;
+     }
+ 
++    @Override
++    protected void removeChild(Node out) {
++        super.removeChild(out);
++        elements.remove(out);
++    }
+ 
+     /**
+      * Prepare to submit this form. A Connection object is created with the request set up from the form values. You
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void removeFormElement() {
+        String html = "<html>\n" +
+                "  <body> \n" +
+                "      <form action=\"/hello.php\" method=\"post\">\n" +
+                "      User:<input type=\"text\" name=\"user\" />\n" +
+                "      Password:<input type=\"password\" name=\"pass\" />\n" +
+                "      <input type=\"submit\" name=\"login\" value=\"login\" />\n" +
+                "   </form>\n" +
+                "  </body>\n" +
+                "</html>  ";
+        Document doc = Jsoup.parse(html);
+        FormElement form = (FormElement) doc.selectFirst("form");
+        Element pass = form.selectFirst("input[name=pass]");
+        pass.remove();
+
+        List<Connection.KeyVal> data = form.formData();
+        assertEquals(2, data.size());
+        assertEquals("user", data.get(0).key());
+        assertEquals("login", data.get(1).key());
+        assertEquals(null, doc.selectFirst("input[name=pass]"));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

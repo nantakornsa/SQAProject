@@ -1,0 +1,28 @@
+```java
+package org.apache.commons.cli;
+
+import junit.framework.TestCase;
+
+public class OptionBuilderResetRegressionTest extends TestCase
+{
+    public void testBuilderIsResettedAfterFailedCreate()
+    {
+        try
+        {
+            OptionBuilder.withDescription("JUnit").create('"');
+            fail("IllegalArgumentException expected");
+        }
+        catch (IllegalArgumentException e)
+        {
+            // expected
+        }
+
+        // the builder must have been reset even though create() failed
+        assertNull("we inherited a description", OptionBuilder.create('x').getDescription());
+    }
+}
+```
+
+This covers only the `create(String)` path that the fix changes. The second half of the original triggering test, `create()` with no long option, is left out. In the diff, `create()` throws before it reaches `create(String)`, so the fix does not affect that path.
+
+I haven't compiled or run this against either version. It should fail on the buggy version because the description set before the failed `create('"')` is still present afterwards.

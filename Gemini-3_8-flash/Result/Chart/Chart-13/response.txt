@@ -1,0 +1,43 @@
+```java
+package org.jfree.chart.block.junit;
+
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import junit.framework.TestCase;
+import org.jfree.chart.block.BlockContainer;
+import org.jfree.chart.block.BorderArrangement;
+import org.jfree.chart.block.EmptyBlock;
+import org.jfree.chart.block.LengthConstraintType;
+import org.jfree.chart.block.RectangleConstraint;
+import org.jfree.data.Range;
+import org.jfree.ui.RectangleEdge;
+import org.jfree.ui.Size2D;
+
+/**
+ * Regression test for BorderArrangement sizing when the left block width
+ * exceeds the available constraint width.
+ */
+public class BorderArrangementRegressionTest extends TestCase {
+
+    private static final double EPSILON = 0.0000001;
+
+    public void testArrangeWithLeftBlockWiderThanConstraintWidth() {
+        RectangleConstraint constraint = new RectangleConstraint(
+            10.0, new Range(10.0, 10.0), LengthConstraintType.FIXED,
+            0.0, new Range(0.0, 0.0), LengthConstraintType.NONE
+        );
+
+        BlockContainer container = new BlockContainer(new BorderArrangement());
+        BufferedImage image = new BufferedImage(200, 100, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2 = image.createGraphics();
+
+        // Left block (width 12.3 > constraint width 10.0) and right block
+        container.add(new EmptyBlock(12.3, 45.6), RectangleEdge.LEFT);
+        container.add(new EmptyBlock(10.0, 20.0), RectangleEdge.RIGHT);
+
+        Size2D size = container.arrange(g2, constraint);
+        assertEquals(10.0, size.width, EPSILON);
+        assertEquals(45.6, size.height, EPSILON);
+    }
+}
+```

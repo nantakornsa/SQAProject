@@ -1,0 +1,250 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JxPath
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JxPath
+       Program: commons-jxpath
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JxPath/JxPath.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-jxpath.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JxPath/active-bugs.csv
+Number of bugs: 22
+--------------------------------------------------------------------------------
+
+Summary for Bug: JxPath-16
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+6cf7092809515b6add5f0e83fd837b8e013c5256
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-02-02 23:16:01 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+JXPATH-114
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/JXPATH-114
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.jxpath.ri.model.dom.DOMModelTest::testAxisFollowing
+   --> junit.framework.ComparisonFailure: Evaluating pointer <//location[2]/following::node()[2]> expected:<...vendor[1]/product[1][]> but was:<...vendor[1]/product[1][/product:name[1]]>
+ - org.apache.commons.jxpath.ri.model.dom.DOMModelTest::testAxisPreceding
+   --> junit.framework.ComparisonFailure: Evaluating pointer <//location[2]/preceding::node()[3]> expected:<...ndor[1]/location[1]/[employeeCount[1]/text()][1]> but was:<...ndor[1]/location[1]/[address][1]>
+ - org.apache.commons.jxpath.ri.model.jdom.JDOMModelTest::testAxisFollowing
+   --> junit.framework.ComparisonFailure: Evaluating pointer <//location[2]/following::node()[2]> expected:<...vendor[1]/product[1][]> but was:<...vendor[1]/product[1][/product:name[1]]>
+ - org.apache.commons.jxpath.ri.model.jdom.JDOMModelTest::testAxisPreceding
+   --> junit.framework.ComparisonFailure: Evaluating pointer <//location[2]/preceding::node()[3]> expected:<...ndor[1]/location[1]/[employeeCount[1]/text()][1]> but was:<...ndor[1]/location[1]/[address][1]>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.jxpath.ri.model.dom.DOMNodePointer
+ - org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.jxpath.ri.model.dom.DOMNodePointer ===
+diff --git a/src/java/org/apache/commons/jxpath/ri/model/dom/DOMNodePointer.java b/src/java/org/apache/commons/jxpath/ri/model/dom/DOMNodePointer.java
+index fcc1f18..55c2b98 100644
+--- a/src/java/org/apache/commons/jxpath/ri/model/dom/DOMNodePointer.java
++++ b/src/java/org/apache/commons/jxpath/ri/model/dom/DOMNodePointer.java
+@@ -144,8 +144,7 @@ public class DOMNodePointer extends NodePointer {
+             int nodeType = node.getNodeType();
+             switch (((NodeTypeTest) test).getNodeType()) {
+                 case Compiler.NODE_TYPE_NODE :
+-                    return nodeType == Node.ELEMENT_NODE
+-                            || nodeType == Node.DOCUMENT_NODE;
++                    return true;
+                 case Compiler.NODE_TYPE_TEXT :
+                     return nodeType == Node.CDATA_SECTION_NODE
+                         || nodeType == Node.TEXT_NODE;
+
+=== MODIFIED SOURCE: org.apache.commons.jxpath.ri.model.jdom.JDOMNodePointer ===
+diff --git a/src/java/org/apache/commons/jxpath/ri/model/jdom/JDOMNodePointer.java b/src/java/org/apache/commons/jxpath/ri/model/jdom/JDOMNodePointer.java
+index 601db7c..4ff42c7 100644
+--- a/src/java/org/apache/commons/jxpath/ri/model/jdom/JDOMNodePointer.java
++++ b/src/java/org/apache/commons/jxpath/ri/model/jdom/JDOMNodePointer.java
+@@ -388,7 +388,7 @@ public class JDOMNodePointer extends NodePointer {
+         if (test instanceof NodeTypeTest) {
+             switch (((NodeTypeTest) test).getNodeType()) {
+                 case Compiler.NODE_TYPE_NODE :
+-                    return (node instanceof Element) || (node instanceof Document);
++                    return true;
+                 case Compiler.NODE_TYPE_TEXT :
+                     return (node instanceof Text) || (node instanceof CDATA);
+                 case Compiler.NODE_TYPE_COMMENT :
+
+
+=== TRIGGERING TEST METHOD ===
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.jxpath.ri.model.dom;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
+
+import org.apache.commons.jxpath.AbstractFactory;
+import org.apache.commons.jxpath.ri.model.XMLModelTestCase;
+import org.apache.commons.jxpath.xml.DocumentContainer;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+/**
+ * Tests JXPath with DOM
+ *
+ * @author Dmitri Plotnikov
+ * @version $Revision$ $Date$
+ */
+
+public class DOMModelTest extends XMLModelTestCase {
+    
+    /**
+     * Construct a new instance of this test case.
+     *
+     * @param name Name of the test case
+     */
+    public DOMModelTest(String name) {
+        super(name);
+    }
+
+    /**
+     * Return the tests included in this test suite.
+     */
+    public static Test suite() {
+        return (new TestSuite(DOMModelTest.class));
+    }
+
+    protected String getModel() {
+        return DocumentContainer.MODEL_DOM;
+    }
+
+    protected AbstractFactory getAbstractFactory() {
+        return new TestDOMFactory();
+    }
+    
+    public void testGetNode() {
+        assertXPathNodeType(context, "/", Document.class);
+        assertXPathNodeType(context, "/vendor/location", Element.class);
+        assertXPathNodeType(context, "//location/@name", Attr.class);
+        assertXPathNodeType(context, "//vendor", Element.class);
+    }
+    
+    protected String getXMLSignature(
+        Object node,
+        boolean elements,
+        boolean attributes,
+        boolean text,
+        boolean pi) 
+    {
+        StringBuffer buffer = new StringBuffer();
+        appendXMLSignature(buffer, node, elements, attributes, text, pi);
+        return buffer.toString();
+    }
+
+    private void appendXMLSignature(
+        StringBuffer buffer,
+        Object object,
+        boolean elements,
+        boolean attributes,
+        boolean text,
+        boolean pi) 
+    {
+        Node node = (Node) object;
+        int type = node.getNodeType();
+        switch (type) {
+            case Node.DOCUMENT_NODE :
+                buffer.append("<D>");
+                appendXMLSignature(
+                    buffer,
+                    node.getChildNodes(),
+                    elements,
+                    attributes,
+                    text,
+                    pi);
+                buffer.append("</D");
+                break;
+
+            case Node.ELEMENT_NODE :
+                String tag = elements ? ((Element) node).getTagName() : "E";
+                buffer.append("<");
+                buffer.append(tag);
+                buffer.append(">");
+                appendXMLSignature(
+                    buffer,
+                    node.getChildNodes(),
+                    elements,
+                    attributes,
+                    text,
+                    pi);
+                buffer.append("</");
+                buffer.append(tag);
+                buffer.append(">");
+                break;
+
+            case Node.TEXT_NODE :
+            case Node.CDATA_SECTION_NODE :
+                if (text) {
+                    String string = node.getNodeValue();
+                    string = string.replace('\n', '=');
+                    buffer.append(string);
+                }
+                break;
+        }
+    }
+
+    private void appendXMLSignature(
+        StringBuffer buffer,
+        NodeList children,
+        boolean elements,
+        boolean attributes,
+        boolean text,
+        boolean pi) 
+    {
+        for (int i = 0; i < children.getLength(); i++) {
+            appendXMLSignature(
+                buffer,
+                children.item(i),
+                elements,
+                attributes,
+                text,
+                pi);
+        }
+    }
+}
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

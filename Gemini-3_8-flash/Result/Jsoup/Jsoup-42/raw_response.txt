@@ -1,0 +1,57 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791142449-NmT5AzQGlUk8FA1591Kx","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing Jsoup Bug**\n\nI've identified the issue in `FormElement.formData()`. It was incorrectly including disabled inputs and not handling checked checkboxes/radios without values as intended, defaulting to an empty string instead of \"on\".\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".jsoup.nodes;\n\nimport org.jsoup.Connection;\nimport org.jsoup.Jsoup;\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" org.jsoup.nodes.Document;\nimport org.jsoup.nodes.FormElement;\nimport org.junit."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Test;\n\nimport java.util.List;\n\nimport static org.junit.Assert.assertEquals;\n\npublic class"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" FormElementTest {\n\n    @Test\n    public void testFormDataWithDisabledInputsAndDefaultCheckboxValue() {\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"String html = \"<form>\" +\n                \"<input name='check' type='checkbox' checked>\" +\n                \"<input name"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"='disabledInput' value='shouldNotAppear' disabled>\" +\n                \"</form>\";\n        Document doc = Jsoup."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"parse(html);\n        FormElement form = (FormElement) doc.select(\"form\").first();\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"List<Connection.KeyVal> data = form.formData();\n\n        assertEquals(1, data.size());\n        assertEquals(\"check"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\", data.get(0).key());\n        assertEquals(\"on\", data.get(0).value());\n    }"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1412,"output_tokens":386,"output_tokens_details":{"thinking_tokens":148},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.0025065,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0025065,"upstream_inference_prompt_cost":0.001059,"upstream_inference_completions_cost":0.0014475}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

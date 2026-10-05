@@ -1,0 +1,50 @@
+package org.apache.commons.collections.map;
+
+import java.util.Iterator;
+import java.util.Map;
+import junit.framework.TestCase;
+import org.apache.commons.collections.MapIterator;
+
+/**
+ * Regression test for COLLECTIONS-217 in Flat3Map.
+ */
+public class Flat3MapRegressionTest extends TestCase {
+
+    public Flat3MapRegressionTest(String testName) {
+        super(testName);
+    }
+
+    public void testEntryIteratorSetValueFallthrough() {
+        Flat3Map map = new Flat3Map();
+        map.put("one", "ten");
+        map.put("two", "twenty");
+        map.put("three", "thirty");
+
+        Iterator it = map.entrySet().iterator();
+        it.next();
+        Map.Entry entry = (Map.Entry) it.next();
+        entry.setValue("NewValue");
+
+        assertEquals(3, map.size());
+        assertEquals("NewValue", map.get("two"));
+        assertEquals("ten", map.get("one"));
+        assertEquals("thirty", map.get("three"));
+    }
+
+    public void testMapIteratorSetValueFallthrough() {
+        Flat3Map map = new Flat3Map();
+        map.put("one", "ten");
+        map.put("two", "twenty");
+        map.put("three", "thirty");
+
+        MapIterator it = map.mapIterator();
+        it.next();
+        it.next();
+        it.setValue("NewValue");
+
+        assertEquals(3, map.size());
+        assertEquals("NewValue", map.get("two"));
+        assertEquals("ten", map.get("one"));
+        assertEquals("thirty", map.get("three"));
+    }
+}

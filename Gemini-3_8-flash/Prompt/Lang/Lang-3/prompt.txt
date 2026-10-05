@@ -1,0 +1,102 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-3
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+8a1042959df80c06dbfa83896594caa8e20ff9d6
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-05-19 10:22:13 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-693
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-693
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang3.math.NumberUtilsTest::testStringCreateNumberEnsureNoPrecisionLoss
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang3.math.NumberUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang3.math.NumberUtils ===
+diff --git a/src/main/java/org/apache/commons/lang3/math/NumberUtils.java b/src/main/java/org/apache/commons/lang3/math/NumberUtils.java
+index c58402156..1e6ccdc02 100644
+--- a/src/main/java/org/apache/commons/lang3/math/NumberUtils.java
++++ b/src/main/java/org/apache/commons/lang3/math/NumberUtils.java
+@@ -590,18 +590,22 @@ public class NumberUtils {
+         //Must be a Float, Double, BigDecimal
+         final boolean allZeros = isAllZeros(mant) && isAllZeros(exp);
+         try {
++            if(numDecimals <= 7){// If number has 7 or fewer digits past the decimal point then make it a float
+                 final Float f = createFloat(str);
+                 if (!(f.isInfinite() || (f.floatValue() == 0.0F && !allZeros))) {
+                     return f;
+                 }
++            }
+         } catch (final NumberFormatException nfe) { // NOPMD
+             // ignore the bad number
+         }
+         try {
++            if(numDecimals <= 16){// If number has between 8 and 16 digits past the decimal point then make it a double
+                 final Double d = createDouble(str);
+                 if (!(d.isInfinite() || (d.doubleValue() == 0.0D && !allZeros))) {
+                     return d;
+                 }
++            }
+         } catch (final NumberFormatException nfe) { // NOPMD
+             // ignore the bad number
+         }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testStringCreateNumberEnsureNoPrecisionLoss(){
+        String shouldBeFloat = "1.23";
+        String shouldBeDouble = "3.40282354e+38";
+        String shouldBeBigDecimal = "1.797693134862315759e+308";
+        
+        assertTrue(NumberUtils.createNumber(shouldBeFloat) instanceof Float);
+        assertTrue(NumberUtils.createNumber(shouldBeDouble) instanceof Double);
+        assertTrue(NumberUtils.createNumber(shouldBeBigDecimal) instanceof BigDecimal);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

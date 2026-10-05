@@ -1,0 +1,79 @@
+```java
+package org.apache.commons.codec.binary;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for CODEC-130: BaseNCodecInputStream must skip decoded bytes
+ * (not encoded ones) and implement available() based on the codec's EOF state.
+ */
+public class BaseNCodecInputStreamCodec130Test extends TestCase {
+
+    // Base64 for "foobar" (6 decoded bytes, 8 encoded bytes)
+    private static final String ENCODED_FOOBAR = "Zm9vYmFy";
+
+    private static InputStream encodedStream() throws Exception {
+        return new ByteArrayInputStream(ENCODED_FOOBAR.getBytes("ISO-8859-1"));
+    }
+
+    public void testSkipPastEnd() throws Throwable {
+        Base64InputStream b64stream = new Base64InputStream(encodedStream());
+        // skip counts decoded bytes, so only 6 can be skipped, not 8
+        assertEquals(6, b64stream.skip(10));
+        assertEquals(-1, b64stream.read());
+        assertEquals(-1, b64stream.read());
+    }
+
+    public void testSkipToEnd() throws Throwable {
+        Base64InputStream b64stream = new Base64InputStream(encodedStream());
+        assertEquals(6, b64stream.skip(6));
+        // End of stream reached
+        assertEquals(-1, b64stream.read());
+        assertEquals(-1, b64stream.read());
+    }
+
+    public void testSkipDecodedData() throws Throwable {
+        Base64InputStream b64stream = new Base64InputStream(encodedStream());
+        assertEquals(3, b64stream.skip(3));
+        // the remaining decoded data is "bar"
+        assertEquals('b', b64stream.read());
+        assertEquals('a', b64stream.read());
+        assertEquals('r', b64stream.read());
+        assertEquals(-1, b64stream.read());
+    }
+
+    public void testSkipWrongArgument() throws Throwable {
+        Base64InputStream b64stream = new Base64InputStream(encodedStream());
+        try {
+            b64stream.skip(-10);
+            fail("Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
+
+    public void testAvailable() throws Throwable {
+        Base64InputStream b64stream = new Base64InputStream(encodedStream());
+        assertEquals(1, b64stream.available());
+        assertEquals(6, b64stream.skip(10));
+        // End of stream reached
+        assertEquals(0, b64stream.available());
+        assertEquals(-1, b64stream.read());
+        assertEquals(-1, b64stream.read());
+        assertEquals(0, b64stream.available());
+    }
+
+    public void testBase32SkipPastEnd() throws Throwable {
+        // Base32 for "foo"
+        InputStream ins = new ByteArrayInputStream("MZXW6===".getBytes("ISO-8859-1"));
+        Base32InputStream b32stream = new Base32InputStream(ins);
+        assertEquals(1, b32stream.available());
+        assertEquals(3, b32stream.skip(10));
+        assertEquals(-1, b32stream.read());
+        assertEquals(0, b32stream.available());
+    }
+}
+```

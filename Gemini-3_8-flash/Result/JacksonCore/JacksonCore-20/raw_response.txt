@@ -1,0 +1,57 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791106792-0Wylk08Q6W8lsF2dVaLN","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Developing Regression Test**\n\nI'm currently focused on crafting a regression test for the JacksonCore-20 defect. My current line of thought is to replicate the condition in `JsonGenerator.writeEmbeddedObject(Object object)` that led to the `JsonGenerationException`. This involves simulating a scenario where native support is absent.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Simulating WriteEmbeddedObject**\n\nI'm refining the test case, aiming to replicate the `JsonGenerationException` by directly calling `writeEmbeddedObject` with a non-byte array object without null checks. This focuses on the specific edge case identified.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Validating Embedded Objects**\n\nMy current focus is on thoroughly validating the behavior of `writeEmbeddedObject`. I'm specifically examining how it handles byte arrays and investigating whether `writeBinary` produces the same Base64 encoded output as expected for embedded binary data.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.core."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"base64;\n\nimport java.io.StringWriter;\n\nimport com.fasterxml.jackson.core.BaseTest;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\nimport com.fasterxml.jackson.core.JsonFactory;\nimport com.fasterxml.jackson.core.Json"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Generator;\n\npublic class EmbeddedObjectGenerationTest extends BaseTest {\n    public void testBinaryAsEmbeddedObject() throws"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" Exception {\n        JsonFactory f = new JsonFactory();\n        StringWriter sw = new StringWriter();\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"JsonGenerator g = f.createGenerator(sw);\n        byte[] data = new byte[] { 1, 2"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":", 3, 4 };\n        g.writeStartArray();\n        g.writeEmbeddedObject(data);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        g.writeEmbeddedObject(null);\n        g.writeEndArray();\n        g.close();\n\n        assertEquals(\""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"[\\\"AQIDBA==\\\",null]\", sw.toString().trim());\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1056,"output_tokens":1046,"output_tokens_details":{"thinking_tokens":835},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.0047145,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0047145,"upstream_inference_prompt_cost":0.000792,"upstream_inference_completions_cost":0.0039225}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,43 @@
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.Node;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test: a NUL character in a string literal must be printed
+ * as "\0" rather than as "\u0000".
+ */
+public class CodePrinterZeroRegressionTest extends TestCase {
+
+  private static String print(String js) {
+    Compiler compiler = new Compiler();
+    CompilerOptions options = new CompilerOptions();
+    compiler.initOptions(options);
+
+    Node n = compiler.parseTestCode(js);
+    assertEquals(0, compiler.getErrorCount());
+
+    String result = compiler.toSource(n).trim();
+    if (result.endsWith(";")) {
+      result = result.substring(0, result.length() - 1);
+    }
+    return result;
+  }
+
+  private static void assertPrint(String js, String expected) {
+    assertEquals(expected, print(js));
+  }
+
+  public void testZero() {
+    assertPrint("var x ='\\0';", "var x=\"\\0\"");
+    assertPrint("var x ='\\x00';", "var x=\"\\0\"");
+    assertPrint("var x ='\\u0000';", "var x=\"\\0\"");
+  }
+}
+```
+
+I haven't compiled or run this against the buggy and fixed revisions. It relies on `Compiler.initOptions`, `parseTestCode` and `toSource` behaving as they did in the 2011 code. I wrote it as a standalone class rather than adding to `CodePrinterTest` because I wasn't sure of that class's helper methods at this revision.
+
+The three assertions are the same as the triggering `testZero`. On the buggy version the NUL character prints as `\u000` followed by the next character, which is the `var x="\u0000"` mismatch in the bug report. The fix adds a `'\0'` case that prints `\0`.

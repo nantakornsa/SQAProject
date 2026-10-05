@@ -1,0 +1,214 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Cli
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Cli
+       Program: commons-cli
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/Cli.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-cli.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/active-bugs.csv
+Number of bugs: 39
+--------------------------------------------------------------------------------
+
+Summary for Bug: Cli-22
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+db4a638cf642fd7d031fcaebffa306b0a16ba771
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-09-16 08:05:03 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+cli-1
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CLI-1
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.cli.ApplicationTest::testGroovy
+   --> junit.framework.ComparisonFailure: expected:<[println 'hello']> but was:<[--]>
+ - org.apache.commons.cli.PosixParserTest::testStopAtExpectedArg
+   --> junit.framework.ComparisonFailure: Confirm -b is set expected:<[foo]> but was:<[--]>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.cli.PosixParser
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.cli.PosixParser ===
+diff --git a/src/java/org/apache/commons/cli/PosixParser.java b/src/java/org/apache/commons/cli/PosixParser.java
+index 47ad0f7..ca8b6c6 100644
+--- a/src/java/org/apache/commons/cli/PosixParser.java
++++ b/src/java/org/apache/commons/cli/PosixParser.java
+@@ -38,6 +38,7 @@ public class PosixParser extends Parser
+     private boolean eatTheRest;
+ 
+     /** holder for the current option */
++    private Option currentOption;
+ 
+     /** the command line Options */
+     private Options options;
+@@ -113,10 +114,11 @@ public class PosixParser extends Parser
+ 
+                 if (!options.hasOption(opt))
+                 {
+-                    processNonOptionToken(token);
++                    processNonOptionToken(token, stopAtNonOption);
+                 }
+                 else
+                 {
++                    currentOption = options.getOption(opt);
+                     
+                     tokens.add(opt);
+                     if (pos != -1)
+@@ -143,13 +145,9 @@ public class PosixParser extends Parser
+                     burstToken(token, stopAtNonOption);
+                 }
+             }
+-            else if (stopAtNonOption)
+-            {
+-                processNonOptionToken(token);
+-            }
+             else
+             {
+-                tokens.add(token);
++                processNonOptionToken(token, stopAtNonOption);
+             }
+ 
+             gobble(iter);
+@@ -181,10 +179,13 @@ public class PosixParser extends Parser
+      *
+      * @param value The current token
+      */
+-    private void processNonOptionToken(String value)
++    private void processNonOptionToken(String value, boolean stopAtNonOption)
+     {
++        if (stopAtNonOption && (currentOption == null || !currentOption.hasArg()))
++        {
+             eatTheRest = true;
+             tokens.add("--");
++        }
+ 
+         tokens.add(value);
+     }
+@@ -208,6 +209,10 @@ public class PosixParser extends Parser
+             eatTheRest = true;
+         }
+ 
++        if (options.hasOption(token))
++        {
++            currentOption = options.getOption(token);
++        }
+ 
+         tokens.add(token);
+     }
+@@ -240,7 +245,6 @@ public class PosixParser extends Parser
+      */
+     protected void burstToken(String token, boolean stopAtNonOption)
+     {
+-        Option currentOption;
+         for (int i = 1; i < token.length(); i++)
+         {
+             String ch = String.valueOf(token.charAt(i));
+@@ -259,7 +263,7 @@ public class PosixParser extends Parser
+             }
+             else if (stopAtNonOption)
+             {
+-                processNonOptionToken(token.substring(i));
++                processNonOptionToken(token.substring(i), true);
+                 break;
+             }
+             else
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testGroovy() throws Exception {
+        Options options = new Options();
+
+        options.addOption(
+            OptionBuilder.withLongOpt("define").
+                withDescription("define a system property").
+                hasArg(true).
+                withArgName("name=value").
+                create('D'));
+        options.addOption(
+            OptionBuilder.hasArg(false)
+            .withDescription("usage information")
+            .withLongOpt("help")
+            .create('h'));
+        options.addOption(
+            OptionBuilder.hasArg(false)
+            .withDescription("debug mode will print out full stack traces")
+            .withLongOpt("debug")
+            .create('d'));
+        options.addOption(
+            OptionBuilder.hasArg(false)
+            .withDescription("display the Groovy and JVM versions")
+            .withLongOpt("version")
+            .create('v'));
+        options.addOption(
+            OptionBuilder.withArgName("charset")
+            .hasArg()
+            .withDescription("specify the encoding of the files")
+            .withLongOpt("encoding")
+            .create('c'));
+        options.addOption(
+            OptionBuilder.withArgName("script")
+            .hasArg()
+            .withDescription("specify a command line script")
+            .create('e'));
+        options.addOption(
+            OptionBuilder.withArgName("extension")
+            .hasOptionalArg()
+            .withDescription("modify files in place; create backup if extension is given (e.g. \'.bak\')")
+            .create('i'));
+        options.addOption(
+            OptionBuilder.hasArg(false)
+            .withDescription("process files line by line using implicit 'line' variable")
+            .create('n'));
+        options.addOption(
+            OptionBuilder.hasArg(false)
+            .withDescription("process files line by line and print result (see also -n)")
+            .create('p'));
+        options.addOption(
+            OptionBuilder.withArgName("port")
+            .hasOptionalArg()
+            .withDescription("listen on a port and process inbound lines")
+            .create('l'));
+        options.addOption(
+            OptionBuilder.withArgName("splitPattern")
+            .hasOptionalArg()
+            .withDescription("split lines using splitPattern (default '\\s') using implicit 'split' variable")
+            .withLongOpt("autosplit")
+            .create('a'));
+
+        Parser parser = new PosixParser();
+        CommandLine line = parser.parse(options, new String[] { "-e", "println 'hello'" }, true);
+
+        assertTrue(line.hasOption('e'));
+        assertEquals("println 'hello'", line.getOptionValue('e'));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

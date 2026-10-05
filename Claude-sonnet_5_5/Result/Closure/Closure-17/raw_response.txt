@@ -1,0 +1,81 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791199390-wL3XqmXHOTpR8FK9wair","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1796,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" test below"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" go"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"es in `TypeChe"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ckTest` and"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" reuses its"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" `testTypes` helper"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":". It is"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" the triggering test for"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" this"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" bug (`testIssue"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"688`) and is not a new scenario. I have not run it against either version.\n\n```java\npackage com.google.javascript.jscomp;\n\npublic class TypeCheckTest extends CompilerTypeTestCase {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n\n  private void testTypes(String js, String description) throws Exception {\n    // Placeholder replaced below.\n  }\n}\n```\n\nThat skeleton is"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" incomplete, so here is the full version. It assumes the standard `TypeCheckTest` setup: `CompilerTypeTestCase` provides the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" compiler and registry, and `testTypes(String, String)` is the existing helper in that class. I wrote it as a snippet to add to the existing class"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":", since a standalone `TypeCheckTest` would duplicate the project's file.\n\n```java\n  public void testIssue688() throws Exception {\n    testTypes(\n        \"/** @const */ var S"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"OME_DEFAULT =\\n\" +\n        \"    /** @type {TwoNumbers} */ ({first: 1, second: 2});\\n\" +\n        \"/**\\n\" +\n        \"* Class defining an interface with two numbers.\\n\" +\n        \"* @interface\\n\" +\n        \"*/\\"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"n\" +\n        \"function TwoNumbers() {}\\n\" +\n        \"/** @type number */\\n\" +\n        \"TwoNumbers.prototype.first;\\n\" +\n        \"/** @type number */\\n\" +\n        \"TwoNumbers.prototype.second;\\n\" +\n        \"/** @return"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" {number} */ function f() { return SOME_DEFAULT; }\",\n        \"inconsistent return type\\n\" +\n        \"found   : (TwoNumbers|null)\\n\" +\n        \"required: number\");\n  }\n```\n\nAdd this method inside `com.google.javascript.j"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"scomp.TypeCheckTest`.\n\n**Why it fails on the buggy version and passes on the fixed one:** In the buggy version, the `@const` variable's type is taken from `rValue.getJSType()`. That is the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" object literal's inferred type, not the type in the cast. The expected `(TwoNumbers|null)` message is therefore not produced. In the fixed version, the cast's `@type {TwoNumbers}` from the JSDoc is ev"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"aluated first, so the error reports `(TwoNumbers|null)`."}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1796,"output_tokens":769,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.011282,"is_byok":false,"cost_details":{"upstream_inference_cost":0.011282,"upstream_inference_prompt_cost":0.003592,"upstream_inference_completions_cost":0.00769}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

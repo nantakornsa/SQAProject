@@ -1,0 +1,17 @@
+```java
+package org.apache.commons.lang3;
+
+import junit.framework.TestCase;
+import java.util.Arrays;
+
+public class ClassUtilsLang33Test extends TestCase {
+
+    public void testToClassWithNullElement() {
+        Object[] array = new Object[] { "Test", null, 99d };
+        Class<?>[] expected = new Class<?>[] { String.class, null, Double.class };
+        Class<?>[] actual = ClassUtils.toClass(array);
+
+        assertTrue("Expected array containing null element to match", Arrays.equals(expected, actual));
+    }
+}
+```

@@ -1,0 +1,57 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791184751-g9RFaHqNCZ8YDZirhmBa","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Deserialization Flaw**\n\nI'm currently pinpointing the exact cause of the `Locale` deserialization issue in JacksonDatabind-56. The problem appears to stem from how `FromStringDeserializer` handles hyphens in BCP 47 formatted strings, leading to incorrect parsing.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind.deser;\n\nimport com"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".fasterxml.jackson.databind.BaseMapTest;\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\nimport java"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".util.Locale;\n\npublic class LocaleDeserialization56Test extends BaseMapTest {\n\n    public void testLocaleWithHyphen"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n\n        // Testing BCP 47 style language tags with hyphen\n        Locale"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" loc = mapper.readValue(quote(\"en-US\"), Locale.class);\n        assertEquals(Locale.US, loc);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        assertEquals(\"en\", loc.getLanguage());\n        assertEquals(\"US\", loc.getCountry());\n\n        loc"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" = mapper.readValue(quote(\"es-ES\"), Locale.class);\n        assertEquals(new Locale(\"es\", \""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ES\"), loc);\n        assertEquals(\"es\", loc.getLanguage());\n        assertEquals(\"ES\", loc.get"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Country());\n\n        // Also test with variant using hyphens\n        loc = mapper.readValue(quote(\"en-US"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"-variant\"), Locale.class);\n        assertEquals(new Locale(\"en\", \"US\", \"variant\"), loc);\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"}\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1202,"output_tokens":641,"output_tokens_details":{"thinking_tokens":384},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00330525,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00330525,"upstream_inference_prompt_cost":0.0009015,"upstream_inference_completions_cost":0.00240375}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,142 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-32
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+66c8c695fd8130e3ede6f77c6e5cc1ec96a0e9b3
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-04-05 18:10:13 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+701
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-701.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.IntegrationTest::testIssue701
+   --> junit.framework.ComparisonFailure: expected:</*
+ - com.google.javascript.jscomp.parsing.JsDocInfoParserTest::testParseLicense
+   --> junit.framework.ComparisonFailure: expected:< Foo
+ - com.google.javascript.jscomp.parsing.JsDocInfoParserTest::testParsePreserve
+   --> junit.framework.ComparisonFailure: expected:< Foo
+ - com.google.javascript.jscomp.parsing.JsDocInfoParserTest::testParseLicenseAscii
+   --> junit.framework.ComparisonFailure: expected:< Foo
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.parsing.JsDocInfoParser
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.parsing.JsDocInfoParser ===
+diff --git a/src/com/google/javascript/jscomp/parsing/JsDocInfoParser.java b/src/com/google/javascript/jscomp/parsing/JsDocInfoParser.java
+index f6a64007c..cfdccbe6c 100644
+--- a/src/com/google/javascript/jscomp/parsing/JsDocInfoParser.java
++++ b/src/com/google/javascript/jscomp/parsing/JsDocInfoParser.java
+@@ -1355,12 +1355,14 @@ public final class JsDocInfoParser {
+     // Track the start of the line to count whitespace that
+     // the tokenizer skipped. Because this case is rare, it's easier
+     // to do this here than in the tokenizer.
++    int lineStartChar = -1;
+ 
+     do {
+       switch (token) {
+         case STAR:
+           if (ignoreStar) {
+             // Mark the position after the star as the new start of the line.
++            lineStartChar = stream.getCharno() + 1;
+           } else {
+             // The star is part of the comment.
+             if (builder.length() > 0) {
+@@ -1379,6 +1381,7 @@ public final class JsDocInfoParser {
+           }
+ 
+           ignoreStar = true;
++          lineStartChar = 0;
+           token = next();
+           continue;
+ 
+@@ -1386,7 +1389,19 @@ public final class JsDocInfoParser {
+           ignoreStar = false;
+           state = State.SEARCHING_ANNOTATION;
+ 
++          boolean isEOC = token == JsDocToken.EOC;
++          if (!isEOC) {
++            if (lineStartChar != -1 && option == WhitespaceOption.PRESERVE) {
++              int numSpaces = stream.getCharno() - lineStartChar;
++              for (int i = 0; i < numSpaces; i++) {
++                builder.append(' ');
++              }
++              lineStartChar = -1;
++            } else if (builder.length() > 0) {
+               // All tokens must be separated by a space.
++              builder.append(' ');
++            }
++          }
+ 
+           if (token == JsDocToken.EOC ||
+               token == JsDocToken.EOF ||
+@@ -1411,9 +1426,6 @@ public final class JsDocInfoParser {
+             return new ExtractionInfo(multilineText, token);
+           }
+ 
+-          if (builder.length() > 0) {
+-            builder.append(' ');
+-          }
+           builder.append(toString(token));
+ 
+           line = stream.getRemainingJSDocLine();
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue701() {
+    // Check ASCII art in license comments.
+    String ascii = "/**\n" +
+        " * @preserve\n" +
+        "   This\n" +
+        "     is\n" +
+        "       ASCII    ART\n" +
+        "*/";
+    String result = "/*\n\n" +
+        "   This\n" +
+        "     is\n" +
+        "       ASCII    ART\n" +
+        "*/\n";
+    testSame(createCompilerOptions(), ascii);
+    assertEquals(result, lastCompiler.toSource());
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

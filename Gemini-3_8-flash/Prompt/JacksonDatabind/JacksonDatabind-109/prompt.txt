@@ -1,0 +1,172 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-109
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+e287a62cd32832d5a9611d5b8f3bc06ec1310dc0
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2019-02-04 17:51:04 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+2230
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/2230
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.ser.jdk.BigDecimalPlain2230Test::testBigIntegerAsPlainTest
+   --> junit.framework.ComparisonFailure: expected:<{"value":"[0.0000000005]"}> but was:<{"value":"[5E-10]"}>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.ser.std.NumberSerializer
+ - com.fasterxml.jackson.databind.ser.std.NumberSerializers
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.ser.std.NumberSerializer ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/ser/std/NumberSerializer.java b/src/main/java/com/fasterxml/jackson/databind/ser/std/NumberSerializer.java
+index dc4906ebf..56b30737f 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/ser/std/NumberSerializer.java
++++ b/src/main/java/com/fasterxml/jackson/databind/ser/std/NumberSerializer.java
+@@ -34,6 +34,7 @@ public class NumberSerializer
+     /**
+      * Copied from `jackson-core` class `GeneratorBase`
+      */
++    protected final static int MAX_BIG_DECIMAL_SCALE = 9999;
+     
+     protected final boolean _isInt;
+ 
+@@ -55,6 +56,9 @@ public class NumberSerializer
+             switch (format.getShape()) {
+             case STRING:
+                 // [databind#2264]: Need special handling for `BigDecimal`
++                if (((Class<?>) handledType()) == BigDecimal.class) {
++                    return bigDecimalAsStringSerializer();
++                }
+                 return ToStringSerializer.instance;
+             default:
+             }
+@@ -110,14 +114,57 @@ public class NumberSerializer
+     /**
+      * @since 2.10
+      */
++    public static JsonSerializer<?> bigDecimalAsStringSerializer() {
++        return BigDecimalAsStringSerializer.BD_INSTANCE;
++    }
+     
++    final static class BigDecimalAsStringSerializer
++        extends ToStringSerializerBase
++    {
++        final static BigDecimalAsStringSerializer BD_INSTANCE = new BigDecimalAsStringSerializer();
++        
++        public BigDecimalAsStringSerializer() {
++            super(BigDecimal.class);
++        }
+ 
++        @Override
++        public boolean isEmpty(SerializerProvider prov, Object value) {
++            return valueToString(value).isEmpty();
++        }
+ 
++        @Override
++        public void serialize(Object value, JsonGenerator gen, SerializerProvider provider)
++            throws IOException
++        {
++            final String text;
++            if (gen.isEnabled(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN)) {
++                final BigDecimal bd = (BigDecimal) value;
+                 // 24-Aug-2016, tatu: [core#315] prevent possible DoS vector, so we need this
++                if (!_verifyBigDecimalRange(gen, bd)) {
+                     // ... but wouldn't it be nice to trigger error via generator? Alas,
+                     // no method to do that. So we'll do...
++                    final String errorMsg = String.format(
++                            "Attempt to write plain `java.math.BigDecimal` (see JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN) with illegal scale (%d): needs to be between [-%d, %d]",
++                            bd.scale(), MAX_BIG_DECIMAL_SCALE, MAX_BIG_DECIMAL_SCALE);
++                    provider.reportMappingProblem(errorMsg);
++                }
++                text = bd.toPlainString();
++            } else {
++                text = value.toString();
++            }
++            gen.writeString(text);
++        }
+ 
++        @Override
++        public String valueToString(Object value) {
+             // should never be called
++            throw new IllegalStateException();
++        }
+ 
+         // 24-Aug-2016, tatu: [core#315] prevent possible DoS vector, so we need this
++        protected boolean _verifyBigDecimalRange(JsonGenerator gen, BigDecimal value) throws IOException {
++            int scale = value.scale();
++            return ((scale >= -MAX_BIG_DECIMAL_SCALE) && (scale <= MAX_BIG_DECIMAL_SCALE));
++        }
++    }
+ }
+
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.ser.std.NumberSerializers ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/ser/std/NumberSerializers.java b/src/main/java/com/fasterxml/jackson/databind/ser/std/NumberSerializers.java
+index 8af633d5b..8fd2b875f 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/ser/std/NumberSerializers.java
++++ b/src/main/java/com/fasterxml/jackson/databind/ser/std/NumberSerializers.java
+@@ -2,6 +2,7 @@ package com.fasterxml.jackson.databind.ser.std;
+ 
+ import java.io.IOException;
+ import java.lang.reflect.Type;
++import java.math.BigDecimal;
+ import java.util.Map;
+ 
+ import com.fasterxml.jackson.annotation.JsonFormat;
+@@ -97,6 +98,9 @@ public class NumberSerializers {
+             if (format != null) {
+                 switch (format.getShape()) {
+                 case STRING:
++                    if (((Class<?>) handledType()) == BigDecimal.class) {
++                        return NumberSerializer.bigDecimalAsStringSerializer();
++                    }
+                     return ToStringSerializer.instance;
+                 default:
+                 }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testBigIntegerAsPlainTest() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

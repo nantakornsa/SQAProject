@@ -1,0 +1,81 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-102
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+323cd0b309697021f1883de1e53038d2d09fc160
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2018-08-30 19:43:43 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+2064
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/2064
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.ser.jdk.SqlDateSerializationTest::testSqlDateConfigOverride
+   --> junit.framework.ComparisonFailure: expected:<["1980+04+14"]> but was:<[324547200000]>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.ser.std.DateTimeSerializerBase
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.ser.std.DateTimeSerializerBase ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/ser/std/DateTimeSerializerBase.java b/src/main/java/com/fasterxml/jackson/databind/ser/std/DateTimeSerializerBase.java
+index 492cd98e8..572d23eb6 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/ser/std/DateTimeSerializerBase.java
++++ b/src/main/java/com/fasterxml/jackson/databind/ser/std/DateTimeSerializerBase.java
+@@ -64,9 +64,6 @@ public abstract class DateTimeSerializerBase<T>
+     {
+         // Note! Should not skip if `property` null since that'd skip check
+         // for config overrides, in case of root value
+-        if (property == null) {
+-            return this;
+-        }
+         JsonFormat.Value format = findFormatOverrides(serializers, property, handledType());
+         if (format == null) {
+             return this;
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testSqlDateConfigOverride() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

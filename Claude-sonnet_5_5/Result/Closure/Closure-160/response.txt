@@ -1,0 +1,33 @@
+The test below calls `Compiler` directly instead of going through `CommandLineRunnerTest`, which keeps the class small. It sets the same options as the command-line flags `--warning_level=QUIET --jscomp_error=undefinedVars`. I have not compiled or run it, and the API names (`DiagnosticGroups.UNDEFINED_VARIABLES`, `JSSourceFile.fromCode`, the `compile` overload) are from memory of the 2011 codebase, so they may need adjusting.
+
+On the buggy version, the `checkVars` group is turned off after the user's `undefinedVars` error setting is applied, so the undefined-variable error is lost and the test fails. On the fixed version, the user's setting is respected and exactly one error (`VarCheck.UNDEFINED_VAR_ERROR`) is reported.
+
+```java
+package com.google.javascript.jscomp;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test: an explicit error level for the undefinedVars group must
+ * be honored even when checkSymbols is off (e.g. warning_level=QUIET).
+ */
+public class CheckSymbolsOverrideForQuietTest extends TestCase {
+
+  public void testCheckSymbolsOverrideForQuiet() {
+    CompilerOptions options = new CompilerOptions();
+    WarningLevel.QUIET.setOptionsForWarningLevel(options);
+    options.checkSymbols = false;
+    options.setWarningLevel(
+        DiagnosticGroups.UNDEFINED_VARIABLES, CheckLevel.ERROR);
+
+    Compiler compiler = new Compiler();
+    Result result = compiler.compile(
+        new JSSourceFile[] { JSSourceFile.fromCode("externs", "var extern;") },
+        new JSSourceFile[] { JSSourceFile.fromCode("input", "x = 3;") },
+        options);
+
+    assertEquals("Expected exactly one error", 1, result.errors.length);
+    assertEquals(VarCheck.UNDEFINED_VAR_ERROR, result.errors[0].getType());
+  }
+}
+```

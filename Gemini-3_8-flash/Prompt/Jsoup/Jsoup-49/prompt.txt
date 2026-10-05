@@ -1,0 +1,99 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-49
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+b2e37fca64877104cfdad3f56cdc2c8b98cb6be1
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-04-03 20:19:13 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+689
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/689
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.nodes.ElementTest::appendMustCorrectlyMoveChildrenInsideOneParentElement
+   --> junit.framework.AssertionFailedError: expected:<...><div3>Check</div3><[div4></div4><div1></div1><div2></div2><]/body>> but was:<...><div3>Check</div3><[]/body>>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.nodes.Node
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.nodes.Node ===
+diff --git a/src/main/java/org/jsoup/nodes/Node.java b/src/main/java/org/jsoup/nodes/Node.java
+index 01a4cd1c..b6bdb93b 100644
+--- a/src/main/java/org/jsoup/nodes/Node.java
++++ b/src/main/java/org/jsoup/nodes/Node.java
+@@ -442,8 +442,8 @@ public abstract class Node implements Cloneable {
+             Node in = children[i];
+             reparentChild(in);
+             childNodes.add(index, in);
++            reindexChildren(index);
+         }
+-        reindexChildren(index);
+     }
+ 
+     protected void ensureChildNodes() {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void appendMustCorrectlyMoveChildrenInsideOneParentElement() {
+        Document doc = new Document("");
+        Element body = doc.appendElement("body");
+        body.appendElement("div1");
+        body.appendElement("div2");
+        final Element div3 = body.appendElement("div3");
+        div3.text("Check");
+        final Element div4 = body.appendElement("div4");
+
+        ArrayList<Element> toMove = new ArrayList<Element>();
+        toMove.add(div3);
+        toMove.add(div4);
+
+        body.insertChildren(0, toMove);
+
+        String result = doc.toString().replaceAll("\\s+", "");
+        assertEquals("<body><div3>Check</div3><div4></div4><div1></div1><div2></div2></body>", result);
+
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

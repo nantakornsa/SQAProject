@@ -1,0 +1,22 @@
+The test below asserts that `Complex.ZERO.reciprocal()` returns `Complex.INF`, which is the behaviour the fix introduces. I have not compiled or run it. On the buggy version `reciprocal()` returns `Complex.NaN` for zero, so the assertion fails. On the fixed version it returns `INF`, so the assertion passes.
+
+I used `Assert.assertEquals(expected, actual)` with the arguments in the conventional order. `Complex.equals` treats two NaN values as equal and compares real and imaginary parts otherwise, so comparing against `INF` is reliable. I also added a second assertion on the real and imaginary parts: `INF` is `(Infinity, Infinity)`, and the buggy NaN result fails that check as well.
+
+```java
+package org.apache.commons.math3.complex;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+public class ComplexReciprocalZeroRegressionTest {
+
+    @Test
+    public void testReciprocalZero() {
+        Complex result = Complex.ZERO.reciprocal();
+        Assert.assertEquals(Complex.INF, result);
+        Assert.assertTrue(Double.isInfinite(result.getReal()));
+        Assert.assertTrue(Double.isInfinite(result.getImaginary()));
+        Assert.assertFalse(result.isNaN());
+    }
+}
+```

@@ -1,0 +1,54 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791115179-eXMnCc5euHviUrX7t7RN","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Mockito Bug**\n\nI'm currently delving into Mockito-36. My focus is on understanding why `callRealMethod()` falters when applied to interface method invocations, specifically the `NullPointerException` or `NoSuchMethodError` that can arise due to a null or missing `realMethod`.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Exploring Mockito's Interface Spy Behavior**\n\nI've been examining Mockito-36, specifically the issues encountered when `callRealMethod()` is used with interface methods. My current focus is on the `SpyingOnInterfacesTest` and the `shouldFailInRuntimeWhenCallingRealMethodOnInterface()` test case, which appears to be a key reproducer for the `MockitoException` I'm seeing. I'm trying to understand the exact invocation flow that leads to this error.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing Mockito Behavior**\n\nI'm observing that `callRealMethod()` on interface methods doesn't execute until the method is actually invoked. This seems to be the root of the issue I'm seeing, as it leads to a `NoSuchMethodError` or `NullPointerException` when the real method isn't found.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.mockitousage.sp"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ies;\n\nimport static org.mockito.Mockito.*;\n\nimport java.util.List;\nimport org.junit"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".Test;\nimport org.mockito.exceptions.base.MockitoException;\nimport org.mockitoutil."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"TestBase;\n\npublic class SpyingOnInterfacesTest extends TestBase {\n\n    @Test\n    public void should"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"FailInRuntimeWhenCallingRealMethodOnInterface() {\n        List<?> list = mock(List.class);\n        when("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"list.get(0)).thenCallRealMethod();\n\n        try {\n            list.get(0);\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"            fail();\n        } catch (MockitoException e) {\n            // expected\n        }\n    }\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1097,"output_tokens":927,"output_tokens_details":{"thinking_tokens":766},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.004299,"is_byok":false,"cost_details":{"upstream_inference_cost":0.004299,"upstream_inference_prompt_cost":0.00082275,"upstream_inference_completions_cost":0.00347625}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

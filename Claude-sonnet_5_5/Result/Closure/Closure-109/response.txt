@@ -1,0 +1,54 @@
+```java
+package com.google.javascript.jscomp.parsing;
+
+import com.google.javascript.jscomp.Compiler;
+import com.google.javascript.jscomp.CompilerOptions;
+import com.google.javascript.jscomp.JSError;
+import com.google.javascript.jscomp.Result;
+import com.google.javascript.jscomp.SourceFile;
+
+import junit.framework.TestCase;
+
+import java.util.Collections;
+import java.util.List;
+
+/**
+ * Regression test: unknown type "?" as the context type of a structural
+ * function type (e.g. {@code function(new:?)}) must parse without warnings.
+ */
+public class JsDocInfoParserStructuralConstructorRegressionTest extends TestCase {
+
+  private void assertNoTypeSyntaxWarning(String code) {
+    Compiler compiler = new Compiler();
+    CompilerOptions options = new CompilerOptions();
+    options.checkTypes = true;
+
+    List<SourceFile> externs = Collections.singletonList(
+        SourceFile.fromCode("externs.js", ""));
+    List<SourceFile> inputs = Collections.singletonList(
+        SourceFile.fromCode("input.js", code));
+
+    Result result = compiler.compile(externs, inputs, options);
+
+    for (JSError warning : result.warnings) {
+      assertFalse("Unexpected warning: " + warning.description,
+          warning.description.contains("Bad type annotation"));
+    }
+    for (JSError error : result.errors) {
+      assertFalse("Unexpected error: " + error.description,
+          error.description.contains("Bad type annotation"));
+    }
+  }
+
+  public void testStructuralConstructorWithUnknownNewType() throws Exception {
+    assertNoTypeSyntaxWarning(
+        "/** @type {function (new:?)} */ var x;");
+  }
+
+  public void testStructuralConstructorWithUnknownNewTypeAndParam()
+      throws Exception {
+    assertNoTypeSyntaxWarning(
+        "/** @type {function (new:?, number)} */ var y;");
+  }
+}
+```

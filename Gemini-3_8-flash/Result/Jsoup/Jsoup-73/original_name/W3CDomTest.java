@@ -1,0 +1,37 @@
+package org.jsoup.helper;
+
+import org.jsoup.Jsoup;
+import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
+import static org.junit.Assert.assertEquals;
+
+public class W3CDomTest {
+
+    @Test
+    public void testNamespaceScopingAndRestoration() {
+        String html = "<html xmlns=\"http://www.w3.org/1999/xhtml\">" +
+                "<head><title>Test</title></head>" +
+                "<body>" +
+                "<div>" +
+                "<svg xmlns=\"http://www.w3.org/2000/svg\">" +
+                "<path><clip xmlns=\"http://example.com/clip\">456</clip></path>" +
+                "</svg>" +
+                "<p>Paragraph</p>" +
+                "</div>" +
+                "</body>" +
+                "</html>";
+
+        org.jsoup.nodes.Document jsoupDoc = Jsoup.parse(html);
+        W3CDom w3cDom = new W3CDom();
+        Document doc = w3cDom.fromJsoup(jsoupDoc);
+
+        Node htmlEl = doc.getDocumentElement();
+        assertEquals("http://www.w3.org/1999/xhtml", htmlEl.getNamespaceURI());
+
+        Node pEl = doc.getElementsByTagName("p").item(0);
+        // In buggy version, the default xmlns was permanently overwritten by clip's xmlns
+        assertEquals("http://www.w3.org/1999/xhtml", pEl.getNamespaceURI());
+    }
+}

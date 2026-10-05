@@ -1,0 +1,112 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-116
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+b80dfd3b0e5e4b490b7afb469320d18bac4520b4
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-10-01 16:59:25 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+1101
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-1101.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.FunctionInjectorTest::testIssue1101a
+   --> junit.framework.AssertionFailedError: expected:<NO> but was:<YES>
+ - com.google.javascript.jscomp.FunctionInjectorTest::testIssue1101b
+   --> junit.framework.AssertionFailedError: expected:<NO> but was:<YES>
+ - com.google.javascript.jscomp.InlineFunctionsTest::testBug4944818
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.InlineFunctionsTest::testDoubleInlining2
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.InlineFunctionsTest::testIssue1101
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.InlineFunctionsTest::testInlineIfParametersModified8
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.InlineFunctionsTest::testInlineIfParametersModified9
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.InlineFunctionsTest::testInlineFunctions6
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.FunctionInjector
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.FunctionInjector ===
+diff --git a/src/com/google/javascript/jscomp/FunctionInjector.java b/src/com/google/javascript/jscomp/FunctionInjector.java
+index c3fc14b24..accf4c537 100644
+--- a/src/com/google/javascript/jscomp/FunctionInjector.java
++++ b/src/com/google/javascript/jscomp/FunctionInjector.java
+@@ -694,6 +694,15 @@ class FunctionInjector {
+ 
+     Node block = fnNode.getLastChild();
+ 
++    boolean hasSideEffects = false;  // empty function case
++    if (block.hasChildren()) {
++      Preconditions.checkState(block.hasOneChild());
++      Node stmt = block.getFirstChild();
++      if (stmt.isReturn()) {
++        hasSideEffects = NodeUtil.mayHaveSideEffects(
++            stmt.getFirstChild(), compiler);
++      }
++    }
+ 
+     // CALL NODE: [ NAME, ARG1, ARG2, ... ]
+     Node cArg = callNode.getFirstChild().getNext();
+@@ -720,6 +729,9 @@ class FunctionInjector {
+       // For each named parameter check if a mutable argument use more than one.
+       if (fnParam != null) {
+         if (cArg != null) {
++          if (hasSideEffects && NodeUtil.canBeSideEffected(cArg)) {
++            return CanInlineResult.NO;
++          }
+ 
+           // Check for arguments that are evaluated more than once.
+           // Note: Unlike block inlining, there it is not possible that a
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testIssue1101a() {
+    helperCanInlineReferenceToFunction(CanInlineResult.NO,
+        "function foo(a){return modifiyX() + a;} foo(x);", "foo",
+        INLINE_DIRECT);
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

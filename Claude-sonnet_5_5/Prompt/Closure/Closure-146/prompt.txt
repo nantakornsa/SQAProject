@@ -1,0 +1,90 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-146
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+35d56dd1fadec0ed50797d222de4e05f78bbf1c9
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-07-07 22:14:18 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+172
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-172.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.SemanticReverseAbstractInterpreterTest::testEqCondition4
+   --> junit.framework.AssertionFailedError: expected:<None> but was:<undefined>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.rhino.jstype.JSType
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.rhino.jstype.JSType ===
+diff --git a/src/com/google/javascript/rhino/jstype/JSType.java b/src/com/google/javascript/rhino/jstype/JSType.java
+index aa8c7bc9c..1a7db7b01 100644
+--- a/src/com/google/javascript/rhino/jstype/JSType.java
++++ b/src/com/google/javascript/rhino/jstype/JSType.java
+@@ -703,7 +703,8 @@ public abstract class JSType implements Serializable {
+     // other types
+     switch (this.testForEquality(that)) {
+       case TRUE:
+-        return new TypePair(null, null);
++        JSType noType = getNativeType(JSTypeNative.NO_TYPE);
++        return new TypePair(noType, noType);
+ 
+       case FALSE:
+       case UNKNOWN:
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testEqCondition4() throws Exception {
+    FlowScope blind = newScope();
+    testBinop(blind,
+        Token.EQ,
+        createVar(blind, "a", VOID_TYPE),
+        createVar(blind, "b", VOID_TYPE),
+        Sets.newHashSet(
+            new TypedName("a", VOID_TYPE),
+            new TypedName("b", VOID_TYPE)),
+        Sets.newHashSet(
+            new TypedName("a", NO_TYPE),
+            new TypedName("b", NO_TYPE)));
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

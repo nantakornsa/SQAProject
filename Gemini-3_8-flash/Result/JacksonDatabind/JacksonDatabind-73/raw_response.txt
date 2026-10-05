@@ -1,0 +1,69 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791185987-AsRwUnBAZFszlIMCVtOB","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing Jackson Deserialization**\n\nI'm currently focused on resolving the JacksonDatabind-73 bug. My thought process is centering on ensuring that properties marked with `JsonProperty.Access.READ_ONLY` are correctly ignored during deserialization, preventing `UnrecognizedPropertyException` instead of failing.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"package com.fasterxml.jackson.databind.deser;\n\nimport com.fasterxml.jackson.annotation.JsonProperty;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\nimport com.fasterxml.jackson.databind.BaseMapTest;\nimport com.fasterxml.jackson.databind."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ObjectMapper;\n\n/**\n * Unit test verifying that properties marked with {@link JsonProperty.Access#READ_ONLY}\n *"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" are ignored during deserialization rather than failing with an UnrecognizedPropertyException.\n */\npublic class ReadOnlyPropertyTest"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" extends BaseMapTest {\n\n    static class Pojo935 {\n        private String firstName;\n        private String lastName;\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        @JsonProperty(access = JsonProperty.Access.READ_ONLY)\n        public String getFullName() {\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"            return firstName + \" \" + lastName;\n        }\n\n        public String getFirstName() {\n            return firstName"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\n        }\n\n        public void setFirstName(String firstName) {\n            this.firstName = firstName;\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        }\n\n        public String getLastName() {\n            return lastName;\n        }\n\n        public void setLastName"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(String lastName) {\n            this.lastName = lastName;\n        }\n    }\n\n    public void test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ReadOnlyIgnoredOnDeserialization() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n        Pojo935 result = mapper"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".readValue(\n                \"{\\\"firstName\\\":\\\"Bob\\\",\\\"lastName\\\":\\\"Burger\\\",\\\"fullName\\\":\\\"Bob Burger\\\"}\",\n                Pojo"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"935.class\n        );\n        assertNotNull(result);\n        assertEquals(\"Bob\", result.getFirstName());\n        assertEquals"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(\"Burger\", result.getLastName());\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1621,"output_tokens":788,"output_tokens_details":{"thinking_tokens":444},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00417075,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00417075,"upstream_inference_prompt_cost":0.00121575,"upstream_inference_completions_cost":0.002955}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,27 @@
+```java
+package org.apache.commons.compress.compressors;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import org.apache.commons.compress.compressors.deflate.DeflateCompressorInputStream;
+import org.junit.Test;
+
+public class DeflateDetectionTest {
+
+    @Test
+    public void testDetectDeflateStream() throws Exception {
+        // 0x78 0x9c is a standard zlib/deflate header with default compression
+        byte[] deflateHeader = new byte[] { 0x78, (byte) 0x9c, 0x01, 0x00 };
+        ByteArrayInputStream in = new ByteArrayInputStream(deflateHeader);
+
+        CompressorInputStream compressorInputStream = new CompressorStreamFactory()
+                .createCompressorInputStream(in);
+
+        assertNotNull(compressorInputStream);
+        assertTrue(compressorInputStream instanceof DeflateCompressorInputStream);
+        compressorInputStream.close();
+    }
+}
+```

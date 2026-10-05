@@ -1,0 +1,45 @@
+This test should fail on the buggy version and pass on the fixed one, but I have not compiled or run it. I reconstructed the `CheckSideEffectsTest` scaffolding (the `CheckSideEffects(CheckLevel.WARNING, true)` constructor call and the `e`/`ok` fields) from memory of the project, so check it against the real class.
+
+The case I chose is a useless expression at the end of a comma in the increment slot of a four-child `for` loop. The buggy code returns early when an ancestor of that comma is not an `EXPR_RESULT` or `BLOCK`, so it never warns. The fix removes that ancestor check, so it warns. I did not confirm the exact assertion in the original `testUselessCode` change.
+
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.jscomp.CheckLevel;
+
+public class CheckSideEffectsTest extends CompilerTestCase {
+
+  public CheckSideEffectsTest() {
+    this.parseTypeInfo = false;
+  }
+
+  private final DiagnosticType e = CheckSideEffects.USELESS_CODE_ERROR;
+  private final DiagnosticType ok = null; // no warning
+
+  @Override
+  protected CompilerPass getProcessor(Compiler compiler) {
+    return new CheckSideEffects(CheckLevel.WARNING, true);
+  }
+
+  @Override
+  public int getNumRepetitions() {
+    return 1;
+  }
+
+  public void testUselessCodeInForLoopComma() {
+    // Useless expression as the last element of a comma in a FOR increment.
+    test("var i; for (i = 0; i < 3; i++, i == 5) {}",
+         "var i; for (i = 0; i < 3; i++, JSCOMPILER_PRESERVE(i == 5)) {}", e);
+  }
+
+  public void testUselessCodeInForLoopInitComma() {
+    // Useless expression as the last element of a comma in a FOR initializer.
+    test("var i; for (i = 0, i == 5; i < 3; i++) {}",
+         "var i; for (i = 0, JSCOMPILER_PRESERVE(i == 5); i < 3; i++) {}", e);
+  }
+
+  public void testNoWarningForLoopWithSideEffects() {
+    test("var i; for (i = 0, i = 1; i < 3; i++, i = 2) {}", ok);
+  }
+}
+```

@@ -1,0 +1,22 @@
+package com.fasterxml.jackson.core.util;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+public class TextBufferResetTest {
+
+    @Test
+    public void testEmptyTextBufferReturnsNonNull() {
+        TextBuffer tb = new TextBuffer(new BufferRecycler());
+        tb.resetWithEmpty();
+
+        char[] buf = tb.getTextBuffer();
+        Assert.assertNotNull("Text buffer should not be null after resetWithEmpty()", buf);
+        Assert.assertEquals(0, buf.length);
+
+        tb.contentsAsString();
+        buf = tb.getTextBuffer();
+        Assert.assertNotNull("Text buffer should not be null after contentsAsString()", buf);
+        Assert.assertEquals(0, buf.length);
+    }
+}

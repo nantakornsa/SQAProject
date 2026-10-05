@@ -1,0 +1,39 @@
+The test below goes in `TypeCheckTest` and reuses its `testTypes` helper. It is the triggering test for this bug (`testIssue688`) and is not a new scenario. I have not run it against either version.
+
+```java
+package com.google.javascript.jscomp;
+
+public class TypeCheckTest extends CompilerTypeTestCase {
+
+  private void testTypes(String js, String description) throws Exception {
+    // Placeholder replaced below.
+  }
+}
+```
+
+That skeleton is incomplete, so here is the full version. It assumes the standard `TypeCheckTest` setup: `CompilerTypeTestCase` provides the compiler and registry, and `testTypes(String, String)` is the existing helper in that class. I wrote it as a snippet to add to the existing class, since a standalone `TypeCheckTest` would duplicate the project's file.
+
+```java
+  public void testIssue688() throws Exception {
+    testTypes(
+        "/** @const */ var SOME_DEFAULT =\n" +
+        "    /** @type {TwoNumbers} */ ({first: 1, second: 2});\n" +
+        "/**\n" +
+        "* Class defining an interface with two numbers.\n" +
+        "* @interface\n" +
+        "*/\n" +
+        "function TwoNumbers() {}\n" +
+        "/** @type number */\n" +
+        "TwoNumbers.prototype.first;\n" +
+        "/** @type number */\n" +
+        "TwoNumbers.prototype.second;\n" +
+        "/** @return {number} */ function f() { return SOME_DEFAULT; }",
+        "inconsistent return type\n" +
+        "found   : (TwoNumbers|null)\n" +
+        "required: number");
+  }
+```
+
+Add this method inside `com.google.javascript.jscomp.TypeCheckTest`.
+
+**Why it fails on the buggy version and passes on the fixed one:** In the buggy version, the `@const` variable's type is taken from `rValue.getJSType()`. That is the object literal's inferred type, not the type in the cast. The expected `(TwoNumbers|null)` message is therefore not produced. In the fixed version, the cast's `@type {TwoNumbers}` from the JSDoc is evaluated first, so the error reports `(TwoNumbers|null)`.

@@ -1,0 +1,91 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-11
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+cedf0d27f9e9341a9e9fa8a192735a0c2e11be40
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-01-15 12:15:50 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-929
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-929
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math3.distribution.MultivariateNormalDistributionTest::testUnivariateDistribution
+   --> junit.framework.AssertionFailedError: expected:<0.23644016090654427> but was:<0.5926675925866471>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math3.distribution.MultivariateNormalDistribution
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math3.distribution.MultivariateNormalDistribution ===
+diff --git a/src/main/java/org/apache/commons/math3/distribution/MultivariateNormalDistribution.java b/src/main/java/org/apache/commons/math3/distribution/MultivariateNormalDistribution.java
+index 15706811b..fd18c281b 100644
+--- a/src/main/java/org/apache/commons/math3/distribution/MultivariateNormalDistribution.java
++++ b/src/main/java/org/apache/commons/math3/distribution/MultivariateNormalDistribution.java
+@@ -180,7 +180,7 @@ public class MultivariateNormalDistribution
+             throw new DimensionMismatchException(vals.length, dim);
+         }
+ 
+-        return FastMath.pow(2 * FastMath.PI, -dim / 2) *
++        return FastMath.pow(2 * FastMath.PI, -0.5 * dim) *
+             FastMath.pow(covarianceMatrixDeterminant, -0.5) *
+             getExponentTerm(vals);
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testUnivariateDistribution() {
+        final double[] mu = { -1.5 };
+        final double[][] sigma = { { 1 } };
+ 
+        final MultivariateNormalDistribution multi = new MultivariateNormalDistribution(mu, sigma);
+
+        final NormalDistribution uni = new NormalDistribution(mu[0], sigma[0][0]);
+        final Random rng = new Random();
+        final int numCases = 100;
+        final double tol = Math.ulp(1d);
+        for (int i = 0; i < numCases; i++) {
+            final double v = rng.nextDouble() * 10 - 5;
+            Assert.assertEquals(uni.density(v), multi.density(new double[] { v }), tol);
+        }
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,17 @@
+The test class is `CSVParserTest` in `org.apache.commons.csv`. The project uses JUnit 4 at this revision. The triggering test is written in the JUnit 3 style and expects an exception. I use `@Test(expected = IllegalStateException.class)` and `CSVParser.parse(String, CSVFormat)`, which the triggering test already calls.
+
+`withHeader(new String[]{})` makes the parser read the header from the first record. On the buggy version the duplicate "a" silently overwrites the earlier map entry, so no exception is thrown and the test fails. On the fixed version the duplicate raises `IllegalStateException`, so the test passes.
+
+```java
+package org.apache.commons.csv;
+
+import org.junit.Test;
+
+public class CSVParserDuplicateHeaderTest {
+
+    @Test(expected = IllegalStateException.class)
+    public void testDuplicateHeaderEntries() throws Exception {
+        CSVParser.parse("a,b,a\n1,2,3\nx,y,z", CSVFormat.DEFAULT.withHeader(new String[]{}));
+    }
+}
+```

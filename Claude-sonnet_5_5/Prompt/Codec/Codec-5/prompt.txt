@@ -1,0 +1,90 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Codec
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Codec
+       Program: commons-codec
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Codec/Codec.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-codec.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Codec/active-bugs.csv
+Number of bugs: 18
+--------------------------------------------------------------------------------
+
+Summary for Bug: Codec-5
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+800f0531068ebaf2f2d257bb1bd805781ddd4760
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-06-01 21:52:33 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CODEC-98
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CODEC-98
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.codec.binary.Base64InputStreamTest::testCodec98NPE
+   --> java.lang.NullPointerException
+ - org.apache.commons.codec.binary.Base64OutputStreamTest::testCodec98NPE
+   --> java.lang.NullPointerException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.codec.binary.Base64
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+diff --git a/src/java/org/apache/commons/codec/binary/Base64.java b/src/java/org/apache/commons/codec/binary/Base64.java
+index 2618e5d5..19a69594 100644
+--- a/src/java/org/apache/commons/codec/binary/Base64.java
++++ b/src/java/org/apache/commons/codec/binary/Base64.java
+@@ -583,6 +583,9 @@ public class Base64 implements BinaryEncoder, BinaryDecoder {
+         // EOF (-1) and first time '=' character is encountered in stream.
+         // This approach makes the '=' padding characters completely optional.
+         if (eof && modulus != 0) {
++            if (buffer == null || buffer.length - pos < decodeSize) {
++                resizeBuffer();
++            }
+             
+             x = x << 6;
+             switch (modulus) {
+
+=== TRIGGERING TEST METHOD ===
+    public void testCodec98NPE() throws Exception {
+        byte[] codec98 = StringUtils.getBytesUtf8(Base64TestData.CODEC_98_NPE);
+        ByteArrayInputStream data = new ByteArrayInputStream(codec98);
+        Base64InputStream stream = new Base64InputStream(data);
+
+        // This line causes an NPE in commons-codec-1.4.jar:
+        byte[] decodedBytes = Base64TestData.streamToBytes(stream, new byte[1024]);
+
+        String decoded = StringUtils.newStringUtf8(decodedBytes);
+        assertEquals(
+            "codec-98 NPE Base64InputStream", Base64TestData.CODEC_98_NPE_DECODED, decoded
+        );
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

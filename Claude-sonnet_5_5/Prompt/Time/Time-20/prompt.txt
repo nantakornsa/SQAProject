@@ -1,0 +1,97 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Time
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Time
+       Program: joda-time
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/Time.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/joda-time.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Time-20
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+a92450e88df85d6b7a0fa53517da46286c24f53f
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-10-23 13:07:54 +0100
+--------------------------------------------------------------------------------
+Bug report id:
+126
+--------------------------------------------------------------------------------
+Bug report url:
+https://sourceforge.net/p/joda-time/bugs/126
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.joda.time.format.TestDateTimeFormatterBuilder::test_printParseZoneDawsonCreek
+   --> java.lang.IllegalArgumentException: Invalid format: "2007-03-04 12:30 America/Dawson_Creek" is malformed at "_Creek"
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.joda.time.format.DateTimeFormatterBuilder
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.joda.time.format.DateTimeFormatterBuilder ===
+diff --git a/src/main/java/org/joda/time/format/DateTimeFormatterBuilder.java b/src/main/java/org/joda/time/format/DateTimeFormatterBuilder.java
+index 558a5864..ebb4b087 100644
+--- a/src/main/java/org/joda/time/format/DateTimeFormatterBuilder.java
++++ b/src/main/java/org/joda/time/format/DateTimeFormatterBuilder.java
+@@ -2539,12 +2539,18 @@ public class DateTimeFormatterBuilder {
+ 
+         public int parseInto(DateTimeParserBucket bucket, String text, int position) {
+             String str = text.substring(position);
++            String best = null;
+             for (String id : ALL_IDS) {
+                 if (str.startsWith(id)) {
+-                    bucket.setZone(DateTimeZone.forID(id));
+-                    return position + id.length();
++                	if (best == null || id.length() > best.length()) {
++                		best = id;
++                	}
+                 }
+             }
++            if (best != null) {
++                bucket.setZone(DateTimeZone.forID(best));
++                return position + best.length();
++            }
+             return ~position;
+         }
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void test_printParseZoneDawsonCreek() {  // clashes with shorter Dawson
+        DateTimeFormatterBuilder bld = new DateTimeFormatterBuilder()
+            .appendPattern("yyyy-MM-dd HH:mm ").appendTimeZoneId();
+        DateTimeFormatter f = bld.toFormatter();
+        
+        DateTime dt = new DateTime(2007, 3, 4, 12, 30, 0, DateTimeZone.forID("America/Dawson_Creek"));
+        assertEquals("2007-03-04 12:30 America/Dawson_Creek", f.print(dt));
+        assertEquals(dt, f.parseDateTime("2007-03-04 12:30 America/Dawson_Creek"));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

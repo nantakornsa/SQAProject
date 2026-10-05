@@ -1,0 +1,128 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-14
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+b07ecae3d60c4f0233f1a1d97eb35d4a678f39aa
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-12-29 13:16:17 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-924
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-924
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math3.fitting.PolynomialFitterTest::testLargeSample
+   --> java.lang.OutOfMemoryError: Java heap space
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math3.optim.nonlinear.vector.jacobian.AbstractLeastSquaresOptimizer
+ - org.apache.commons.math3.optim.nonlinear.vector.Weight
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math3.optim.nonlinear.vector.jacobian.AbstractLeastSquaresOptimizer ===
+diff --git a/src/main/java/org/apache/commons/math3/optim/nonlinear/vector/jacobian/AbstractLeastSquaresOptimizer.java b/src/main/java/org/apache/commons/math3/optim/nonlinear/vector/jacobian/AbstractLeastSquaresOptimizer.java
+index d12ebeaf0..ef5294324 100644
+--- a/src/main/java/org/apache/commons/math3/optim/nonlinear/vector/jacobian/AbstractLeastSquaresOptimizer.java
++++ b/src/main/java/org/apache/commons/math3/optim/nonlinear/vector/jacobian/AbstractLeastSquaresOptimizer.java
+@@ -264,7 +264,16 @@ public abstract class AbstractLeastSquaresOptimizer
+      * @return the square-root of the weight matrix.
+      */
+     private RealMatrix squareRoot(RealMatrix m) {
++        if (m instanceof DiagonalMatrix) {
++            final int dim = m.getRowDimension();
++            final RealMatrix sqrtM = new DiagonalMatrix(dim);
++            for (int i = 0; i < dim; i++) {
++                sqrtM.setEntry(i, i, FastMath.sqrt(m.getEntry(i, i)));
++            }
++            return sqrtM;
++        } else {
+             final EigenDecomposition dec = new EigenDecomposition(m);
+             return dec.getSquareRoot();
++        }
+     }
+ }
+
+=== MODIFIED SOURCE: org.apache.commons.math3.optim.nonlinear.vector.Weight ===
+diff --git a/src/main/java/org/apache/commons/math3/optim/nonlinear/vector/Weight.java b/src/main/java/org/apache/commons/math3/optim/nonlinear/vector/Weight.java
+index b8225add6..aa3299aea 100644
+--- a/src/main/java/org/apache/commons/math3/optim/nonlinear/vector/Weight.java
++++ b/src/main/java/org/apache/commons/math3/optim/nonlinear/vector/Weight.java
+@@ -40,10 +40,7 @@ public class Weight implements OptimizationData {
+      */
+     public Weight(double[] weight) {
+         final int dim = weight.length;
+-        weightMatrix = org.apache.commons.math3.linear.MatrixUtils.createRealMatrix(dim, dim);
+-        for (int i = 0; i < dim; i++) {
+-            weightMatrix.setEntry(i, i, weight[i]);
+-        }
++        weightMatrix = new DiagonalMatrix(weight);
+     }
+ 
+     /**
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testLargeSample() {
+        Random randomizer = new Random(0x5551480dca5b369bl);
+        double maxError = 0;
+        for (int degree = 0; degree < 10; ++degree) {
+            PolynomialFunction p = buildRandomPolynomial(degree, randomizer);
+
+            PolynomialFitter fitter = new PolynomialFitter(new LevenbergMarquardtOptimizer());
+            for (int i = 0; i < 40000; ++i) {
+                double x = -1.0 + i / 20000.0;
+                fitter.addObservedPoint(1.0, x,
+                                        p.value(x) + 0.1 * randomizer.nextGaussian());
+            }
+
+            final double[] init = new double[degree + 1];
+            PolynomialFunction fitted = new PolynomialFunction(fitter.fit(init));
+
+            for (double x = -1.0; x < 1.0; x += 0.01) {
+                double error = FastMath.abs(p.value(x) - fitted.value(x)) /
+                              (1.0 + FastMath.abs(p.value(x)));
+                maxError = FastMath.max(maxError, error);
+                Assert.assertTrue(FastMath.abs(error) < 0.01);
+            }
+        }
+        Assert.assertTrue(maxError > 0.001);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

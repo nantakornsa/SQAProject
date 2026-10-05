@@ -1,0 +1,30 @@
+The test below is a regression test for Closure-168 (issue 726). I have not compiled or run it against the buggy and fixed versions.
+
+It lives in `TypeCheckTest`, which extends `CompilerTypeTestCase` and uses JUnit 3 style (`junit.framework`). It reuses the project's `testTypes(String js, String description)` helper, which asserts that exactly one warning is reported and that its text matches the expected description.
+
+The test mirrors the triggering case. An inner function calls `self.bar(true)`, where `self` is a local variable assigned from `this` in the enclosing function, and `bar` expects a number. On the buggy version, the scope-depth check in `TypedScopeCreator` skips `self` for inference, so no warning is produced. The fixed version reports the type mismatch.
+
+Because the file is one class in the project's test suite, the code below is only the new test method inside that class. The surrounding `TypeCheckTest` members (the `testTypes` helper and the setup) already exist and are not repeated.
+
+```java
+package com.google.javascript.jscomp;
+
+public class TypeCheckTest extends CompilerTypeTestCase {
+
+  public void testIssue726() throws Exception {
+    testTypes(
+        "/** @constructor */ function Foo() {}" +
+        "/** @param {number} x */ Foo.prototype.bar = function(x) {};" +
+        "/** @return {!Function} */ " +
+        "Foo.prototype.getDeferredBar = function() { " +
+        "  var self = this;" +
+        "  return function() {" +
+        "    self.bar(true);" +
+        "  };" +
+        "};",
+        "actual parameter 1 of Foo.prototype.bar does not match formal parameter\n" +
+        "found   : boolean\n" +
+        "required: number");
+  }
+}
+```

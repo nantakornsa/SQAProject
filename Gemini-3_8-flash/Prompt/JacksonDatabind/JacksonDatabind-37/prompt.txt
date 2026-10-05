@@ -1,0 +1,86 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-37
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+dbf0c6f4c93d922a2ebb4d744661e7090fef2aac
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-01-15 21:02:56 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+1083
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1083
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.objectid.Objecid1083Test::testSimple
+   --> com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException: Unrecognized field "name" (class com.fasterxml.jackson.databind.objectid.Objecid1083Test$JsonMapSchema), not marked as ignorable (0 known properties: ])
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.type.SimpleType
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.type.SimpleType ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/type/SimpleType.java b/src/main/java/com/fasterxml/jackson/databind/type/SimpleType.java
+index eca7e8e48..1c741ec9f 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/type/SimpleType.java
++++ b/src/main/java/com/fasterxml/jackson/databind/type/SimpleType.java
+@@ -132,7 +132,7 @@ public class SimpleType // note: until 2.6 was final
+         }
+         */
+         // 15-Jan-2015, tatu: Not correct; should really re-resolve...
+-        return new SimpleType(subclass, _bindings, _superClass, _superInterfaces,
++        return new SimpleType(subclass, _bindings, this, _superInterfaces,
+                 _valueHandler, _typeHandler, _asStatic);
+     }
+     
+
+
+=== TRIGGERING TEST METHOD ===
+      public void testSimple() throws Exception {
+          final ObjectMapper mapper = new ObjectMapper();
+          final String json = aposToQuotes("{'schemas': [{\n"
+              + "  'name': 'FoodMart'\n"
+              + "}]}\n");
+          mapper.readValue(json, JsonRoot.class);
+      }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

@@ -1,0 +1,54 @@
+package org.apache.commons.jxpath.ri.compiler;
+
+import java.util.HashMap;
+
+import junit.framework.TestCase;
+
+import org.apache.commons.jxpath.JXPathContext;
+
+/**
+ * Regression test for JXPATH-95: relational comparisons involving NaN
+ * must evaluate to false.
+ */
+public class CoreOperationRelationalNanRegressionTest extends TestCase {
+
+    private JXPathContext context;
+
+    protected void setUp() throws Exception {
+        super.setUp();
+        context = JXPathContext.newContext(new HashMap());
+        context.getVariables().declareVariable("nan", new Double(Double.NaN));
+    }
+
+    private void assertBoolean(String xpath, boolean expected) {
+        Object value = context.getValue(xpath, Boolean.class);
+        assertEquals("Evaluating <" + xpath + ">",
+                expected ? Boolean.TRUE : Boolean.FALSE, value);
+    }
+
+    public void testNanGreaterThan() {
+        assertBoolean("$nan > $nan", false);
+        assertBoolean("$nan > 0", false);
+        assertBoolean("$nan > 1", false);
+        assertBoolean("1 > $nan", false);
+    }
+
+    public void testNanLessThan() {
+        assertBoolean("$nan < $nan", false);
+        assertBoolean("$nan < 0", false);
+        assertBoolean("$nan < 1", false);
+        assertBoolean("1 < $nan", false);
+    }
+
+    public void testNanGreaterOrLessOrEqual() {
+        assertBoolean("$nan >= 1", false);
+        assertBoolean("1 >= $nan", false);
+        assertBoolean("$nan <= 1", false);
+        assertBoolean("1 <= $nan", false);
+    }
+
+    public void testNanEquality() {
+        assertBoolean("$nan = 0", false);
+        assertBoolean("$nan = 1", false);
+    }
+}

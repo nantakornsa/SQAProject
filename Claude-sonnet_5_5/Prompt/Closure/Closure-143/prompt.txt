@@ -1,0 +1,103 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-143
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+7eaa0d8eca2549742649af34671eaf3da83b5c08
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-04-07 18:34:02 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+139
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-139.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.CommandLineRunnerTest::testDefineFlag3
+   --> java.lang.RuntimeException: --define flag syntax invalid: FOO="x'"
+ - com.google.javascript.jscomp.RemoveConstantExpressionsTest::testCall1
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.RemoveConstantExpressionsTest::testNew1
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.AbstractCommandLineRunner
+ - com.google.javascript.jscomp.RemoveConstantExpressions
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.AbstractCommandLineRunner ===
+diff --git a/src/com/google/javascript/jscomp/AbstractCommandLineRunner.java b/src/com/google/javascript/jscomp/AbstractCommandLineRunner.java
+index 13cb62680..aa29e5f03 100644
+--- a/src/com/google/javascript/jscomp/AbstractCommandLineRunner.java
++++ b/src/com/google/javascript/jscomp/AbstractCommandLineRunner.java
+@@ -868,7 +868,8 @@ abstract class AbstractCommandLineRunner<A extends Compiler,
+           } else if (defValue.length() > 1
+               && ((defValue.charAt(0) == '\'' &&
+                   defValue.charAt(defValue.length() - 1) == '\'')
+-            )) {
++                  || (defValue.charAt(0) == '\"' &&
++                      defValue.charAt(defValue.length() - 1) == '\"'))) {
+             // If the value starts and ends with a single quote,
+             // we assume that it's a string.
+             String maybeStringVal =
+
+=== MODIFIED SOURCE: com.google.javascript.jscomp.RemoveConstantExpressions ===
+diff --git a/src/com/google/javascript/jscomp/RemoveConstantExpressions.java b/src/com/google/javascript/jscomp/RemoveConstantExpressions.java
+index fee9c2877..17d55c9fc 100644
+--- a/src/com/google/javascript/jscomp/RemoveConstantExpressions.java
++++ b/src/com/google/javascript/jscomp/RemoveConstantExpressions.java
+@@ -88,7 +88,8 @@ final class RemoveConstantExpressions implements CompilerPass {
+ 
+       Node exprBody = node.getFirstChild();
+       if (!NodeUtil.nodeTypeMayHaveSideEffects(exprBody)
+-      ) {
++          || exprBody.getType() == Token.NEW
++          || exprBody.getType() == Token.CALL) {
+         changeProxy.replaceWith(parent, node, getSideEffectNodes(exprBody));
+       }
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testDefineFlag3() {
+    args.add("--define=FOO=\"x'\"");
+    test("/** @define {string} */ var FOO = \"a\";",
+         "var FOO = \"x'\";");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,30 @@
+The bug is in `DateTimeZone.getOffsetFromLocal`. On the London overlap (2011-10-30, 01:00 to 02:00 local time), the standard offset is 0 and the DST offset is +1. The buggy check `offsetLocal > 0` skips the case where `offsetLocal == 0`, so the earlier +01:00 offset is not chosen.
+
+The test below uses the triggering scenario and adds a few extra assertions. I am assuming the project uses JUnit 3 (`junit.framework.TestCase`), as the failure message suggests.
+
+```java
+package org.joda.time;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for the London autumn cutover overlap (Time-19).
+ */
+public class TestDateTimeZoneCutoverRegression extends TestCase {
+
+    public void testDateTimeCreation_london_overlap() {
+        DateTimeZone zone = DateTimeZone.forID("Europe/London");
+        DateTime base = new DateTime(2011, 10, 30, 1, 15, zone);
+        assertEquals("2011-10-30T01:15:00.000+01:00", base.toString());
+        assertEquals("2011-10-30T01:15:00.000Z", base.plusHours(1).toString());
+    }
+
+    public void testGetOffsetFromLocal_london_overlap() {
+        DateTimeZone zone = DateTimeZone.forID("Europe/London");
+        // 2011-10-30T01:15 local, as if UTC
+        long local = new DateTime(2011, 10, 30, 1, 15, DateTimeZone.UTC).getMillis();
+        // the earlier (summer time) offset should be chosen in an overlap
+        assertEquals(3600000, zone.getOffsetFromLocal(local));
+    }
+}
+```

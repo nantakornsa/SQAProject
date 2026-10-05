@@ -1,0 +1,149 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Collections
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Collections
+       Program: commons-collections
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/Collections.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-collections.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Collections/active-bugs.csv
+Number of bugs: 28
+--------------------------------------------------------------------------------
+
+Summary for Bug: Collections-25
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+73d69dfe8677210e44049bc1a2a7d1ff85bc1ca7
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-06-04 20:36:25 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COLLECTIONS-566
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COLLECTIONS-566
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.collections4.IteratorUtilsTest::testCollatedIterator
+   --> java.lang.NullPointerException: You must invoke setComparator() to set a comparator first.
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.collections4.IteratorUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.collections4.IteratorUtils ===
+diff --git a/src/main/java/org/apache/commons/collections4/IteratorUtils.java b/src/main/java/org/apache/commons/collections4/IteratorUtils.java
+index 40f99898..b3b1be0f 100644
+--- a/src/main/java/org/apache/commons/collections4/IteratorUtils.java
++++ b/src/main/java/org/apache/commons/collections4/IteratorUtils.java
+@@ -602,7 +602,9 @@ public class IteratorUtils {
+     public static <E> Iterator<E> collatedIterator(final Comparator<? super E> comparator,
+                                                    final Iterator<? extends E> iterator1,
+                                                    final Iterator<? extends E> iterator2) {
+-        return new CollatingIterator<E>(comparator, iterator1, iterator2);
++        @SuppressWarnings("unchecked")
++        final Comparator<E> comp = comparator == null ? ComparatorUtils.NATURAL_COMPARATOR : comparator;
++        return new CollatingIterator<E>(comp, iterator1, iterator2);
+     }
+ 
+     /**
+@@ -623,7 +625,9 @@ public class IteratorUtils {
+      */
+     public static <E> Iterator<E> collatedIterator(final Comparator<? super E> comparator,
+                                                    final Iterator<? extends E>... iterators) {
+-        return new CollatingIterator<E>(comparator, iterators);
++        @SuppressWarnings("unchecked")
++        final Comparator<E> comp = comparator == null ? ComparatorUtils.NATURAL_COMPARATOR : comparator;
++        return new CollatingIterator<E>(comp, iterators);
+     }
+ 
+     /**
+@@ -645,7 +649,9 @@ public class IteratorUtils {
+      */
+     public static <E> Iterator<E> collatedIterator(final Comparator<? super E> comparator,
+                                                    final Collection<Iterator<? extends E>> iterators) {
+-        return new CollatingIterator<E>(comparator, iterators);
++        @SuppressWarnings("unchecked")
++        final Comparator<E> comp = comparator == null ? ComparatorUtils.NATURAL_COMPARATOR : comparator;
++        return new CollatingIterator<E>(comp, iterators);
+     }
+ 
+     // Object Graph
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testCollatedIterator() {
+        try {
+            IteratorUtils.collatedIterator(null, collectionOdd.iterator(), null);
+            fail("expecting NullPointerException");
+        } catch (NullPointerException npe) {
+            // expected
+        }
+
+        try {
+            IteratorUtils.collatedIterator(null, null, collectionEven.iterator());
+            fail("expecting NullPointerException");
+        } catch (NullPointerException npe) {
+            // expected
+        }
+
+        // natural ordering
+        Iterator<Integer> it = 
+                IteratorUtils.collatedIterator(null, collectionOdd.iterator(), collectionEven.iterator());
+
+        List<Integer> result = IteratorUtils.toList(it);
+        assertEquals(12, result.size());
+
+        List<Integer> combinedList = new ArrayList<Integer>();
+        combinedList.addAll(collectionOdd);
+        combinedList.addAll(collectionEven);
+        Collections.sort(combinedList);
+
+        assertEquals(combinedList, result);
+
+        it = IteratorUtils.collatedIterator(null, collectionOdd.iterator(), emptyCollection.iterator());
+        result = IteratorUtils.toList(it);
+        assertEquals(collectionOdd, result);
+
+        final Comparator<Integer> reverseComparator =
+                ComparatorUtils.reversedComparator(ComparatorUtils.<Integer>naturalComparator());
+
+        Collections.reverse((List<Integer>) collectionOdd);
+        Collections.reverse((List<Integer>) collectionEven);
+        Collections.reverse(combinedList);
+
+        it = IteratorUtils.collatedIterator(reverseComparator,
+                                            collectionOdd.iterator(),
+                                            collectionEven.iterator());
+        result = IteratorUtils.toList(it);
+        assertEquals(combinedList, result);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

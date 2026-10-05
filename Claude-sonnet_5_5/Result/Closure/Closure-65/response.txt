@@ -1,0 +1,17 @@
+The test belongs in `CodePrinterTest`, which extends `CodePrinterTestBase` and already provides `assertPrint`. In the buggy version the printer emits `\0` for a NUL character, so `'\0'` prints as `"\0"`. The fix changes this to `\000`. That matters when a digit follows the NUL, because `\03` would be read as a different octal escape. The test asserts the fixed output for the plain NUL cases and for the case where a digit follows.
+
+```java
+package com.google.javascript.jscomp;
+
+public class CodePrinterTest extends CodePrinterTestBase {
+
+  public void testZero() {
+    assertPrint("var x ='\\0';", "var x=\"\\000\"");
+    assertPrint("var x ='\\x00';", "var x=\"\\000\"");
+    assertPrint("var x ='\\u0000';", "var x=\"\\000\"");
+    assertPrint("var x ='\\u00003';", "var x=\"\\0003\"");
+  }
+}
+```
+
+This class replaces the existing `CodePrinterTest`, so in a real project the `testZero` method should be added to the existing class rather than a new file created.

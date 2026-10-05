@@ -1,0 +1,150 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-31
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+3a08bfa6d8f4260c133d2b0054c0e4cad592b03c
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-05-21 19:55:30 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-718
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-718
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math3.distribution.BinomialDistributionTest::testMath718
+   --> org.apache.commons.math3.exception.ConvergenceException: illegal state: Continued fraction diverged to NaN for value 0.5
+ - org.apache.commons.math3.distribution.FDistributionTest::testMath785
+   --> junit.framework.AssertionFailedError: Failing to calculate inverse cumulative probability
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math3.util.ContinuedFraction
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math3.util.ContinuedFraction ===
+diff --git a/src/main/java/org/apache/commons/math3/util/ContinuedFraction.java b/src/main/java/org/apache/commons/math3/util/ContinuedFraction.java
+index b881bb2d7..253f3c59e 100644
+--- a/src/main/java/org/apache/commons/math3/util/ContinuedFraction.java
++++ b/src/main/java/org/apache/commons/math3/util/ContinuedFraction.java
+@@ -131,8 +131,6 @@ public abstract class ContinuedFraction {
+ 
+         int n = 1;
+         double dPrev = 0.0;
+-        double p0 = 1.0;
+-        double q1 = 1.0;
+         double cPrev = hPrev;
+         double hN = hPrev;
+ 
+@@ -140,34 +138,18 @@ public abstract class ContinuedFraction {
+             final double a = getA(n, x);
+             final double b = getB(n, x);
+ 
+-            double cN = a * hPrev + b * p0;
+-            double q2 = a * q1 + b * dPrev;
+-            if (Double.isInfinite(cN) || Double.isInfinite(q2)) {
+-                double scaleFactor = 1d;
+-                double lastScaleFactor = 1d;
+-                final int maxPower = 5;
+-                final double scale = FastMath.max(a,b);
+-                if (scale <= 0) {  // Can't scale
+-                    throw new ConvergenceException(LocalizedFormats.CONTINUED_FRACTION_INFINITY_DIVERGENCE, x);
+-                }
+-                for (int i = 0; i < maxPower; i++) {
+-                    lastScaleFactor = scaleFactor;
+-                    scaleFactor *= scale;
+-                    if (a != 0.0 && a > b) {
+-                        cN = hPrev / lastScaleFactor + (b / scaleFactor * p0);
+-                        q2 = q1 / lastScaleFactor + (b / scaleFactor * dPrev);
+-                    } else if (b != 0) {
+-                        cN = (a / scaleFactor * hPrev) + p0 / lastScaleFactor;
+-                        q2 = (a / scaleFactor * q1) + dPrev / lastScaleFactor;
+-                    }
+-                    if (!(Double.isInfinite(cN) || Double.isInfinite(q2))) {
+-                        break;
+-                    }
+-                }
++            double dN = a + b * dPrev;
++            if (Precision.equals(dN, 0.0, small)) {
++                dN = small;
++            }
++            double cN = a + b / cPrev;
++            if (Precision.equals(cN, 0.0, small)) {
++                cN = small;
+             }
+ 
+-            final double deltaN = cN / q2 / cPrev;
+-            hN = cPrev * deltaN;
++            dN = 1 / dN;
++            final double deltaN = cN * dN;
++            hN = hPrev * deltaN;
+ 
+             if (Double.isInfinite(hN)) {
+                 throw new ConvergenceException(LocalizedFormats.CONTINUED_FRACTION_INFINITY_DIVERGENCE,
+@@ -182,11 +164,9 @@ public abstract class ContinuedFraction {
+                 break;
+             }
+ 
+-            dPrev = q1;
+-            cPrev = cN / q2;
+-            p0 = hPrev;
+-            hPrev = cN;
+-            q1 = q2;
++            dPrev = dN;
++            cPrev = cN;
++            hPrev = hN;
+             n++;
+         }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testMath718() {
+        // for large trials the evaluation of ContinuedFraction was inaccurate
+        // do a sweep over several large trials to test if the current implementation is
+        // numerically stable.
+
+        for (int trials = 500000; trials < 20000000; trials += 100000) {
+            BinomialDistribution dist = new BinomialDistribution(trials, 0.5);
+            int p = dist.inverseCumulativeProbability(0.5);
+            Assert.assertEquals(trials / 2, p);
+        }
+
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

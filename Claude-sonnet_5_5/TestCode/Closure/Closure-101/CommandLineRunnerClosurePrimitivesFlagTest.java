@@ -1,0 +1,53 @@
+package com.google.javascript.jscomp;
+
+import junit.framework.TestCase;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintStream;
+import java.io.Writer;
+
+/**
+ * Regression test: --process_closure_primitives=false must disable the
+ * closure primitives pass.
+ */
+public class CommandLineRunnerClosurePrimitivesFlagTest extends TestCase {
+
+  private String run(String js, String... extraFlags) throws Exception {
+    File input = File.createTempFile("closurePrimitives", ".js");
+    input.deleteOnExit();
+    Writer writer = new FileWriter(input);
+    try {
+      writer.write(js);
+    } finally {
+      writer.close();
+    }
+
+    String[] flags = new String[extraFlags.length + 2];
+    flags[0] = "--js";
+    flags[1] = input.getAbsolutePath();
+    System.arraycopy(extraFlags, 0, flags, 2, extraFlags.length);
+
+    ByteArrayOutputStream outBytes = new ByteArrayOutputStream();
+    ByteArrayOutputStream errBytes = new ByteArrayOutputStream();
+    CommandLineRunner runner = new CommandLineRunner(
+        flags, new PrintStream(outBytes), new PrintStream(errBytes));
+    assertTrue(runner.shouldRunCompiler());
+    int result = runner.doRun();
+    assertEquals(errBytes.toString(), 0, result);
+    return outBytes.toString();
+  }
+
+  public void testProcessClosurePrimitivesDisabled() throws Exception {
+    String source = "var goog = {}; goog.provide('goog.dom');";
+
+    // By default the closure primitives pass is run.
+    String defaultOutput = run(source);
+    assertFalse(defaultOutput, defaultOutput.contains("goog.provide"));
+
+    // When explicitly disabled the goog.provide call must remain.
+    String disabledOutput = run(source, "--process_closure_primitives=false");
+    assertTrue(disabledOutput, disabledOutput.contains("goog.provide"));
+  }
+}

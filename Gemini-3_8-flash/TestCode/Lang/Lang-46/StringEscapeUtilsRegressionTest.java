@@ -1,0 +1,36 @@
+package org.apache.commons.lang;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import junit.framework.TestCase;
+
+/**
+ * Regression test for LANG-421: StringEscapeUtils.escapeJava(String) should not escape forward slashes.
+ */
+public class StringEscapeUtilsRegressionTest extends TestCase {
+
+    public void testEscapeJavaWithSlash() {
+        final String input = "String with a slash (/) in it";
+        final String expected = input;
+        final String actual = StringEscapeUtils.escapeJava(input);
+
+        assertEquals("Forward slashes should not be escaped in Java strings", expected, actual);
+    }
+
+    public void testEscapeJavaWithSlashWriter() throws IOException {
+        final String input = "String with a slash (/) in it";
+        final String expected = input;
+        final StringWriter writer = new StringWriter();
+        StringEscapeUtils.escapeJava(writer, input);
+
+        assertEquals("Forward slashes should not be escaped in Java strings via Writer", expected, writer.toString());
+    }
+
+    public void testEscapeJavaScriptWithSlash() {
+        final String input = "String with a slash (/) in it";
+        final String expected = "String with a slash (\\/) in it";
+        final String actual = StringEscapeUtils.escapeJavaScript(input);
+
+        assertEquals("Forward slashes should be escaped in JavaScript strings", expected, actual);
+    }
+}

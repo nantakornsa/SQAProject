@@ -1,0 +1,88 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Cli
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Cli
+       Program: commons-cli
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/Cli.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-cli.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/active-bugs.csv
+Number of bugs: 39
+--------------------------------------------------------------------------------
+
+Summary for Bug: Cli-12
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+aa050a69b2395f496f953f4f9c4f63a475dcf430
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2008-06-01 10:01:50 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+cli-1
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CLI-1
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.cli.GnuParserTest::testShortWithEqual
+   --> junit.framework.ComparisonFailure: expected:<[]bar> but was:<[=]bar>
+ - org.apache.commons.cli.GnuParserTest::testLongWithEqualSingleDash
+   --> junit.framework.ComparisonFailure: expected:<[]bar> but was:<[oo=]bar>
+ - org.apache.commons.cli.GnuParserTest::testLongWithEqual
+   --> org.apache.commons.cli.UnrecognizedOptionException: Unrecognized option: --foo=bar
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.cli.GnuParser
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.cli.GnuParser ===
+diff --git a/src/java/org/apache/commons/cli/GnuParser.java b/src/java/org/apache/commons/cli/GnuParser.java
+index 0de035f..1590fc3 100644
+--- a/src/java/org/apache/commons/cli/GnuParser.java
++++ b/src/java/org/apache/commons/cli/GnuParser.java
+@@ -78,9 +78,14 @@ public class GnuParser extends Parser {
+                 }
+                 else
+                 {
+-                    if (options.hasOption(arg.substring(0, 2)))
++                    if (opt.indexOf('=') != -1 && options.hasOption(opt.substring(0, opt.indexOf('='))))
+                     {
+                         // the format is --foo=value or -foo=value
++                        tokens.add(arg.substring(0, arg.indexOf('='))); // --foo
++                        tokens.add(arg.substring(arg.indexOf('=') + 1)); // value
++                    }
++                    else if (options.hasOption(arg.substring(0, 2)))
++                    {
+                         // the format is a special properties option (-Dproperty=value)
+                         tokens.add(arg.substring(0, 2)); // -D
+                         tokens.add(arg.substring(2)); // property=value
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testShortWithEqual() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

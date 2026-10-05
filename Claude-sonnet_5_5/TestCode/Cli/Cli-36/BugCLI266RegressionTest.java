@@ -1,0 +1,59 @@
+package org.apache.commons.cli.bug;
+
+import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionGroup;
+import org.apache.commons.cli.Options;
+import org.junit.Test;
+
+/**
+ * Regression test for CLI-266: options added through an OptionGroup must keep
+ * their insertion order.
+ */
+public class BugCLI266RegressionTest
+{
+    @Test
+    public void testOptionGroupKeepsInsertedOrder()
+    {
+        // The short names "p", "d" and "x" fall into different HashMap buckets
+        // in the order p, d, x. A HashMap-backed group therefore returns them
+        // in that order and not in the insertion order x, d, p.
+        OptionGroup group = new OptionGroup();
+        group.addOption(new Option("x", "x option"));
+        group.addOption(new Option("d", "d option"));
+        group.addOption(new Option("p", "p option"));
+
+        Options options = new Options();
+        options.addOptionGroup(group);
+
+        List<String> actual = new ArrayList<String>();
+        for (Option o : options.getOptions())
+        {
+            actual.add(o.getOpt());
+        }
+
+        assertEquals(Arrays.asList("x", "d", "p"), actual);
+    }
+
+    @Test
+    public void testOptionGroupGetOptionsInsertedOrder()
+    {
+        OptionGroup group = new OptionGroup();
+        group.addOption(new Option("x", "x option"));
+        group.addOption(new Option("d", "d option"));
+        group.addOption(new Option("p", "p option"));
+
+        List<String> actual = new ArrayList<String>();
+        for (Option o : group.getOptions())
+        {
+            actual.add(o.getOpt());
+        }
+
+        assertEquals(Arrays.asList("x", "d", "p"), actual);
+    }
+}

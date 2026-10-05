@@ -1,0 +1,92 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-84
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+1a0326fbc31d3d9f1e5145dc71b937820142d111
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-06-08 11:01:29 -0600
+--------------------------------------------------------------------------------
+Bug report id:
+1647
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1647
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.type.TestTypeFactoryWithRecursiveTypes::testBasePropertiesIncludedWhenSerializingSubWhenSubTypeLoadedAfterBaseType
+   --> junit.framework.ComparisonFailure: expected:<{"[base":1,"]sub":2}> but was:<{"[]sub":2}>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.type.ResolvedRecursiveType
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.type.ResolvedRecursiveType ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/type/ResolvedRecursiveType.java b/src/main/java/com/fasterxml/jackson/databind/type/ResolvedRecursiveType.java
+index 30807836d..12162c57f 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/type/ResolvedRecursiveType.java
++++ b/src/main/java/com/fasterxml/jackson/databind/type/ResolvedRecursiveType.java
+@@ -26,6 +26,13 @@ public class ResolvedRecursiveType extends TypeBase
+         _referencedType = ref;
+     }
+    
++    @Override
++    public JavaType getSuperClass() {
++    	if (_referencedType != null) {
++    		return _referencedType.getSuperClass();
++    	}
++    	return super.getSuperClass();
++    }
+ 
+     public JavaType getSelfReferencedType() { return _referencedType; }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testBasePropertiesIncludedWhenSerializingSubWhenSubTypeLoadedAfterBaseType() throws IOException {
+        TypeFactory tf = TypeFactory.defaultInstance();
+        tf.constructType(Base.class);
+        tf.constructType(Sub.class);
+        Sub sub = new Sub();
+        String serialized = objectMapper().writeValueAsString(sub);
+        assertEquals("{\"base\":1,\"sub\":2}", serialized);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

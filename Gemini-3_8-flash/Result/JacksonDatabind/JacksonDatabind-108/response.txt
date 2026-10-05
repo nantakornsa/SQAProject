@@ -1,0 +1,25 @@
+```java
+package com.fasterxml.jackson.databind.node;
+
+import java.io.StringReader;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectReader;
+
+public class ObjectReaderReadTreeEOFTest extends BaseMapTest
+{
+    private final ObjectMapper MAPPER = newObjectMapper();
+
+    public void testNullFromEOFWithParserAndReader() throws Exception
+    {
+        ObjectReader reader = MAPPER.reader();
+        JsonParser p = reader.createParser(new StringReader(""));
+        JsonNode node = reader.readTree(p);
+        assertNull("Should get `null` for reads with `JsonParser` at EOF, instead got: " + node, node);
+        p.close();
+    }
+}
+```

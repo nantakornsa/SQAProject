@@ -1,0 +1,20 @@
+package org.jsoup.nodes;
+
+import org.junit.Test;
+
+import java.nio.charset.Charset;
+
+import static org.junit.Assert.assertEquals;
+
+public class EntitiesRegressionTest {
+
+    @Test
+    public void testCaseSensitiveEntities() {
+        String text = "Ü ü & &";
+        String escaped = Entities.escape(text, Charset.forName("ascii").newEncoder(), Entities.EscapeMode.base);
+        assertEquals("&Uuml; &uuml; &amp; &amp;", escaped);
+
+        String unescaped = Entities.unescape(escaped);
+        assertEquals(text, unescaped);
+    }
+}

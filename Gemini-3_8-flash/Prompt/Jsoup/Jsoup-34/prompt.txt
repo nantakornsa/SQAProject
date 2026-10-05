@@ -1,0 +1,85 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-34
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+88730bf9f399aab6a150212faeea012598be9ec6
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-10-06 15:36:25 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+349
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/349
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.parser.CharacterReaderTest::nextIndexOfUnmatched
+   --> java.lang.ArrayIndexOutOfBoundsException: 8
+ - org.jsoup.parser.HtmlParserTest::handlesUnclosedCdataAtEOF
+   --> java.lang.ArrayIndexOutOfBoundsException: 11
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.parser.CharacterReader
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.parser.CharacterReader ===
+diff --git a/src/main/java/org/jsoup/parser/CharacterReader.java b/src/main/java/org/jsoup/parser/CharacterReader.java
+index dc1b1149..f8e0eb07 100644
+--- a/src/main/java/org/jsoup/parser/CharacterReader.java
++++ b/src/main/java/org/jsoup/parser/CharacterReader.java
+@@ -88,7 +88,7 @@ class CharacterReader {
+                 while(++offset < length && startChar != input[offset]);
+             int i = offset + 1;
+             int last = i + seq.length()-1;
+-            if (offset < length) {
++            if (offset < length && last <= length) {
+                 for (int j = 1; i < last && seq.charAt(j) == input[i]; i++, j++);
+                 if (i == last) // found full sequence
+                     return offset - pos;
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void nextIndexOfUnmatched() {
+        CharacterReader r = new CharacterReader("<[[one]]");
+        assertEquals(-1, r.nextIndexOf("]]>"));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

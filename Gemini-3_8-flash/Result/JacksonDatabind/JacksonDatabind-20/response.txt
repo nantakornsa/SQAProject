@@ -1,0 +1,27 @@
+```java
+package com.fasterxml.jackson.databind.introspect;
+
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+public class ObjectNodeNaming815Test extends BaseMapTest
+{
+    static class NodeBean {
+        public ObjectNode node;
+    }
+
+    public void testNamingWithObjectNode() throws Exception
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setPropertyNamingStrategy(PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES);
+
+        String json = mapper.writeValueAsString(new NodeBean());
+        assertNotNull(json);
+
+        NodeBean result = mapper.readValue("{\"node\":null}", NodeBean.class);
+        assertNotNull(result);
+    }
+}
+```

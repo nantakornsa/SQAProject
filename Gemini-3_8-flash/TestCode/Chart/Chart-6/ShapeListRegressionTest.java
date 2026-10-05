@@ -1,0 +1,46 @@
+package org.jfree.chart.util.junit;
+
+import java.awt.geom.Line2D;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.jfree.chart.util.ShapeList;
+
+/**
+ * Tests for the {@link ShapeList} class.
+ */
+public class ShapeListRegressionTest extends TestCase {
+
+    /**
+     * Returns the tests as a suite.
+     *
+     * @return The test suite.
+     */
+    public static Test suite() {
+        return new TestSuite(ShapeListRegressionTest.class);
+    }
+
+    /**
+     * Constructs a new set of tests.
+     *
+     * @param name  the name of the tests.
+     */
+    public ShapeListRegressionTest(String name) {
+        super(name);
+    }
+
+    /**
+     * Tests the equals method with Shapes (like Line2D) that do not implement equals().
+     * In the buggy version, ShapeList.equals delegates to AbstractObjectList.equals
+     * which calls Object.equals(), failing for distinct instances of Line2D with equal coordinates.
+     */
+    public void testEqualsWithLine2D() {
+        ShapeList l1 = new ShapeList();
+        l1.setShape(0, new Line2D.Double(1.0, 2.0, 3.0, 4.0));
+
+        ShapeList l2 = new ShapeList();
+        l2.setShape(0, new Line2D.Double(1.0, 2.0, 3.0, 4.0));
+
+        assertEquals(l1, l2);
+    }
+}

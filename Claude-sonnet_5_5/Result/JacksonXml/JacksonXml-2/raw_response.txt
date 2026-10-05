@@ -1,0 +1,90 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791090921-qnzT9LIkCMFMtIcbY7VP","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":2089,"output_tokens":2,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I'm trying to recall"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" the exact structure of the XmlTextTest from jackson-dataformat-xml, specifically the test case handling mixed content with a Simple class annotated with JacksonXmlText."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"Since I can't recall the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" exact original test, I'll construct my own self-contained test class with a Phone-like structure that has a text field and a numeric value field, then reason through how the buggy deserializ"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"er handles text followed by a start element—likely dropping the text content while still parsing the nested value, which could explain the mismatch between expected and actual results."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"The name should"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" get set to the text property via the parsing context's current name mechanism, so in the buggy version text comes back null versus \"text\" in the fixed one. I'll use a JacksonXmlText annotation with XmlMapper to constru"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ct this test case."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1zb25uZXQtNS41LTIwMjYwOTI4fGNsYXVkZS1vbi1hd3MifQ"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.dataformat.xml.misc;\n\nimport com.fasterxml.jackson.dataformat.xml.X"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"mlMapper;\nimport com.fasterxml.jackson.dataformat.xml.XmlTestBase;\nimport com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;\n\npublic class XmlTextM"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ixedContentRegressionTest extends XmlTestBase\n{\n    static class MixedBean {\n        @JacksonXmlText\n        public String text;\n\n        public int age;\n    }\n\n    private final XmlMapper MAPPER = new XmlMapper();\n\n    // [data"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"format-xml#196]: text preceding a child element must not be dropped\n    public void testMixedContent() throws Exception\n    {\n        MixedBean bean = MAPPER.readValue(\n                \"<MixedBean>some text<age>27"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"</age></MixedBean>\",\n                MixedBean.class);\n        assertEquals(27, bean.age);\n        assertEquals(\"some text\", bean.text);\n    }\n\n    // whitespace-only text before a child element is still ignored\n    public void testW"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"hitespaceBeforeElement() throws Exception\n    {\n        MixedBean bean = MAPPER.readValue(\n                \"<MixedBean>\\n   <age>27</age></MixedBean>\",\n                MixedBean.class);\n        assertEquals(27, bean.age);\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"}\n}\n```\n\nI haven't compiled or run this against either version. The first test, `testMixedContent`, is the regression check. On the buggy version `XmlTokenStream"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"` drops text that comes before a child element, so `text` stays `null` and the `\"some text\"` assertion fails. The fix keeps that text, so the test should"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" pass there.\n\nThe second test only checks that whitespace-only text before an element is still ignored, which both versions should satisfy.\n\nI wrote this from the diff r"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ather than from the original `XmlTextTest::testMixedContent`, so it uses its own `MixedBean` class and XML. The reported failure was \"expected:"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"<27> but was:<0>\", which suggests the original test asserts on a numeric field. My version asserts both the number and the text."}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2089,"output_tokens":1744,"output_tokens_details":{"thinking_tokens":1035},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.021618,"is_byok":false,"cost_details":{"upstream_inference_cost":0.021618,"upstream_inference_prompt_cost":0.004178,"upstream_inference_completions_cost":0.01744}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

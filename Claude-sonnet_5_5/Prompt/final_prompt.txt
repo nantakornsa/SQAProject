@@ -1,0 +1,233 @@
+You are an expert software testing engineer specializing in automated unit test generation for Defects4J Java projects.
+
+Your task is to generate an executable JUnit test that detects the specific defect in the Defects4J bug described below.
+
+IMPORTANT:
+- The test must target the reported defect specifically.
+- Do not modify production source code.
+- Use the existing testing framework and conventions of the project.
+- The generated test must fail on the buggy version and pass on the fixed version.
+- Do not fabricate APIs, classes, or methods that do not exist in the provided source code.
+- Return complete executable Java test code.
+- Prefer a minimal test that directly exposes the defect.
+
+=== PROJECT INFORMATION ===
+
+Project: Codec
+Bug ID: Codec-1
+Bug Report ID: CODEC-65
+Buggy Version: 1b
+Fixed Revision: 52d82d1dfff8c2b2ded9d843e0b03017af6d747c
+
+=== BUG DESCRIPTION ===
+
+Codec-1 is a locale-independence defect in the Apache Commons Codec language encoders.
+
+The affected implementation performs String case conversion using the JVM default locale instead of explicitly using the English locale.
+
+This causes different encoding results when the default locale is Turkish ("tr") compared with English.
+
+The defect is exposed by the Turkish locale because the behavior of the characters "I" and "i" differs under Turkish case conversion rules.
+
+The Defects4J triggering tests include:
+
+- org.apache.commons.codec.language.CaverphoneTest::testLocaleIndependence
+- org.apache.commons.codec.language.DoubleMetaphoneTest::testLocaleIndependence
+- org.apache.commons.codec.language.MetaphoneTest::testLocaleIndependence
+- org.apache.commons.codec.language.RefinedSoundexTest::testLocaleIndependence
+- org.apache.commons.codec.language.SoundexTest::testLocaleIndependence
+
+The modified production classes are:
+
+- org.apache.commons.codec.language.Caverphone
+- org.apache.commons.codec.language.Metaphone
+- org.apache.commons.codec.language.SoundexUtils
+
+=== EXISTING TEST FRAMEWORK ===
+
+The project uses JUnit 3 style tests based on junit.framework.TestCase.
+
+The common abstract test class is:
+
+org.apache.commons.codec.StringEncoderAbstractTest
+
+Relevant existing test:
+
+public void testLocaleIndependence() throws Exception {
+    StringEncoder encoder = makeEncoder();
+
+    String[] data = { "I", "i", };
+
+    Locale orig = Locale.getDefault();
+    Locale[] locales = { Locale.ENGLISH, new Locale("tr"), Locale.getDefault() };
+
+    try {
+        for (int i = 0; i < data.length; i++) {
+            String ref = null;
+            for (int j = 0; j < locales.length; j++) {
+                Locale.setDefault(locales[j]);
+                if (j <= 0) {
+                    ref = encoder.encode(data[i]);
+                } else {
+                    String cur = null;
+                    try {
+                        cur = encoder.encode(data[i]);
+                    } catch (Exception e) {
+                        fail(Locale.getDefault().toString() + ": " + e.getMessage());
+                    }
+                    assertEquals(Locale.getDefault().toString() + ": ", ref, cur);
+                }
+            }
+        }
+    } finally {
+        Locale.setDefault(orig);
+    }
+}
+
+This test verifies that the encoder produces the same result under English and Turkish locales.
+
+The Caverphone test class extends StringEncoderAbstractTest:
+
+public class CaverphoneTest extends StringEncoderAbstractTest {
+
+    public static Test suite() {
+        return new TestSuite(CaverphoneTest.class);
+    }
+
+    public CaverphoneTest(String name) {
+        super(name);
+    }
+
+    protected StringEncoder makeEncoder() {
+        return new Caverphone();
+    }
+}
+
+=== RELEVANT BUGGY SOURCE CODE ===
+
+Caverphone.java contains:
+
+public String caverphone(String txt) {
+    if (txt == null || txt.length() == 0) {
+        return "1111111111";
+    }
+
+    txt = txt.toLowerCase();
+
+    txt = txt.replaceAll("[^a-z]", "");
+
+    txt = txt.replaceAll("e$", "");
+
+    txt = txt.replaceAll("^cough", "cou2f");
+    txt = txt.replaceAll("^rough", "rou2f");
+    txt = txt.replaceAll("^tough", "tou2f");
+    txt = txt.replaceAll("^enough", "enou2f");
+    txt = txt.replaceAll("^trough", "trou2f");
+    txt = txt.replaceAll("^gn", "2n");
+    txt = txt.replaceAll("^mb", "m2");
+
+    txt = txt.replaceAll("cq", "2q");
+    txt = txt.replaceAll("ci", "si");
+    txt = txt.replaceAll("ce", "se");
+    txt = txt.replaceAll("cy", "sy");
+    txt = txt.replaceAll("tch", "2ch");
+    txt = txt.replaceAll("c", "k");
+    txt = txt.replaceAll("q", "k");
+    txt = txt.replaceAll("x", "k");
+    txt = txt.replaceAll("v", "f");
+    txt = txt.replaceAll("dg", "2g");
+    txt = txt.replaceAll("tio", "sio");
+    txt = txt.replaceAll("tia", "sia");
+    txt = txt.replaceAll("d", "t");
+    txt = txt.replaceAll("ph", "fh");
+    txt = txt.replaceAll("b", "p");
+    txt = txt.replaceAll("sh", "s2");
+    txt = txt.replaceAll("z", "s");
+    txt = txt.replaceAll("^[aeiou]", "A");
+    txt = txt.replaceAll("[aeiou]", "3");
+    txt = txt.replaceAll("j", "y");
+    txt = txt.replaceAll("^y3", "Y3");
+    txt = txt.replaceAll("^y", "A");
+    txt = txt.replaceAll("y", "3");
+    txt = txt.replaceAll("3gh3", "3kh3");
+    txt = txt.replaceAll("gh", "22");
+    txt = txt.replaceAll("g", "k");
+    txt = txt.replaceAll("s+", "S");
+    txt = txt.replaceAll("t+", "T");
+    txt = txt.replaceAll("p+", "P");
+    txt = txt.replaceAll("k+", "K");
+    txt = txt.replaceAll("f+", "F");
+    txt = txt.replaceAll("m+", "M");
+    txt = txt.replaceAll("n+", "N");
+    txt = txt.replaceAll("w3", "W3");
+    txt = txt.replaceAll("wh3", "Wh3");
+    txt = txt.replaceAll("w$", "3");
+    txt = txt.replaceAll("w", "2");
+    txt = txt.replaceAll("^h", "A");
+    txt = txt.replaceAll("h", "2");
+    txt = txt.replaceAll("r3", "R3");
+    txt = txt.replaceAll("r$", "3");
+    txt = txt.replaceAll("r", "2");
+    txt = txt.replaceAll("l3", "L3");
+    txt = txt.replaceAll("l$", "3");
+    txt = txt.replaceAll("l", "2");
+
+    txt = txt.replaceAll("2", "");
+    txt = txt.replaceAll("3$", "A");
+    txt = txt.replaceAll("3", "");
+
+    txt = txt + "111111" + "1111";
+
+    return txt.substring(0, 10);
+}
+
+Metaphone.java contains:
+
+return txt.toUpperCase();
+
+and:
+
+txt.toUpperCase(java.util.Locale.ENGLISH)
+
+SoundexUtils.java contains:
+
+if (count == len) {
+    return str.toUpperCase();
+}
+
+and:
+
+return new String(chars, 0, count).toUpperCase(java.util.Locale.ENGLISH);
+
+=== TASK ===
+
+Analyze the defect and generate one minimal executable JUnit test that specifically detects Codec-1.
+
+The test should:
+
+1. Set the default locale to English.
+2. Generate the reference result using the target encoder.
+3. Set the default locale to Turkish ("tr").
+4. Generate the result again using the same input.
+5. Assert that both results are equal.
+6. Restore the original default locale in a finally block.
+7. Follow the existing JUnit 3 style used by this project.
+8. Target the affected behavior rather than testing unrelated functionality.
+9. Avoid modifying production source code.
+
+Prefer targeting Caverphone because the existing Defects4J triggering test specifically identifies:
+
+org.apache.commons.codec.language.CaverphoneTest::testLocaleIndependence
+
+The generated test should be compatible with the existing Codec test suite.
+
+=== OUTPUT FORMAT ===
+
+=== ANALYSIS ===
+Briefly explain the defect and why the generated test detects it.
+
+=== TEST CODE ===
+Provide only the complete Java test class.
+
+=== TARGET TEST ===
+State the exact test method name intended to detect Codec-1.

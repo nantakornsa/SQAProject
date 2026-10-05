@@ -1,0 +1,69 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791054443-5ctqVMheIYDgmjHx409N","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":2020,"output_tokens":8,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"```java\npackage com.google."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"gson.functional;\n\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" java.lang.reflect"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".Type;\nimport java."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"util.concurrent."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ConcurrentM"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ap;\nimport java.util."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"concurrent.Conc"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"urrentNavigableM"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ap;\nimport java.util."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"concurrent.Conc"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"urrentSkipListMap;\n\nimport junit.framework.TestCase;\n\nimport com.google.gson.Gson;\nimport com.google.gson.reflect.TypeToken;\n\n/**\n * Regression tests for deserializing concurrent map types ("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Gson issue 624).\n */\npublic class ConcurrentMapRegressionTest extends TestCase {\n  private Gson gson;\n\n  @Override\n  protected void setUp() throws Exception {\n    super.setUp();\n    gson = new Gson();\n  }\n\n  public void testConcurrent"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Map() throws Exception {\n    Type typeOfMap = new TypeToken<ConcurrentMap<Integer, String>>() {}.getType();\n    ConcurrentMap<Integer, String> map = gson.fromJson(\"{\\\"123\\\":\\\"456\\\"}\", typeOfMap"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":");\n    assertEquals(1, map.size());\n    assertTrue(map.containsKey(123));\n    assertEquals(\"456\", map.get(123));\n    String json = gson.toJson(map);\n    assertEquals(\"{\\\"123\\\":\\\"456\\\"}\", json);\n  }\n\n  public void testConcur"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"rentNavigableMap() throws Exception {\n    Type typeOfMap = new TypeToken<ConcurrentNavigableMap<Integer, String>>() {}.getType();\n    ConcurrentNavigableMap<Integer, String> map = gson.fromJson(\"{\\\"123\\"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\":\\\"456\\\"}\", typeOfMap);\n    assertEquals(1, map.size());\n    assertTrue(map.containsKey(123));\n    assertEquals(\"456\", map.get(123));\n    assertTrue(map instanceof ConcurrentSkipListMap);\n    String json = gson."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"toJson(map);\n    assertEquals(\"{\\\"123\\\":\\\"456\\\"}\", json);\n  }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2020,"output_tokens":681,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.01085,"is_byok":false,"cost_details":{"upstream_inference_cost":0.01085,"upstream_inference_prompt_cost":0.00404,"upstream_inference_completions_cost":0.00681}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

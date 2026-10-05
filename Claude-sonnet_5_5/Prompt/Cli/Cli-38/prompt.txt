@@ -1,0 +1,92 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Cli
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Cli
+       Program: commons-cli
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/Cli.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-cli.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/active-bugs.csv
+Number of bugs: 39
+--------------------------------------------------------------------------------
+
+Summary for Bug: Cli-38
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+ac2a1c85616f0140418de9190389fe7b80296c39
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-09-08 05:36:59 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CLI-265
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CLI-265
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.cli.bug.BugCLI265Test::shouldParseConcatenatedShortOptions
+   --> junit.framework.AssertionFailedError: expected null, but was:<-ab>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.cli.DefaultParser
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.cli.DefaultParser ===
+diff --git a/src/main/java/org/apache/commons/cli/DefaultParser.java b/src/main/java/org/apache/commons/cli/DefaultParser.java
+index 4bff7f3..2cee432 100644
+--- a/src/main/java/org/apache/commons/cli/DefaultParser.java
++++ b/src/main/java/org/apache/commons/cli/DefaultParser.java
+@@ -307,8 +307,12 @@ public class DefaultParser implements CommandLineParser
+         // remove leading "-" and "=value"
+         int pos = token.indexOf("=");
+         String optName = pos == -1 ? token.substring(1) : token.substring(1, pos);
+-        return options.hasShortOption(optName);
++        if (options.hasShortOption(optName))
++        {
++            return true;
++        }
+         // check for several concatenated short options
++        return optName.length() > 0 && options.hasShortOption(String.valueOf(optName.charAt(0)));
+     }
+ 
+     /**
+
+
+=== TRIGGERING TEST METHOD ===
+    public void shouldParseConcatenatedShortOptions() throws Exception {
+        String[] concatenatedShortOptions = new String[] { "-t1", "-ab" };
+
+        final CommandLine commandLine = parser.parse(options, concatenatedShortOptions);
+
+        assertTrue(commandLine.hasOption("t1"));
+        assertNull(commandLine.getOptionValue("t1"));
+        assertTrue(commandLine.hasOption("a"));
+        assertTrue(commandLine.hasOption("b"));
+        assertFalse(commandLine.hasOption("last"));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

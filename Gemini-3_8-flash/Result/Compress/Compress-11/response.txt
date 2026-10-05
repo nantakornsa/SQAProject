@@ -1,0 +1,24 @@
+```java
+package org.apache.commons.compress.archivers;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.ByteArrayInputStream;
+
+import org.junit.Test;
+
+public class Compress11Test {
+
+    @Test
+    public void testShortTextFilesAreNoTARs() throws Exception {
+        try {
+            new ArchiveStreamFactory()
+                .createArchiveInputStream(new ByteArrayInputStream("This certainly is not a tar archive, really, no kidding".getBytes()));
+            fail("created an input stream for a non-archive");
+        } catch (ArchiveException ae) {
+            assertTrue(ae.getMessage().startsWith("No Archiver found"));
+        }
+    }
+}
+```

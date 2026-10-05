@@ -1,0 +1,159 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-41
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+2dc56182579703153e5c9886b3ecd22bbc348b49
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-10-15 07:31:32 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-535
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-535
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang.ClassUtilsTest::test_getShortClassName_Class
+   --> junit.framework.ComparisonFailure: expected:<String[[]]> but was:<String[;]>
+ - org.apache.commons.lang.ClassUtilsTest::test_getPackageName_Class
+   --> junit.framework.ComparisonFailure: expected:<[]java.lang> but was:<[[L]java.lang>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang.ClassUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang.ClassUtils ===
+diff --git a/src/java/org/apache/commons/lang/ClassUtils.java b/src/java/org/apache/commons/lang/ClassUtils.java
+index d5de42b2b..478b37776 100644
+--- a/src/java/org/apache/commons/lang/ClassUtils.java
++++ b/src/java/org/apache/commons/lang/ClassUtils.java
+@@ -188,10 +188,23 @@ public class ClassUtils {
+             return StringUtils.EMPTY;
+         }
+ 
++        StringBuffer arrayPrefix = new StringBuffer();
+ 
+         // Handle array encoding
++        if (className.startsWith("[")) {
++            while (className.charAt(0) == '[') {
++                className = className.substring(1);
++                arrayPrefix.append("[]");
++            }
+             // Strip Object type encoding
++            if (className.charAt(0) == 'L' && className.charAt(className.length() - 1) == ';') {
++                className = className.substring(1, className.length() - 1);
++            }
++        }
+ 
++        if (reverseAbbreviationMap.containsKey(className)) {
++            className = reverseAbbreviationMap.get(className);
++        }
+ 
+         int lastDotIdx = className.lastIndexOf(PACKAGE_SEPARATOR_CHAR);
+         int innerIdx = className.indexOf(
+@@ -200,7 +213,7 @@ public class ClassUtils {
+         if (innerIdx != -1) {
+             out = out.replace(INNER_CLASS_SEPARATOR_CHAR, PACKAGE_SEPARATOR_CHAR);
+         }
+-        return out;
++        return out + arrayPrefix;
+     }
+ 
+     // Package name
+@@ -242,12 +255,18 @@ public class ClassUtils {
+      * @return the package name or an empty string
+      */
+     public static String getPackageName(String className) {
+-        if (className == null) {
++        if (className == null || className.length() == 0) {
+             return StringUtils.EMPTY;
+         }
+ 
+         // Strip array encoding
++        while (className.charAt(0) == '[') {
++            className = className.substring(1);
++        }
+         // Strip Object type encoding
++        if (className.charAt(0) == 'L' && className.charAt(className.length() - 1) == ';') {
++            className = className.substring(1);
++        }
+ 
+         int i = className.lastIndexOf(PACKAGE_SEPARATOR_CHAR);
+         if (i == -1) {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void test_getShortClassName_Class() {
+        assertEquals("ClassUtils", ClassUtils.getShortClassName(ClassUtils.class));
+        assertEquals("Map.Entry", ClassUtils.getShortClassName(Map.Entry.class));
+        assertEquals("", ClassUtils.getShortClassName((Class) null));
+
+        // LANG-535
+        assertEquals("String[]", ClassUtils.getShortClassName(String[].class));
+        assertEquals("Map.Entry[]", ClassUtils.getShortClassName(Map.Entry[].class));
+
+        // Primitives
+        assertEquals("boolean", ClassUtils.getShortClassName(boolean.class));
+        assertEquals("byte", ClassUtils.getShortClassName(byte.class));
+        assertEquals("char", ClassUtils.getShortClassName(char.class));
+        assertEquals("short", ClassUtils.getShortClassName(short.class));
+        assertEquals("int", ClassUtils.getShortClassName(int.class));
+        assertEquals("long", ClassUtils.getShortClassName(long.class));
+        assertEquals("float", ClassUtils.getShortClassName(float.class));
+        assertEquals("double", ClassUtils.getShortClassName(double.class));
+
+        // Primitive Arrays
+        assertEquals("boolean[]", ClassUtils.getShortClassName(boolean[].class));
+        assertEquals("byte[]", ClassUtils.getShortClassName(byte[].class));
+        assertEquals("char[]", ClassUtils.getShortClassName(char[].class));
+        assertEquals("short[]", ClassUtils.getShortClassName(short[].class));
+        assertEquals("int[]", ClassUtils.getShortClassName(int[].class));
+        assertEquals("long[]", ClassUtils.getShortClassName(long[].class));
+        assertEquals("float[]", ClassUtils.getShortClassName(float[].class));
+        assertEquals("double[]", ClassUtils.getShortClassName(double[].class));
+
+        // Arrays of arrays of ...
+        assertEquals("String[][]", ClassUtils.getShortClassName(String[][].class));
+        assertEquals("String[][][]", ClassUtils.getShortClassName(String[][][].class));
+        assertEquals("String[][][][]", ClassUtils.getShortClassName(String[][][][].class));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

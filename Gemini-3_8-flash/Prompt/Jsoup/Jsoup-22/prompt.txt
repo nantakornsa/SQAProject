@@ -1,0 +1,167 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-22
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+4b0dde413a3c38a77461ac64ad278a042d6eea68
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-04-14 10:48:29 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+184
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/184
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.nodes.ElementTest::elementIsNotASiblingOfItself
+   --> junit.framework.AssertionFailedError: expected:<2> but was:<3>
+ - org.jsoup.nodes.NodeTest::nodeIsNotASiblingOfItself
+   --> junit.framework.AssertionFailedError: expected:<2> but was:<3>
+ - org.jsoup.nodes.NodeTest::orphanNodeReturnsNullForSiblingElements
+   --> java.lang.NullPointerException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.nodes.Element
+ - org.jsoup.nodes.Node
+ - org.jsoup.select.Elements
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.nodes.Element ===
+diff --git a/src/main/java/org/jsoup/nodes/Element.java b/src/main/java/org/jsoup/nodes/Element.java
+index fd2b542f..dc352dcb 100644
+--- a/src/main/java/org/jsoup/nodes/Element.java
++++ b/src/main/java/org/jsoup/nodes/Element.java
+@@ -431,8 +431,15 @@ public class Element extends Node {
+      * @return sibling elements
+      */
+     public Elements siblingElements() {
++        if (parentNode == null)
++            return new Elements(0);
+ 
+-        return parent().children();
++        List<Element> elements = parent().children();
++        Elements siblings = new Elements(elements.size() - 1);
++        for (Element el: elements)
++            if (el != this)
++                siblings.add(el);
++        return siblings;
+     }
+ 
+     /**
+@@ -444,6 +451,7 @@ public class Element extends Node {
+      * @see #previousElementSibling()
+      */
+     public Element nextElementSibling() {
++        if (parentNode == null) return null;
+         List<Element> siblings = parent().children();
+         Integer index = indexInList(this, siblings);
+         Validate.notNull(index);
+@@ -459,6 +467,7 @@ public class Element extends Node {
+      * @see #nextElementSibling()
+      */
+     public Element previousElementSibling() {
++        if (parentNode == null) return null;
+         List<Element> siblings = parent().children();
+         Integer index = indexInList(this, siblings);
+         Validate.notNull(index);
+
+=== MODIFIED SOURCE: org.jsoup.nodes.Node ===
+diff --git a/src/main/java/org/jsoup/nodes/Node.java b/src/main/java/org/jsoup/nodes/Node.java
+index 92a2f8f8..c0640cdd 100644
+--- a/src/main/java/org/jsoup/nodes/Node.java
++++ b/src/main/java/org/jsoup/nodes/Node.java
+@@ -441,8 +441,15 @@ public abstract class Node implements Cloneable {
+      @return node siblings. If the node has no parent, returns an empty list.
+      */
+     public List<Node> siblingNodes() {
++        if (parentNode == null)
++            return Collections.emptyList();
+ 
+-        return parent().childNodes();
++        List<Node> nodes = parentNode.childNodes;
++        List<Node> siblings = new ArrayList<Node>(nodes.size() - 1);
++        for (Node node: nodes)
++            if (node != this)
++                siblings.add(node);
++        return siblings;
+     }
+ 
+     /**
+@@ -467,6 +474,8 @@ public abstract class Node implements Cloneable {
+      @return the previous sibling, or null if this is the first sibling
+      */
+     public Node previousSibling() {
++        if (parentNode == null)
++            return null; // root
+ 
+         List<Node> siblings = parentNode.childNodes;
+         Integer index = siblingIndex();
+
+=== MODIFIED SOURCE: org.jsoup.select.Elements ===
+diff --git a/src/main/java/org/jsoup/select/Elements.java b/src/main/java/org/jsoup/select/Elements.java
+index a10ae3b8..7f8f66a7 100644
+--- a/src/main/java/org/jsoup/select/Elements.java
++++ b/src/main/java/org/jsoup/select/Elements.java
+@@ -19,6 +19,9 @@ public class Elements implements List<Element>, Cloneable {
+         contents = new ArrayList<Element>();
+     }
+ 
++    public Elements(int initialCapacity) {
++        contents = new ArrayList<Element>(initialCapacity);
++    }
+ 
+     public Elements(Collection<Element> elements) {
+         contents = new ArrayList<Element>(elements);
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void elementIsNotASiblingOfItself() {
+        Document doc = Jsoup.parse("<div><p>One<p>Two<p>Three</div>");
+        Element p2 = doc.select("p").get(1);
+
+        assertEquals("Two", p2.text());
+        Elements els = p2.siblingElements();
+        assertEquals(2, els.size());
+        assertEquals("<p>One</p>", els.get(0).outerHtml());
+        assertEquals("<p>Three</p>", els.get(1).outerHtml());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

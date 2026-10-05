@@ -1,0 +1,39 @@
+The test below reuses the triggering scenario from the bug report. I have not compiled or run it against either version.
+
+The scenario is `SourceDestArgument` built from two arguments with a minimum and maximum of 1 each, given four identical values. On the buggy version, `ArgumentImpl.process` starts `argumentCount` at 0, so it keeps consuming values it should not. The failure surfaces as the message `Unexpected value "testfile.txt" found while processing  input`, which is the "but was" in the reported comparison failure. The fixed version starts the count from `commandLine.getUndefaultedValues(option).size()`, so it stops consuming and the message becomes `Unexpected testfile.txt while processing `.
+
+The test asserts the fixed-version message exactly, as the original triggering test does. The `fail` call sits inside the `try` block. `AssertionFailedError` is not an `OptionException`, so the `catch` does not swallow it.
+
+```java
+package org.apache.commons.cli2.bug;
+
+import junit.framework.TestCase;
+
+import org.apache.commons.cli2.Argument;
+import org.apache.commons.cli2.Group;
+import org.apache.commons.cli2.OptionException;
+import org.apache.commons.cli2.builder.ArgumentBuilder;
+import org.apache.commons.cli2.builder.GroupBuilder;
+import org.apache.commons.cli2.commandline.Parser;
+import org.apache.commons.cli2.option.SourceDestArgument;
+
+public class BugLoopingOptionLookAlikeRegressionTest extends TestCase {
+
+    public void testLoopingOptionLookAlikeTooManyValues() {
+        final ArgumentBuilder abuilder = new ArgumentBuilder();
+        final GroupBuilder gbuilder = new GroupBuilder();
+        final Argument inputfile_opt = abuilder.withName("input").withMinimum(1).withMaximum(1).create();
+        final Argument outputfile_opt = abuilder.withName("output").withMinimum(1).withMaximum(1).create();
+        final Argument targets = new SourceDestArgument(inputfile_opt, outputfile_opt);
+        final Group options = gbuilder.withOption(targets).create();
+        final Parser parser = new Parser();
+        parser.setGroup(options);
+        try {
+            parser.parse(new String[] { "testfile.txt", "testfile.txt", "testfile.txt", "testfile.txt" });
+            fail("OptionException");
+        } catch (OptionException e) {
+            assertEquals("Unexpected testfile.txt while processing ", e.getMessage());
+        }
+    }
+}
+```

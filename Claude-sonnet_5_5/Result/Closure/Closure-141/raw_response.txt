@@ -1,0 +1,156 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791213453-8Ge3lngBf4v7lRb7Z82A","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":3232,"output_tokens":2,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I need a"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" test that fails on the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" buggy code but passes once fixed—likely targeting ExpressionDecomposerTest's testCanExposeExpression2 case with \"(function(a){b = a})(foo())\" expecting MOVABLE. I'm trying to recall the base"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" test class structure so I can write a compilable test, considering whether PureFunctionIdentifier's test setup would be saf"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"er to replicate."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"'m reconsidering a safer approach: testing NodeUtil's canBeSideEffected method directly in the same package, since that's likely where the actual bug resides rather than in ExpressionDecom"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"poser. I'm tracing through how the buggy version handles function nodes and their children (name, params, body) to see where the side-effect detection logic diverges from the f"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ixed version."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"Since the exact method"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" signature is u"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ncertain, I'm instead considering an end-to-end test approach through InlineFunctionsTest-style test cases that exercise the decomposition logic without needing to know internal signatures precisely."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"Test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ing CompilerTestCase feels safer, so I'm reconstructing a helper method that builds a compiler instance and checks expression decomposition results against expected outcomes for given"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" code snippets and known constants."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I'm trying to recall"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" exact constructor signature from around early 2010, when ExpressionDecomposer first included the set of known constant names alongside the compiler and name supplier."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"For the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" test, I'll write my own helper to find the call site rather than relying on an existing utility, using package-private access and standard Node/Token APIs to ident"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ify CALL nodes. I'll name the test class ExpressionDecomposerRegressionTest and use the compiler's parseTestCode method to get the script node for test input."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"CAQSuDMKEAgSGAI4AUIIdGhpbmtpbmcSDN9r7aPh5i3w3xci0hoMFWhMD5PEx9Vz1iEPIjDPX5VNq7fd5iCUwEUrq84XF9GESG4A+BQ5o1RlcOfajuRAdkDC8z5PrqA+j+ycuVgq1TKAShee18CbbLMMwafGHpRvgrdmmobVLiB8LWRSccH85qKDZApDyMVP2hWoK8kP96dup1XXEVvDlIc0IZyG2sPszvK4+chKaaKST70AfcaMMPDTffV9cDsm6cI+sfmOHvDt890hl+tIoE1sLV8lwkoMuVoD8zzexKivUEVYJFJQ9/Aod7b+lYHxFrtcJhXaKvTCASwgaV1Q+FjBgbCm6OYRpGUHht5w7fIXosKtag41UW1x91ETr/+3PfluEuXVaGoYg4z6PFA4DJPyHEzZpOQjyeZe9w+T4FxKRawyJvxeqDlo/zp51bfaE1AXU4CNbQSrGlo0EHbknINUeN5wnLvgJydK+jlHEA5bAiB2HLu/MBovMvpmqImJH/dSfnM4Up3XvW0bwRNKfcdIK2rQcH5vyZJBpDzatY9WZGtuxljdmuaX8XL0XLw1QDFQSRG8Y50/xFf9KdNZMKgWCNxyutp7umWmuaCY3WbfS2ZEMXLrAIAAZuXGO4Q7UNJY43zzIMZqsnTcYbk3rdCtUPW7Lfi0zVr4DyWiATl7+til+Yr9aCG+WzVd7V1m9T57I2su/6W0/bRr55I5EYw2kD/gwYRWETZJoDOWfDeo8N27nOQo40JeR+Xv4n09N4PPTTXZjiyl6gxn+0x9rd499/eoEQsIMWWceWcBSKbn2e/QjNLJtNxB86cI+9/x0EzwTGKLcEguvpOGptQKj8PhmCBLhZYIOU7etmfHH+fmMFowug18TtS0FYhzciaNqLIs/bZ/BKQ7kL/SulPFc9MUF2+CZ92Dhil8OpLZzAk1ErypVRb1JeOQpT8x7VzZ2SH+qgrHnNyRz71ykbjun/71lOn4Q1hNs9YxhN/keFYbYyMB+jO8jgoklVJuRK+xmJbmQzKpIfsy5MdQV7ZpHk8AKDhJJ45OtbZCkkvNwLBgugaLLceGme9ySJuC7GQXpGDeDAUWFfmjVBwuxsBbBWIFxWSIj4H5klQ1KTWfPa5Nw0OEC63kci2CC30i7fwEDdVx2eja2gAM42GpwtK729ScxhA1nlnL8jKBDjhEzmGGWb/9efeHSuYMzIUzebEOUqe1u/dgC03SKarD4G2WqHJrH/EDUcVwhl2WN/kfihUHptyLEI2w3OCp9KMousL6zcsizjdL+dJEsAMDa8a67NuH4vRYLeygFGcqNBoIv3oxX5vm3G8G3kAS/mVBZUQQKljnM0CVORDq/WeQwfymd7ieLFhQG1dtNzMSYamCvA19GqEWTQfVRrS1BPYHxjeOnhhHilPNiKHddFlLgz4EAMRdMl1EGyq5QWLis/zKDQHyHG3kFzZ92uUciVwfo7fZzV5CpZEJPH+a8iKlg3v1f5Fw4MBvJQ5IoSq70bw2bQPASe7bVe88kL3py2+vlcl3Ef4jIfBSbGqJn1M9FiYCfRXAq7vr04lpBj838CEc/7dASmWq0j7OBalr/IbjF4MMAcnxB2qp3XQdmpQ9XQxRWlQ5tUchAVAbgR+xNiYG1zrM7c2pQg/x6qkutfdJCfOoIc9lLkZEl6p4pww1VJQ3Drmg2yldTkOKtLhpyWG62qZgQ77EA0anVToNTL8fvQNxh6+ULmvqyPemLU/oMJhy/bfjQ3UTnSfl/9HJZc1TgwRoRdXyglo2uBBLuP2GDdDb22mx7KR5Pvp9D9XQYZ1rwGjE1v+EEgupfwVf9yXtGRIJBBkTo0lEhBTxRTdGMHQdNHmAqPjLOtCrP2fFd7I96ybvg9P7wtn6p3EKJNY0KNiNOIu5RxDHjiq5r06MhN//meuB5mM4j60ZWC8ZAXP9mTsVCQovsTyl1H1eFHE3ZXjlXLaCN1tmIvwXx9ZiQUXTOJ1oOeuAniOfncXQWftEH0fcCfs3ca3/CwXyRlL36S3j1FT9AEY4BD3zGoHxMiC5WwDvL1p+WRrDPLhVWossbl/W5hW4s2VtSnrtZgprgVTLY0IgNkf/DMbARhay/HNilZ0od+eRAEpI2dCQJqgcP81dsnX5xR2zdG0LGh0zVRiJTRgD2p2eJHZIxAeiYrl5/n+xu1Hn6mVqQDc7TbFWrp6t3VxHjAFKKiohe4z25QtI/mUOgkc59nXdWgzAso/A6qhGAIe7+RY/zlrd5P0uJR/luHGsOauuuataPi57ymYx+vwdm6Aidn1HGrnW48VCAH5gxFiNtSYmpOLmac/mNHV9wwYYbCypVMwqAUirIprq+DhgumGOC16e15ZkPTTgCvObp0FTzab76bB+VNiqeOsF53zeqzQqSaK03NVAmiMF3Bt7NtJGko1QJgqxIwEEsupt0onHHs/2JB3f8IlhrdE8ThkYEr9WGRGOh4GW0fG7Fpt8sRKrQe359NNLZCdSnxhcBPsa765vbWfA4jwkl3Qw8iwg7b8u4U5PseZfu+pJB4ei4XvucWSUcpaSrJLRW7B6PSDIPLqabq3Coifp9L9pQmmuJXQG00cVeTeRbscgomL9/pK9eYawP0/Gub/w3/L1NGKom+CiJCCLnVncDQYK1onnKQ7SSJ70UNZqwFSyV69oI9G2OHEGj/H0+PPf35EkN+V++/+I/gCfgG0t4UhHM6JimOIoIlJ5Rq3mh2kYfO00QAAqoqa+Cg1rYynidiDJ4cUwdiD6jbCxBntbh7lK8EZ92DSdN85clHvLmOv34BLoikL+y1igTF/jOywlRnrQXnqZQzanvDjrcTF5PG0RCRy1ukDswfowavoJuNs+4WR+ELNx+FbHAdJntgqGIuwc8uM6GYXb0fvuruWE083fQz3SeJNo8q3cNskbCSChhyd0hcx5bb4Snnvul9sVCVJQVvHo5coZQ8voMGSPR3rwLjdJ6A1VCKGUon2SBYnNLGQYceEoU0Aq6WSYeqC5IW3AImLordwFCvqkpp+zf25HzNgCmdbzXueJV5HoqmpK+6eR0zSuELZCbvbmksu5UxOv8ck0r1YW/AQVUb4/qoHDExqgwGozHbTOcm+qq1YT/pqLCJGVc/PPpE92vu0LiXGY0y1uyq94XVLN2s2jY2bYZhh0P/I3pMTA5dHogCIfbCXV1cQ2EpCnZwzLLfTV9+3UT0YcG5la8YOQQLZD+bVp9Upa+cjl+uDKWBrG/ogQlPofGuhd5qx6I88LT5Z1apvsV/fubliwtA0MhnIhf1NSVjs6ExV+FDMUpy6qrfkvb13fm1D6xwugn7bsH9fvsqEZGEi5WVchye7qa3fFt9q4VCqA8YOX2gLK9ine92aUOmtRnrWoXPQHhMR/gdDyyvip96Sl/CFjxL25Q1PDAUH1vGPD8fORAZlaX7UHkxUMWIX8scT9GHnZIRXwIbzljk/xD4kdnN23De0lzyt3Pj67BUmCb56is5wMA7inzb2FYdHW5vnHX4MkcLTSnvm1jWlehufSUIkekXvlxCOQNiBOjmWbYlSYPrisE+NCMd7KeFCOFE7mNxHZwadQ2+yW35tNO77B2hPRbsXGElwnWOIlhhk3gUCmXaIySwUtZPg8G+t06ElxNCEOi8VC897mGcWPHEKRn4puibeXyRKOCLmSzmWtL9dUc+Hdl661WCieYZTBYF3n0o0nV8PS5d+9picT5ALlLgk2NM52o9GHQ75uyTx7DhklKUbIllJw6qe4EGGTQFfBjx4eQ6T2xchoNVS3XPHnT9Ib55QrbdUwakOaLGmAqSRI7HobGFRB8ISOlilImpogVjXMZd1UFSQPJRwLT5yoGq5GQo0KbILCqyI8WR+MDFzSpKg8D4rFSh67N4WYw4JfLpeKKPcIXUpPqtPXyVeUj7od5XBTwogV8zTmUjjg6oS82xW2kTuedYVRWaP5AEsD3GNIdCiBJt3KdG7bh0encqk2/hTcL1/SNv6/hzSr9Q0HNVwmC/8SNyf07Jc9tcwBBYqWELC/YhDf4G4Bj43MljMbRiRTIXMOFEBhwhZp+rL1icrJEGXrGTBGWo0cIkxjPaIPHnSuF+rzPSUgNurTZhIERiPWdLZeBPrHWM5hJjQ5O3TYBAdEAv9VpAWxZzpBTJwv6rgpWCQ68aC0gIoi9ggbDid9uDSujHSFC99fCJjeK5FqbOxwGgDFRrNCq8J+neXzgOeHB/GhxopcKTbre99yzMsE27N3LbuVIg3FKPZ62YxorsTAGMGGFni838eM5hnP8kxFv4gwh6OmwZLbX9WjATFjxb64yuaoQi8L6ywQCa6iDfxW0BUe/8xymEikvy5ZYluD7hzbPKDk+c/sWeU0lXe/v96Sy5Rr1Lyqp29pCkDowv1J/0KeRS9UQzb+PZx1nMFnlAsK1e2LQeTwyX3zmn9QSGohvg15oHEbKS81acj04uhapRz70oOWAfPQB/C7yZnsXcZH+8D28boGZFRVWpAqwaSInuAl2Ymu6oqRix4uzLPs5GdgIfphfOxdBHr5TCQEjwjE1BN5oRIvX2sDcksSACfTbR/STjGiFS+S4uvctuQAt9zL+xwz5kPGXb34ey+mWMcOJXJJB2z+0Pqbvu9y/hTd94feV/CedjkyjuxDPn091knP1xgdHWKJ9nzS5xuJYWxgNM2cYA+Wg2/+pIptazTtKK1BNFidOK4ahLCOkQ/lU57z0KZeLSahhQrUmJ9XgUx3tE+w6td1i+QutIlNgr0PCdAcNull073ocxf7E4QNmbPi3pRxtpmX186QSyVIvYobn6PwgdhPMPiHkNaQXICFqZIgVkwNNQ4yeVJrw/o1iNXEtKItTNvXoeaHH7yLhdLnM8J0DqyT8JF1xmv1hRWViJR9zkXbOOOpRTJvJ1WcsOBuzb+rqdHx80Ssnxe9NCm/41VtwlEgqnPbtELrwyw0sO3UZsv/xe0Gy6TvTxjltHgJXbYDRVFLqnzhU7wt6SsfnhXGfOkKVLxFSMJ0csINRlLpZf2/IGHbbByEsEPpxFjhmy2/+9rr1G6uo4H9gBlBE0Aa9Ps/Rq2v1616i0ik0lce9ua3WvJ8zjYoaFSAHleMp5U47bSwI2f4JE4g2d+Y472EWvnEFuOIcU0H6knQcjkF9yQ/qFiNyPSVvdGvp6KI72otUN0bM57LqBXx7jmW3U2G50mDW/n+LroMEXaqMv9PcK+Ry45psJIxBvfJYIk1pbdv17Fjih+5Y2MaDPquhXBzyU5lN2xgPi0ftE5F8PRbJZc88UCnP4QWbbrvCbRHXEY6jg9gedGr0HLX+0NeMQSu6Q6N+gNfct1TEExoJZz0h/TPA+kmqPEBFMWR59fvx/anCLLRyheyt99XtvwQTrUpD4TdHG78Rs8ap5FLRQrxiA92ce5LKq0mia9rEwRXX6qDS01WkclVZiOafp96oHWQzfjlfUbcxRfXaPRPH9I6JKVxZYPMOMBj8TEK9uSbKhbfKdEDiTiqO4LU7WtKozetv65rWzLxMP1FGsM3XPiu6YQCCyyC+HEdntj6cwv5qr/sSFR8cJ5hpLRyYeTXGDuRkcruog3QivnMwyXVfEe6JRnhd4PXQ4YjhxvKjV9ubBTcvlFb7RaGFLlVXKSqp91OnIi5jiltxW7KBS9qwiIhXbQ3C3kOmg45QqqQtKL/VUY6BdSDfm+UZERLWZOEP2D0W8llXh6x/0v2n0YyvQv7Vaxh0cpI9UdDvXBDfuNLCgkWxiyJYUQ4wyFKwGR2KtJ2UCKKmRs6lO2JRZ4ZhHSa6n7bwoCVuaO+rO4g6f+y1gqFwKBDMZkeaHMYfEsYp2YlA8eiJDC29O5DR7xEUSnZekrbAAob7m6Er2UsB+wTWIjiWd4t0Hz5amHC8lWGu9s/w4zl2l1zQADHgoT7HIOP4C267BAvepK8fbzQLENY9tJR/KB3ZQpCWy9Bwa7UmsLl/eI72jVBaaUbaOBGG8ICqNCKoEq9F/4Tnw3YQrq86YGvgqfJ8dbYlvDTAej6NoQNPvBC8Fd+uFwOLPZi3d/e1PMcyVyZ5UaQ4bGebQtbKsdidgsA/6D96oIPdNdTSCtjt7lIYIm3co1VUenLIC6bzAg1pNhJOUkLArrw+Wf7Kt8t1FmRjlXIccmNfyF9V60BfSzbX0YpkMSocGHwwwiL5sUsMTySSyVonk4w4YhiXVvGqY8ujVx39J8LfaHfQ/enZSq/wvfHCk2UF02zIT1jYEOAxOuIX1iCSi+nsQQWDlxj4rkAaTi1UlSj7t+HUFgoibFtMVvedhk/OVPH1wbXyquZgmewBo2T4cNDY+TalAmhDN2Awn2QwW06ic8b85IfkHMqps4MJzAVi/KxMpmo9jTXTBXvJELCPWXi/gmyvgW9akd1WS5ORrGU6WRhyfBqOj2Kl03LK6ukxtCbJXimtqLBjqVGlS+rdbrhAgnF2HTx4fd/MYC2IyHnBoHjC/HWapOw9SrMqy6YSFlyFVbZxIsmRUwMrGJ9T76XidPxRT8m3acFCNp8pAOSS9fIJwLDTWEWTuYKGS4ECL36EG/j/DY2+QpJXoSAtu4zqKxKlGf6eOEp3Zwkocvc6woZqMnYyOwMairjQPNhlknhybh4pfi1fCDCB4tlf3zQctnxGf+8iRTgBiYTmRA0YaeYwNUVOLXmpXqxu1B1vFyisAk4VQwVgG1YE9mrivOqJdAE6cOMrmX9KjoP1eDcMSH6TiEwGXOvieaTwP7es8GYdpstHMr/pC6GMBiCz/iPWWTUE/HYx6HqFK4Apz+1ZvdQAGTCCxyvSPe56yf3A3j6qeal87gWL6eNn9c9TSxQ3eoQL9IzWGVIsT0D8Yx4fW/azwl6/66TrTUtgg7Sxz/S92sURbtf69YMxU+it2QEdM7tqakeaXncOnWF3mYYijzLzNtwk+jiPiyeZg5QrdfpGBp2hSXrg7KYBZI+gtzURhTKwxv0wwmaX4F6i7O4jlTx7jmjr3Jj7wL18o4qOnjDdaBG2g7W3TFLQXBcS8EY5UZvvh6UTQrBn4KuVbnshN8jk5jGtWWhy1QbHH6xHbcgRkTDX+miLTqz9RjW+TfGSDtKtuG392Ph7Chq0jliWeG7109ivkLyxJNo4bAj727FuxssdXZ3P8YZr1UZ0nvPjzLkcl/3YBOu4EUmY5fyut3XtGJP7kw4elW0MMTKeGX6ahA2NVIiGQHeJESB1uY/O6P1Je+QDQqxz5je9thgeBjTbMb/yMIVcrepp50ecqkksK8Xj5txXz/FkJFfexWk0v38Uy2kFBQGX+ZriZ1/Ui08oXtoFXA+kLLHsTpay8T/q1fXT4Wky9yRkxWpJD4bARHxwnh5kujoV87nOcm47TZljvVcn1IqirpSbVlcwu0Pm0Co4++KUrw+knfo6iEATOUcwbrIY4fzr9nAW99nISgJbF9C27WIlnqJlStst5nvOfAMsWVglPOpghqoUk3Y//n7LhgkejVbsYevYWJLPaSH8YgCbMBdsjSiasUUghlapvsci28Jh0XGhuQOO8TU+RUsWkNws8N5gfdt292AXucpHe16tduC0iBtFI9o9eAGp8dzXMowI4o0m2vZgOExEPeLalwYD9Mp3l/td0z3d/xMS4AkNf1U3A5vFChz/zNFHvfFFkdGIfQTjC/lEnmzd8aqv+oQKGY6g+zck/RzBGjtrBLKBoNyXzOgO7/FZuy3IhYjWHiyOPxQ5q5TSUrjygits7qIZsCfaGc+9A8+GrBXCZBmFX2+diBAiYdDl9j7JTCECx9P2s0HQKDmjOWDy00pqqvCkpkSfTNH9UBr2CuKSxCyLp9DxSh3Sm1vY56/1R0HM38JetJSYEuDeF0N6HKbWBesOhFqwv00/Np6NILK9QVB+5RmEbXeYuv1KNOL0kYQLS2KV4J5JAU0GR0pqjNbmZ3pQsMSMwKs5MDcdCmk53i+84yHCXgZwUZ90sLb/tt6/1uSYRSxOGOokMcLXGpq4bPVb33Lymz+dufz/XxxtTggMAKQG+yOiIYkvH2oZedTPzZOBPZaywQbIMTE1Tfsu95JvucXOXBViPkytw++rZ5Tjwzf9VlpDKVqcvO1cQIPGXfOAbvrU8lbm9LOBpOjA2iqj1o+Ey5GOUbHpmLFl+iXIPEOx6otegYk/Li1tYuuQ/yicgcKrwBvXse17WXCavgYXAuLsUJV1IFy20IkdF3ddcGZ0OxZ/jbkPij1NM2W+gwQhKrIu6ooDY34BH2584Rm+xyR81kdIKDikkrtbBROkrIszrY9eAZD9xUHEWdEylZJMQDShL0BROcCy8mKZ6Rf4hbJwwGfP95qCIMquGekuEGWXJIHphEyK6KVbn0QrtM/R5F5KJARU0ghS4X1olvB3fx/IaUly4XbqEwd9rMUE5swbbMAZ0sn9fp2W7Hv1CvbQ7DlHkfBe5MW5hN2SQHEixmkJuWytJ7eoVHRylYyf7YOdbzqeaI8WAeehypJ85wSJkgDLm2GX7QXB6l+NrW7qxPfpDfg7bOOVGJNRdk84sqR/Ar1Zm+hX9jis8RUOgS9wZX2p8nu5bqD0G17uAc+QUhrV2bEcZnTgMoAwO+ZO5bX8H6lK/zO7UVnVVA7jPVsgBxD9TFSWKP+fT+uKvEf+QUAV0HJT+/Ozr563b/rfFNmzXrJroannCLy6RLBsksmUtUnQnIxy0sPx07hgrberuiqbqhHiFNV94wp2S7WTLQLQ0hPZv10Cgy1DQNJY0E8inx5yuRx+PM5JjJos98p8ZPvIUbcld7WXeX/j/DGKseX+Wbgv2omMhgB.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1zb25uZXQtNS41LTIwMjYwOTI4fGNsYXVkZS1vbi1hd3MifQ"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.google.javascript.jscomp;\n\nimport com"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".google.common.collect.Sets;\nimport com.google.javascript.jscomp.ExpressionDecomposer.DecompositionType;\nimport com.google.javascript.rhino.Node;\nimport com.google.javascript.rhino.Token;\n\nimport junit.framework.TestCase;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\nimport java.util.Set;\n\n/**\n * Regression test: an anonymous function expression used as the callee of\n * a call must not be treated as something that can be side-effected, so the\n * call argument is"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" movable rather than needing decomposition.\n */\npublic class ExpressionDecomposerAnonymousFunctionRegressionTest\n    extends TestCase {\n\n  public void testCanExposeExpressionWithAnonymousFunctionCallee() {\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"helperCanExposeExpression(\n        DecompositionType.MOVABLE, \"(function(a){b = a})(foo())\", \"foo\");\n  }\n\n  public void testCanExposeExpressionSimpleCall() {\n    helperCanExposeExpression(\n        DecompositionType.MOV"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ABLE, \"x = foo()\", \"foo\");\n  }\n\n  private void helperCanExposeExpression(\n      DecompositionType expectedResult, String code, String fnName) {\n    Compiler compiler = getCompiler();\n    Set<String> knownConstants = Sets.newHashSet"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"();\n    ExpressionDecomposer decomposer = new ExpressionDecomposer(\n        compiler, compiler.getUniqueNameIdSupplier(), knownConstants);\n    decomposer.setTempNamePrefix(\"temp\");\n    decomposer.setResultNamePref"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ix(\"result\");\n\n    Node tree = compiler.parseTestCode(code);\n    assertNotNull(tree);\n    assertEquals(0, compiler.getErrorCount());\n\n    Node callSite = findCall(tree, fnName);\n    assertNotNull(\""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Call to \" + fnName + \" was not found\", callSite);\n\n    compiler.resetUniqueNameId();\n    DecompositionType result = decomposer.canExposeExpression(callSite);\n    assertEquals(expectedResult, result);\n  }\n\n  private static Compiler getCompiler"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"() {\n    Compiler compiler = new Compiler();\n    CompilerOptions options = new CompilerOptions();\n    options.setCodingConvention(new GoogleCodingConvention());\n    compiler.initOptions(options);\n    return compiler;\n  }\n\n  private static Node findCall("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Node n, String name) {\n    if (n.getType() == Token.CALL) {\n      Node callee = n.getFirstChild();\n      if (callee != null && callee.getType() == Token.NAME\n          && name.equals(callee.getString())) {\n        return n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\n      }\n    }\n    for (Node c = n.getFirstChild(); c != null; c = c.getNext()) {\n      Node result = findCall(c, name);\n      if (result != null) {\n        return result;\n      }\n    }\n    return null;\n  }\n}\n```\n\nI"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" haven't compiled or run this. The `ExpressionDecomposer` constructor signature, `Compiler.parseTestCode` and `resetUniqueNameId` are written from memory of the existing `ExpresssionDec"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"omposerTest`, so they may need adjusting. The `findCall` helper is my own.\n\nThe test uses `\"(function(a){b = a})(foo())\"`, taken from the triggering `testCanExposeExpression2`. On"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" the buggy version `NodeUtil` has no `Token.FUNCTION` case, so it walks into the anonymous function body and sees `b = a` as side-effectable."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" That makes `canExposeExpression` return `DECOMPOSABLE`. The fixed version returns `MOVABLE`. The second test (`x = foo()`) is a sanity check that passes on"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" both versions."}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":3232,"output_tokens":3633,"output_tokens_details":{"thinking_tokens":2375},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.042794,"is_byok":false,"cost_details":{"upstream_inference_cost":0.042794,"upstream_inference_prompt_cost":0.006464,"upstream_inference_completions_cost":0.03633}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

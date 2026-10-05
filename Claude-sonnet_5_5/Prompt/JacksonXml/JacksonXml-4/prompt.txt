@@ -1,0 +1,82 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonXml
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonXml
+       Program: jackson-dataformat-xml
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonXml/JacksonXml.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-dataformat-xml.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonXml/active-bugs.csv
+Number of bugs: 6
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonXml-4
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+2c5f6f4e0f7bbcfa566fbc91ee57baf8dd7a371a
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-11-14 22:34:17 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+213
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-dataformat-xml/issues/213
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.dataformat.xml.misc.RootNameTest::testDynamicRootName
+   --> junit.framework.ComparisonFailure: expected:<<[rudy]/>> but was:<<[null]/>>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.dataformat.xml.ser.XmlSerializerProvider
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.dataformat.xml.ser.XmlSerializerProvider ===
+diff --git a/src/main/java/com/fasterxml/jackson/dataformat/xml/ser/XmlSerializerProvider.java b/src/main/java/com/fasterxml/jackson/dataformat/xml/ser/XmlSerializerProvider.java
+index 327d1497..40dd64db 100644
+--- a/src/main/java/com/fasterxml/jackson/dataformat/xml/ser/XmlSerializerProvider.java
++++ b/src/main/java/com/fasterxml/jackson/dataformat/xml/ser/XmlSerializerProvider.java
+@@ -201,8 +201,12 @@ public class XmlSerializerProvider extends DefaultSerializerProvider
+     {
+         // 14-Nov-2016, tatu: As per [dataformat-xml#213], we may have explicitly
+         //    configured root name...
++        QName rootName = _rootNameFromConfig();
++        if (rootName == null) {
++            rootName = ROOT_NAME_FOR_NULL;
++        }
+         if (jgen instanceof ToXmlGenerator) {
+-            _initWithRootName((ToXmlGenerator) jgen, ROOT_NAME_FOR_NULL);
++            _initWithRootName((ToXmlGenerator) jgen, rootName);
+         }
+         super.serializeValue(jgen, null);
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testDynamicRootName() throws IOException
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

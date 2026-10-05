@@ -1,0 +1,22 @@
+package com.fasterxml.jackson.databind.deser;
+
+import java.util.Date;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+public class TestStdDateFormatRegression extends BaseMapTest
+{
+    private final ObjectMapper MAPPER = new ObjectMapper();
+
+    public void testISO8601MissingSeconds() throws Exception
+    {
+        Date date = MAPPER.readValue(quote("1997-07-16T19:20+01:00"), Date.class);
+        assertNotNull(date);
+    }
+
+    public void testISO8601PartialMilliseconds() throws Exception
+    {
+        Date date = MAPPER.readValue(quote("2014-10-03T18:00:00.6-05:00"), Date.class);
+        assertNotNull(date);
+    }
+}

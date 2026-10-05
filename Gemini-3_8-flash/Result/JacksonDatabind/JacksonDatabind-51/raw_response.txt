@@ -1,0 +1,114 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791184704-yT7gR5Y7D134uJhECzb1","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Jackson Bug**\n\nI'm currently deep into JacksonDatabind-51. My focus is on the `TypeDeserializerBase.java` file, specifically the conditional logic surrounding generic type handling. I'm analyzing how the `_baseType` and raw class are used to construct a specialized type, and how this differs between the buggy and corrected versions.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind.jsontype;\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"import com.fasterxml.jackson.annotation.JsonTypeInfo;\nimport com.fasterxml.jackson.annotation.JsonTypeIdResolver"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\nimport com.fasterxml.jackson.databind.BaseMapTest;\nimport com.fasterxml.jackson.databind.Datab"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"indContext;\nimport com.fasterxml.jackson.databind.JavaType;\nimport com.fasterxml.jackson."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"databind.ObjectMapper;\nimport com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;\n\npublic class"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" PolymorphicCustomTypeId1270Test extends BaseMapTest {\n\n    static class Top1270 {\n        public Base1"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"270<?> b;\n    }\n\n    @JsonTypeInfo(use = JsonTypeInfo.Id."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"CUSTOM, include = JsonTypeInfo.As.PROPERTY, property = \"type\")\n    @JsonTypeIdResolver("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"CustomResolver1270.class)\n    static class Base1270<T> {\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"public String val;\n        public T options;\n    }\n\n    static class Poly1Base { }\n\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"static class Poly1 extends Poly1Base {\n        public String val;\n    }\n\n    static class CustomResolver"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"1270 extends TypeIdResolverBase {\n        private JavaType baseType;\n\n        @Override\n        public void init("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"JavaType bt) {\n            baseType = bt;\n        }\n\n        @Override\n        public Id get"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Mechanism() {\n            return Id.CUSTOM;\n        }\n\n        @Override\n        public String idFromValue"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(Object value) {\n            if (value instanceof Base1270) {\n                Object opt = ((Base127"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"0<?>) value).options;\n                if (opt instanceof Poly1) {\n                    return \"poly1\";\n                "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"}\n            }\n            return \"unknown\";\n        }\n\n        @Override\n        public String idFromValueAnd"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Type(Object value, Class<?> suggestedType) {\n            return idFromValue(value);\n        }\n\n        @"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Override\n        public JavaType typeFromId(DatabindContext context, String id) {\n            if (\"poly"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"1\".equals(id)) {\n                return context.getTypeFactory().constructParametricType(Base127"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"0.class, Poly1.class);\n            }\n            return null;\n        }\n    }\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    public void testPolymorphicTypeViaCustom() throws Exception {\n        ObjectMapper mapper = new ObjectMapper();\n\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Base1270<Poly1> req = new Base1270<Poly1>();\n        Poly"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"1 o = new Poly1();\n        o.val = \"optionValue\";\n        req.options = o"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\n        req.val = \"some value\";\n        Top1270 top = new Top12"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"70();\n        top.b = req;\n\n        String json = mapper.writeValueAsString(top);\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        Top1270 itemRead = mapper.readValue(json, Top1270.class);\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        assertNotNull(itemRead);\n        assertNotNull(itemRead.b);\n        assertTrue(itemRead."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"b.options instanceof Poly1);\n        assertEquals(\"optionValue\", ((Poly1) itemRead.b.options"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":").val);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1330,"output_tokens":1154,"output_tokens_details":{"thinking_tokens":430},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.005325,"is_byok":false,"cost_details":{"upstream_inference_cost":0.005325,"upstream_inference_prompt_cost":0.0009975,"upstream_inference_completions_cost":0.0043275}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

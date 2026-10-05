@@ -1,0 +1,88 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JxPath
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JxPath
+       Program: commons-jxpath
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JxPath/JxPath.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-jxpath.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JxPath/active-bugs.csv
+Number of bugs: 22
+--------------------------------------------------------------------------------
+
+Summary for Bug: JxPath-22
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+afa2deca94436837e785b89362cfaaf84a8ca1bd
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-01-20 17:58:11 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+JXPATH-154
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/JXPATH-154
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.jxpath.ri.model.JXPath154Test::testInnerEmptyNamespaceDOM
+   --> junit.framework.ComparisonFailure: expected:</b:foo[1]/[test[1]]> but was:</b:foo[1]/[node()[2]]>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.jxpath.ri.model.dom.DOMNodePointer
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.jxpath.ri.model.dom.DOMNodePointer ===
+diff --git a/src/java/org/apache/commons/jxpath/ri/model/dom/DOMNodePointer.java b/src/java/org/apache/commons/jxpath/ri/model/dom/DOMNodePointer.java
+index f8e3b1a..f1a1b2b 100644
+--- a/src/java/org/apache/commons/jxpath/ri/model/dom/DOMNodePointer.java
++++ b/src/java/org/apache/commons/jxpath/ri/model/dom/DOMNodePointer.java
+@@ -686,14 +686,14 @@ public class DOMNodePointer extends NodePointer {
+                 if (aNode.getNodeType() == Node.ELEMENT_NODE) {
+                     Attr attr = ((Element) aNode).getAttributeNode(qname);
+                     if (attr != null) {
+-                        return attr.getValue();
++                        uri = attr.getValue();
++                        break;
+                     }
+                 }
+                 aNode = aNode.getParentNode();
+             }
+-            return null;
+         }
+-        return uri;
++        return "".equals(uri) ? null : uri;
+     }
+ 
+     public Object getValue() {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testInnerEmptyNamespaceDOM() {
+        doTest("b:foo/test", DocumentContainer.MODEL_DOM, "/b:foo[1]/test[1]");
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

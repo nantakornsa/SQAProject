@@ -1,0 +1,24 @@
+package org.jsoup.parser;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class CharacterReaderRegressionTest {
+
+    @Test
+    public void testConsumeToEndDoesNotDropLastChar() {
+        String in = "one two three";
+        CharacterReader r = new CharacterReader(in);
+        assertEquals("one two three", r.consumeToEnd());
+    }
+
+    @Test
+    public void testHandleCarriageReturnAsLineFeed() {
+        String in = "one \r two \r\n three";
+        CharacterReader r = new CharacterReader(in);
+
+        String first = r.consumeTo('\n');
+        assertEquals("one ", first);
+        assertEquals("\n two \n three", r.consumeToEnd());
+    }
+}

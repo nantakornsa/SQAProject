@@ -1,0 +1,46 @@
+```java
+package org.apache.commons.math3.dfp;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+public class DfpMultiplyIntRegressionTest {
+
+    private final DfpField field = new DfpField(20);
+
+    @Test
+    public void testMultiplyByIntGreaterThanRadix() {
+        Dfp three = field.newDfp(3);
+
+        Dfp result = three.multiply(100000);
+        Dfp expected = field.newDfp(300000);
+        Assert.assertTrue("3 * 100000 expected " + expected + " but was " + result,
+                          expected.equals(result));
+
+        result = three.multiply(10000);
+        expected = field.newDfp(30000);
+        Assert.assertTrue("3 * 10000 expected " + expected + " but was " + result,
+                          expected.equals(result));
+    }
+
+    @Test
+    public void testMultiplyByNegativeInt() {
+        Dfp five = field.newDfp(5);
+
+        Dfp result = five.multiply(-3);
+        Dfp expected = field.newDfp(-15);
+        Assert.assertTrue("5 * -3 expected " + expected + " but was " + result,
+                          expected.equals(result));
+    }
+
+    @Test
+    public void testMultiplyByMaxInt() {
+        Dfp three = field.newDfp(3);
+
+        Dfp result = three.multiply(Integer.MAX_VALUE);
+        Dfp expected = three.multiply(field.newDfp(Integer.MAX_VALUE));
+        Assert.assertTrue("3 * MAX_VALUE expected " + expected + " but was " + result,
+                          expected.equals(result));
+    }
+}
+```

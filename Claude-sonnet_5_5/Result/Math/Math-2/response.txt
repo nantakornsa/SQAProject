@@ -1,0 +1,50 @@
+The bug is an integer overflow in `getNumericalMean()`. `getSampleSize() * getNumberOfSuccesses()` is computed in `int` arithmetic, so 50 * 42976365 overflows. The fix multiplies in double precision.
+
+A direct regression test can check the mean without relying on random sampling. With the parameters from the bug report, the expected mean is 50 * (42976365 / 43130568) ≈ 49.82.
+
+- **Buggy version:** 50 * 42976365 = 2,148,818,250, which exceeds Integer.MAX_VALUE (2,147,483,647). It wraps to 2,148,818,250 − 4,294,967,296 = −2,146,149,046. Dividing by 43130568 gives about −49.76, which differs from the expected value.
+- **Fixed version:** the result is about 49.82.
+
+The test also includes the sampling check from the original triggering test.
+
+```java
+package org.apache.commons.math3.distribution;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+/**
+ * Regression test for MATH-1021: integer overflow in
+ * HypergeometricDistribution#getNumericalMean.
+ */
+public class HypergeometricDistributionOverflowRegressionTest {
+
+    @Test
+    public void testMath1021Mean() {
+        final int N = 43130568;
+        final int m = 42976365;
+        final int n = 50;
+        final HypergeometricDistribution dist = new HypergeometricDistribution(N, m, n);
+
+        final double expected = n * ((double) m / (double) N);
+        final double mean = dist.getNumericalMean();
+
+        Assert.assertTrue("mean=" + mean, mean > 0);
+        Assert.assertEquals(expected, mean, 1e-9);
+    }
+
+    @Test
+    public void testMath1021Sample() {
+        final int N = 43130568;
+        final int m = 42976365;
+        final int n = 50;
+        final HypergeometricDistribution dist = new HypergeometricDistribution(N, m, n);
+
+        for (int i = 0; i < 100; i++) {
+            final int sample = dist.sample();
+            Assert.assertTrue("sample=" + sample, 0 <= sample);
+            Assert.assertTrue("sample=" + sample, sample <= n);
+        }
+    }
+}
+```

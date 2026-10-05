@@ -1,0 +1,102 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Time
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Time
+       Program: joda-time
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/Time.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/joda-time.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Time-10
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+3a413d7844c22dc6ddd50bf5d0d55ff3589e47ac
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-06-16 11:28:26 +0100
+--------------------------------------------------------------------------------
+Bug report id:
+22
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/JodaOrg/joda-time/issues/22
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.joda.time.TestDays::testFactory_daysBetween_RPartial_MonthDay
+   --> org.joda.time.IllegalFieldValueException: Value 29 for dayOfMonth must be in the range [1,28]
+ - org.joda.time.TestMonths::testFactory_monthsBetween_RPartial_MonthDay
+   --> org.joda.time.IllegalFieldValueException: Value 29 for dayOfMonth must be in the range [1,28]
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.joda.time.base.BaseSingleFieldPeriod
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.joda.time.base.BaseSingleFieldPeriod ===
+diff --git a/src/main/java/org/joda/time/base/BaseSingleFieldPeriod.java b/src/main/java/org/joda/time/base/BaseSingleFieldPeriod.java
+index 91b2c5c2..839d3b8e 100644
+--- a/src/main/java/org/joda/time/base/BaseSingleFieldPeriod.java
++++ b/src/main/java/org/joda/time/base/BaseSingleFieldPeriod.java
+@@ -49,6 +49,7 @@ public abstract class BaseSingleFieldPeriod
+     /** Serialization version. */
+     private static final long serialVersionUID = 9386874258972L;
+     /** The start of 1972. */
++    private static final long START_1972 = 2L * 365L * 86400L * 1000L;
+ 
+     /** The period in the units of this period. */
+     private volatile int iPeriod;
+@@ -101,7 +102,7 @@ public abstract class BaseSingleFieldPeriod
+             throw new IllegalArgumentException("ReadablePartial objects must be contiguous");
+         }
+         Chronology chrono = DateTimeUtils.getChronology(start.getChronology()).withUTC();
+-        int[] values = chrono.get(zeroInstance, chrono.set(start, 0L), chrono.set(end, 0L));
++        int[] values = chrono.get(zeroInstance, chrono.set(start, START_1972), chrono.set(end, START_1972));
+         return values[0];
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testFactory_daysBetween_RPartial_MonthDay() {
+        MonthDay start1 = new MonthDay(2, 1);
+        MonthDay start2 = new MonthDay(2, 28);
+        MonthDay end1 = new MonthDay(2, 28);
+        MonthDay end2 = new MonthDay(2, 29);
+        
+        assertEquals(27, Days.daysBetween(start1, end1).getDays());
+        assertEquals(28, Days.daysBetween(start1, end2).getDays());
+        assertEquals(0, Days.daysBetween(start2, end1).getDays());
+        assertEquals(1, Days.daysBetween(start2, end2).getDays());
+        
+        assertEquals(-27, Days.daysBetween(end1, start1).getDays());
+        assertEquals(-28, Days.daysBetween(end2, start1).getDays());
+        assertEquals(0, Days.daysBetween(end1, start2).getDays());
+        assertEquals(-1, Days.daysBetween(end2, start2).getDays());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

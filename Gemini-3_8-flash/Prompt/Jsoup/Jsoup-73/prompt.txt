@@ -1,0 +1,179 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-73
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+3475dc846d78e56422b3e6fdf36dfd4416f359f5
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-11-18 12:52:52 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+977
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/977
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.helper.W3CDomTest::namespacePreservation
+   --> junit.framework.AssertionFailedError: expected:<http://[www.w3.org/1999/xhtml]> but was:<http://[example.com/clip]>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.helper.W3CDom
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.helper.W3CDom ===
+diff --git a/src/main/java/org/jsoup/helper/W3CDom.java b/src/main/java/org/jsoup/helper/W3CDom.java
+index f58a9255..81ac9324 100644
+--- a/src/main/java/org/jsoup/helper/W3CDom.java
++++ b/src/main/java/org/jsoup/helper/W3CDom.java
+@@ -19,6 +19,7 @@ import javax.xml.transform.dom.DOMSource;
+ import javax.xml.transform.stream.StreamResult;
+ import java.io.StringWriter;
+ import java.util.HashMap;
++import java.util.Stack;
+ 
+ /**
+  * Helper class to transform a {@link org.jsoup.nodes.Document} to a {@link org.w3c.dom.Document org.w3c.dom.Document},
+@@ -70,19 +71,21 @@ public class W3CDom {
+         private static final String xmlnsPrefix = "xmlns:";
+ 
+         private final Document doc;
+-        private final HashMap<String, String> namespaces = new HashMap<>();
++        private final Stack<HashMap<String, String>> namespacesStack = new Stack<>(); // stack of namespaces, prefix => urn
+         private Element dest;
+ 
+         public W3CBuilder(Document doc) {
+             this.doc = doc;
++            this.namespacesStack.push(new HashMap<String, String>());
+         }
+ 
+         public void head(org.jsoup.nodes.Node source, int depth) {
++            namespacesStack.push(new HashMap<>(namespacesStack.peek())); // inherit from above on the stack
+             if (source instanceof org.jsoup.nodes.Element) {
+                 org.jsoup.nodes.Element sourceEl = (org.jsoup.nodes.Element) source;
+ 
+                 String prefix = updateNamespaces(sourceEl);
+-                String namespace = namespaces.get(prefix);
++                String namespace = namespacesStack.peek().get(prefix);
+ 
+                 Element el = doc.createElementNS(namespace, sourceEl.tagName());
+                 copyAttributes(sourceEl, el);
+@@ -113,6 +116,7 @@ public class W3CDom {
+             if (source instanceof org.jsoup.nodes.Element && dest.getParentNode() instanceof Element) {
+                 dest = (Element) dest.getParentNode(); // undescend. cromulent.
+             }
++            namespacesStack.pop();
+         }
+ 
+         private void copyAttributes(org.jsoup.nodes.Node source, Element el) {
+@@ -141,7 +145,7 @@ public class W3CDom {
+                 } else {
+                     continue;
+                 }
+-                namespaces.put(prefix, attr.getValue());
++                namespacesStack.peek().put(prefix, attr.getValue());
+             }
+ 
+             // get the element prefix if any
+
+
+=== TRIGGERING TEST METHOD ===
+    public void namespacePreservation() throws IOException {
+        File in = ParseTest.getFile("/htmltests/namespaces.xhtml");
+        org.jsoup.nodes.Document jsoupDoc;
+        jsoupDoc = Jsoup.parse(in, "UTF-8");
+
+        Document doc;
+        org.jsoup.helper.W3CDom jDom = new org.jsoup.helper.W3CDom();
+        doc = jDom.fromJsoup(jsoupDoc);
+
+        Node htmlEl = doc.getChildNodes().item(0);
+        assertEquals("http://www.w3.org/1999/xhtml", htmlEl.getNamespaceURI());
+        assertEquals("html", htmlEl.getLocalName());
+        assertEquals("html", htmlEl.getNodeName());
+
+        // inherits default namespace
+        Node head = htmlEl.getFirstChild();
+        assertEquals("http://www.w3.org/1999/xhtml", head.getNamespaceURI());
+        assertEquals("head", head.getLocalName());
+        assertEquals("head", head.getNodeName());
+
+        Node epubTitle = htmlEl.getChildNodes().item(2).getChildNodes().item(3);
+        assertEquals("Check", epubTitle.getTextContent());
+        assertEquals("http://www.idpf.org/2007/ops", epubTitle.getNamespaceURI());
+        assertEquals("title", epubTitle.getLocalName());
+        assertEquals("epub:title", epubTitle.getNodeName());
+
+        Node xSection = epubTitle.getNextSibling().getNextSibling();
+        assertEquals("urn:test", xSection.getNamespaceURI());
+        assertEquals("section", xSection.getLocalName());
+        assertEquals("x:section", xSection.getNodeName());
+
+        // https://github.com/jhy/jsoup/issues/977
+        // does not keep last set namespace
+        Node svg = xSection.getNextSibling().getNextSibling();
+        assertEquals("http://www.w3.org/2000/svg", svg.getNamespaceURI());
+        assertEquals("svg", svg.getLocalName());
+        assertEquals("svg", svg.getNodeName());
+
+        Node path = svg.getChildNodes().item(1);
+        assertEquals("http://www.w3.org/2000/svg", path.getNamespaceURI());
+        assertEquals("path", path.getLocalName());
+        assertEquals("path", path.getNodeName());
+
+        Node clip = path.getChildNodes().item(1);
+        assertEquals("http://example.com/clip", clip.getNamespaceURI());
+        assertEquals("clip", clip.getLocalName());
+        assertEquals("clip", clip.getNodeName());
+        assertEquals("456", clip.getTextContent());
+
+        Node picture = svg.getNextSibling().getNextSibling();
+        assertEquals("http://www.w3.org/1999/xhtml", picture.getNamespaceURI());
+        assertEquals("picture", picture.getLocalName());
+        assertEquals("picture", picture.getNodeName());
+
+        Node img = picture.getFirstChild();
+        assertEquals("http://www.w3.org/1999/xhtml", img.getNamespaceURI());
+        assertEquals("img", img.getLocalName());
+        assertEquals("img", img.getNodeName());
+
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

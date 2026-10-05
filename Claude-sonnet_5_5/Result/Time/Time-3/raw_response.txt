@@ -1,0 +1,93 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791092284-wZvxDX5kyI0iq3NXPNz9","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":3106,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" test below"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" targ"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ets the Time"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"-3 bug,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" where"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" adding zero to a"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" `MutableDateTime"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"` during"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" a DST overlap sh"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ifts the offset from +"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"01:00 to +02:00. I haven't compiled or run it against either version.\n\nThe fix makes every `add*` method a no-op when the amount is zero. The test builds "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"2011-10-30T02:30 in Europe/Berlin, which occurs twice. It calls `addHours(1)` to reach the second occurrence (+01:00), then ad"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ds zero through each method and checks the offset is unchanged.\n\nThe project uses JUnit 3 (`junit.framework.TestCase`), so the test follows that style.\n\nOn the buggy version, `setMillis(field.add(mill"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"is, 0))` goes through the field's add, which resolves the local time to the earlier offset (+02:00). The assertions fail there and"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" pass once the zero check is in place.\n\n```java\npackage org.joda.time;\n\nimport junit.framework.TestCase;\nimport junit.framework.TestSuite;\n\n/**\n * Regression test: adding zero to a"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" MutableDateTime must not change the\n * instant, even during a DST overlap.\n */\npublic class TestMutableDateTimeAddZeroRegression extends TestCase {\n\n    private static final DateTimeZone B"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ERLIN = DateTimeZone.forID(\"Europe/Berlin\");\n    private static final String EXPECTED = \"2011-10-30T02:30:00.000+01:00\";\n\n    public static void main(String[] args) {\n        junit.textui.TestRunner.run(suite());\n    }\n\n    public"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" static TestSuite suite() {\n        return new TestSuite(TestMutableDateTimeAddZeroRegression.class);\n    }\n\n    public TestMutableDateTimeAddZeroRegression(String name) {\n        super(name);\n    }\n\n    private MutableDateTime createOverlap"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"SecondOccurrence() {\n        MutableDateTime test = new MutableDateTime(2011, 10, 30, 2, 30, 0, 0, BERLIN);\n        test.addHours(1);\n        assertEquals(EXPECTED, test.toString());\n        return test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":";\n    }\n\n    public void testAddYears_addZero_dstOverlapWinter() {\n        MutableDateTime test = createOverlapSecondOccurrence();\n        test.addYears(0);\n        assertEquals(EXPECTED, test.toString());\n    }\n\n    public"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" void testAddMonths_addZero_dstOverlapWinter() {\n        MutableDateTime test = createOverlapSecondOccurrence();\n        test.addMonths(0);\n        assertEquals(EXPECTED, test.toString());\n    }\n\n    public void testAddWeeks_addZ"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ero_dstOverlapWinter() {\n        MutableDateTime test = createOverlapSecondOccurrence();\n        test.addWeeks(0);\n        assertEquals(EXPECTED, test.toString());\n    }\n\n    public void testAddDays_addZero_dstOverlapWinter"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"() {\n        MutableDateTime test = createOverlapSecondOccurrence();\n        test.addDays(0);\n        assertEquals(EXPECTED, test.toString());\n    }\n\n    public void testAddWeekyears_addZero_dstOverlapWinter() {\n        M"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"utableDateTime test = createOverlapSecondOccurrence();\n        test.addWeekyears(0);\n        assertEquals(EXPECTED, test.toString());\n    }\n\n    public void testAddDurationFieldType_addZero_dstOverlapWinter() {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n        MutableDateTime test = createOverlapSecondOccurrence();\n        test.add(DurationFieldType.days(), 0);\n        assertEquals(EXPECTED, test.toString());\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":3106,"output_tokens":1220,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.018412,"is_byok":false,"cost_details":{"upstream_inference_cost":0.018412,"upstream_inference_prompt_cost":0.006212,"upstream_inference_completions_cost":0.0122}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,90 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-15
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+7fe868089855c33d6345e740bfdbe6f140794598
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-07-02 21:12:10 +1000
+--------------------------------------------------------------------------------
+Bug report id:
+104
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/104
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.parser.ParserTest::handlesDataOnlyTags
+   --> junit.framework.AssertionFailedError: expected:<Hello []There> but was:<Hello ['); i++; ]There>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.parser.TreeBuilderState
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.parser.TreeBuilderState ===
+diff --git a/src/main/java/org/jsoup/parser/TreeBuilderState.java b/src/main/java/org/jsoup/parser/TreeBuilderState.java
+index e82eed53..4ae01e1f 100644
+--- a/src/main/java/org/jsoup/parser/TreeBuilderState.java
++++ b/src/main/java/org/jsoup/parser/TreeBuilderState.java
+@@ -280,7 +280,7 @@ enum TreeBuilderState {
+                             if (!html.hasAttr(attribute.getKey()))
+                                 html.attributes().put(attribute);
+                         }
+-                    } else if (StringUtil.in(name, "base", "basefont", "bgsound", "command", "link", "meta", "noframes", "style", "title")) {
++                    } else if (StringUtil.in(name, "base", "basefont", "bgsound", "command", "link", "meta", "noframes", "script", "style", "title")) {
+                         return tb.process(t, InHead);
+                     } else if (name.equals("body")) {
+                         tb.error(this);
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void handlesDataOnlyTags() {
+        String t = "<style>font-family: bold</style>";
+        List<Element> tels = Jsoup.parse(t).getElementsByTag("style");
+        assertEquals("font-family: bold", tels.get(0).data());
+        assertEquals("", tels.get(0).text());
+
+        String s = "<p>Hello</p><script>obj.insert('<a rel=\"none\" />');\ni++;</script><p>There</p>";
+        Document doc = Jsoup.parse(s);
+        assertEquals("Hello There", doc.text());
+        assertEquals("obj.insert('<a rel=\"none\" />');\ni++;", doc.data());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

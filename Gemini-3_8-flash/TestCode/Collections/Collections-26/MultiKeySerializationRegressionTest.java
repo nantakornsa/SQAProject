@@ -1,0 +1,45 @@
+package org.apache.commons.collections4.keyvalue;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+/**
+ * Regression test for COLLECTIONS-576:
+ * MultiKey.readResolve() must be protected so that subclasses properly recalculate
+ * their hashCode upon deserialization.
+ */
+public class MultiKeySerializationRegressionTest {
+
+    private static class DerivedMultiKey<K> extends MultiKey<K> {
+        private static final long serialVersionUID = 1L;
+
+        public DerivedMultiKey(final K key1, final K key2) {
+            super(key1, key2);
+        }
+    }
+
+    @Test
+    public void testEqualsAfterSerializationOfDerivedClass() throws IOException, ClassNotFoundException {
+        final DerivedMultiKey<String> original = new DerivedMultiKey<String>("key1", "key2");
+
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(original);
+        oos.close();
+
+        final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        final ObjectInputStream ois = new ObjectInputStream(bais);
+        @SuppressWarnings("unchecked")
+        final DerivedMultiKey<String> deserialized = (DerivedMultiKey<String>) ois.readObject();
+        ois.close();
+
+        Assert.assertEquals(original.hashCode(), deserialized.hashCode());
+        Assert.assertEquals(original, deserialized);
+    }
+}

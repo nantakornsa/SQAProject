@@ -1,0 +1,110 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-67
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+fb8b60b4d3d202c6fa708f60b8b4a5a53836af24
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-10-21 19:37:42 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+955
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/955
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.parser.HtmlParserTest::handlesDeepStack
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.parser.HtmlTreeBuilder
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.parser.HtmlTreeBuilder ===
+diff --git a/src/main/java/org/jsoup/parser/HtmlTreeBuilder.java b/src/main/java/org/jsoup/parser/HtmlTreeBuilder.java
+index b07e47f9..011a7041 100644
+--- a/src/main/java/org/jsoup/parser/HtmlTreeBuilder.java
++++ b/src/main/java/org/jsoup/parser/HtmlTreeBuilder.java
+@@ -39,6 +39,7 @@ public class HtmlTreeBuilder extends TreeBuilder {
+         "section", "select", "style", "summary", "table", "tbody", "td", "textarea", "tfoot", "th", "thead",
+         "title", "tr", "ul", "wbr", "xmp"});
+ 
++    public static final int MaxScopeSearchDepth = 100; // prevents the parser bogging down in exceptionally broken pages
+ 
+     private HtmlTreeBuilderState state; // the current state
+     private HtmlTreeBuilderState originalState; // original / marked state
+@@ -465,6 +466,9 @@ public class HtmlTreeBuilder extends TreeBuilder {
+ 
+     private boolean inSpecificScope(String[] targetNames, String[] baseTypes, String[] extraTypes) {
+         int depth = stack.size() -1;
++        if (depth > MaxScopeSearchDepth) {
++            depth = MaxScopeSearchDepth;
++        }
+         for (int pos = depth; pos >= 0; pos--) {
+             Element el = stack.get(pos);
+             String elName = el.nodeName();
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void handlesDeepStack() {
+        // inspired by http://sv.stargate.wikia.com/wiki/M2J and https://github.com/jhy/jsoup/issues/955
+        // I didn't put it in the integration tests, because explorer and intellij kept dieing trying to preview/index it
+
+        // Arrange
+        StringBuilder longBody = new StringBuilder(500000);
+        for (int i = 0; i < 25000; i++) {
+            longBody.append(i).append("<dl><dd>");
+        }
+        for (int i = 0; i < 25000; i++) {
+            longBody.append(i).append("</dd></dl>");
+        }
+
+        // Act
+        long start = System.currentTimeMillis();
+        Document doc = Parser.parseBodyFragment(longBody.toString(), "");
+
+        // Assert
+        assertEquals(2, doc.body().childNodeSize());
+        assertEquals(25000, doc.select("dd").size());
+        assertTrue(System.currentTimeMillis() - start < 1000);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

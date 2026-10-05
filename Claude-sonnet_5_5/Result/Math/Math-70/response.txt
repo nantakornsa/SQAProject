@@ -1,0 +1,27 @@
+The bug is in `BisectionSolver.solve(f, min, max, initial)`. It called `solve(min, max)`, which uses the solver's internal function field. That field is null when the solver is constructed with the no-argument constructor, so a `NullPointerException` is thrown. The fix delegates to `solve(f, min, max)`.
+
+The test builds a `BisectionSolver` with the no-argument constructor and calls the four-argument `solve` on `sin(x)` over [3.0, 3.2] with initial value 3.1. Sine changes sign across that interval, so the root is π. On the buggy version this throws the NPE, and on the fixed version it returns π within the absolute accuracy.
+
+I used JUnit 3 style (`TestCase`), which is what this version of the project uses. I did not compile or run the test.
+
+```java
+package org.apache.commons.math.analysis.solvers;
+
+import org.apache.commons.math.analysis.SinFunction;
+import org.apache.commons.math.analysis.UnivariateRealFunction;
+import org.apache.commons.math.analysis.QuinticFunction;
+import junit.framework.TestCase;
+
+/**
+ * Regression test for MATH-369: BisectionSolver.solve(f, min, max, initial)
+ * ignored the supplied function and threw a NullPointerException.
+ */
+public class BisectionSolverTest extends TestCase {
+
+    public void testMath369() throws Exception {
+        UnivariateRealFunction f = new SinFunction();
+        UnivariateRealSolver solver = new BisectionSolver();
+        assertEquals(Math.PI, solver.solve(f, 3.0, 3.2, 3.1), solver.getAbsoluteAccuracy());
+    }
+}
+```

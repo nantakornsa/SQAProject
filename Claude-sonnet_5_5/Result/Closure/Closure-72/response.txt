@@ -1,0 +1,52 @@
+The test goes in `InlineFunctionsTest`, using the same `test(input, expected)` style as the triggering test. I haven't compiled or run it. The expected output is taken directly from `testInlineFunctions31`, which is the known failing case on the buggy version.
+
+The existing test class extends `CompilerTestCase`, so I kept the usual setup: `getProcessor` builds an `InlineFunctions` pass, and the constructor and setup follow the standard pattern in that file. The `InlineFunctions` constructor signature varies between versions of the project. At this revision I believe it is `new InlineFunctions(compiler, compiler.getUniqueNameIdSupplier(), true, true, true)`, but I'm not certain.
+
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.Node;
+
+public class InlineFunctionsTest extends CompilerTestCase {
+  boolean allowGlobalFunctionInlining = true;
+  boolean allowBlockInlining = true;
+  final boolean allowExpressionDecomposition = true;
+  final boolean allowFunctionExpressionInlining = true;
+  final boolean allowLocalFunctionInlining = true;
+
+  public InlineFunctionsTest() {
+    this.enableNormalize();
+    this.enableMarkNoSideEffects();
+  }
+
+  @Override
+  protected CompilerPass getProcessor(final Compiler compiler) {
+    compiler.resetUniqueNameId();
+    return new InlineFunctions(
+        compiler,
+        compiler.getUniqueNameIdSupplier(),
+        allowGlobalFunctionInlining,
+        allowLocalFunctionInlining,
+        allowBlockInlining);
+  }
+
+  @Override
+  protected int getNumRepetitions() {
+    return 1;
+  }
+
+  @Override
+  public void setUp() throws Exception {
+    super.setUp();
+    allowGlobalFunctionInlining = true;
+    allowBlockInlining = true;
+  }
+
+  public void testInlineFunctions31() {
+    // Don't introduce a duplicate label in the same scope
+    test("function foo(){ lab:{4;} }" +
+        "lab:{foo();}",
+        "lab:{{JSCompiler_inline_label_0:{4}}}");
+  }
+}
+```

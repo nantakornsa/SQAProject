@@ -1,0 +1,68 @@
+package org.mockitousage.stubbing;
+
+import org.junit.Test;
+import org.mockito.Mockito;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
+
+public class GeminiDeepStubsSerializableTest {
+
+    @Test
+    public void should_serialize_and_deserialize_mock_created_by_deep_stubs() throws Exception {
+        SampleClass sampleClass = mock(
+                SampleClass.class,
+                withSettings().defaultAnswer(Mockito.RETURNS_DEEP_STUBS).serializable()
+        );
+
+        when(sampleClass.getSample().isSth()).thenReturn(true);
+        when(sampleClass.getSample().getNumber()).thenReturn(42);
+
+        // Serialization
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(sampleClass);
+        oos.close();
+
+        // Deserialization
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bais);
+        Object deserialized = ois.readObject();
+        ois.close();
+
+        assertNotNull(deserialized);
+        SampleClass deserializedSample = (SampleClass) deserialized;
+        assertEquals(true, deserializedSample.getSample().isSth());
+        assertEquals(42, deserializedSample.getSample().getNumber());
+    }
+
+    public static class SampleClass implements Serializable {
+        private static final long serialVersionUID = 1L;
+        Sample2 sample;
+
+        public Sample2 getSample() {
+            return sample;
+        }
+    }
+
+    public static class Sample2 implements Serializable {
+        private static final long serialVersionUID = 1L;
+
+        public boolean isSth() {
+            return false;
+        }
+
+        public int getNumber() {
+            return 0;
+        }
+    }
+}

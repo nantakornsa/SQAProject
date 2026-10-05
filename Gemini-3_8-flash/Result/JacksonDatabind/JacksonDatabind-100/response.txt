@@ -1,0 +1,29 @@
+```java
+package com.fasterxml.jackson.databind.node;
+
+import com.fasterxml.jackson.core.Base64Variant;
+import com.fasterxml.jackson.core.Base64Variants;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import org.junit.Assert;
+
+public class Base64VariantRegressionTest extends BaseMapTest
+{
+    public void testBase64WithVariantInTreeTraversingParser() throws Exception
+    {
+        final Base64Variant variant = Base64Variants.MODIFIED_FOR_URL;
+        final byte[] originalData = new byte[] { (byte) 0xFF };
+        final String encoded = variant.encode(originalData);
+
+        TextNode textNode = new TextNode(encoded);
+        JsonParser parser = textNode.traverse();
+        Assert.assertNull(parser.currentToken());
+        parser.nextToken();
+
+        byte[] result = parser.getBinaryValue(variant);
+        Assert.assertNotNull(result);
+        Assert.assertArrayEquals(originalData, result);
+        parser.close();
+    }
+}
+```

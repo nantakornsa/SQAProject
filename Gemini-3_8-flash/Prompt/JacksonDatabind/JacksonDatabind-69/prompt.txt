@@ -1,0 +1,144 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-69
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+d44600d3750e5dba9fac68aee7248ed2a80a2225
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2017-01-09 13:42:27 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+1476
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1476
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.creators.Creator1476Test::testConstructorChoice
+   --> com.fasterxml.jackson.databind.JsonMappingException: Could not find creator property with name 'intField' (in class com.fasterxml.jackson.databind.creators.Creator1476Test$SimplePojo)
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.deser.impl.CreatorCollector
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.deser.impl.CreatorCollector ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/deser/impl/CreatorCollector.java b/src/main/java/com/fasterxml/jackson/databind/deser/impl/CreatorCollector.java
+index b3030afdc..a530e4b20 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/deser/impl/CreatorCollector.java
++++ b/src/main/java/com/fasterxml/jackson/databind/deser/impl/CreatorCollector.java
+@@ -162,18 +162,20 @@ public class CreatorCollector
+             SettableBeanProperty[] injectables)
+     {
+         if (creator.getParameterType(0).isCollectionLikeType()) {
+-            verifyNonDup(creator, C_ARRAY_DELEGATE, explicit);
++            if (verifyNonDup(creator, C_ARRAY_DELEGATE, explicit)) {
+                 _arrayDelegateArgs = injectables;
++            }
+         } else {
+-            verifyNonDup(creator, C_DELEGATE, explicit);
++            if (verifyNonDup(creator, C_DELEGATE, explicit)) {
+                 _delegateArgs = injectables;
++            }
+         }
+     }
+     
+     public void addPropertyCreator(AnnotatedWithParams creator, boolean explicit,
+             SettableBeanProperty[] properties)
+     {
+-        verifyNonDup(creator, C_PROPS, explicit);
++        if (verifyNonDup(creator, C_PROPS, explicit)) {
+             // Better ensure we have no duplicate names either...
+             if (properties.length > 1) {
+                 HashMap<String,Integer> names = new HashMap<String,Integer>();
+@@ -192,6 +194,7 @@ public class CreatorCollector
+                 }
+             }
+             _propertyBasedArgs = properties;
++        }
+     }
+ 
+     public void addIncompeteParameter(AnnotatedParameter parameter) {
+@@ -296,7 +299,7 @@ public class CreatorCollector
+     /**
+      * @return True if specified Creator is to be used
+      */
+-    protected void verifyNonDup(AnnotatedWithParams newOne, int typeIndex, boolean explicit)
++    protected boolean verifyNonDup(AnnotatedWithParams newOne, int typeIndex, boolean explicit)
+     {
+         final int mask = (1 << typeIndex);
+         _hasNonDefaultCreator = true;
+@@ -307,7 +310,7 @@ public class CreatorCollector
+             if ((_explicitCreators & mask) != 0) { // already had explicitly annotated, leave as-is
+                 // but skip, if new one not annotated
+                 if (!explicit) {
+-                    return;
++                    return false;
+                 }
+                 // both explicit: verify
+                 verify = true;
+@@ -329,7 +332,7 @@ public class CreatorCollector
+                 // otherwise, which one to choose?
+                 if (newType.isAssignableFrom(oldType)) {
+                     // new type more generic, use old
+-                    return;
++                    return false;
+                 }
+                 // new type more specific, use it
+             }
+@@ -338,6 +341,7 @@ public class CreatorCollector
+             _explicitCreators |= mask;
+         }
+         _creators[typeIndex] = _fixAccess(newOne);
++        return true;
+     }
+ 
+     /*
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testConstructorChoice() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        SimplePojo pojo = mapper.readValue("{ \"intField\": 1, \"stringField\": \"foo\" }", SimplePojo.class);
+
+        assertEquals(1, pojo.getIntField());
+        assertEquals("foo", pojo.getStringField());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

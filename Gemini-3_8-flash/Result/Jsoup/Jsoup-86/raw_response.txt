@@ -1,0 +1,51 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791143520-rtm3900OA2uzHg68QvTY","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing Jsoup Bug**\n\nI'm currently investigating a peculiar bug, Jsoup-86. It seems to trigger when `Comment#asXmlDeclaration()` is invoked under specific conditions involving the `doc.childNodeSize()` and `doc.children().size()` relationship, particularly when non-Element child nodes are present or when indexing into children fails.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Edge Cases**\n\nI'm examining a bug where `Comment.asXmlDeclaration()` fails. It seems to stem from a mismatch in how `childNodeSize()` and `children()` count nodes, especially with non-Element children or when parsing XML fragments with `xmlParser()`. The current focus is on the `IndexOutOfBoundsException` when `doc.child(0)` is called.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.jsoup."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"parser;\n\nimport org.jsoup.Jsoup;\nimport org.jsoup.nodes.Document;\nimport org"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".junit.Test;\n\nimport static org.junit.Assert.assertEquals;\n\npublic class XmlTreeBuilderRegressionTest {\n\n    @Test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n    public void handlesLTinScript() {\n        // https://github.com/jhy/jsoup/"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"issues/1139\n        String html = \"<script> var a=\\\"<?\\\"; var b=\\\"?>\\\";"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" </script>\";\n        Document doc = Jsoup.parse(html, \"\", Parser.xmlParser());\n        assertEquals"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(\"<script> var a=\\\"\\n <!--?\\\"; var b=\\\"?-->\\\"; </script>\", doc.html());"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1053,"output_tokens":695,"output_tokens_details":{"thinking_tokens":531},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.003396,"is_byok":false,"cost_details":{"upstream_inference_cost":0.003396,"upstream_inference_prompt_cost":0.00078975,"upstream_inference_completions_cost":0.00260625}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

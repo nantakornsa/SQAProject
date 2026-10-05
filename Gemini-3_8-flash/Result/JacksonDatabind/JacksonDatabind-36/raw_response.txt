@@ -1,0 +1,51 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791184572-8VJekfO5yVAG7uTQccDt","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing Jackson Bug**\n\nI'm currently investigating a bug in `JacksonDatabind-36`. It appears the `StdDateFormat.setLenient(boolean enabled)` method was either absent or malfunctioning, impacting its ability to properly set the `_lenient` flag and clear formats.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"fasterxml.jackson.databind.util;\n\nimport com.fasterxml.jackson.databind.BaseMapTest;\n\nimport java.text.ParseException"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":";\n\npublic class StdDateFormatTest extends BaseMapTest\n{\n    public void testLenient() throws Exception\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    {\n        StdDateFormat df = new StdDateFormat();\n        // Should not throw NullPointerException\n        df.setLenient"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"(false);\n        assertFalse(df.isLenient());\n\n        // Also test parsing with non-lenient mode"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" rejects invalid date\n        try {\n            df.parse(\"2015-11-32\");"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n            fail(\"Should have failed to parse invalid date with lenient=false\");\n        } catch (ParseException e) {"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n            // expected\n        }\n\n        df.setLenient(true);\n        assertTrue(df.isLenient());\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"}\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1047,"output_tokens":519,"output_tokens_details":{"thinking_tokens":326},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.0027315,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0027315,"upstream_inference_prompt_cost":0.00078525,"upstream_inference_completions_cost":0.00194625}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

@@ -1,0 +1,113 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Closure
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Closure
+       Program: closure-compiler
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/Closure.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/closure-compiler.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Closure/active-bugs.csv
+Number of bugs: 174
+--------------------------------------------------------------------------------
+
+Summary for Bug: Closure-26
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+372eb11e44b8559004bfe78a5b4003caf0072135
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-05-18 23:57:52 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+732
+--------------------------------------------------------------------------------
+Bug report url:
+https://storage.googleapis.com/google-code-archive/v2/code.google.com/closure-compiler/issues/issue-732.json
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.google.javascript.jscomp.CommandLineRunnerTest::testTransformAMDAndProcessCJS
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.CommandLineRunnerTest::testProcessCJS
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.ProcessCommonJSModulesTest::testExports
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.ProcessCommonJSModulesTest::testModuleName
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.ProcessCommonJSModulesTest::testDash
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.ProcessCommonJSModulesTest::testVarRenaming
+   --> junit.framework.AssertionFailedError: 
+ - com.google.javascript.jscomp.ProcessCommonJSModulesTest::testWithoutExports
+   --> junit.framework.AssertionFailedError: 
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.google.javascript.jscomp.ProcessCommonJSModules
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.google.javascript.jscomp.ProcessCommonJSModules ===
+diff --git a/src/com/google/javascript/jscomp/ProcessCommonJSModules.java b/src/com/google/javascript/jscomp/ProcessCommonJSModules.java
+index 1744a5892..fa01cd9e8 100644
+--- a/src/com/google/javascript/jscomp/ProcessCommonJSModules.java
++++ b/src/com/google/javascript/jscomp/ProcessCommonJSModules.java
+@@ -125,6 +125,7 @@ public class ProcessCommonJSModules implements CompilerPass {
+       AbstractPostOrderCallback {
+ 
+     private int scriptNodeCount = 0;
++    private Set<String> modulesWithExports = Sets.newHashSet();
+ 
+     @Override
+     public void visit(NodeTraversal t, Node n, Node parent) {
+@@ -204,6 +205,9 @@ public class ProcessCommonJSModules implements CompilerPass {
+      */
+     private void emitOptionalModuleExportsOverride(Node script,
+         String moduleName) {
++      if (!modulesWithExports.contains(moduleName)) {
++        return;
++      }
+ 
+       Node moduleExportsProp = IR.getprop(IR.name(moduleName),
+           IR.string("module$exports"));
+@@ -225,6 +229,7 @@ public class ProcessCommonJSModules implements CompilerPass {
+       Node exports = prop.getChildAtIndex(1);
+       exports.putProp(Node.ORIGINALNAME_PROP, "exports");
+       exports.setString("module$exports");
++      modulesWithExports.add(moduleName);
+     }
+ 
+     /**
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testTransformAMDAndProcessCJS() {
+    args.add("--transform_amd_modules");
+    args.add("--process_common_js_modules");
+    args.add("--common_js_entry_module=foo/bar");
+    setFilename(0, "foo/bar.js");
+    test("define({foo: 1})",
+        "var module$foo$bar={}, module$foo$bar={foo:1};");
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

@@ -1,0 +1,83 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-54
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+75d931a3264b73caa9cdd7d3373375cc33008ddf
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2007-05-01 23:50:01 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-328
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-328
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang.LocaleUtilsTest::testLang328
+   --> java.lang.IllegalArgumentException: Invalid locale format: fr__POSIX
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang.LocaleUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang.LocaleUtils ===
+diff --git a/src/java/org/apache/commons/lang/LocaleUtils.java b/src/java/org/apache/commons/lang/LocaleUtils.java
+index 139d9a7f6..9607953b3 100644
+--- a/src/java/org/apache/commons/lang/LocaleUtils.java
++++ b/src/java/org/apache/commons/lang/LocaleUtils.java
+@@ -111,6 +111,9 @@ public class LocaleUtils {
+                 throw new IllegalArgumentException("Invalid locale format: " + str);
+             }
+             char ch3 = str.charAt(3);
++            if (ch3 == '_') {
++                return new Locale(str.substring(0, 2), "", str.substring(4));
++            }
+             char ch4 = str.charAt(4);
+             if (ch3 < 'A' || ch3 > 'Z' || ch4 < 'A' || ch4 > 'Z') {
+                 throw new IllegalArgumentException("Invalid locale format: " + str);
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testLang328() {
+        assertValidToLocale("fr__POSIX", "fr", "", "POSIX");
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

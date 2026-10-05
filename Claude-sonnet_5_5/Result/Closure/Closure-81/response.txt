@@ -1,0 +1,47 @@
+```java
+package com.google.javascript.jscomp.parsing;
+
+import com.google.javascript.rhino.Node;
+import com.google.javascript.rhino.testing.TestErrorReporter;
+
+import junit.framework.TestCase;
+
+public class UnnamedFunctionStatementRegressionTest extends TestCase {
+
+  private Node parse(String string, String... warnings) {
+    TestErrorReporter testErrorReporter =
+        new TestErrorReporter(null, warnings);
+    Node script = ParserRunner.parse(
+        "input", string, ParserRunner.createConfig(true), testErrorReporter)
+        .ast;
+
+    // verifying that all warnings were seen
+    assertTrue(testErrorReporter.hasEncounteredAllWarnings());
+    return script;
+  }
+
+  private void parseError(String string, String... errors) {
+    TestErrorReporter testErrorReporter =
+        new TestErrorReporter(errors, null);
+    try {
+      ParserRunner.parse(
+          "input", string, ParserRunner.createConfig(true), testErrorReporter);
+    } catch (Exception e) {
+      // Parse errors may be thrown as exceptions; ignore them.
+    }
+
+    // verifying that all errors were seen
+    assertTrue(testErrorReporter.hasEncounteredAllErrors());
+  }
+
+  public void testUnnamedFunctionStatement() {
+    // Statements
+    parseError("function() {};", "unnamed function statement");
+    parseError("if (true) { function() {}; }", "unnamed function statement");
+    parse("function f() {};");
+    // Expressions
+    parse("(function f() {});");
+    parse("(function () {});");
+  }
+}
+```

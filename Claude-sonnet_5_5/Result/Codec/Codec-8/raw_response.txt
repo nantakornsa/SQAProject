@@ -1,0 +1,87 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791043107-8ud2DJeHg8TXqTQSUywL","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1430,"output_tokens":2,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I need to reconstruct"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" the test class with the Codec105ErrorInputStream helper, recalling how the original Base64InputStreamTest handled this edge case for testing error conditions during decoding."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I'm re"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"asoning through the actual bug: the error stream's read(byte[], pos, len) fills the buffer with zeros and returns len instead of signaling EOF properly, so when Base64InputStream cal"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ls it with a single-byte buffer, the decoder writes beyond the array bounds and triggers the exception. The fix is making sure the input stream behaves consistently regardless of buffer size passed in."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"The generic InputStream."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"read(byte[]) just"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" delegates to read(b, 0, b.length), and since I override read(byte[],int,int) directly, that path is covered correctly."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1zb25uZXQtNS41LTIwMjYwOTI4fGNsYXVkZS1vbi1hd3MifQ"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.apache.commons.codec.binary;\n\nimport java.io.IOException;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\nimport java.io.InputStream;\n\nimport junit.framework.TestCase;\n\n/**\n * Regression test for CODEC-105: Base64InputStream.read() threw an\n * ArrayIndexOutOfBoundsException when enc"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"oding, because the caller's\n * one-byte array was used as the encoder's initial output buffer.\n */\npublic class Base64InputStreamTest extends TestCase {\n\n    /**\n     * Without the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" fix, the following calls cause an ArrayIndexOutOfBoundsException.\n     */\n    public void testCodec105() throws IOException {\n        Base64InputStream in = new Base64InputStream(new Codec105ErrorInputStream(), true,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" 0, null);\n        for (int i = 0; i < 5; i++) {\n            in.read();\n        }\n    }\n\n    /**\n     * Verifies that single-byte reads while encoding yield the expected output.\n     */\n    public void testCodec105EncodedCont"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ent() throws IOException {\n        Base64InputStream in = new Base64InputStream(new Codec105ErrorInputStream(), true, 0, null);\n        // three zero bytes encode to \"AAAA\"\n        for (int i = 0; i < 4; i++) {\n            assertEquals('"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"A', in.read());\n        }\n        assertEquals(-1, in.read());\n    }\n\n    /**\n     * An input stream that supplies three zero bytes in a single bulk read and then reports EOF.\n     */\n    private static class Codec105ErrorInputSt"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ream extends InputStream {\n\n        private boolean done = false;\n\n        public int read() throws IOException {\n            throw new UnsupportedOperationException(\"Only bulk reads are supported\");\n        }\n\n        public int read(byte[] b, int pos,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" int len) throws IOException {\n            if (done) {\n                return -1;\n            }\n            done = true;\n            int n = Math.min(3, len);\n            for (int i = 0; i < n; i++) {\n                b[pos + i] = 0;\n            }\n            return n;\n        }\n    }\n}"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1430,"output_tokens":1898,"output_tokens_details":{"thinking_tokens":1216},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.02184,"is_byok":false,"cost_details":{"upstream_inference_cost":0.02184,"upstream_inference_prompt_cost":0.00286,"upstream_inference_completions_cost":0.01898}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

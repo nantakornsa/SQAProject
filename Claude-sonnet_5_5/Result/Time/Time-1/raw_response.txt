@@ -1,0 +1,93 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791092266-F7Kf4yLFzvAfRIPejV2I","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":2781,"output_tokens":8,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"I need to write"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" a regression test that fails on the buggy version and passes once fixed. The bug is in UnsupportedDurationField.compareTo, which just checks whether the other field is supported rather than comparing properly, and this gets triggered when a part"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"ial has fields like year, era, and monthOfYear where era's duration field ends up being unsupported in ISO chronology."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"Tracing through:"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" years.compareTo(eras) should give some ordering, then era→month comparison is where buggy behavior skips the \"must be in order\" exception that"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" the fixed version throws. So I'll build a standalone test using the year, era, month triggering case, asserting that constructing the partial throws an IllegalArgumentException about field order, with"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" a helper to check the exception message."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"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.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1zb25uZXQtNS41LTIwMjYwOTI4fGNsYXVkZS1vbi1hd3MifQ"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"The test below targets the third case of the triggering test:"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" `year, era, monthOfYear`. I haven't compiled or run it against either version.\n\n- **Fixed version:** the new check in `Partial` s"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ees that `era` has an unsupported duration field following the supported `year` field. It throws `IllegalArgumentException` with \"must be in order … largest-smallest\".\n- **Buggy version:"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"** `UnsupportedDurationField.compareTo` returns 1 against a supported field, so the ordering check never fails. No exception is thrown and `fail()` is reached.\n\nI also added the"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" `year, dayOfMonth, era` case from the triggering test. `ex.getMessage()` is checked directly, so the test does not depend on the project's `assertMessageContains` helper.\n\n```java"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\npackage org.joda.time;\n\nimport junit.framework.TestCase;\nimport junit.framework.TestSuite;\n\n/**\n * Regression test for unsupported duration field ordering in Partial.\n */\npublic class TestPartial_UnsupportedFieldOrder"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Regression extends TestCase {\n\n    public static void main(String[] args) {\n        junit.textui.TestRunner.run(suite());\n    }\n\n    public static TestSuite suite() {\n        return new TestSuite(TestPartial_UnsupportedFieldOrderRegression."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"class);\n    }\n\n    public TestPartial_UnsupportedFieldOrderRegression(String name) {\n        super(name);\n    }\n\n    private void assertMessageContains(Throwable ex, String... texts) {\n        String msg = ex.getMessage();\n        assertNotNull(msg);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        for (String text : texts) {\n            assertTrue(\"Message '\" + msg + \"' should contain '\" + text + \"'\", msg.contains(text));\n        }\n    }\n\n    public void testConstructor_eraAfterYear"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"NotInOrder() throws Throwable {\n        int[] values = new int[] {1, 1, 1};\n        DateTimeFieldType[] types = new DateTimeFieldType[] {\n            DateTimeFieldType.year(), DateTimeFieldType.era("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"), DateTimeFieldType.monthOfYear() };\n        try {\n            new Partial(types, values);\n            fail();\n        } catch (IllegalArgumentException ex) {\n            assertMessageContains(ex, \"must be in order\", \"largest-smallest\");\n        }\n    }\n\n    public void test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Constructor_eraAtEndNotInOrder() throws Throwable {\n        int[] values = new int[] {1, 1, 1};\n        DateTimeFieldType[] types = new DateTimeFieldType[] {\n            DateTimeFieldType.year(), DateT"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"imeFieldType.dayOfMonth(), DateTimeFieldType.era() };\n        try {\n            new Partial(types, values);\n            fail();\n        } catch (IllegalArgumentException ex) {\n            assertMessageContains(ex, \"must be in order\", \"largest-smallest\");"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        }\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":2781,"output_tokens":1591,"output_tokens_details":{"thinking_tokens":621},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.021472,"is_byok":false,"cost_details":{"upstream_inference_cost":0.021472,"upstream_inference_prompt_cost":0.005562,"upstream_inference_completions_cost":0.01591}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

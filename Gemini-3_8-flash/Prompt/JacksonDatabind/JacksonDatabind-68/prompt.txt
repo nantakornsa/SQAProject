@@ -1,0 +1,230 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-68
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+d0cfb645350fab16bf61fac140b69ef55f8cba2e
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-11-11 19:28:53 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+1421
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1421
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.struct.SingleValueAsArrayTest::testSuccessfulDeserializationOfObjectWithChainedArrayCreators
+   --> com.fasterxml.jackson.databind.JsonMappingException: Can not construct instance of com.fasterxml.jackson.databind.struct.SingleValueAsArrayTest$Messages: no suitable constructor found, can not deserialize from Object value (missing default constructor or creator, or perhaps need to add/enable type information?)
+ - com.fasterxml.jackson.databind.struct.SingleValueAsArrayTest::testWithSingleString
+   --> com.fasterxml.jackson.databind.JsonMappingException: Can not construct instance of com.fasterxml.jackson.databind.struct.SingleValueAsArrayTest$Bean1421B: no String-argument constructor/factory method to deserialize from String value ('test2')
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.deser.BeanDeserializerBase
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.deser.BeanDeserializerBase ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/deser/BeanDeserializerBase.java b/src/main/java/com/fasterxml/jackson/databind/deser/BeanDeserializerBase.java
+index ac95adca7..3c686044f 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/deser/BeanDeserializerBase.java
++++ b/src/main/java/com/fasterxml/jackson/databind/deser/BeanDeserializerBase.java
+@@ -1189,9 +1189,10 @@ public abstract class BeanDeserializerBase
+     protected Object deserializeFromObjectUsingNonDefault(JsonParser p,
+             DeserializationContext ctxt) throws IOException
+     {
+-        if (_delegateDeserializer != null) {
++        final JsonDeserializer<Object> delegateDeser = _delegateDeserializer();
++        if (delegateDeser != null) {
+             return _valueInstantiator.createUsingDelegate(ctxt,
+-                    _delegateDeserializer.deserialize(p, ctxt));
++                    delegateDeser.deserialize(p, ctxt));
+         }
+         if (_propertyBasedCreator != null) {
+             return _deserializeUsingPropertyBased(p, ctxt);
+@@ -1217,12 +1218,13 @@ public abstract class BeanDeserializerBase
+         if (_objectIdReader != null) {
+             return deserializeFromObjectId(p, ctxt);
+         }
++        final JsonDeserializer<Object> delegateDeser = _delegateDeserializer();
+         switch (p.getNumberType()) {
+         case INT:
+-            if (_delegateDeserializer != null) {
++            if (delegateDeser != null) {
+                 if (!_valueInstantiator.canCreateFromInt()) {
+                     Object bean = _valueInstantiator.createUsingDelegate(ctxt,
+-                            _delegateDeserializer.deserialize(p, ctxt));
++                            delegateDeser.deserialize(p, ctxt));
+                     if (_injectables != null) {
+                         injectValues(ctxt, bean);
+                     }
+@@ -1231,10 +1233,10 @@ public abstract class BeanDeserializerBase
+             }
+             return _valueInstantiator.createFromInt(ctxt, p.getIntValue());
+         case LONG:
+-            if (_delegateDeserializer != null) {
++            if (delegateDeser != null) {
+                 if (!_valueInstantiator.canCreateFromInt()) {
+                     Object bean = _valueInstantiator.createUsingDelegate(ctxt,
+-                            _delegateDeserializer.deserialize(p, ctxt));
++                            delegateDeser.deserialize(p, ctxt));
+                     if (_injectables != null) {
+                         injectValues(ctxt, bean);
+                     }
+@@ -1244,9 +1246,9 @@ public abstract class BeanDeserializerBase
+             return _valueInstantiator.createFromLong(ctxt, p.getLongValue());
+         }
+         // actually, could also be BigInteger, so:
+-        if (_delegateDeserializer != null) {
++        if (delegateDeser != null) {
+             Object bean = _valueInstantiator.createUsingDelegate(ctxt,
+-                    _delegateDeserializer.deserialize(p, ctxt));
++                    delegateDeser.deserialize(p, ctxt));
+             if (_injectables != null) {
+                 injectValues(ctxt, bean);
+             }
+@@ -1266,10 +1268,11 @@ public abstract class BeanDeserializerBase
+         /* Bit complicated if we have delegating creator; may need to use it,
+          * or might not...
+          */
+-        if (_delegateDeserializer != null) {
++        JsonDeserializer<Object> delegateDeser = _delegateDeserializer();
++        if (delegateDeser != null) {
+             if (!_valueInstantiator.canCreateFromString()) {
+                 Object bean = _valueInstantiator.createUsingDelegate(ctxt,
+-                        _delegateDeserializer.deserialize(p, ctxt));
++                        delegateDeser.deserialize(p, ctxt));
+                 if (_injectables != null) {
+                     injectValues(ctxt, bean);
+                 }
+@@ -1288,10 +1291,11 @@ public abstract class BeanDeserializerBase
+         NumberType t = p.getNumberType();
+         // no separate methods for taking float...
+         if ((t == NumberType.DOUBLE) || (t == NumberType.FLOAT)) {
+-            if (_delegateDeserializer != null) {
++            JsonDeserializer<Object> delegateDeser = _delegateDeserializer();
++            if (delegateDeser != null) {
+                 if (!_valueInstantiator.canCreateFromDouble()) {
+                     Object bean = _valueInstantiator.createUsingDelegate(ctxt,
+-                            _delegateDeserializer.deserialize(p, ctxt));
++                            delegateDeser.deserialize(p, ctxt));
+                     if (_injectables != null) {
+                         injectValues(ctxt, bean);
+                     }
+@@ -1301,9 +1305,10 @@ public abstract class BeanDeserializerBase
+             return _valueInstantiator.createFromDouble(ctxt, p.getDoubleValue());
+         }
+         // actually, could also be BigDecimal, so:
+-        if (_delegateDeserializer != null) {
++        JsonDeserializer<Object> delegateDeser = _delegateDeserializer();
++        if (delegateDeser != null) {
+             return _valueInstantiator.createUsingDelegate(ctxt,
+-                    _delegateDeserializer.deserialize(p, ctxt));
++                    delegateDeser.deserialize(p, ctxt));
+         }
+         return ctxt.handleMissingInstantiator(handledType(), p,
+                 "no suitable creator method found to deserialize from Number value (%s)",
+@@ -1315,10 +1320,11 @@ public abstract class BeanDeserializerBase
+      */
+     public Object deserializeFromBoolean(JsonParser p, DeserializationContext ctxt) throws IOException
+     {
+-        if (_delegateDeserializer != null) {
++        JsonDeserializer<Object> delegateDeser = _delegateDeserializer();
++        if (delegateDeser != null) {
+             if (!_valueInstantiator.canCreateFromBoolean()) {
+                 Object bean = _valueInstantiator.createUsingDelegate(ctxt,
+-                        _delegateDeserializer.deserialize(p, ctxt));
++                        delegateDeser.deserialize(p, ctxt));
+                 if (_injectables != null) {
+                     injectValues(ctxt, bean);
+                 }
+@@ -1332,30 +1338,15 @@ public abstract class BeanDeserializerBase
+     public Object deserializeFromArray(JsonParser p, DeserializationContext ctxt) throws IOException
+     {
+         // note: can not call `_delegateDeserializer()` since order reversed here:
+-        if (_arrayDelegateDeserializer != null) {
+-            try {
+-                Object bean = _valueInstantiator.createUsingArrayDelegate(ctxt, _arrayDelegateDeserializer.deserialize(p, ctxt));
+-                if (_injectables != null) {
+-                    injectValues(ctxt, bean);
+-                }
+-                return bean;
+-            } catch (Exception e) {
+-                return wrapInstantiationProblem(e, ctxt);
+-            }
+-        }
++        JsonDeserializer<Object> delegateDeser = _arrayDelegateDeserializer;
+         // fallback to non-array delegate
+-        if (_delegateDeserializer != null) {
+-            try {
++        if ((delegateDeser != null) || ((delegateDeser = _delegateDeserializer) != null)) {
+             Object bean = _valueInstantiator.createUsingArrayDelegate(ctxt,
+-                    _delegateDeserializer.deserialize(p, ctxt));
++                    delegateDeser.deserialize(p, ctxt));
+             if (_injectables != null) {
+                 injectValues(ctxt, bean);
+             }
+             return bean;
+-            } catch (Exception e) {
+-                wrapInstantiationProblem(e, ctxt);
+-                return null;
+-            }
+         }
+         if (ctxt.isEnabled(DeserializationFeature.UNWRAP_SINGLE_VALUE_ARRAYS)) {
+             JsonToken t = p.nextToken();
+@@ -1396,6 +1387,13 @@ public abstract class BeanDeserializerBase
+     /**
+      * @since 2.9
+      */
++    private final JsonDeserializer<Object> _delegateDeserializer() {
++        JsonDeserializer<Object> deser = _delegateDeserializer;
++        if (deser == null) {
++            deser = _arrayDelegateDeserializer;
++        }
++        return deser;
++    }
+ 
+     /*
+     /**********************************************************
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testSuccessfulDeserializationOfObjectWithChainedArrayCreators() throws IOException
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

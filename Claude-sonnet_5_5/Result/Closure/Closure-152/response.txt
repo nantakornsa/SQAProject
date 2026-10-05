@@ -1,0 +1,42 @@
+This is a standalone JUnit 3 test class, not an addition to `TypeCheckTest`. I haven't compiled or run it, and it relies on 2010-era Closure Compiler APIs (`JSSourceFile.fromCode`, the array-based `compile` overload, `options.checkTypes`) that I'm assuming exist at this revision.
+
+The test compiles the same code as `testBackwardsTypedefUse1`, with type checking on. It only asserts that compilation completes without an exception, not that the "@this type of a function must be an object" warning appears, since I wasn't sure how to enable that warning level at this revision.
+
+On the buggy version, resolving `{MyTypedef}` as `string` triggers the `ClassCastException` in `FunctionType`, so the test fails. The fix skips the cast when the resolved type isn't an `ObjectType`, so the test passes.
+
+```java
+package com.google.javascript.jscomp;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for backwards typedef use in a {@code @this} annotation,
+ * which previously caused a ClassCastException during type resolution.
+ */
+public class BackwardsTypedefThisTypeTest extends TestCase {
+
+  private void compileWithTypeChecking(String js) {
+    Compiler compiler = new Compiler();
+    CompilerOptions options = new CompilerOptions();
+    options.checkTypes = true;
+
+    JSSourceFile[] externs = new JSSourceFile[] {
+        JSSourceFile.fromCode("externs", "")
+    };
+    JSSourceFile[] inputs = new JSSourceFile[] {
+        JSSourceFile.fromCode("input", js)
+    };
+
+    // On the buggy version this throws a ClassCastException
+    // (StringType cannot be cast to ObjectType).
+    Result result = compiler.compile(externs, inputs, options);
+    assertNotNull(result);
+  }
+
+  public void testBackwardsTypedefUse1() throws Exception {
+    compileWithTypeChecking(
+        "/** @this {MyTypedef} */ function f() {}" +
+        "/** @typedef {string} */ var MyTypedef;");
+  }
+}
+```

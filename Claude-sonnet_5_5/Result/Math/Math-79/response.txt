@@ -1,0 +1,27 @@
+The bug is an int overflow in `MathUtils.distance(int[], int[])`. A direct test on `MathUtils` is more reliable than a clustering test.
+
+With p1 = {0} and p2 = {50000}, the difference is 50000 and its square is 2.5e9. That exceeds `Integer.MAX_VALUE` (about 2.147e9), so the buggy version overflows to a negative int. `Math.sqrt` of a negative value returns NaN, so the buggy version returns NaN instead of 50000. The fixed version returns 50000.
+
+The test is written in JUnit 3 style, matching the project's `TestCase` conventions. It also includes a multi-dimensional case based on the triggering data. There the difference (48100)² is about 2.3e9, which also overflows in the buggy version.
+
+```java
+package org.apache.commons.math.util;
+
+import junit.framework.TestCase;
+
+public class MathUtilsDistanceOverflowTest extends TestCase {
+
+    public void testDistanceIntOverflow() {
+        int[] p1 = new int[] { 0 };
+        int[] p2 = new int[] { 50000 };
+        assertEquals(50000.0, MathUtils.distance(p1, p2), 1.0e-9);
+    }
+
+    public void testDistanceIntLargeDifferences() {
+        int[] p1 = new int[] { 1959, 325100 };
+        int[] p2 = new int[] { 1960, 373200 };
+        double expected = Math.sqrt(1.0 + 48100.0 * 48100.0);
+        assertEquals(expected, MathUtils.distance(p1, p2), 1.0e-6);
+    }
+}
+```

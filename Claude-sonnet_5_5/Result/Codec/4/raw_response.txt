@@ -1,0 +1,63 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791042043-o2vfVp4RiT763SsokAHg","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1433,"output_tokens":5,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"The bug is"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" in Base64's default constructor—`this(false)` sets urlSafe to false but keeps the default line length of 76, causing chunked output with CRLFs, whereas the fix `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"this(0)` disables line chunking entirely. I'm planning a test that encodes a long input with `new Base64().encode()` and checks that no CRLF appears in the output, using the commons-codec 1.4 API where Base64"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":" implements BinaryEncoder with both instance and static encode methods."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"signature_delta","signature":"CAQSoAsKEAgSGAI4AUIIdGhpbmtpbmcSDMj473/iu25asfxfuBoMMDkoQdZAjAm3sjhkIjAkHvTG4IVd675AogQL9x9SbQeS2zMLgO7DU87DUYUSI1p6IdUXeYAjAU0rhwGo69QqvQocT2dhrr3FLKp1sUVeScQIc3Owgj8T45T/Cv30BhPL70LbpeTkFhIUJP4tMPPdszCsbVYyUrVodpuV95kXjBapYJBxK3m+vAaaCs7IgTDg3A7PAtPuxg6Y0kcLwYQkgQbbBUSEnQuIeni0WbO1OB9eTktASoY3/FMGqXyCc8dREgESRSDLjiyf3nMaDDIsxGsC8vjVVSsRErkyt5IWNIbQ4C4zFuh9I3obLWop5Q4VkFgp9FMOXRVRaQ6fZijnJtnDPBXSbKZuKlxDdUMHXO0p957Lzg4l5DIY0ualVDiJUeG2j39pSnGT8WPElQ4WlTb+tM8TyBMdb8xnxKI0QR8pTpNIWBb3Z+7e1lQvAAnkY8pHwogwXYuPzwHwLQ/52uzKOfmIEkoyKkXtMaU2zbuuMbZ6B7FF8oflEkqoI9SKpP1te1xjeXHOhy4F/7DOfIdTBrmOv9ZI5AeY3vFwdEg1dOYlAyd0N8EGY4qh5TcKITZYCbDUKDwMszW9zVU6B5kS+Cu/LJAGPFPWnk368Hx/hc14I4jBTmwuPLe1OcI36A87i6N14GSDjbZwRdI2Mx3SzWrEItUAxD8RbfYYC+p4zDha3yli+hM5JWld0fu1Pax0CBnWFOws5eIt7aA4VzHyEjihgtNbUMmbAHWq0fRqD8SRb40t+uioT3jIaip0pO58Tbd4dyLuSaG+UdlKcdGFy9V9DWe+IhsmIcHh6Kd/aX6wr7SiBva9ovaYeinPzQbpCD0LcKmKXuHslS0csK35z2qpkdtWpejW1k+wHwo/u+Y3mNtI6MNWyD+ujI2OB3Gxb4CGCrtjQNycYwcvy6VB6SrNqqBgNDn8y5y43DQEsOPz9kbrz4gcJ/g2h6T6SkGe+hGRMLLOo6Oun+ZG9vbfOXyNRtQ02M8zPZFBDYiRZcXEoRV+hVLLOAmSXr0zWo08YFE9xMy0r+v3QvEsLBTAeA5o7N4hD0wtl29yCw8jLogIKYhQlL7TlFfOX/IOMeIzpIv7rvG7QtRHK3PI1YsWa0e9zpOJo012xYJD1ZmA9vUq0MzoeNyMGcE8ADR516+utrn83KN6ya46o1KaaPnvGyUDlTML5hz/2vuIqzMDRAvVHcSQuF8xTtqkBkrh590G5S7Xehn+mVuVQfAlRUeToKVbuILDT/CmUZ+pcq9CIT0dlrnxi/20fSi7BcEZV9VNqbD2RPM96QqJkEVOwpkeer60UMj174dCjDqI2qUF0wkoUCkCJc5AfhVjCX+qCA67W8CNA9x3U2R9udW8gu+VqQ4eqVmHxwkSxEZf+9giw/WDmBE0iynQtj+5rSVP8IOabOSKZQS0cvHuBSY+9TofX2eywOT8KRMOmla6nuX/Dl8dok8jtqVeylRYX9MysIkf1caTHhL1RVDxVeH366BeYRurebEEx4/oIbUQ6Wmww5uppCU9HV+bPwu/zCizl2a+syG/mVL7IMNx/Slukk6lDA6hkhbj9obud8HdpeVEs0hNHKXuXcYNEuR+VomloypoFpc2OhfqsghkkbFqiUB/jaPmiVhPJmQZZxyyh3yHhumljhwuOTYsP4I5o9pdlLsEgmTTKwvhC8a780Mlynu7NZvfmhklQ1+U9mrzivN9TG6VKWhsyrHWeEse3z4gXYpo8x85RQejKBOPFgp3MwNUzxh7gdYV1I3qYgiuWV3wfwOIDplyzAfqrEjx9KIb+One1M0t50OZUyUuepYxbESyr4yPhapJqjoszsEubIWBstmftn1JCGdwB9Yu0Kz4gALL6yR3CSN42mmDVRUYAQ==.eyJlbmRwb2ludF9zbHVnIjoiYW50aHJvcGljL2NsYXVkZS1zb25uZXQtNS41LTIwMjYwOTI4fGNsYXVkZS1vbi1hd3MifQ"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org.apache.commons.codec.binary;\n\nimport junit.framework.TestCase;\n\n/**\n * Regression test for CODEC-89: the default"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" Base64 constructor must not chunk its output.\n */\npublic class Base64DefaultConstructorRegressionTest extends TestCase {\n\n    public void testDefaultConstructorDoesNotChunk() throws Exception {\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"byte[] binary = new byte[200];\n        for (int i = 0; i < binary.length; i++) {\n            binary[i] = (byte) i;\n        }\n\n        byte[] encoded = new Base64().encode(binary);\n        String result = new String(encoded,"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" \"UTF-8\");\n\n        assertFalse(\"Default Base64 encoder must not insert line breaks\",\n                result.indexOf('\\r') >= 0 || result.indexOf('\\n') >= 0);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n\n        // Should equal the output of the non-chunking static encoder\n        byte[] expected = Base64.encodeBase64(binary, false);\n        assertTrue(\"Default encoder output should be unchunked\",\n                java.util.Arrays."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"equals(expected, encoded));\n    }\n\n    public void testDefaultConstructorObjectEncodeDoesNotChunk() throws Exception {\n        byte[] binary = new byte[100];\n        for (int i = 0; i < binary.length; i++) {\n            binary[i] = (byte)"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" (i * 3);\n        }\n\n        byte[] encoded = (byte[]) new Base64().encode((Object) binary);\n        String result = new String(encoded, \"UTF-8\");\n\n        assertEquals(\"Encoded length for "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"100 bytes without chunking\", 136, encoded.length);\n        assertTrue(\"No CRLF expected\", result.indexOf(\"\\r\\n\") < 0);\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1433,"output_tokens":938,"output_tokens_details":{"thinking_tokens":356},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.012246,"is_byok":false,"cost_details":{"upstream_inference_cost":0.012246,"upstream_inference_prompt_cost":0.002866,"upstream_inference_completions_cost":0.00938}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

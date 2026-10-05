@@ -1,0 +1,97 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-61
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+4cc9a49db12026d043824fbad036918189b43fe8
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2010-09-25 23:06:34 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-349
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-349
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math.distribution.PoissonDistributionTest::testMean
+   --> org.apache.commons.math.MathRuntimeException$4: the Poisson mean must be positive (-1)
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math.distribution.PoissonDistributionImpl
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math.distribution.PoissonDistributionImpl ===
+diff --git a/src/main/java/org/apache/commons/math/distribution/PoissonDistributionImpl.java b/src/main/java/org/apache/commons/math/distribution/PoissonDistributionImpl.java
+index 148daad0d..0a8123390 100644
+--- a/src/main/java/org/apache/commons/math/distribution/PoissonDistributionImpl.java
++++ b/src/main/java/org/apache/commons/math/distribution/PoissonDistributionImpl.java
+@@ -19,7 +19,7 @@ package org.apache.commons.math.distribution;
+ import java.io.Serializable;
+ 
+ import org.apache.commons.math.MathException;
+-import org.apache.commons.math.MathRuntimeException;
++import org.apache.commons.math.exception.NotStrictlyPositiveException;
+ import org.apache.commons.math.exception.util.LocalizedFormats;
+ import org.apache.commons.math.special.Gamma;
+ import org.apache.commons.math.util.MathUtils;
+@@ -91,7 +91,7 @@ public class PoissonDistributionImpl extends AbstractIntegerDistribution
+      */
+     public PoissonDistributionImpl(double p, double epsilon, int maxIterations) {
+         if (p <= 0) {
+-            throw MathRuntimeException.createIllegalArgumentException(LocalizedFormats.NOT_POSITIVE_POISSON_MEAN, p);
++            throw new NotStrictlyPositiveException(LocalizedFormats.MEAN, p);
+         }
+         mean = p;
+         normal = new NormalDistributionImpl(p, FastMath.sqrt(p));
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testMean() {
+        PoissonDistribution dist;
+        try {
+            dist = new PoissonDistributionImpl(-1);
+            fail("negative mean: NotStrictlyPositiveException expected");
+        } catch(NotStrictlyPositiveException ex) {
+            // Expected.
+        }
+
+        dist = new PoissonDistributionImpl(10.0);
+        assertEquals(10.0, dist.getMean(), 0.0);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

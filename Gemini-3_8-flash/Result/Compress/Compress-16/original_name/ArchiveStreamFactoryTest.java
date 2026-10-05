@@ -1,0 +1,37 @@
+package org.apache.commons.compress.archivers;
+
+import java.io.ByteArrayInputStream;
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+public class ArchiveStreamFactoryTest {
+
+    @Test
+    public void testNonTarFileWithInvalidChecksumIsNotRecognizedAsTar() throws Exception {
+        // Construct a 512-byte header block where octal fields are syntactically valid
+        // so that TarArchiveEntry can be instantiated without throwing an exception,
+        // but the checksum field does not match the actual header checksum.
+        byte[] header = new byte[512];
+        System.arraycopy("test.txt".getBytes("US-ASCII"), 0, header, 0, 8); // name
+
+        // Fill octal fields: mode, uid, gid, size, mtime with valid octal ASCII strings
+        System.arraycopy("0000644\0".getBytes("US-ASCII"), 0, header, 100, 8);  // mode
+        System.arraycopy("0000765\0".getBytes("US-ASCII"), 0, header, 108, 8);  // uid
+        System.arraycopy("0000765\0".getBytes("US-ASCII"), 0, header, 116, 8);  // gid
+        System.arraycopy("00000000000\0".getBytes("US-ASCII"), 0, header, 124, 12); // size
+        System.arraycopy("00000000000\0".getBytes("US-ASCII"), 0, header, 136, 12); // mtime
+
+        // Checksum field stored as 0, which does not match the computed checksum of the block
+        System.arraycopy("000000\0 ".getBytes("US-ASCII"), 0, header, 148, 8);  // chksum
+
+        ByteArrayInputStream is = new ByteArrayInputStream(header);
+        try {
+            new ArchiveStreamFactory().createArchiveInputStream(is);
+            fail("created an input stream for a non-archive");
+        } catch (ArchiveException ae) {
+            assertTrue(ae.getMessage().startsWith("No Archiver found"));
+        }
+    }
+}

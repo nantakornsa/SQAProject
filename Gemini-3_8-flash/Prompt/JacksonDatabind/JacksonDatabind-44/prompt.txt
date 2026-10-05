@@ -1,0 +1,113 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-44
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+700617aa96fdfb3259a1e8001c1bee24deaec34a
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-03-09 15:30:34 -0800
+--------------------------------------------------------------------------------
+Bug report id:
+1125
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/1125
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.jsontype.TestSubtypes::testIssue1125WithDefault
+   --> com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException: Unrecognized field "b" (class com.fasterxml.jackson.databind.jsontype.TestSubtypes$Default1125), not marked as ignorable (2 known properties: "a", "def"])
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.type.SimpleType
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.type.SimpleType ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/type/SimpleType.java b/src/main/java/com/fasterxml/jackson/databind/type/SimpleType.java
+index 09fae7708..0273c70cf 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/type/SimpleType.java
++++ b/src/main/java/com/fasterxml/jackson/databind/type/SimpleType.java
+@@ -129,15 +129,41 @@ public class SimpleType // note: until 2.6 was final
+         // 15-Jan-2016, tatu: Almost yes, but there are some complications with
+         //    placeholder values (`Void`, `NoClass`), so can not quite do yet.
+         // TODO: fix in 2.8
++        if (!_class.isAssignableFrom(subclass)) {
+             /*
+             throw new IllegalArgumentException("Class "+subclass.getName()+" not sub-type of "
+                     +_class.getName());
+                     */
+             return new SimpleType(subclass, _bindings, this, _superInterfaces,
+                     _valueHandler, _typeHandler, _asStatic);
++        }
+         // Otherwise, stitch together the hierarchy. First, super-class
++        Class<?> next = subclass.getSuperclass();
++        if (next == _class) { // straight up parent class? Great.
++            return new SimpleType(subclass, _bindings, this,
++                    _superInterfaces, _valueHandler, _typeHandler, _asStatic);
++        }
++        if ((next != null) && _class.isAssignableFrom(next)) {
++            JavaType superb = _narrow(next);
++            return new SimpleType(subclass, _bindings, superb,
++                    null, _valueHandler, _typeHandler, _asStatic);
++        }
+         // if not found, try a super-interface
++        Class<?>[] nextI = subclass.getInterfaces();
++        for (Class<?> iface : nextI) {
++            if (iface == _class) { // directly implemented
++                return new SimpleType(subclass, _bindings, null,
++                        new JavaType[] { this }, _valueHandler, _typeHandler, _asStatic);
++            }
++            if (_class.isAssignableFrom(iface)) { // indirect, so recurse
++                JavaType superb = _narrow(iface);
++                return new SimpleType(subclass, _bindings, null,
++                        new JavaType[] { superb }, _valueHandler, _typeHandler, _asStatic);
++            }
++        }
+         // should not get here but...
++        throw new IllegalArgumentException("Internal error: Can not resolve sub-type for Class "+subclass.getName()+" to "
++                +_class.getName());
+     }
+     
+     @Override
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testIssue1125WithDefault() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

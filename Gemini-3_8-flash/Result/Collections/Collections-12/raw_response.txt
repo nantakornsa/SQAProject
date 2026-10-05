@@ -1,0 +1,54 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791109178-7asT1AkyZZjd7zfKZzmf","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Fixing `combine` Bug**\n\nI'm currently focused on pinpointing the exact issue within the `ExtendedProperties.combine` method. It appears the loop iterating through the keys from the incoming `props` might be the culprit, with potential issues arising during the `super.put()` operation.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating `combine` Logic**\n\nI'm digging into why `ExtendedProperties.combine` isn't behaving as expected. It seems the direct use of `super.put` might be bypassing crucial internal updates to key management, leading to incorrect subsetting and property retrieval, as observed in the `testCollections271` case. The fix involves using `clearProperty` and `addPropertyDirect` to ensure internal state consistency.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage org"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".apache.commons.collections;\n\nimport junit.framework.TestCase;\n\n/**\n * Regression test for COLLECTIONS-271:"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" ExtendedProperties.combine() does not properly\n * register combined properties for subset() queries.\n */\npublic class ExtendedPropertiesCombineTest extends TestCase"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" {\n\n    public ExtendedPropertiesCombineTest(String name) {\n        super(name);\n    }\n\n    public void testCombine"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Subset() {\n        ExtendedProperties props1 = new ExtendedProperties();\n        props1.setProperty(\"sub.test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\", \"foo\");\n\n        ExtendedProperties props2 = new ExtendedProperties();\n        props2.combine(props1"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":");\n\n        assertEquals(\"foo\", props2.getProperty(\"sub.test\"));\n\n        ExtendedProperties subs = props2.subset(\"sub"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\");\n        assertNotNull(subs);\n        assertEquals(\"foo\", subs.getProperty(\"test\"));\n    }\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1120,"output_tokens":656,"output_tokens_details":{"thinking_tokens":462},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.0033,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0033,"upstream_inference_prompt_cost":0.00084,"upstream_inference_completions_cost":0.00246}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

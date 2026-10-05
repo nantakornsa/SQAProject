@@ -1,0 +1,77 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Cli
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Cli
+       Program: commons-cli
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/Cli.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-cli.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/active-bugs.csv
+Number of bugs: 39
+--------------------------------------------------------------------------------
+
+Summary for Bug: Cli-40
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+b0024d482050a08efc36c3cabee37c0af0e57a10
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2018-02-26 10:23:40 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+CLI-282
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CLI-282
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.cli.TypeHandlerTest::testCreateValueInteger_failure
+   --> junit.framework.AssertionFailedError: Expected exception: org.apache.commons.cli.ParseException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.cli.TypeHandler
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.cli.TypeHandler ===
+diff --git a/src/main/java/org/apache/commons/cli/TypeHandler.java b/src/main/java/org/apache/commons/cli/TypeHandler.java
+index 6bd84b0..9ed8beb 100644
+--- a/src/main/java/org/apache/commons/cli/TypeHandler.java
++++ b/src/main/java/org/apache/commons/cli/TypeHandler.java
+@@ -100,7 +100,7 @@ public class TypeHandler
+         }
+         else
+         {
+-            return null;
++            throw new ParseException("Unable to handle the class: " + clazz);
+         }
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testCreateValueInteger_failure()
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

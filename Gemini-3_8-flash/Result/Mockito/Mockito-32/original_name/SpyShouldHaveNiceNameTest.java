@@ -1,0 +1,36 @@
+package org.mockitousage.bugs;
+
+import org.fest.assertions.Assertions;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.MockitoAnnotations;
+import org.mockito.Spy;
+import org.mockitoutil.TestBase;
+
+import java.util.LinkedList;
+import java.util.List;
+
+import static org.mockito.Mockito.verify;
+
+public class SpyShouldHaveNiceNameTest extends TestBase {
+
+    @Spy
+    private List<Integer> veryCoolSpy = new LinkedList<Integer>();
+
+    @Before
+    public void init() {
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    public void shouldPrintNiceName() {
+        veryCoolSpy.add(1);
+
+        try {
+            verify(veryCoolSpy).add(2);
+            fail();
+        } catch (AssertionError e) {
+            Assertions.assertThat(e.getMessage()).contains("veryCoolSpy");
+        }
+    }
+}

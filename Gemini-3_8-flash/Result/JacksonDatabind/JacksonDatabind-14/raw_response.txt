@@ -1,0 +1,69 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791181155-gos0gdBOd8mcgurJgQhx","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing Deserializer Inconsistency**\n\nI'm currently investigating a bug in JacksonDatabind where `readerForUpdating` combined with `readTree` or related methods improperly utilizes the updating value's deserializer instead of the expected `JsonNode` deserializer. The core issue appears to stem from `ObjectReader._findRootDeserializer`.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Deserializer Mismatch**\n\nI've pinpointed the problematic line in JacksonDatabind's `_findRootDeserializer`, where it incorrectly fetches a deserializer for the updating value rather than the intended `JsonNode` type. This seems to be triggered by specific update scenarios, as seen in the `testIssue744` test case.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Tracing Deserializer Logic**\n\nI'm tracing the execution flow within JacksonDatabind, specifically around `ObjectReader.readValue(JsonNode)` when using `readerForUpdating`. It seems the logic might be incorrectly falling back to deserializing the update value itself, rather than treating the incoming `JsonNode` as the source for updating.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Tracing Deserializer Fallback**\n\nI'm digging into how `_findRootDeserializer` behaves when `_valueToUpdate` is present. It appears to be prematurely initializing `_rootDeserializer` with the deserializer for the update object, which then gets incorrectly returned when a `JsonNode` is expected.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com.fasterxml.jackson.databind.convert;\n\nimport java"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".io.IOException;\n\nimport com.fasterxml.jackson.databind.BaseMapTest;\nimport com.fasterxml.jackson.databind."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"JsonNode;\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\npublic class Issue744Test extends Base"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"MapTest\n{\n    static class DataA {\n        public int i = 1;\n        public int j = "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"2;\n    }\n\n    static class DataB {\n        public DataA da = new DataA();\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"        public int k = 3;\n    }\n\n    public void testIssue744() throws IOException\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    {\n        ObjectMapper mapper = new ObjectMapper();\n        DataB db = new DataB();\n        db.da.i = "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"4;\n\n        // Calling readTree on an updating reader should deserialize as JsonNode,\n        // not attempt to deserialize using the target"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" object's deserializer.\n        JsonNode tree = mapper.readerForUpdating(db).readTree(\"{\\\""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"i\\\": 1, \\\"j\\\": 2}\");\n        assertNotNull(tree);\n        assertTrue(tree.is"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Object());\n        assertEquals(1, tree.get(\"i\").asInt());\n        assertEquals(2, tree"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".get(\"j\").asInt());\n    }\n}\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1250,"output_tokens":1656,"output_tokens_details":{"thinking_tokens":1365},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.0071475,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0071475,"upstream_inference_prompt_cost":0.0009375,"upstream_inference_completions_cost":0.00621}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

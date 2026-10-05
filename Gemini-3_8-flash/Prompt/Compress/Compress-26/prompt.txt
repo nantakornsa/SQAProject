@@ -1,0 +1,101 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Compress
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Compress
+       Program: commons-compress
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/Compress.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-compress.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Compress/active-bugs.csv
+Number of bugs: 47
+--------------------------------------------------------------------------------
+
+Summary for Bug: Compress-26
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+557800a53cedad99afc951032a11931f3e39bf13
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2014-04-12 17:05:57 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+COMPRESS-277
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/COMPRESS-277
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.compress.utils.IOUtilsTest::skipUsingRead
+   --> junit.framework.AssertionFailedError: expected:<10> but was:<0>
+ - org.apache.commons.compress.utils.IOUtilsTest::skipUsingSkipAndRead
+   --> junit.framework.AssertionFailedError: expected:<10> but was:<5>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.compress.utils.IOUtils
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.compress.utils.IOUtils ===
+diff --git a/src/main/java/org/apache/commons/compress/utils/IOUtils.java b/src/main/java/org/apache/commons/compress/utils/IOUtils.java
+index 686d75ad..177d8f2a 100644
+--- a/src/main/java/org/apache/commons/compress/utils/IOUtils.java
++++ b/src/main/java/org/apache/commons/compress/utils/IOUtils.java
+@@ -101,6 +101,17 @@ public final class IOUtils {
+             numToSkip -= skipped;
+         }
+             
++        if (numToSkip > 0) {
++            byte[] skipBuf = new byte[SKIP_BUF_SIZE];
++            while (numToSkip > 0) {
++                int read = readFully(input, skipBuf, 0,
++                                     (int) Math.min(numToSkip, SKIP_BUF_SIZE));
++                if (read < 1) {
++                    break;
++                }
++                numToSkip -= read;
++            }
++        }
+         return available - numToSkip;
+     }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+    public void skipUsingRead() throws Exception {
+        skip(new StreamWrapper() {
+                public InputStream wrap(InputStream toWrap) {
+                    return new FilterInputStream(toWrap) {
+                        public long skip(long s) {
+                            return 0;
+                        }
+                    };
+                }
+            });
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

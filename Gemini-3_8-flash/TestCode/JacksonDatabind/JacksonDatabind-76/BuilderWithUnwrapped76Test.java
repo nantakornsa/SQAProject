@@ -1,0 +1,107 @@
+package com.fasterxml.jackson.databind.deser.builder;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+
+public class BuilderWithUnwrapped76Test extends BaseMapTest {
+
+    static class Name {
+        private String first;
+        private String last;
+
+        public Name() {}
+
+        public Name(String first, String last) {
+            this.first = first;
+            this.last = last;
+        }
+
+        @JsonProperty("first_name")
+        public String getFirst() {
+            return first;
+        }
+
+        public void setFirst(String first) {
+            this.first = first;
+        }
+
+        @JsonProperty("last_name")
+        public String getLast() {
+            return last;
+        }
+
+        public void setLast(String last) {
+            this.last = last;
+        }
+    }
+
+    @JsonDeserialize(builder = PersonBuilder.class)
+    static class Person {
+        private final int id;
+        private final Name name;
+        private final int age;
+
+        public Person(int id, Name name, int age) {
+            this.id = id;
+            this.name = name;
+            this.age = age;
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public Name getName() {
+            return name;
+        }
+
+        public int getAge() {
+            return age;
+        }
+    }
+
+    @JsonPOJOBuilder(withPrefix = "with")
+    static class PersonBuilder {
+        private final int id;
+        private Name name;
+        private int age;
+
+        @JsonCreator
+        public PersonBuilder(@JsonProperty("person_id") int id) {
+            this.id = id;
+        }
+
+        @JsonUnwrapped
+        public PersonBuilder withName(Name name) {
+            this.name = name;
+            return this;
+        }
+
+        @JsonProperty("years_old")
+        public PersonBuilder withAge(int age) {
+            this.age = age;
+            return this;
+        }
+
+        public Person build() {
+            return new Person(id, name, age);
+        }
+    }
+
+    public void testWithUnwrappedAndCreatorSingleParameterAtBeginning() throws Exception {
+        final String json = aposToQuotes("{'person_id':1234,'first_name':'John','last_name':'Doe','years_old':30}");
+
+        final ObjectMapper mapper = new ObjectMapper();
+        Person person = mapper.readValue(json, Person.class);
+        assertEquals(1234, person.getId());
+        assertNotNull(person.getName());
+        assertEquals("John", person.getName().getFirst());
+        assertEquals("Doe", person.getName().getLast());
+        assertEquals(30, person.getAge());
+    }
+}

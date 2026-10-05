@@ -1,0 +1,129 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Lang
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Lang
+       Program: commons-lang
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/Lang.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-lang.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Lang/active-bugs.csv
+Number of bugs: 61
+--------------------------------------------------------------------------------
+
+Summary for Bug: Lang-8
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+04babff3798680e012646988841bcc710a9e3c54
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-09-27 12:56:19 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+LANG-818
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/LANG-818
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.lang3.time.FastDateFormat_PrinterTest::testCalendarTimezoneRespected
+   --> junit.framework.AssertionFailedError: expected:<2:43PM [IC]T> but was:<2:43PM [PS]T>
+ - org.apache.commons.lang3.time.FastDatePrinterTest::testCalendarTimezoneRespected
+   --> junit.framework.AssertionFailedError: expected:<2:43PM [IC]T> but was:<2:43PM [PS]T>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.lang3.time.FastDatePrinter
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.lang3.time.FastDatePrinter ===
+diff --git a/src/main/java/org/apache/commons/lang3/time/FastDatePrinter.java b/src/main/java/org/apache/commons/lang3/time/FastDatePrinter.java
+index 5c0edda2e..c952309a8 100644
+--- a/src/main/java/org/apache/commons/lang3/time/FastDatePrinter.java
++++ b/src/main/java/org/apache/commons/lang3/time/FastDatePrinter.java
+@@ -1095,7 +1095,6 @@ public class FastDatePrinter implements DatePrinter, Serializable {
+     private static class TimeZoneNameRule implements Rule {
+         private final Locale mLocale;
+         private final int mStyle;
+-        private final TimeZone zone;
+         private final String mStandard;
+         private final String mDaylight;
+ 
+@@ -1109,7 +1108,6 @@ public class FastDatePrinter implements DatePrinter, Serializable {
+         TimeZoneNameRule(TimeZone timeZone, Locale locale, int style) {
+             mLocale = locale;
+             mStyle = style;
+-            zone = timeZone;
+             
+             mStandard = getTimeZoneDisplay(timeZone, false, style, locale);
+             mDaylight = getTimeZoneDisplay(timeZone, true, style, locale);
+@@ -1131,6 +1129,7 @@ public class FastDatePrinter implements DatePrinter, Serializable {
+          */
+         @Override
+         public void appendTo(StringBuffer buffer, Calendar calendar) {
++            TimeZone zone = calendar.getTimeZone();
+             if (zone.useDaylightTime()
+                     && calendar.get(Calendar.DST_OFFSET) != 0) {
+                 buffer.append(getTimeZoneDisplay(zone, true, mStyle, mLocale));
+
+
+=== TRIGGERING TEST METHOD ===
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.commons.lang3.time;
+
+import java.util.Locale;
+import java.util.TimeZone;
+
+/**
+ * Unit tests for the print methods of FastDateFormat
+ *
+ * @since 3.2
+ */
+public class FastDateFormat_PrinterTest extends FastDatePrinterTest {
+
+    @Override
+    protected DatePrinter getInstance(String format, TimeZone timeZone, Locale locale) {
+        return FastDateFormat.getInstance(format, timeZone, locale);
+    }
+}
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

@@ -1,0 +1,32 @@
+package com.fasterxml.jackson.core.io;
+
+import com.fasterxml.jackson.core.util.BufferRecycler;
+import org.junit.Test;
+
+import static org.junit.Assert.fail;
+
+public class TestIOContextReleaseBuffer {
+
+    @Test
+    public void testReleaseSameLengthDifferentBuffer() {
+        IOContext ctxt = new IOContext(new BufferRecycler(), "source", false);
+
+        // Test byte[] buffer release
+        byte[] readBuffer = ctxt.allocReadIOBuffer();
+        byte[] differentByteBuffer = new byte[readBuffer.length];
+        try {
+            ctxt.releaseReadIOBuffer(differentByteBuffer);
+        } catch (IllegalArgumentException e) {
+            fail("Releasing a different buffer of the same length should be allowed, but threw: " + e.getMessage());
+        }
+
+        // Test char[] buffer release
+        char[] concatBuffer = ctxt.allocConcatBuffer();
+        char[] differentCharBuffer = new char[concatBuffer.length];
+        try {
+            ctxt.releaseConcatBuffer(differentCharBuffer);
+        } catch (IllegalArgumentException e) {
+            fail("Releasing a different buffer of the same length should be allowed, but threw: " + e.getMessage());
+        }
+    }
+}

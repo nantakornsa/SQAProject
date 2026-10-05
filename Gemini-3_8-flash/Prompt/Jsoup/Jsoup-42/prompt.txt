@@ -1,0 +1,110 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-42
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+c01fcd338d73dc039e6a3a6cd2c449d9c9d41304
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-04-02 19:14:23 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+489
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/489
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.nodes.FormElementTest::createsFormData
+   --> junit.framework.AssertionFailedError: expected:<6> but was:<7>
+ - org.jsoup.nodes.FormElementTest::usesOnForCheckboxValueIfNoValueSet
+   --> junit.framework.AssertionFailedError: expected:<[on]> but was:<[]>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.nodes.FormElement
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.nodes.FormElement ===
+diff --git a/src/main/java/org/jsoup/nodes/FormElement.java b/src/main/java/org/jsoup/nodes/FormElement.java
+index 4ce11907..a12e3535 100644
+--- a/src/main/java/org/jsoup/nodes/FormElement.java
++++ b/src/main/java/org/jsoup/nodes/FormElement.java
+@@ -77,6 +77,7 @@ public class FormElement extends Element {
+         // iterate the form control elements and accumulate their values
+         for (Element el: elements) {
+             if (!el.tag().isFormSubmittable()) continue; // contents are form listable, superset of submitable
++            if (el.hasAttr("disabled")) continue; // skip disabled form inputs
+             String name = el.attr("name");
+             if (name.length() == 0) continue;
+             String type = el.attr("type");
+@@ -96,7 +97,7 @@ public class FormElement extends Element {
+             } else if ("checkbox".equalsIgnoreCase(type) || "radio".equalsIgnoreCase(type)) {
+                 // only add checkbox or radio if they have the checked attribute
+                 if (el.hasAttr("checked")) {
+-                    final String val = el.val();
++                    final String val = el.val().length() >  0 ? el.val() : "on";
+                     data.add(HttpConnection.KeyVal.create(name, val));
+                 }
+             } else {
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void createsFormData() {
+        String html = "<form><input name='one' value='two'><select name='three'><option value='not'>" +
+                "<option value='four' selected><option value='five' selected><textarea name=six>seven</textarea>" +
+                "<input name='seven' type='radio' value='on' checked><input name='seven' type='radio' value='off'>" +
+                "<input name='eight' type='checkbox' checked><input name='nine' type='checkbox' value='unset'>" +
+                "<input name='ten' value='text' disabled>" +
+                "</form>";
+        Document doc = Jsoup.parse(html);
+        FormElement form = (FormElement) doc.select("form").first();
+        List<Connection.KeyVal> data = form.formData();
+
+        assertEquals(6, data.size());
+        assertEquals("one=two", data.get(0).toString());
+        assertEquals("three=four", data.get(1).toString());
+        assertEquals("three=five", data.get(2).toString());
+        assertEquals("six=seven", data.get(3).toString());
+        assertEquals("seven=on", data.get(4).toString()); // set
+        assertEquals("eight=on", data.get(5).toString()); // default
+        // nine should not appear, not checked checkbox
+        // ten should not appear, disabled
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

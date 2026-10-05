@@ -1,0 +1,23 @@
+Project: Codec
+Bug: Codec-2
+Buggy Version: 2b
+Fixed Version: 2f
+
+Generated Test:
+Base64InputStreamTest::testBase64EmptyInputStreamEncodeReturnsEofImmediately
+
+Compile: PASS
+Buggy Version Test: FAIL
+Fixed Version Test: PASS
+Fault Detected: YES
+
+Bug Description:
+Empty-input streaming Base64 encoding incorrectly produces data
+instead of immediately returning EOF.
+
+Claude Model:
+claude-sonnet-5.5
+
+Validation:
+The generated test compiled successfully and failed on Codec-2b,
+while passing on Codec-2f.

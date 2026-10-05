@@ -1,0 +1,63 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791181178-xZdZdf9ACRnhCh7qLCtg","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Bug in Annotation Map**\n\nI'm digging into a bug within the `_add` method of `AnnotationMap`. It seems the logic for handling previous annotations is flawed, potentially returning incorrect results when an annotation is updated or added for the first time. I'm analyzing the conditional return statement to pinpoint the exact cause.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Revising Annotation Logic**\n\nI've been focusing on refining the annotation handling within `_add`. The goal is to ensure accurate detection of added or modified annotations, particularly in scenarios involving mix-ins. I'm currently examining how this logic interacts with `AnnotatedMember.addOrOverride` and considering direct tests for `AnnotationMap` and mixins to validate the fix.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Testing Mixin Interactions**\n\nI'm currently focused on understanding how multiple mixins are applied, specifically within the `testMixinOverride` scenario. I need to trace the behavior of `addMixIn` when applied repeatedly to the same target class, especially in relation to older issues like #771 concerning bundle mixins. This will help clarify the underlying mechanism and its potential impact on annotation mapping.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"fasterxml.jackson.databind.mixins;\n\nimport com.fasterxml.jackson.annotation.JsonProperty;\nimport com"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".fasterxml.jackson.databind.BaseMapTest;\nimport com.fasterxml.jackson.databind.ObjectMapper;\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"public class MixinOverride771Test extends BaseMapTest {\n\n    interface Mixin1 {\n        @JsonProperty(\"stuff"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\")\n        String getFoo();\n    }\n\n    interface Mixin2 {\n        @JsonProperty(\"bar\")"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        String getFoo();\n    }\n\n    static class Target {\n        public String getFoo() {\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"            return \"result\";\n        }\n    }\n\n    public void testMixinOverride() throws Exception {\n        "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"ObjectMapper mapper = new ObjectMapper();\n        mapper.addMixIn(Target.class, Mixin1.class);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        mapper.addMixIn(Target.class, Mixin2.class);\n\n        String json = mapper"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".writeValueAsString(new Target());\n        assertEquals(\"{\\\"bar\\\":\\\"result\\\"}\", json);\n    }\n}"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":975,"output_tokens":1221,"output_tokens_details":{"thinking_tokens":994},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00531,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00531,"upstream_inference_prompt_cost":0.00073125,"upstream_inference_completions_cost":0.00457875}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

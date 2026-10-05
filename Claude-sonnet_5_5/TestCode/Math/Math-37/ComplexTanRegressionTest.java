@@ -1,0 +1,60 @@
+package org.apache.commons.math.complex;
+
+import junit.framework.TestCase;
+
+public class ComplexTanRegressionTest extends TestCase {
+
+    private final double inf = Double.POSITIVE_INFINITY;
+
+    public void testTanhInfiniteReal() {
+        Complex r = new Complex(inf, 1.0).tanh();
+        assertEquals(1.0, r.getReal(), 0.0);
+        assertEquals(0.0, r.getImaginary(), 0.0);
+
+        r = new Complex(-inf, 1.0).tanh();
+        assertEquals(-1.0, r.getReal(), 0.0);
+        assertEquals(0.0, r.getImaginary(), 0.0);
+    }
+
+    public void testTanhLargeReal() {
+        Complex r = new Complex(1000.0, 1.0).tanh();
+        assertEquals(1.0, r.getReal(), 0.0);
+        assertEquals(0.0, r.getImaginary(), 0.0);
+
+        r = new Complex(-1000.0, 1.0).tanh();
+        assertEquals(-1.0, r.getReal(), 0.0);
+        assertEquals(0.0, r.getImaginary(), 0.0);
+    }
+
+    public void testTanhInfiniteImaginary() {
+        assertTrue(new Complex(1.0, inf).tanh().isNaN());
+        assertTrue(new Complex(1.0, -inf).tanh().isNaN());
+        assertTrue(new Complex(inf, inf).tanh().isNaN());
+    }
+
+    public void testTanInfiniteImaginary() {
+        Complex r = new Complex(1.0, inf).tan();
+        assertEquals(0.0, r.getReal(), 0.0);
+        assertEquals(1.0, r.getImaginary(), 0.0);
+
+        r = new Complex(1.0, -inf).tan();
+        assertEquals(0.0, r.getReal(), 0.0);
+        assertEquals(-1.0, r.getImaginary(), 0.0);
+    }
+
+    public void testTanLargeImaginary() {
+        Complex r = new Complex(1.0, 1000.0).tan();
+        assertEquals(0.0, r.getReal(), 0.0);
+        assertEquals(1.0, r.getImaginary(), 0.0);
+
+        r = new Complex(1.0, -1000.0).tan();
+        assertEquals(0.0, r.getReal(), 0.0);
+        assertEquals(-1.0, r.getImaginary(), 0.0);
+    }
+
+    public void testTanInfiniteReal() {
+        assertTrue(new Complex(inf, 1.0).tan().isNaN());
+        assertTrue(new Complex(-inf, 1.0).tan().isNaN());
+        assertTrue(new Complex(inf, inf).tan().isNaN());
+    }
+}

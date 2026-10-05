@@ -1,0 +1,39 @@
+The regression test below targets the `forOffsetHoursMinutes` bug. It uses JUnit 3 style (`TestCase`), as the project does.
+
+On the buggy version, `forOffsetHoursMinutes(0, -15)` throws `IllegalArgumentException: Minutes out of range: -15`. The fixed version accepts it and returns the `-00:15` zone. The `(-2, -15)` case fails the same way on the buggy version.
+
+The fixed version still rejects `(2, -15)`, so the test checks that too. I did not run the test against either version.
+
+```java
+package org.joda.time;
+
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
+public class TestDateTimeZoneOffsetRegression extends TestCase {
+
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(suite());
+    }
+
+    public static TestSuite suite() {
+        return new TestSuite(TestDateTimeZoneOffsetRegression.class);
+    }
+
+    public TestDateTimeZoneOffsetRegression(String name) {
+        super(name);
+    }
+
+    public void testForOffsetHoursMinutes_negativeMinutes() {
+        assertEquals(DateTimeZone.forID("-00:15"), DateTimeZone.forOffsetHoursMinutes(0, -15));
+        assertEquals(DateTimeZone.forID("-02:15"), DateTimeZone.forOffsetHoursMinutes(-2, -15));
+        assertEquals(DateTimeZone.forID("-02:15"), DateTimeZone.forOffsetHoursMinutes(-2, 15));
+        try {
+            DateTimeZone.forOffsetHoursMinutes(2, -15);
+            fail();
+        } catch (IllegalArgumentException ex) {
+            // expected
+        }
+    }
+}
+```

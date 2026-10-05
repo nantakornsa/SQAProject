@@ -1,0 +1,33 @@
+package org.apache.commons.lang.enums;
+
+import junit.framework.TestCase;
+
+public class ValuedEnumCompareToRegressionTest extends TestCase {
+
+    private static class EnumA extends ValuedEnum {
+        private static final long serialVersionUID = 1L;
+        public static final EnumA ITEM_1 = new EnumA("Item 1", 1);
+
+        protected EnumA(String name, int value) {
+            super(name, value);
+        }
+    }
+
+    private static class EnumB extends ValuedEnum {
+        private static final long serialVersionUID = 1L;
+        public static final EnumB ITEM_1 = new EnumB("Item 1", 1);
+
+        protected EnumB(String name, int value) {
+            super(name, value);
+        }
+    }
+
+    public void testCompareToDifferentEnumTypeThrowsClassCastException() {
+        try {
+            EnumA.ITEM_1.compareTo(EnumB.ITEM_1);
+            fail("Expected ClassCastException when comparing different ValuedEnum types");
+        } catch (ClassCastException expected) {
+            // expected behavior
+        }
+    }
+}

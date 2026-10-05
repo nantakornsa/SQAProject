@@ -1,0 +1,84 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-26
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+2ea6e402d4cf86c3f7e9a16e667a40bab61cf11c
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-08-14 15:44:02 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+899
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/899
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.TestJDKSerialization::testEnumHandlers
+   --> java.io.NotSerializableException: com.fasterxml.jackson.databind.ser.BeanPropertyWriter
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.ser.BeanPropertyWriter
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.ser.BeanPropertyWriter ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/ser/BeanPropertyWriter.java b/src/main/java/com/fasterxml/jackson/databind/ser/BeanPropertyWriter.java
+index 2093b7bcb..acaa17809 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/ser/BeanPropertyWriter.java
++++ b/src/main/java/com/fasterxml/jackson/databind/ser/BeanPropertyWriter.java
+@@ -36,9 +36,11 @@ import com.fasterxml.jackson.databind.util.NameTransformer;
+  */
+ @JacksonStdImpl // since 2.6. NOTE: sub-classes typically are not
+ public class BeanPropertyWriter extends PropertyWriter
+-    implements BeanProperty
++    implements BeanProperty,
++        java.io.Serializable // since 2.6.2
+ {
+     // as of 2.6.2
++    private static final long serialVersionUID = 4603296144163950020L;
+ 
+     /**
+      * Marker object used to indicate "do not serialize if empty"
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testEnumHandlers() throws IOException
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

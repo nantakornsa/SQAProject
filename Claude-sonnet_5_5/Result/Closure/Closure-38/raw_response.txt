@@ -1,0 +1,72 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791201113-kh8cN3uO04mW2bY9JDZP","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":1420,"output_tokens":1,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"The"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" test go"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"es in `CodePrin"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"terTest`, which already"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" has"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" an"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" `assertPrint(String"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":","}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" String)` helper. I"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" ha"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ven't comp"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"iled or run it. The existing `testMinusNegativeZero` fails on the buggy version because the printer emits `x--0.0` instead of `x- -0.0`. This test uses the same input and exp"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ected output, plus a related case.\n\n```java\npackage com.google.javascript.jscomp;\n\nimport com.google.javascript.rhino.Node;\n\npublic class CodePrinterTest extends CodePrinterTestB"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"ase {\n\n  public void testMinusNegativeZero() {\n    // Negative zero is weird, because we have to be able to distinguish\n    // it from positive zero (there are some subtle differences in behavior).\n    assertPrint(\"x- -0\", \"x- -0.0\");\n  }\n\n  public void test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"MinusNegativeZeroSpacing() {\n    // Ensure \"x--0.0\" (decrement followed by a number) is never produced.\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"assertPrint(\"var a = x - -0\", \"var a=x- -0.0\");\n  }\n}\n```\n\nI wasn't sure of the base class name, so here is a fuller version in case `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"CodePrinterTest` is not already in scope. This is the safest form, since the file already exists in the project and the method is simply added to it:\n\n```java\n//"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" Add the following method to the existing\n// com.google.javascript.jscomp.CodePrinterTest class:\n\n  public void testMinusNegativeZero() {\n    // Negative zero is weird, because we have to be able to distinguish\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"// it from positive zero (there are some subtle differences in behavior).\n    assertPrint(\"x- -0\", \"x- -0.0\");\n  }\n```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1420,"output_tokens":537,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.00821,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00821,"upstream_inference_prompt_cost":0.00284,"upstream_inference_completions_cost":0.00537}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

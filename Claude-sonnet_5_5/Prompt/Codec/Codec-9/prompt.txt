@@ -1,0 +1,79 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Codec
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Codec
+       Program: commons-codec
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Codec/Codec.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-codec.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Codec/active-bugs.csv
+Number of bugs: 18
+--------------------------------------------------------------------------------
+
+Summary for Bug: Codec-9
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+c5291ab1ca4d4d7a041874a66b1c05b7d5c02ccb
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-01-26 23:40:25 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CODEC-112
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CODEC-112
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.codec.binary.Base64Test::testCodec112
+   --> java.lang.IllegalArgumentException: Input array too big, the output array would be bigger (6) than the specified maxium size of 4
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.codec.binary.Base64
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+diff --git a/src/java/org/apache/commons/codec/binary/Base64.java b/src/java/org/apache/commons/codec/binary/Base64.java
+index 2cd0163b..e81b7e91 100644
+--- a/src/java/org/apache/commons/codec/binary/Base64.java
++++ b/src/java/org/apache/commons/codec/binary/Base64.java
+@@ -824,7 +824,7 @@ public class Base64 implements BinaryEncoder, BinaryDecoder {
+             return binaryData;
+         }
+ 
+-        long len = getEncodeLength(binaryData, MIME_CHUNK_SIZE, CHUNK_SEPARATOR);
++        long len = getEncodeLength(binaryData, isChunked ? MIME_CHUNK_SIZE : 0, CHUNK_SEPARATOR);
+         if (len > maxResultSize) {
+             throw new IllegalArgumentException("Input array too big, the output array would be bigger (" +
+                 len +
+
+=== TRIGGERING TEST METHOD ===
+    public void testCodec112() { // size calculation assumes always chunked
+        byte[] in = new byte[] {0};
+        byte[] out=Base64.encodeBase64(in);
+        Base64.encodeBase64(in, false, false, out.length);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

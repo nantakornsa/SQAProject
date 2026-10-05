@@ -1,0 +1,100 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-48
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+65553582d184e18de10e496b0eaa53fbe206ba17
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-08-30 15:47:43 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+618
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/618
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.helper.HttpConnectionTest::sameHeadersCombineWithComma
+   --> junit.framework.AssertionFailedError: expected:<no-cache[, no-store]> but was:<no-cache[]>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.helper.HttpConnection
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.helper.HttpConnection ===
+diff --git a/src/main/java/org/jsoup/helper/HttpConnection.java b/src/main/java/org/jsoup/helper/HttpConnection.java
+index f8fd9dd7..a215b566 100644
+--- a/src/main/java/org/jsoup/helper/HttpConnection.java
++++ b/src/main/java/org/jsoup/helper/HttpConnection.java
+@@ -770,8 +770,18 @@ public class HttpConnection implements Connection {
+                             cookie(cookieName, cookieVal);
+                     }
+                 } else { // combine same header names with comma: http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
+-                    if (!values.isEmpty())
++                    if (values.size() == 1)
+                         header(name, values.get(0));
++                    else if (values.size() > 1) {
++                        StringBuilder accum = new StringBuilder();
++                        for (int i = 0; i < values.size(); i++) {
++                            final String val = values.get(i);
++                            if (i != 0)
++                                accum.append(", ");
++                            accum.append(val);
++                        }
++                        header(name, accum.toString());
++                    }
+                 }
+             }
+         }
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void sameHeadersCombineWithComma() {
+        Map<String, List<String>> headers = new HashMap<String, List<String>>();
+        List<String> values = new ArrayList<String>();
+        values.add("no-cache");
+        values.add("no-store");
+        headers.put("Cache-Control", values);
+        HttpConnection.Response res = new HttpConnection.Response();
+        res.processResponseHeaders(headers);
+        assertEquals("no-cache, no-store", res.header("Cache-Control"));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

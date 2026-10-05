@@ -1,0 +1,47 @@
+package com.google.javascript.jscomp;
+
+/**
+ * Regression test: {@code typeof void 0} must fold to {@code "undefined"}.
+ */
+public class PeepholeFoldConstantsTest extends CompilerTestCase {
+
+  public PeepholeFoldConstantsTest() {
+    super("", false);
+  }
+
+  @Override
+  public CompilerPass getProcessor(final Compiler compiler) {
+    return new PeepholeOptimizationsPass(compiler, new PeepholeFoldConstants());
+  }
+
+  private void fold(String js, String expected) {
+    test(js, expected);
+  }
+
+  private void foldSame(String js) {
+    testSame(js);
+  }
+
+  public void testFoldTypeofVoid() {
+    fold("x = typeof void 0", "x = \"undefined\"");
+    fold("x = typeof void 1", "x = \"undefined\"");
+    fold("x = typeof undefined", "x = \"undefined\"");
+  }
+
+  public void testFoldTypeof() {
+    fold("x = typeof 1", "x = \"number\"");
+    fold("x = typeof 'foo'", "x = \"string\"");
+    fold("x = typeof true", "x = \"boolean\"");
+    fold("x = typeof false", "x = \"boolean\"");
+    fold("x = typeof null", "x = \"object\"");
+    fold("x = typeof undefined", "x = \"undefined\"");
+    fold("x = typeof void 0", "x = \"undefined\"");
+    fold("x = typeof []", "x = \"object\"");
+    fold("x = typeof [1]", "x = \"object\"");
+    fold("x = typeof [1,[]]", "x = \"object\"");
+    fold("x = typeof {}", "x = \"object\"");
+
+    foldSame("x = typeof[1,[foo()]]");
+    foldSame("x = typeof{bathwater:baby()}");
+  }
+}

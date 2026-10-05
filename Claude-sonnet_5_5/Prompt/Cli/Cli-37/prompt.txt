@@ -1,0 +1,93 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Cli
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Cli
+       Program: commons-cli
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/Cli.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-cli.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Cli/active-bugs.csv
+Number of bugs: 39
+--------------------------------------------------------------------------------
+
+Summary for Bug: Cli-37
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+1bf9e6c551b6a2e7d37291673a1ff77c338ce131
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-09-07 20:19:32 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CLI-265
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CLI-265
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.cli.bug.BugCLI265Test::shouldParseShortOptionWithoutValue
+   --> junit.framework.AssertionFailedError: Second option has been used as value for first option. Actual: -last
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.cli.DefaultParser
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.cli.DefaultParser ===
+diff --git a/src/main/java/org/apache/commons/cli/DefaultParser.java b/src/main/java/org/apache/commons/cli/DefaultParser.java
+index 6aeaebe..f34173e 100644
+--- a/src/main/java/org/apache/commons/cli/DefaultParser.java
++++ b/src/main/java/org/apache/commons/cli/DefaultParser.java
+@@ -299,9 +299,15 @@ public class DefaultParser implements CommandLineParser
+     private boolean isShortOption(String token)
+     {
+         // short options (-S, -SV, -S=V, -SV1=V2, -S1S2)
+-        return token.startsWith("-") && token.length() >= 2 && options.hasShortOption(token.substring(1, 2));
++        if (!token.startsWith("-") || token.length() == 1)
++        {
++            return false;
++        }
+ 
+         // remove leading "-" and "=value"
++        int pos = token.indexOf("=");
++        String optName = pos == -1 ? token.substring(1) : token.substring(1, pos);
++        return options.hasShortOption(optName);
+     }
+ 
+     /**
+
+
+=== TRIGGERING TEST METHOD ===
+    public void shouldParseShortOptionWithoutValue() throws Exception {
+        String[] twoShortOptions = new String[]{"-t1", "-last"};
+
+        final CommandLine commandLine = parser.parse(options, twoShortOptions);
+
+        assertTrue(commandLine.hasOption("t1"));
+        assertNotEquals("Second option has been used as value for first option", "-last", commandLine.getOptionValue("t1"));
+        assertTrue("Second option has not been detected", commandLine.hasOption("last"));
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

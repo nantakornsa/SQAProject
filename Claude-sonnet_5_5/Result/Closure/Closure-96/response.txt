@@ -1,0 +1,44 @@
+```java
+package com.google.javascript.jscomp;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for var_args parameter type checking (Closure-96).
+ */
+public class TypeCheckVarArgsRegressionTest extends TestCase {
+
+  public void testFunctionArguments16() throws Exception {
+    Compiler compiler = new Compiler();
+    CompilerOptions options = new CompilerOptions();
+    options.checkTypes = true;
+
+    compiler.compile(
+        new JSSourceFile[] { JSSourceFile.fromCode("externs", "") },
+        new JSSourceFile[] {
+            JSSourceFile.fromCode(
+                "input",
+                "/** @param {...number} var_args */" +
+                "function g(var_args) {} g(1, true);")
+        },
+        options);
+
+    JSError[] warnings = compiler.getWarnings();
+    assertEquals("expected a warning", 1, warnings.length);
+    String description = warnings[0].description;
+    assertTrue(description,
+        description.contains(
+            "actual parameter 2 of g does not match formal parameter"));
+    assertTrue(description, description.contains("found   : boolean"));
+    assertTrue(description,
+        description.contains("required: (number|undefined)"));
+  }
+}
+```
+
+I haven't compiled or run this against the buggy and fixed revisions. Two API details are uncertain for this 2010 revision:
+
+- **Compile call:** it assumes `Compiler.compile(JSSourceFile[], JSSourceFile[], CompilerOptions)` exists with that signature.
+- **Warning level:** it assumes type warnings are reported at warning level by default when `checkTypes` is set. If they are not, the test would need an explicit warning-level setting.
+
+I wrote a standalone class rather than subclassing `TypeCheckTest`, because I wasn't sure its `testTypes` helper is accessible from outside.

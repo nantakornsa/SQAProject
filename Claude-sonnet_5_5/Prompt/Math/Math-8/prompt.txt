@@ -1,0 +1,89 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-8
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+0d057fc6dc9fac9e16c01e3647c2201281310a6a
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-03-10 12:01:00 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-942
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-942
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math3.distribution.DiscreteRealDistributionTest::testIssue942
+   --> java.lang.ArrayStoreException: org.apache.commons.math3.distribution.DiscreteRealDistributionTest$2
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math3.distribution.DiscreteDistribution
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math3.distribution.DiscreteDistribution ===
+diff --git a/src/main/java/org/apache/commons/math3/distribution/DiscreteDistribution.java b/src/main/java/org/apache/commons/math3/distribution/DiscreteDistribution.java
+index 5cb0e4382..879eb2a29 100644
+--- a/src/main/java/org/apache/commons/math3/distribution/DiscreteDistribution.java
++++ b/src/main/java/org/apache/commons/math3/distribution/DiscreteDistribution.java
+@@ -178,13 +178,13 @@ public class DiscreteDistribution<T> {
+      * @throws NotStrictlyPositiveException if {@code sampleSize} is not
+      * positive.
+      */
+-    public T[] sample(int sampleSize) throws NotStrictlyPositiveException {
++    public Object[] sample(int sampleSize) throws NotStrictlyPositiveException {
+         if (sampleSize <= 0) {
+             throw new NotStrictlyPositiveException(LocalizedFormats.NUMBER_OF_SAMPLES,
+                     sampleSize);
+         }
+ 
+-        final T[]out = (T[]) java.lang.reflect.Array.newInstance(singletons.get(0).getClass(), sampleSize);
++        final Object[] out = new Object[sampleSize];
+ 
+         for (int i = 0; i < sampleSize; i++) {
+             out[i] = sample();
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testIssue942() {
+        List<Pair<Object,Double>> list = new ArrayList<Pair<Object, Double>>();
+        list.add(new Pair<Object, Double>(new Object() {}, new Double(0)));
+        list.add(new Pair<Object, Double>(new Object() {}, new Double(1)));
+        Assert.assertEquals(1, new DiscreteDistribution<Object>(list).sample(1).length);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

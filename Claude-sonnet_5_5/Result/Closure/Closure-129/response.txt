@@ -1,0 +1,38 @@
+This is a regression test for Closure-129. It goes in `IntegrationTest`, which is where the triggering test lives, so it follows the project's existing JUnit 3 style and uses the same `test(options, original, expected)` helper.
+
+The fix makes `PrepareAst` skip cast nodes before checking whether the callee is a property get. Without the fix, the cast wrapping `((new x())['abc'])` makes the call look like a free call, so `FREE_CALL` is set wrongly. The compiler then rewrites the call in a way that changes `this` semantics, and the output no longer matches the expected `(new x()).abc()`.
+
+The test below is the triggering test, unchanged. I have not run it against the buggy and fixed versions.
+
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.jscomp.CompilerOptions.LanguageMode;
+
+public class IntegrationTest extends IntegrationTestCase {
+
+  public void testIssue937() {
+    CompilerOptions options = createCompilerOptions();
+    CompilationLevel level = CompilationLevel.SIMPLE_OPTIMIZATIONS;
+    level.setOptionsForCompilationLevel(options);
+    WarningLevel warnings = WarningLevel.DEFAULT;
+    warnings.setOptionsForWarningLevel(options);
+
+    String code = "" +
+        "console.log(" +
+            "/** @type {function():!string} */ ((new x())['abc'])() );";
+    String result = "" +
+        "console.log((new x()).abc());";
+    test(options, code, result);
+  }
+
+  @Override
+  protected CompilerOptions createCompilerOptions() {
+    CompilerOptions options = new CompilerOptions();
+    options.setLanguageIn(LanguageMode.ECMASCRIPT5);
+    return options;
+  }
+}
+```
+
+If the project's real `IntegrationTest` already defines `createCompilerOptions()` (as it does upstream), drop the override and the `LanguageMode` import and add only the `testIssue937` method to the existing class.

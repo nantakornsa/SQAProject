@@ -1,0 +1,48 @@
+```java
+package com.google.javascript.jscomp;
+
+import com.google.javascript.rhino.Node;
+
+/**
+ * Regression test for Closure-15: FlowSensitiveInlineVariables must treat a
+ * delete operation as having side effects, so it must not inline across it.
+ */
+public class FlowSensitiveInlineVariablesDeleteTest extends CompilerTestCase {
+
+  public static final String EXTERN_FUNCTIONS = "" +
+      "var print;\n" +
+      "/** @nosideeffects */ function noSFX() {} \n" +
+      "                      function hasSFX() {} \n";
+
+  @Override
+  public int getNumRepetitions() {
+    return 1;
+  }
+
+  @Override
+  protected CompilerPass getProcessor(final Compiler compiler) {
+    return new CompilerPass() {
+      @Override
+      public void process(Node externs, Node root) {
+        (new MarkNoSideEffectCalls(compiler)).process(externs, root);
+        (new FlowSensitiveInlineVariables(compiler)).process(externs, root);
+      }
+    };
+  }
+
+  private void inline(String input, String expected) {
+    test(EXTERN_FUNCTIONS, input, expected);
+  }
+
+  private void noInline(String input) {
+    inline(input, input);
+  }
+
+  public void testSimpleForInWithDelete() {
+    inline("var a,b,x = a in b; x",
+           "var a,b,x; a in b");
+    noInline("var a, b; var x = a in b; print(1); x");
+    noInline("var a,b,x = a in b; delete a[b]; x");
+  }
+}
+```

@@ -1,0 +1,130 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: JacksonDatabind
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: JacksonDatabind
+       Program: jackson-databind
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/JacksonDatabind.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jackson-databind.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/JacksonDatabind/active-bugs.csv
+Number of bugs: 110
+--------------------------------------------------------------------------------
+
+Summary for Bug: JacksonDatabind-17
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+a143c05db7a911f98f8bf59beb13cfcb7689395d
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2015-05-14 20:56:50 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+793
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/FasterXML/jackson-databind/issues/793
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - com.fasterxml.jackson.databind.node.TestJsonNode::testArrayWithDefaultTyping
+   --> com.fasterxml.jackson.databind.JsonMappingException: Unexpected token (VALUE_NUMBER_INT), expected VALUE_STRING: need JSON String that contains type id (for subtype of com.fasterxml.jackson.databind.JsonNode)
+--------------------------------------------------------------------------------
+List of modified sources:
+ - com.fasterxml.jackson.databind.ObjectMapper
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: com.fasterxml.jackson.databind.ObjectMapper ===
+diff --git a/src/main/java/com/fasterxml/jackson/databind/ObjectMapper.java b/src/main/java/com/fasterxml/jackson/databind/ObjectMapper.java
+index 7fd23f07a..643984b73 100644
+--- a/src/main/java/com/fasterxml/jackson/databind/ObjectMapper.java
++++ b/src/main/java/com/fasterxml/jackson/databind/ObjectMapper.java
+@@ -177,7 +177,7 @@ public class ObjectMapper
+                 return (t.getRawClass() == Object.class)
+                         || (!t.isConcrete()
+                                 // [databind#88] Should not apply to JSON tree models:
+-                        || TreeNode.class.isAssignableFrom(t.getRawClass()));
++                                && !TreeNode.class.isAssignableFrom(t.getRawClass()));
+ 
+             case NON_FINAL:
+                 while (t.isArrayType()) {
+@@ -521,7 +521,7 @@ public class ObjectMapper
+     
+     /*
+     /**********************************************************
+-    /* com.fasterxml.jackson.databind.Module registration, discovery
++    /* Module registration, discovery
+     /**********************************************************
+      */
+ 
+@@ -530,7 +530,7 @@ public class ObjectMapper
+      * provided by this mapper; for example, by adding providers for
+      * custom serializers and deserializers.
+      * 
+-     * @param module com.fasterxml.jackson.databind.Module to register
++     * @param module Module to register
+      */
+     public ObjectMapper registerModule(Module module)
+     {
+@@ -735,7 +735,7 @@ public class ObjectMapper
+      * 
+      * @since 2.2
+      */
+-    public ObjectMapper registerModules(Iterable<com.fasterxml.jackson.databind.Module> modules)
++    public ObjectMapper registerModules(Iterable<Module> modules)
+     {
+         for (Module module : modules) {
+             registerModule(module);
+@@ -752,7 +752,7 @@ public class ObjectMapper
+      * 
+      * @since 2.2
+      */
+-    public static List<com.fasterxml.jackson.databind.Module> findModules() {
++    public static List<Module> findModules() {
+         return findModules(null);
+     }
+ 
+@@ -765,10 +765,10 @@ public class ObjectMapper
+      * 
+      * @since 2.2
+      */
+-    public static List<com.fasterxml.jackson.databind.Module> findModules(ClassLoader classLoader)
++    public static List<Module> findModules(ClassLoader classLoader)
+     {
+-        ArrayList<com.fasterxml.jackson.databind.Module> modules = new ArrayList<Module>();
+-        ServiceLoader<com.fasterxml.jackson.databind.Module> loader = (classLoader == null) ?
++        ArrayList<Module> modules = new ArrayList<Module>();
++        ServiceLoader<Module> loader = (classLoader == null) ?
+                 ServiceLoader.load(Module.class) : ServiceLoader.load(Module.class, classLoader);
+         for (Module module : loader) {
+             modules.add(module);
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testArrayWithDefaultTyping() throws Exception
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

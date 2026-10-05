@@ -1,0 +1,54 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791143322-OteHZjjFDyoSKT6GlU39","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"```java\npackage org.jsoup.parser;\n\nimport"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" org.jsoup.Jsoup;\nimport org.jsoup.nodes.Document;\nimport org.junit.Test;\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"import static org.junit.Assert.assertEquals;\n\npublic class Jsoup59RegressionTest {\n\n    @Test"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"\n    public void handlesControlCodeInAttributeName() {\n        // Control character \\06 gets trimmed to empty string;"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" on buggy version this throws\n        // IllegalArgumentException: String must not be empty in new Attribute(\"\", ...)\n        Document"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" doc = Jsoup.parse(\"<p><a \\06=foo>One</a><a/\\06="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"bar><a foo\\06=bar>Two</a></p>\");\n        assertEquals(\"<p><a>One</a>"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"<a></a><a foo=\\\"bar\\\">Two</a></p>\", doc.body().html());\n    }\n\n    @Test\n    public"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" void handlesControlCharactersAfterTagName() {\n        Document doc = Jsoup.parse(\"<a\\06>Link"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"</a>\");\n        assertEquals(\"<a>Link</a>\", doc.body().html());\n    }\n}\n```"}}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"signature_delta","signature":"AY89a1+67QGEoX2IfI76E6xiQDgEx9amIw7l+Q8mDEOcgvQwuXJ5RakCjN6DlkDWg4d+wigfK0SOxNhIRMu/c+1qCZhg4IyLAArha8XsRgopoe7auP+7lG/VR43fF9B1Ew7pNl2XuyvcDsZnXuQ73pVMxhLhAAjhH2il66ynYkulcMelq/jr6MvQpjTN+pnm5uz5oP4cYcZ9Lyl7xTYlf0zirYcynyT3W3yjxqFTnc2qeGPA5hmAizUDDshNDjZaRYa2gYIeUJticBXRT/gH+Vq9gbfv/BZeuY0XW5hz0ZpB+r56Lrc2qhJKkO4sJqGTzCFylgD2MyuCG0Zo7hGy18j6qWSL8PMfJ1VXGBlA3vJJdWCd1brqe9Bty6H2hLodKnXLYLC/P4ysV1PvpVHrPmH5+w3anlz6UjmfxCHytHxK34KDqiEsKANIO47ArRDWTokJVqIZWkYuw5fVrv6ATrQKMjKwIDw8WucP75GqMATUJ0GLa3UM9/VJtjqPE/9pnpRVTCDjxI2GezHNKABGGoIN1QS8fZt4MleIuUMIr2K0tGKyJ2v84A+lXuq7dqLzRM7mCX0egHIPQxQjmwpIhyYDCAmPNl27OVTJYvV0FiDUuZL/uHaJwbh/AAbi1Ar6Ai6ddkZTDMmzyShDzCSHcSCQP3KhCkqTh3RnoaKt8G4enQ6L/jZD0tDGGcEyg4n4zjrO9VnCf2/DI0ASToSywu8d8qYdKKo3ogtyiTJ9ach4iOC9A+DrbMnzQOGbZoqxqc0QkGpE7hE96NXL1lEI1u+XVTlFDZuVO1kE1YGNqsvMzqw1g3mQowwkGBQDrzV6O5NQCJ9szzlDBX5o9AtgYs6RIp3rG9cfe+k="}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1080,"output_tokens":350,"output_tokens_details":{"thinking_tokens":114},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.0021225,"is_byok":false,"cost_details":{"upstream_inference_cost":0.0021225,"upstream_inference_prompt_cost":0.00081,"upstream_inference_completions_cost":0.0013125}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

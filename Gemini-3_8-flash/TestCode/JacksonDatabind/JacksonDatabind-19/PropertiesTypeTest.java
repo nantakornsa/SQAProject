@@ -1,0 +1,32 @@
+package com.fasterxml.jackson.databind.type;
+
+import java.util.Properties;
+
+import com.fasterxml.jackson.databind.BaseMapTest;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+/**
+ * Unit test to verify that {@link Properties} is handled as a {@code Map<String, String>}
+ * as per [databind#810].
+ */
+public class PropertiesTypeTest extends BaseMapTest
+{
+    private final ObjectMapper MAPPER = new ObjectMapper();
+
+    public void testPropertiesTypeParameters()
+    {
+        JavaType type = MAPPER.getTypeFactory().constructType(Properties.class);
+        assertEquals(Properties.class, type.getRawClass());
+        assertEquals(String.class, type.getKeyType().getRawClass());
+        assertEquals(String.class, type.getContentType().getRawClass());
+    }
+
+    public void testReadProperties() throws Exception
+    {
+        // When Properties is treated as Map<String, String>, integer values in JSON
+        // are deserialized as Strings, so getProperty() returns the string value instead of null.
+        Properties props = MAPPER.readValue("{\"a\":123}", Properties.class);
+        assertEquals("123", props.getProperty("a"));
+    }
+}

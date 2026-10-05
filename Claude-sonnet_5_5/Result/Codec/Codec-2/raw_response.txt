@@ -1,0 +1,75 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791034044-5LSWf6QzzaEKGf2C5sjr","type":"message","role":"assistant","container":null,"content":[],"model":"anthropic/claude-sonnet-5.5","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":4144,"output_tokens":8,"output_tokens_details":null,"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"inference_geo":"global","server_tool_use":null,"service_tier":"standard","speed":"standard"},"provider":"Claude Platform on AWS"},"model":"anthropic/claude-sonnet-5.5"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"=== ANALYSI"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"S ===\nThe"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" defect ("}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"CODEC-77"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":") is in"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" `"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"Base64`"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"'s streaming enc"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"oder"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":". When a"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" `Base64InputStream"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"` in encode mode reads an empty source, `in.read(buf)` returns -1 and `encode(buf, 0, -1)` is called. In the buggy version, the E"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"OF handling still appends a line separator when `lineLength > 0`, even though no data was encoded (`modulus == 0`). That is why the failure reads \""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"EOF expected:<-1> but was:<13>\": the stream returns CR (13) from the line separator instead of EOF. In the fixed version, the EOF handling em"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"its nothing for empty input, so the first `read()` returns -1.\n\nThe test wraps an empty `ByteArrayInputStream` in `new Base64InputStream(in, true, 76, crlf)`."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":" It asserts that `read()` returns -1 immediately and again on a repeated read. Version 2b fails the first assertion with 13. Version 2f passes. The class"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"es under test are `Base64InputStream` and `Base64`.\n\n=== TEST CODE ===\n```java\npackage org.apache.commons.codec.binary;\n\nimport java.io.ByteArrayInputStream;\nimport java.io.InputStream;\n\nimport junit.framework"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":".TestCase;\n\npublic class Base64InputStreamTest extends TestCase {\n\n    public void testBase64EmptyInputStreamEncodeReturnsEofImmediately() throws Exception {\n        byte[] crlf = new byte[] { 13, 10 };\n        In"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"putStream in = new ByteArrayInputStream(new byte[0]);\n        in = new Base64InputStream(in, true, 76, crlf);\n\n        assertEquals(\"EOF expected immediately for empty input\", -1, in.read());\n        assertE"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"text_delta","text":"quals(\"Still EOF\", -1, in.read());\n    }\n}\n```\n\n=== TARGET TEST ===\norg.apache.commons.codec.binary.Base64InputStreamTest::testBase64EmptyInputStreamEncodeReturnsEofImmediately"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":4144,"output_tokens":669,"output_tokens_details":{"thinking_tokens":0},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":{"ephemeral_5m_input_tokens":0,"ephemeral_1h_input_tokens":0},"server_tool_use":null,"service_tier":"standard","speed":"standard","cost":0.014978,"is_byok":false,"cost_details":{"upstream_inference_cost":0.014978,"upstream_inference_prompt_cost":0.008288,"upstream_inference_completions_cost":0.00669}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

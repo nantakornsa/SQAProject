@@ -1,0 +1,60 @@
+The bug is in `Parser.setOptions`, which stores `options.getRequiredOptions()` directly. Parsing removes satisfied options from that list, so it also empties the required list inside the shared `Options` object. Reusing the same `Options` for a second parse then sees no required options, and no `MissingOptionException` is thrown. The fix copies the list into a new `ArrayList`.
+
+The test makes two parse calls with the same `Options`:
+1. The first call supplies the required option and succeeds.
+2. The second call omits it and must throw `MissingOptionException`.
+
+The project uses JUnit 3 (`junit.framework.TestCase`), so the test follows that style. The class uses `PosixParser`, which exists in this version.
+
+```java
+package org.apache.commons.cli;
+
+import junit.framework.TestCase;
+
+public class ParseRequiredReuseOptionsTest extends TestCase
+{
+    public void testReuseOptionsTwice() throws Exception
+    {
+        Options opts = new Options();
+        opts.addOption(OptionBuilder.isRequired().create('v'));
+
+        GnuParser parser = new GnuParser();
+
+        // first parse: required option present, should succeed
+        CommandLine cmd = parser.parse(opts, new String[] { "-v" });
+        assertTrue(cmd.hasOption("v"));
+
+        // second parse with the same Options: required option missing
+        try
+        {
+            parser.parse(opts, new String[0]);
+            fail("MissingOptionException not thrown");
+        }
+        catch (MissingOptionException e)
+        {
+            // expected
+        }
+    }
+
+    public void testReuseOptionsTwicePosixParser() throws Exception
+    {
+        Options opts = new Options();
+        opts.addOption(OptionBuilder.isRequired().create('v'));
+
+        PosixParser parser = new PosixParser();
+
+        CommandLine cmd = parser.parse(opts, new String[] { "-v" });
+        assertTrue(cmd.hasOption("v"));
+
+        try
+        {
+            parser.parse(opts, new String[0]);
+            fail("MissingOptionException not thrown");
+        }
+        catch (MissingOptionException e)
+        {
+            // expected
+        }
+    }
+}
+```

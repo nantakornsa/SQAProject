@@ -1,0 +1,138 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Math
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Math
+       Program: commons-math
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/Math.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-math.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Math/active-bugs.csv
+Number of bugs: 106
+--------------------------------------------------------------------------------
+
+Summary for Bug: Math-7
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+424cbd201ca5969181d68cff99d8b9b77a41cefe
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2013-03-19 14:09:08 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+MATH-950
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/MATH-950
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.math3.ode.nonstiff.DormandPrince853IntegratorTest::testEventsScheduling
+   --> junit.framework.AssertionFailedError
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.math3.ode.AbstractIntegrator
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.math3.ode.AbstractIntegrator ===
+diff --git a/src/main/java/org/apache/commons/math3/ode/AbstractIntegrator.java b/src/main/java/org/apache/commons/math3/ode/AbstractIntegrator.java
+index f24f87c39..6e0237f9f 100644
+--- a/src/main/java/org/apache/commons/math3/ode/AbstractIntegrator.java
++++ b/src/main/java/org/apache/commons/math3/ode/AbstractIntegrator.java
+@@ -343,8 +343,10 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
+                 final double[] eventY = interpolator.getInterpolatedState().clone();
+ 
+                 // advance all event states to current time
+-                currentEvent.stepAccepted(eventT, eventY);
+-                isLastStep = currentEvent.stop();
++                for (final EventState state : eventsStates) {
++                    state.stepAccepted(eventT, eventY);
++                    isLastStep = isLastStep || state.stop();
++                }
+ 
+                 // handle the first part of the step, up to the event
+                 for (final StepHandler handler : stepHandlers) {
+@@ -354,22 +356,19 @@ public abstract class AbstractIntegrator implements FirstOrderIntegrator {
+                 if (isLastStep) {
+                     // the event asked to stop integration
+                     System.arraycopy(eventY, 0, y, 0, y.length);
+-                    for (final EventState remaining : occuringEvents) {
+-                        remaining.stepAccepted(eventT, eventY);
+-                    }
+                     return eventT;
+                 }
+ 
+-                boolean needReset = currentEvent.reset(eventT, eventY);
++                boolean needReset = false;
++                for (final EventState state : eventsStates) {
++                    needReset =  needReset || state.reset(eventT, eventY);
++                }
+                 if (needReset) {
+                     // some event handler has triggered changes that
+                     // invalidate the derivatives, we need to recompute them
+                     System.arraycopy(eventY, 0, y, 0, y.length);
+                     computeDerivatives(eventT, y, yDot);
+                     resetOccurred = true;
+-                    for (final EventState remaining : occuringEvents) {
+-                        remaining.stepAccepted(eventT, eventY);
+-                    }
+                     return eventT;
+                 }
+ 
+
+
+=== TRIGGERING TEST METHOD ===
+  public void testEventsScheduling() {
+
+      FirstOrderDifferentialEquations sincos = new FirstOrderDifferentialEquations() {
+
+          public int getDimension() {
+              return 2;
+          }
+
+          public void computeDerivatives(double t, double[] y, double[] yDot) {
+              yDot[0] =  y[1];
+              yDot[1] = -y[0];
+          }
+
+      };
+
+      SchedulingChecker sinChecker = new SchedulingChecker(0); // events at 0, PI, 2PI ...
+      SchedulingChecker cosChecker = new SchedulingChecker(1); // events at PI/2, 3PI/2, 5PI/2 ...
+
+      FirstOrderIntegrator integ =
+              new DormandPrince853Integrator(0.001, 1.0, 1.0e-12, 0.0);
+      integ.addEventHandler(sinChecker, 0.01, 1.0e-7, 100);
+      integ.addStepHandler(sinChecker);
+      integ.addEventHandler(cosChecker, 0.01, 1.0e-7, 100);
+      integ.addStepHandler(cosChecker);
+      double   t0 = 0.5;
+      double[] y0 = new double[] { FastMath.sin(t0), FastMath.cos(t0) };
+      double   t  = 10.0;
+      double[] y  = new double[2];
+      integ.integrate(sincos, t0, y0, t, y);
+
+  }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

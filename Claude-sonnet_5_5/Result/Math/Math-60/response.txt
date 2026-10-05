@@ -1,0 +1,44 @@
+```java
+package org.apache.commons.math.distribution;
+
+import junit.framework.TestCase;
+
+/**
+ * Regression test for MATH-414: NormalDistributionImpl.cumulativeProbability
+ * must not throw a ConvergenceException for extreme values.
+ */
+public class NormalDistributionExtremeValuesRegressionTest extends TestCase {
+
+    public NormalDistributionExtremeValuesRegressionTest(String name) {
+        super(name);
+    }
+
+    public void testExtremeValues() throws Exception {
+        NormalDistribution distribution = new NormalDistributionImpl(0, 1);
+        for (int i = 0; i < 100; i++) { // make sure no convergence exception
+            double lowerTail = distribution.cumulativeProbability(-i);
+            double upperTail = distribution.cumulativeProbability(i);
+            if (i < 9) { // make sure not top-coded
+                assertTrue(lowerTail > 0.0d);
+                assertTrue(upperTail < 1.0d);
+            } else { // make sure top coding not reversed
+                assertTrue(lowerTail < 0.00001);
+                assertTrue(upperTail > 0.99999);
+            }
+        }
+
+        assertEquals(1, distribution.cumulativeProbability(Double.MAX_VALUE), 0);
+        assertEquals(0, distribution.cumulativeProbability(-Double.MAX_VALUE), 0);
+        assertEquals(1, distribution.cumulativeProbability(Double.POSITIVE_INFINITY), 0);
+        assertEquals(0, distribution.cumulativeProbability(Double.NEGATIVE_INFINITY), 0);
+    }
+
+    public void testExtremeValuesNonStandard() throws Exception {
+        NormalDistribution distribution = new NormalDistributionImpl(2, 3);
+        assertEquals(1, distribution.cumulativeProbability(Double.MAX_VALUE), 0);
+        assertEquals(0, distribution.cumulativeProbability(-Double.MAX_VALUE), 0);
+        assertEquals(1, distribution.cumulativeProbability(Double.POSITIVE_INFINITY), 0);
+        assertEquals(0, distribution.cumulativeProbability(Double.NEGATIVE_INFINITY), 0);
+    }
+}
+```

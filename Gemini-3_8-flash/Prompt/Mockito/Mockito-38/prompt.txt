@@ -1,0 +1,87 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Mockito
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Mockito
+       Program: mockito
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/Mockito.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/mockito.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Mockito/active-bugs.csv
+Number of bugs: 38
+--------------------------------------------------------------------------------
+
+Summary for Bug: Mockito-38
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+c1f2c4e6b5bab4cfc004f22999e11e8ac140d377
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2009-07-09 11:23:58 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+79
+--------------------------------------------------------------------------------
+Bug report url:
+https://code.google.com/archive/p/mockito/issues/79
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.mockito.internal.verification.argumentmatching.ArgumentMatchingToolTest::shouldWorkFineWhenGivenArgIsNull
+   --> java.lang.NullPointerException
+ - org.mockitousage.bugs.ActualInvocationHasNullArgumentNPEBugTest::shouldAllowPassingNullArgument
+   --> java.lang.NullPointerException
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.mockito.internal.verification.argumentmatching.ArgumentMatchingTool
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.mockito.internal.verification.argumentmatching.ArgumentMatchingTool ===
+diff --git a/src/org/mockito/internal/verification/argumentmatching/ArgumentMatchingTool.java b/src/org/mockito/internal/verification/argumentmatching/ArgumentMatchingTool.java
+index 671fbc539..9d4f834d2 100644
+--- a/src/org/mockito/internal/verification/argumentmatching/ArgumentMatchingTool.java
++++ b/src/org/mockito/internal/verification/argumentmatching/ArgumentMatchingTool.java
+@@ -45,6 +45,6 @@ public class ArgumentMatchingTool {
+     }
+ 
+     private boolean toStringEquals(Matcher m, Object arg) {
+-        return StringDescription.toString(m).equals(arg.toString());
++        return StringDescription.toString(m).equals(arg == null? "null" : arg.toString());
+     }
+ }
+
+
+=== TRIGGERING TEST METHOD ===
+    public void shouldWorkFineWhenGivenArgIsNull() {
+        //when
+        Integer[] suspicious = tool.getSuspiciouslyNotMatchingArgsIndexes((List) Arrays.asList(new Equals(20)), new Object[] {null});
+        
+        //then
+        assertEquals(0, suspicious.length);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

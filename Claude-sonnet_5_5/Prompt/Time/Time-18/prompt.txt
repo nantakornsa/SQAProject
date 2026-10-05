@@ -1,0 +1,96 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Time
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Time
+       Program: joda-time
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/Time.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/joda-time.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Time/active-bugs.csv
+Number of bugs: 26
+--------------------------------------------------------------------------------
+
+Summary for Bug: Time-18
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+b609d7d66d180f2eb537b27f5d605d0596e096ce
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2011-12-04 12:10:35 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+130
+--------------------------------------------------------------------------------
+Bug report url:
+https://sourceforge.net/p/joda-time/bugs/130
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.joda.time.chrono.TestGJChronology::testLeapYearRulesConstruction
+   --> org.joda.time.IllegalFieldValueException: Value 29 for dayOfMonth must be in the range [1,28]
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.joda.time.chrono.GJChronology
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.joda.time.chrono.GJChronology ===
+diff --git a/src/main/java/org/joda/time/chrono/GJChronology.java b/src/main/java/org/joda/time/chrono/GJChronology.java
+index 29e559d4..0a19aa64 100644
+--- a/src/main/java/org/joda/time/chrono/GJChronology.java
++++ b/src/main/java/org/joda/time/chrono/GJChronology.java
+@@ -361,9 +361,21 @@ public final class GJChronology extends AssembledChronology {
+ 
+         // Assume date is Gregorian.
+         long instant;
++        try {
+             instant = iGregorianChronology.getDateTimeMillis
+                 (year, monthOfYear, dayOfMonth,
+                  hourOfDay, minuteOfHour, secondOfMinute, millisOfSecond);
++        } catch (IllegalFieldValueException ex) {
++            if (monthOfYear != 2 || dayOfMonth != 29) {
++                throw ex;
++            }
++            instant = iGregorianChronology.getDateTimeMillis
++                (year, monthOfYear, 28,
++                 hourOfDay, minuteOfHour, secondOfMinute, millisOfSecond);
++            if (instant >= iCutoverMillis) {
++                throw ex;
++            }
++        }
+         if (instant < iCutoverMillis) {
+             // Maybe it's Julian.
+             instant = iJulianChronology.getDateTimeMillis
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testLeapYearRulesConstruction() {
+        // 1500 not leap in Gregorian, but is leap in Julian
+        DateMidnight dt = new DateMidnight(1500, 2, 29, GJChronology.getInstanceUTC());
+        assertEquals(dt.getYear(), 1500);
+        assertEquals(dt.getMonthOfYear(), 2);
+        assertEquals(dt.getDayOfMonth(), 29);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

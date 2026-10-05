@@ -1,0 +1,44 @@
+```java
+package org.apache.commons.jxpath.ri.compiler;
+
+import java.util.HashMap;
+
+import junit.framework.TestCase;
+
+import org.apache.commons.jxpath.JXPathContext;
+
+/**
+ * Regression test for JXPATH-93: relational expressions on empty node sets
+ * must evaluate to false.
+ */
+public class CoreOperationRelationalEmptyNodeSetTest extends TestCase {
+
+    private JXPathContext context;
+
+    protected void setUp() throws Exception {
+        super.setUp();
+        context = JXPathContext.newContext(new HashMap());
+        context.getVariables().declareVariable("array", new int[] { 1, 2 });
+    }
+
+    private void assertFalseValue(String xpath) {
+        Object value = context.getValue(xpath, Boolean.class);
+        assertEquals("Evaluating <" + xpath + ">", Boolean.FALSE, value);
+    }
+
+    public void testEmptyNodeSetOperations() {
+        assertFalseValue("/idonotexist = 0");
+        assertFalseValue("/idonotexist != 0");
+        assertFalseValue("/idonotexist < 0");
+        assertFalseValue("/idonotexist > 0");
+        assertFalseValue("/idonotexist >= 0");
+        assertFalseValue("/idonotexist <= 0");
+        assertFalseValue("$array[position() < 1] = 0");
+        assertFalseValue("$array[position() < 1] != 0");
+        assertFalseValue("$array[position() < 1] < 0");
+        assertFalseValue("$array[position() < 1] > 0");
+        assertFalseValue("$array[position() < 1] >= 0");
+        assertFalseValue("$array[position() < 1] <= 0");
+    }
+}
+```

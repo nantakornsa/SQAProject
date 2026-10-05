@@ -1,0 +1,28 @@
+package com.google.javascript.jscomp;
+
+import com.google.javascript.jscomp.CompilerOptions.LanguageMode;
+
+public class ClaudeIntegrationTest extends IntegrationTestCase {
+
+  public void testIssue937() {
+    CompilerOptions options = createCompilerOptions();
+    CompilationLevel level = CompilationLevel.SIMPLE_OPTIMIZATIONS;
+    level.setOptionsForCompilationLevel(options);
+    WarningLevel warnings = WarningLevel.DEFAULT;
+    warnings.setOptionsForWarningLevel(options);
+
+    String code = "" +
+        "console.log(" +
+            "/** @type {function():!string} */ ((new x())['abc'])() );";
+    String result = "" +
+        "console.log((new x()).abc());";
+    test(options, code, result);
+  }
+
+  @Override
+  protected CompilerOptions createCompilerOptions() {
+    CompilerOptions options = new CompilerOptions();
+    options.setLanguageIn(LanguageMode.ECMASCRIPT5);
+    return options;
+  }
+}

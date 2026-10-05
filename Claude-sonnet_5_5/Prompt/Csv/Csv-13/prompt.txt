@@ -1,0 +1,196 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Csv
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Csv
+       Program: commons-csv
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Csv/Csv.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/commons-csv.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Csv/active-bugs.csv
+Number of bugs: 16
+--------------------------------------------------------------------------------
+
+Summary for Bug: Csv-13
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+f8b80e83417c3c7eeed1282118f64fa0e85c4787
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2016-01-19 02:34:19 +0000
+--------------------------------------------------------------------------------
+Bug report id:
+CSV-168
+--------------------------------------------------------------------------------
+Bug report url:
+https://issues.apache.org/jira/browse/CSV-168
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.apache.commons.csv.CSVPrinterTest::testMySqlNullOutput
+   --> junit.framework.AssertionFailedError: expected:<"NULL"	[NULL]
+ - org.apache.commons.csv.CSVPrinterTest::testMySqlNullStringDefault
+   --> junit.framework.AssertionFailedError: expected:<\N> but was:<null>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.apache.commons.csv.CSVFormat
+ - org.apache.commons.csv.CSVPrinter
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.apache.commons.csv.CSVFormat ===
+diff --git a/src/main/java/org/apache/commons/csv/CSVFormat.java b/src/main/java/org/apache/commons/csv/CSVFormat.java
+index 847f30ad..8c71f3af 100644
+--- a/src/main/java/org/apache/commons/csv/CSVFormat.java
++++ b/src/main/java/org/apache/commons/csv/CSVFormat.java
+@@ -316,7 +316,7 @@ public final class CSVFormat implements Serializable {
+      *      http://dev.mysql.com/doc/refman/5.1/en/load-data.html</a>
+      */
+     public static final CSVFormat MYSQL = DEFAULT.withDelimiter(TAB).withEscape(BACKSLASH).withIgnoreEmptyLines(false)
+-            .withQuote(null).withRecordSeparator(LF);
++            .withQuote(null).withRecordSeparator(LF).withNullString("\\N");
+ 
+     /**
+      * Returns true if the given character is a line break character.
+
+=== MODIFIED SOURCE: org.apache.commons.csv.CSVPrinter ===
+diff --git a/src/main/java/org/apache/commons/csv/CSVPrinter.java b/src/main/java/org/apache/commons/csv/CSVPrinter.java
+index ac4234bb..0e9a2dee 100644
+--- a/src/main/java/org/apache/commons/csv/CSVPrinter.java
++++ b/src/main/java/org/apache/commons/csv/CSVPrinter.java
+@@ -136,7 +136,9 @@ public final class CSVPrinter implements Flushable, Closeable {
+         if (!newRecord) {
+             out.append(format.getDelimiter());
+         }
+-        if (format.isQuoteCharacterSet()) {
++        if (object == null) {
++            out.append(value);
++        } else if (format.isQuoteCharacterSet()) {
+             // the original object is needed so can check for Number
+             printAndQuote(object, value, offset, len);
+         } else if (format.isEscapeCharacterSet()) {
+
+
+=== TRIGGERING TEST METHOD ===
+    public void testMySqlNullOutput() throws IOException {
+        Object[] s = new String[] { "NULL", null };
+        CSVFormat format = CSVFormat.MYSQL.withQuote('"').withNullString("NULL").withQuoteMode(QuoteMode.NON_NUMERIC);
+        StringWriter writer = new StringWriter();
+        CSVPrinter printer = new CSVPrinter(writer, format);
+        printer.printRecord(s);
+        printer.close();
+        String expected = "\"NULL\"\tNULL\n";
+        assertEquals(expected, writer.toString());
+        String[] record0 = toFirstRecordValues(expected, format);
+        assertArrayEquals(new Object[2], record0);
+
+        s = new String[] { "\\N", null };
+        format = CSVFormat.MYSQL.withNullString("\\N");
+        writer = new StringWriter();
+        printer = new CSVPrinter(writer, format);
+        printer.printRecord(s);
+        printer.close();
+        expected = "\\\\N\t\\N\n";
+        assertEquals(expected, writer.toString());
+        record0 = toFirstRecordValues(expected, format);
+        assertArrayEquals(expectNulls(s, format), record0);
+
+        s = new String[] { "\\N", "A" };
+        format = CSVFormat.MYSQL.withNullString("\\N");
+        writer = new StringWriter();
+        printer = new CSVPrinter(writer, format);
+        printer.printRecord(s);
+        printer.close();
+        expected = "\\\\N\tA\n";
+        assertEquals(expected, writer.toString());
+        record0 = toFirstRecordValues(expected, format);
+        assertArrayEquals(expectNulls(s, format), record0);
+
+        s = new String[] { "\n", "A" };
+        format = CSVFormat.MYSQL.withNullString("\\N");
+        writer = new StringWriter();
+        printer = new CSVPrinter(writer, format);
+        printer.printRecord(s);
+        printer.close();
+        expected = "\\n\tA\n";
+        assertEquals(expected, writer.toString());
+        record0 = toFirstRecordValues(expected, format);
+        assertArrayEquals(expectNulls(s, format), record0);
+
+        s = new String[] { "", null };
+        format = CSVFormat.MYSQL.withNullString("NULL");
+        writer = new StringWriter();
+        printer = new CSVPrinter(writer, format);
+        printer.printRecord(s);
+        printer.close();
+        expected = "\tNULL\n";
+        assertEquals(expected, writer.toString());
+        record0 = toFirstRecordValues(expected, format);
+        assertArrayEquals(expectNulls(s, format), record0);
+
+        s = new String[] { "", null };
+        format = CSVFormat.MYSQL;
+        writer = new StringWriter();
+        printer = new CSVPrinter(writer, format);
+        printer.printRecord(s);
+        printer.close();
+        expected = "\t\\N\n";
+        assertEquals(expected, writer.toString());
+        record0 = toFirstRecordValues(expected, format);
+        assertArrayEquals(expectNulls(s, format), record0);
+
+        s = new String[] { "\\N", "", "\u000e,\\\r" };
+        format = CSVFormat.MYSQL;
+        writer = new StringWriter();
+        printer = new CSVPrinter(writer, format);
+        printer.printRecord(s);
+        printer.close();
+        expected = "\\\\N\t\t\u000e,\\\\\\r\n";
+        assertEquals(expected, writer.toString());
+        record0 = toFirstRecordValues(expected, format);
+        assertArrayEquals(expectNulls(s, format), record0);
+
+        s = new String[] { "NULL", "\\\r" };
+        format = CSVFormat.MYSQL;
+        writer = new StringWriter();
+        printer = new CSVPrinter(writer, format);
+        printer.printRecord(s);
+        printer.close();
+        expected = "NULL\t\\\\\\r\n";
+        assertEquals(expected, writer.toString());
+        record0 = toFirstRecordValues(expected, format);
+        assertArrayEquals(expectNulls(s, format), record0);
+
+        s = new String[] { "\\\r" };
+        format = CSVFormat.MYSQL;
+        writer = new StringWriter();
+        printer = new CSVPrinter(writer, format);
+        printer.printRecord(s);
+        printer.close();
+        expected = "\\\\\\r\n";
+        assertEquals(expected, writer.toString());
+        record0 = toFirstRecordValues(expected, format);
+        assertArrayEquals(expectNulls(s, format), record0);
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```

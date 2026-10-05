@@ -1,0 +1,72 @@
+event: message_start
+data: {"type":"message_start","message":{"id":"gen-1791184579-JcRY4qV7opx0vqvkVRkK","type":"message","role":"assistant","container":null,"content":[],"model":"google/gemini-3.8-flash","stop_reason":null,"stop_details":null,"stop_sequence":null,"usage":{"input_tokens":0,"output_tokens":0,"output_tokens_details":null,"cache_creation_input_tokens":null,"cache_read_input_tokens":null,"cache_creation":null,"inference_geo":null,"server_tool_use":null,"service_tier":null,"speed":"standard"},"provider":"Google"},"model":"google/gemini-3.8-flash"}
+
+event: content_block_start
+data: {"type":"content_block_start","index":0,"content_block":{"type":"thinking","thinking":"","signature":""}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Investigating Bug Source**\n\nI'm currently pinpointing the exact line of code causing the issue, focusing my investigation on `SimpleType.withContentValueHandler` and its related `refine` and `_narrow` methods. The `SimpleType` constructor parameters are under scrutiny for a potential discrepancy.\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":0,"delta":{"type":"thinking_delta","thinking":"**Analyzing Error Message**\n\nI've identified the problematic test, `Objecid1083Test::testSimple`, and the specific `UnrecognizedPropertyException`. It seems `JsonMapSchema` is not recognizing the inherited `name` property from `JsonSchema` due to the type information.\n\n"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":0}
+
+event: content_block_start
+data: {"type":"content_block_start","index":1,"content_block":{"type":"text","text":"","citations":[]}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```java\npackage com."}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"fasterxml.jackson.databind.objectid;\n\nimport java.util.List;\n\nimport com.fasterxml.jackson"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".annotation.JsonTypeInfo;\nimport com.fasterxml.jackson.databind.BaseMapTest;\nimport com"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":".fasterxml.jackson.databind.ObjectMapper;\n\npublic class Issue1083Test extends BaseMapTest {\n\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"    static class JsonRoot {\n        public List<JsonSchema> schemas;\n    }\n\n    @JsonType"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Info(\n            use = JsonTypeInfo.Id.NAME,\n            include = JsonTypeInfo.As.PROPERTY,\n            "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"property = \"type\",\n            defaultImpl = JsonMapSchema.class\n    )\n    abstract static class Json"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Schema {\n        public String name;\n    }\n\n    static class JsonMapSchema extends JsonSchema {\n    "}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"}\n\n    public void testPolymorphicSubclassInheritedProperties() throws Exception {\n        final ObjectMapper mapper ="}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":" new ObjectMapper();\n        final String json = aposToQuotes(\"{'schemas': [{\\n\"\n                + \"  'name': 'Food"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Mart'\\n\"\n                + \"}]}\\n\");\n        JsonRoot root = mapper.readValue(json, Json"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"Root.class);\n        assertNotNull(root);\n        assertNotNull(root.schemas);\n        assertEquals(1"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":", root.schemas.size());\n        assertTrue(root.schemas.get(0) instanceof JsonMapSchema);"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"\n        assertEquals(\"FoodMart\", root.schemas.get(0).name);\n    }\n}\n"}}
+
+event: content_block_delta
+data: {"type":"content_block_delta","index":1,"delta":{"type":"text_delta","text":"```"}}
+
+event: content_block_stop
+data: {"type":"content_block_stop","index":1}
+
+event: message_delta
+data: {"type":"message_delta","delta":{"container":null,"stop_details":null,"stop_reason":"end_turn","stop_sequence":null},"usage":{"input_tokens":1075,"output_tokens":810,"output_tokens_details":{"thinking_tokens":482},"cache_creation_input_tokens":0,"cache_read_input_tokens":0,"cache_creation":null,"server_tool_use":null,"service_tier":"provisioned","speed":"standard","cost":0.00384375,"is_byok":false,"cost_details":{"upstream_inference_cost":0.00384375,"upstream_inference_prompt_cost":0.00080625,"upstream_inference_completions_cost":0.0030375}},"context_management":null}
+
+event: message_stop
+data: {"type":"message_stop"}
+

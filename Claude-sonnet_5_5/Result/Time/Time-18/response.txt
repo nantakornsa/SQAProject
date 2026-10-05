@@ -1,0 +1,42 @@
+The test constructs a date that exists only in the Julian calendar: 1500-02-29. 1500 is a leap year in Julian but not in Gregorian, and it falls before the default cutover (1582). On the buggy version, `GJChronology` first asks the Gregorian chronology for that date and throws `IllegalFieldValueException`. The fix catches the exception and falls back to Julian when the date is before the cutover.
+
+I added a second test for a case that must still fail: 1900-02-29 is after the cutover and not a leap year, so it should throw `IllegalFieldValueException` on both versions. I did not run these tests against either version.
+
+```java
+package org.joda.time.chrono;
+
+import junit.framework.TestCase;
+
+import org.joda.time.DateMidnight;
+import org.joda.time.DateTimeZone;
+import org.joda.time.IllegalFieldValueException;
+
+/**
+ * Regression test for GJChronology leap year handling during construction
+ * of dates that are valid only in the Julian calendar.
+ */
+public class TestGJChronologyLeapYearRegression extends TestCase {
+
+    public TestGJChronologyLeapYearRegression(String name) {
+        super(name);
+    }
+
+    public void testLeapYearRulesConstruction() {
+        // 1500 not leap in Gregorian, but is leap in Julian
+        DateMidnight dt = new DateMidnight(1500, 2, 29, GJChronology.getInstanceUTC());
+        assertEquals(1500, dt.getYear());
+        assertEquals(2, dt.getMonthOfYear());
+        assertEquals(29, dt.getDayOfMonth());
+    }
+
+    public void testInvalidLeapDayAfterCutoverStillFails() {
+        // 1900 is not a leap year in Gregorian, and is after the cutover
+        try {
+            new DateMidnight(1900, 2, 29, GJChronology.getInstance(DateTimeZone.UTC));
+            fail();
+        } catch (IllegalFieldValueException ex) {
+            // expected
+        }
+    }
+}
+```

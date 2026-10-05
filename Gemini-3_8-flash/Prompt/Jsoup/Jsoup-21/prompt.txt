@@ -1,0 +1,137 @@
+You are an expert Java testing engineer.
+
+Generate a Java regression test for the following Defects4J bug.
+
+Requirements:
+1. The test must fail on the buggy version.
+2. The test must pass on the fixed version.
+3. Do not modify production code.
+4. Follow the project's existing test framework and coding style.
+5. Return complete compilable Java test code only.
+
+=== BUG INFORMATION ===
+Determine revision date.................................................... OK
+Summary of configuration for Project: Jsoup
+--------------------------------------------------------------------------------
+    Script dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework
+      Base dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j
+    Major root: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/major
+      Repo dir: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos
+--------------------------------------------------------------------------------
+    Project ID: Jsoup
+       Program: jsoup
+    Build file: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/Jsoup.build.xml
+--------------------------------------------------------------------------------
+           Vcs: Vcs::Git
+    Repository: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/project_repos/jsoup.git
+     Commit db: /Users/suphawat/Documents/SQA/defect4j_test/defects4j/framework/projects/Jsoup/active-bugs.csv
+Number of bugs: 93
+--------------------------------------------------------------------------------
+
+Summary for Bug: Jsoup-21
+--------------------------------------------------------------------------------
+Revision ID (fixed version):
+249e5a8aae9324cc6c8caf5303a607056b15a9da
+--------------------------------------------------------------------------------
+Revision date (fixed version):
+2012-04-02 19:40:56 -0700
+--------------------------------------------------------------------------------
+Bug report id:
+179
+--------------------------------------------------------------------------------
+Bug report url:
+https://github.com/jhy/jsoup/issues/179
+--------------------------------------------------------------------------------
+Root cause in triggering tests:
+ - org.jsoup.select.SelectorTest::handlesCommasInSelector
+   --> java.util.regex.PatternSyntaxException: Unclosed character class near index 3
+ - org.jsoup.select.SelectorTest::mixCombinatorGroup
+   --> junit.framework.AssertionFailedError: expected:<2> but was:<3>
+--------------------------------------------------------------------------------
+List of modified sources:
+ - org.jsoup.select.CombiningEvaluator
+ - org.jsoup.select.QueryParser
+--------------------------------------------------------------------------------
+
+=== BUGGY/FIXED SOURCE DIFF ===
+=== MODIFIED SOURCE: org.jsoup.select.CombiningEvaluator ===
+diff --git a/src/main/java/org/jsoup/select/CombiningEvaluator.java b/src/main/java/org/jsoup/select/CombiningEvaluator.java
+index bd8460a4..781acc67 100644
+--- a/src/main/java/org/jsoup/select/CombiningEvaluator.java
++++ b/src/main/java/org/jsoup/select/CombiningEvaluator.java
+@@ -61,6 +61,9 @@ abstract class CombiningEvaluator extends Evaluator {
+                 this.evaluators.addAll(evaluators);
+         }
+ 
++        Or() {
++            super();
++        }
+ 
+         public void add(Evaluator e) {
+             evaluators.add(e);
+
+=== MODIFIED SOURCE: org.jsoup.select.QueryParser ===
+diff --git a/src/main/java/org/jsoup/select/QueryParser.java b/src/main/java/org/jsoup/select/QueryParser.java
+index 9ff43bad..417cb227 100644
+--- a/src/main/java/org/jsoup/select/QueryParser.java
++++ b/src/main/java/org/jsoup/select/QueryParser.java
+@@ -55,15 +55,7 @@ class QueryParser {
+             // hierarchy and extras
+             boolean seenWhite = tq.consumeWhitespace();
+ 
+-            if (tq.matchChomp(",")) {
+-                CombiningEvaluator.Or or = new CombiningEvaluator.Or(evals);
+-                evals.clear();
+-                evals.add(or);
+-                while (!tq.isEmpty()) {
+-                    String subQuery = tq.chompTo(",");
+-                    or.add(parse(subQuery));
+-                }
+-            } else if (tq.matchesAny(combinators)) {
++            if (tq.matchesAny(combinators)) {
+                 combinator(tq.consume());
+             } else if (seenWhite) {
+                 combinator(' ');
+@@ -98,6 +90,18 @@ class QueryParser {
+             evals.add(new CombiningEvaluator.And(f, new StructuralEvaluator.ImmediatePreviousSibling(e)));
+         else if (combinator == '~')
+             evals.add(new CombiningEvaluator.And(f, new StructuralEvaluator.PreviousSibling(e)));
++        else if (combinator == ',') { // group or
++            CombiningEvaluator.Or or;
++            if (e instanceof CombiningEvaluator.Or) {
++                or = (CombiningEvaluator.Or) e;
++                or.add(f);
++            } else {
++                or = new CombiningEvaluator.Or();
++                or.add(e);
++                or.add(f);
++            }
++            evals.add(or);
++        }
+         else
+             throw new Selector.SelectorParseException("Unknown combinator: " + combinator);
+     }
+
+
+=== TRIGGERING TEST METHOD ===
+    @Test public void handlesCommasInSelector() {
+        Document doc = Jsoup.parse("<p name='1,2'>One</p><div>Two</div><ol><li>123</li><li>Text</li></ol>");
+
+        Elements ps = doc.select("[name=1,2]");
+        assertEquals(1, ps.size());
+
+        Elements containers = doc.select("div, li:matches([0-9,]+)");
+        assertEquals(2, containers.size());
+        assertEquals("div", containers.get(0).tagName());
+        assertEquals("li", containers.get(1).tagName());
+        assertEquals("123", containers.get(1).text());
+    }
+
+=== OUTPUT ===
+=== TEST CODE ===
+```java
+<complete Java test code>
+```
+
+=== EFFICIENCY NOTE ===
+Do not deliberate at length. Keep any internal reasoning very brief and write the final test code directly.

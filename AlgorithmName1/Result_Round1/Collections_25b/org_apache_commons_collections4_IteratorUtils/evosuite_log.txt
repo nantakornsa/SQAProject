@@ -1,0 +1,87 @@
+* EvoSuite 1.1.0
+* Going to generate test cases for class: org.apache.commons.collections4.IteratorUtils
+* Starting Client-0
+* Connecting to master process on port 9922
+* Analyzing classpath: 
+  - /home/user/sqa_project/algorithm1_wts/workdir/Collections_25b/target/classes
+[MASTER] 18:04:38.507 [logback-1] WARN  InheritanceTree - Class not in inheritance graph: java.io.ObjectInputFilter
+[MASTER] 18:04:38.555 [logback-1] WARN  InheritanceTree - Class not in inheritance graph: java.util.Locale$IsoCountryCode
+[MASTER] 18:04:38.565 [logback-1] WARN  InheritanceTree - Class not in inheritance graph: java.lang.module.ModuleFinder
+* Finished analyzing classpath
+* Generating tests for class org.apache.commons.collections4.IteratorUtils
+* Test criteria:
+  - Branch Coverage
+  - Line Coverage
+  - Exception
+  - Mutation testing (weak)
+* Total number of test goals for DYNAMOSA: 600
+* Using seed 1
+* Starting evolution
+* Initial Number of Goals in DynaMOSA = 272 / 600
+[MASTER] 18:04:39.522 [logback-2] ERROR TestCluster - Failed to check cache for java.util.Hashtable<K, V> : Type points to itself
+[MASTER] 18:04:39.524 [logback-2] ERROR TestCluster - Failed to check cache for java.util.ArrayDeque<E> : Type points to itself
+[MASTER] 18:04:39.524 [logback-2] ERROR TestCluster - Failed to check cache for java.util.ArrayList<E> : Type points to itself
+[MASTER] 18:04:39.524 [logback-2] ERROR TestCluster - Failed to check cache for java.util.EnumSet<E> : Type points to itself
+[MASTER] 18:04:39.524 [logback-2] ERROR TestCluster - Failed to check cache for java.util.HashSet<E> : Type points to itself
+[MASTER] 18:04:39.525 [logback-2] ERROR TestCluster - Failed to check cache for java.util.LinkedHashSet<E> : Type points to itself
+[MASTER] 18:04:39.525 [logback-2] ERROR TestCluster - Failed to check cache for java.util.LinkedList<E> : Type points to itself
+[MASTER] 18:04:39.525 [logback-2] ERROR TestCluster - Failed to check cache for java.util.PriorityQueue<E> : Type points to itself
+[MASTER] 18:04:39.525 [logback-2] ERROR TestCluster - Failed to check cache for java.util.ServiceLoader<S> : Type points to itself
+[MASTER] 18:04:39.525 [logback-2] ERROR TestCluster - Failed to check cache for java.util.Stack<E> : Type points to itself
+[MASTER] 18:04:39.525 [logback-2] ERROR TestCluster - Failed to check cache for java.util.TreeSet<E> : Type points to itself
+[MASTER] 18:04:39.525 [logback-2] ERROR TestCluster - Failed to check cache for java.util.Vector<E> : Type points to itself
+[MASTER] 18:04:39.525 [logback-2] ERROR TestCluster - Failed to check cache for java.util.HashMap<K, V> : Type points to itself
+[MASTER] 18:04:40.211 [logback-2] ERROR TestCluster - Failed to check cache for org.apache.commons.collections4.Transformer<I, O> : Type points to itself
+[MASTER] 18:04:48.125 [logback-2] ERROR TestCluster - Failed to check cache for java.util.Comparator<T> : Type points to itself
+[MASTER] 18:04:49.264 [logback-2] ERROR TestCluster - Failed to check cache for java.util.Iterator<E> : Type points to itself
+[MASTER] 18:05:05.264 [logback-2] ERROR TestCluster - Failed to check cache for org.apache.commons.collections4.Closure<T> : Type points to itself
+* Computation finished
+[MASTER] 18:05:29.283 [logback-2] ERROR ClientNodeImpl - Error when generating tests for: org.apache.commons.collections4.IteratorUtils with seed 1. Configuration id : null
+java.lang.RuntimeException: not supported: class org.evosuite.utils.generic.WildcardTypeImpl
+	at com.googlecode.gentyref.GenericTypeReflector.erase(GenericTypeReflector.java:44)
+	at org.evosuite.utils.generic.GenericClass.satisfiesBoundaries(GenericClass.java:1613)
+	at org.evosuite.seeding.CastClassManager.getAssignableClasses(CastClassManager.java:394)
+	at org.evosuite.seeding.CastClassManager.selectCastClass(CastClassManager.java:489)
+	at org.evosuite.utils.generic.GenericClass.getGenericWildcardInstantiation(GenericClass.java:677)
+	at org.evosuite.utils.generic.GenericClass.getGenericInstantiation(GenericClass.java:573)
+	at org.evosuite.utils.generic.GenericClass.getGenericTypeVariableInstantiation(GenericClass.java:621)
+	at org.evosuite.utils.generic.GenericClass.getGenericInstantiation(GenericClass.java:578)
+	at org.evosuite.utils.generic.GenericClass.getGenericInstantiation(GenericClass.java:557)
+	at org.evosuite.utils.generic.GenericAccessibleObject.getGenericInstantiation(GenericAccessibleObject.java:277)
+	at org.evosuite.setup.TestCluster.getRandomGenerator(TestCluster.java:1004)
+	at org.evosuite.testcase.TestFactory.attemptObjectGeneration(TestFactory.java:845)
+	at org.evosuite.testcase.TestFactory.createOrReuseObjectVariable(TestFactory.java:1652)
+	at org.evosuite.testcase.TestFactory.createOrReuseVariable(TestFactory.java:1390)
+	at org.evosuite.testcase.TestFactory.satisfyParameters(TestFactory.java:2424)
+	at org.evosuite.testcase.TestFactory.addMethod(TestFactory.java:501)
+	at org.evosuite.testcase.TestFactory.createObject(TestFactory.java:1345)
+	at org.evosuite.testcase.TestFactory.attemptGeneration(TestFactory.java:790)
+	at org.evosuite.testcase.TestFactory.createVariable(TestFactory.java:1501)
+	at org.evosuite.testcase.TestFactory.createOrReuseVariable(TestFactory.java:1416)
+	at org.evosuite.testcase.TestFactory.satisfyParameters(TestFactory.java:2424)
+	at org.evosuite.testcase.TestFactory.addMethod(TestFactory.java:501)
+	at org.evosuite.testcase.TestFactory.appendStatement(TestFactory.java:604)
+	at org.evosuite.testcase.TestChromosome.crossOver(TestChromosome.java:175)
+	at org.evosuite.testcase.TestChromosome.crossOver(TestChromosome.java:66)
+	at org.evosuite.ga.operators.crossover.SinglePointRelativeCrossOver.crossOver(SinglePointRelativeCrossOver.java:61)
+	at org.evosuite.ga.metaheuristics.mosa.AbstractMOSA.breedNextGeneration(AbstractMOSA.java:155)
+	at org.evosuite.ga.metaheuristics.mosa.DynaMOSA.evolve(DynaMOSA.java:66)
+	at org.evosuite.ga.metaheuristics.mosa.DynaMOSA.generateSolution(DynaMOSA.java:167)
+	at org.evosuite.ga.metaheuristics.TestSuiteAdapter.generateSolution(TestSuiteAdapter.java:114)
+	at org.evosuite.strategy.MOSuiteStrategy.generateTests(MOSuiteStrategy.java:123)
+	at org.evosuite.TestSuiteGenerator.generateTests(TestSuiteGenerator.java:630)
+	at org.evosuite.TestSuiteGenerator.generateTestSuite(TestSuiteGenerator.java:205)
+	at org.evosuite.rmi.service.ClientNodeImpl.lambda$startNewSearch$0(ClientNodeImpl.java:150)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:515)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1128)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:628)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+[MASTER] 18:05:29.396 [main] ERROR SearchStatistics - No obtained value for output variable: Total_Goals
+[MASTER] 18:05:31.407 [main] ERROR SearchStatistics - No obtained value for output variable: Total_Goals
+[MASTER] 18:05:32.408 [main] ERROR SearchStatistics - No obtained value for output variable: Total_Goals
+[MASTER] 18:05:33.409 [main] ERROR SearchStatistics - No obtained value for output variable: Total_Goals
+[MASTER] 18:05:34.410 [main] ERROR SearchStatistics - No obtained value for output variable: Total_Goals
+[MASTER] 18:05:35.412 [main] ERROR SearchStatistics - No obtained value for output variable: Total_Goals
+[MASTER] 18:05:35.412 [main] ERROR SearchStatistics - Not going to write down statistics data, as some are missing
+[MASTER] 18:05:35.517 [main] ERROR TestGeneration - failed to write statistics data

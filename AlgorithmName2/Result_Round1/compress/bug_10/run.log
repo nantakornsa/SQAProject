@@ -1,0 +1,191 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.example:AlgorithmName2 >---------------------
+[INFO] Building AlgorithmName2 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- jacoco:0.8.11:prepare-agent (default) @ AlgorithmName2 ---
+[INFO] argLine set to -javaagent:/home/kanyaphak673380391-3/.m2/repository/org/jacoco/org.jacoco.agent/0.8.11/org.jacoco.agent-0.8.11-runtime.jar=destfile=/tmp/bugrun/compress_10.bi5kqy/target/jacoco.exec
+[INFO] 
+[INFO] --- resources:3.4.0:resources (default-resources) @ AlgorithmName2 ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ AlgorithmName2 ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 1 source file with javac [debug target 1.8] to target/classes
+[WARNING] bootstrap class path not set in conjunction with -source 8
+[INFO] 
+[INFO] --- dependency:3.6.0:unpack-dependencies (unpack-defects4j) @ AlgorithmName2 ---
+[INFO] 
+[INFO] --- resources:3.4.0:testResources (default-testResources) @ AlgorithmName2 ---
+[INFO] skip non existing resourceDirectory /tmp/bugrun/compress_10.bi5kqy/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ AlgorithmName2 ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 1 source file with javac [debug target 1.8] to target/test-classes
+[WARNING] bootstrap class path not set in conjunction with -source 8
+[INFO] 
+[INFO] --- surefire:3.1.2:test (default-cli) @ AlgorithmName2 ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.example.algorithm2.Algorithm2Test
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+INFO: Loaded 281 hooks from com.code_intelligence.jazzer.runtime.TraceCmpHooks
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.runtime.TraceDivHooks
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.runtime.TraceIndirHooks
+INFO: Loaded 4 hooks from com.code_intelligence.jazzer.runtime.NativeLibHooks
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.sanitizers.ClojureLangHooks
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.sanitizers.Deserialization
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.sanitizers.ExpressionLanguageInjection
+INFO: Loaded 70 hooks from com.code_intelligence.jazzer.sanitizers.LdapInjection
+INFO: Loaded 46 hooks from com.code_intelligence.jazzer.sanitizers.NamingContextLookup
+INFO: Loaded 1 hooks from com.code_intelligence.jazzer.sanitizers.OsCommandInjection
+INFO: Loaded 52 hooks from com.code_intelligence.jazzer.sanitizers.ReflectiveCall
+INFO: Loaded 8 hooks from com.code_intelligence.jazzer.sanitizers.RegexInjection
+INFO: Loaded 16 hooks from com.code_intelligence.jazzer.sanitizers.RegexRoadblocks
+INFO: Loaded 18 hooks from com.code_intelligence.jazzer.sanitizers.ScriptEngineInjection
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.sanitizers.ServerSideRequestForgery
+INFO: Loaded 19 hooks from com.code_intelligence.jazzer.sanitizers.SqlInjection
+INFO: Loaded 6 hooks from com.code_intelligence.jazzer.sanitizers.XPathInjection
+INFO: Instrumented com.example.algorithm2.Algorithm2Test$Skip (took 189 ms, size +44%)
+INFO: Instrumented com.example.algorithm2.Algorithm2Test (took 239 ms, size +27%)
+INFO: Instrumented org.apache.commons.compress.archivers.ArchiveStreamFactory (took 81 ms, size +36%)
+INFO: Instrumented org.apache.commons.compress.archivers.ArchiveInputStream (took 11 ms, size +32%)
+INFO: New number of coverage counters: 1024
+WARN: Some hooks could not be applied to class files built for Java 7 or lower.
+                       Ensure that the fuzz target and its dependencies are compiled with
+                       -target 8 or higher to identify as many bugs as possible.
+INFO: Instrumented org.apache.commons.compress.archivers.ar.ArArchiveInputStream (took 101 ms, size +26%)
+INFO: Instrumented org.apache.commons.compress.archivers.zip.ZipArchiveInputStream (took 68 ms, size +17%)
+INFO: New number of coverage counters: 2048
+INFO: Instrumented org.apache.commons.compress.archivers.tar.TarArchiveInputStream (took 59 ms, size +26%)
+INFO: Instrumented org.apache.commons.compress.archivers.jar.JarArchiveInputStream (took 14 ms, size +26%)
+INFO: Instrumented org.apache.commons.compress.archivers.cpio.CpioArchiveInputStream (took 64 ms, size +30%)
+INFO: Instrumented org.apache.commons.compress.archivers.cpio.CpioConstants (took 1 ms, size +0%)
+INFO: Instrumented org.apache.commons.compress.archivers.dump.DumpArchiveInputStream (took 79 ms, size +25%)
+INFO: Instrumented org.apache.commons.compress.archivers.ArchiveException (took 11 ms, size +38%)
+INFO: Instrumented org.apache.commons.compress.archivers.ArchiveOutputStream (took 14 ms, size +28%)
+INFO: Instrumented org.apache.commons.compress.archivers.ar.ArArchiveOutputStream (took 18 ms, size +24%)
+INFO: New number of coverage counters: 4096
+INFO: Instrumented org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream (took 172 ms, size +18%)
+INFO: Instrumented org.apache.commons.compress.archivers.tar.TarArchiveOutputStream (took 23 ms, size +18%)
+INFO: Instrumented org.apache.commons.compress.archivers.jar.JarArchiveOutputStream (took 18 ms, size +36%)
+INFO: Instrumented org.apache.commons.compress.archivers.cpio.CpioArchiveOutputStream (took 37 ms, size +23%)
+[harness] target=org.apache.commons.compress.archivers.ArchiveStreamFactory factories=1 methods=3
+INFO: found LLVMFuzzerCustomMutator (0x776e75970cd0). Disabling -len_control by default.
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 561890965
+INFO: using inputs from: /tmp/bugrun/compress_10.bi5kqy/.cifuzz-corpus/com.example.algorithm2.Algorithm2Test/testParameterizedFuzzer
+INFO: using inputs from: /tmp/jazzer-java-seeds10804464194706304044
+INFO: Loaded 4 modules   (4096 inline 8-bit counters): 512 [0x776f24b81730, 0x776f24b81930), 512 [0x776f24b81930, 0x776f24b81b30), 1024 [0x776f24b81b30, 0x776f24b81f30), 2048 [0x776f24b81f30, 0x776f24b82730), 
+INFO: Loaded 4 PC tables (4096 PCs): 512 [0x776f24ade9b0,0x776f24ae09b0), 512 [0x776f246b3d30,0x776f246b5d30), 1024 [0x776f246ba6d0,0x776f246be6d0), 2048 [0x776f249428b0,0x776f2494a8b0), 
+INFO:        0 files found in /tmp/bugrun/compress_10.bi5kqy/.cifuzz-corpus/com.example.algorithm2.Algorithm2Test/testParameterizedFuzzer
+INFO:        0 files found in /tmp/jazzer-java-seeds10804464194706304044
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+INFO: A corpus is not provided, starting from an empty corpus
+INFO: Instrumented org.apache.commons.compress.archivers.zip.UnsupportedZipFeatureException (took 18 ms, size +21%)
+INFO: Instrumented org.apache.commons.compress.archivers.ArchiveEntry (took 3 ms, size +0%)
+INFO: Instrumented org.apache.commons.compress.archivers.zip.ZipLong (took 29 ms, size +21%)
+INFO: Instrumented org.apache.commons.compress.archivers.zip.Zip64RequiredException (took 12 ms, size +27%)
+INFO: Instrumented org.apache.commons.compress.archivers.zip.ZipExtraField (took 6 ms, size +0%)
+INFO: Instrumented org.apache.commons.compress.archivers.dump.UnrecognizedFormatException (took 9 ms, size +43%)
+INFO: Instrumented org.apache.commons.compress.archivers.dump.DumpArchiveException (took 21 ms, size +34%)
+INFO: Instrumented org.apache.commons.compress.archivers.dump.InvalidFormatException (took 22 ms, size +30%)
+#2	INITED cov: 158 ft: 158 corp: 1/1b exec/s: 0 rss: 817Mb
+INFO: Instrumented org.apache.commons.compress.archivers.tar.TarArchiveInputStream$1 (took 18 ms, size +30%)
+INFO: Instrumented org.apache.commons.compress.archivers.tar.TarBuffer (took 31 ms, size +21%)
+INFO: Instrumented org.apache.commons.compress.archivers.tar.TarArchiveEntry (took 47 ms, size +26%)
+INFO: Instrumented org.apache.commons.compress.archivers.tar.TarConstants (took 1 ms, size +0%)
+#3	NEW    cov: 227 ft: 232 corp: 2/3b lim: 4 exec/s: 0 rss: 817Mb L: 2/2 MS: 2 InsertByte-Custom-
+#4	NEW    cov: 227 ft: 233 corp: 3/7b lim: 4 exec/s: 0 rss: 817Mb L: 4/4 MS: 2 CrossOver-Custom-
+#7	NEW    cov: 227 ft: 251 corp: 4/8b lim: 4 exec/s: 0 rss: 817Mb L: 1/4 MS: 6 ChangeBit-Custom-EraseBytes-Custom-CrossOver-Custom-
+#13	NEW    cov: 230 ft: 256 corp: 5/12b lim: 4 exec/s: 0 rss: 817Mb L: 4/4 MS: 2 ChangeBinInt-Custom-
+#14	NEW    cov: 230 ft: 257 corp: 6/15b lim: 4 exec/s: 0 rss: 817Mb L: 3/4 MS: 2 EraseBytes-Custom-
+INFO: Instrumented org.apache.commons.compress.archivers.tar.TarUtils (took 37 ms, size +24%)
+#17	REDUCE cov: 230 ft: 257 corp: 6/13b lim: 4 exec/s: 0 rss: 817Mb L: 2/4 MS: 6 CrossOver-Custom-CopyPart-Custom-EraseBytes-Custom-
+#200	REDUCE cov: 230 ft: 257 corp: 6/12b lim: 4 exec/s: 0 rss: 823Mb L: 1/4 MS: 6 ShuffleBytes-Custom-CopyPart-Custom-EraseBytes-Custom-
+#422	NEW    cov: 234 ft: 264 corp: 7/15b lim: 6 exec/s: 422 rss: 831Mb L: 3/4 MS: 4 InsertRepeatedBytes-Custom-CMP-Custom- DE: "ar"-
+#426	NEW    cov: 239 ft: 272 corp: 8/21b lim: 6 exec/s: 426 rss: 832Mb L: 6/6 MS: 8 CopyPart-Custom-ChangeBit-Custom-InsertRepeatedBytes-Custom-CopyPart-Custom-
+#466	NEW    cov: 249 ft: 282 corp: 9/24b lim: 6 exec/s: 466 rss: 837Mb L: 3/6 MS: 10 ChangeBit-Custom-CopyPart-Custom-CMP-Custom-ChangeBit-Custom-PersAutoDict-Custom- DE: "\377\377\377\007"-"ar"-
+#489	REDUCE cov: 249 ft: 282 corp: 9/23b lim: 6 exec/s: 489 rss: 839Mb L: 5/5 MS: 6 ChangeBit-Custom-ChangeBit-Custom-EraseBytes-Custom-
+#513	NEW    cov: 251 ft: 284 corp: 10/26b lim: 6 exec/s: 513 rss: 841Mb L: 3/5 MS: 8 ShuffleBytes-Custom-ChangeByte-Custom-ChangeBinInt-Custom-PersAutoDict-Custom- DE: "ar"-
+#531	NEW    cov: 253 ft: 286 corp: 11/30b lim: 6 exec/s: 531 rss: 843Mb L: 4/5 MS: 6 ChangeByte-Custom-ShuffleBytes-Custom-ChangeByte-Custom-
+#551	REDUCE cov: 253 ft: 286 corp: 11/29b lim: 6 exec/s: 551 rss: 847Mb L: 3/5 MS: 10 InsertByte-Custom-ChangeBinInt-Custom-InsertByte-Custom-CrossOver-Custom-EraseBytes-Custom-
+#733	REDUCE cov: 253 ft: 286 corp: 11/28b lim: 6 exec/s: 733 rss: 861Mb L: 2/5 MS: 4 ShuffleBytes-Custom-EraseBytes-Custom-
+#892	NEW    cov: 253 ft: 287 corp: 12/33b lim: 6 exec/s: 892 rss: 873Mb L: 5/5 MS: 8 CrossOver-Custom-InsertRepeatedBytes-Custom-EraseBytes-Custom-CMP-Custom- DE: "ja"-
+#897	NEW    cov: 253 ft: 288 corp: 13/39b lim: 6 exec/s: 897 rss: 873Mb L: 6/6 MS: 10 CopyPart-Custom-ChangeByte-Custom-PersAutoDict-Custom-InsertByte-Custom-InsertByte-Custom- DE: "ar"-
+#989	REDUCE cov: 253 ft: 288 corp: 13/38b lim: 6 exec/s: 989 rss: 880Mb L: 5/5 MS: 4 CrossOver-Custom-EraseBytes-Custom-
+#1266	NEW    cov: 256 ft: 291 corp: 14/46b lim: 8 exec/s: 1266 rss: 901Mb L: 8/8 MS: 4 CopyPart-Custom-CopyPart-Custom-
+#1601	NEW    cov: 257 ft: 293 corp: 15/56b lim: 11 exec/s: 1601 rss: 963Mb L: 10/10 MS: 10 PersAutoDict-Custom-PersAutoDict-Custom-ChangeByte-Custom-EraseBytes-Custom-InsertRepeatedBytes-Custom- DE: "\377\377\377\007"-"ar"-
+#1735	REDUCE cov: 258 ft: 294 corp: 16/63b lim: 11 exec/s: 1735 rss: 974Mb L: 7/10 MS: 8 InsertByte-Custom-CopyPart-Custom-ShuffleBytes-Custom-CrossOver-Custom-
+#1786	REDUCE cov: 258 ft: 294 corp: 16/61b lim: 11 exec/s: 1786 rss: 978Mb L: 3/10 MS: 2 EraseBytes-Custom-
+#1860	REDUCE cov: 258 ft: 294 corp: 16/60b lim: 11 exec/s: 930 rss: 980Mb L: 7/10 MS: 8 CopyPart-Custom-EraseBytes-Custom-CrossOver-Custom-EraseBytes-Custom-
+#1862	REDUCE cov: 258 ft: 294 corp: 16/59b lim: 11 exec/s: 931 rss: 980Mb L: 9/9 MS: 4 CMP-Custom-EraseBytes-Custom- DE: "\000J"-
+#2048	pulse  cov: 258 ft: 294 corp: 16/59b lim: 11 exec/s: 1024 rss: 990Mb
+#2368	NEW    cov: 258 ft: 295 corp: 17/68b lim: 14 exec/s: 1184 rss: 1014Mb L: 9/9 MS: 2 CopyPart-Custom-
+#2481	NEW    cov: 258 ft: 296 corp: 18/82b lim: 14 exec/s: 1240 rss: 1023Mb L: 14/14 MS: 6 ChangeByte-Custom-ChangeBit-Custom-InsertRepeatedBytes-Custom-
+#2796	NEW    cov: 259 ft: 298 corp: 19/99b lim: 17 exec/s: 1398 rss: 1050Mb L: 17/17 MS: 10 ShuffleBytes-Custom-ChangeBinInt-Custom-ChangeByte-Custom-InsertRepeatedBytes-Custom-CrossOver-Custom-
+#3262	NEW    cov: 259 ft: 299 corp: 20/120b lim: 21 exec/s: 1631 rss: 1078Mb L: 21/21 MS: 2 InsertRepeatedBytes-Custom-
+#3823	REDUCE cov: 259 ft: 299 corp: 20/119b lim: 25 exec/s: 1911 rss: 1078Mb L: 20/20 MS: 2 EraseBytes-Custom-
+#3944	REDUCE cov: 259 ft: 299 corp: 20/118b lim: 25 exec/s: 1972 rss: 1078Mb L: 8/20 MS: 2 EraseBytes-Custom-
+#4096	pulse  cov: 259 ft: 299 corp: 20/118b lim: 25 exec/s: 2048 rss: 1078Mb
+#4600	REDUCE cov: 259 ft: 299 corp: 20/117b lim: 29 exec/s: 2300 rss: 1078Mb L: 7/20 MS: 2 EraseBytes-Custom-
+#5110	NEW    cov: 264 ft: 305 corp: 21/150b lim: 33 exec/s: 1703 rss: 1078Mb L: 33/33 MS: 10 ShuffleBytes-Custom-InsertByte-Custom-CopyPart-Custom-InsertRepeatedBytes-Custom-InsertRepeatedBytes-Custom-
+#5112	REDUCE cov: 265 ft: 306 corp: 22/183b lim: 33 exec/s: 1704 rss: 1078Mb L: 33/33 MS: 4 CopyPart-Custom-InsertRepeatedBytes-Custom-
+INFO: Instrumented org.apache.commons.compress.archivers.dump.DumpArchiveUtil (took 5 ms, size +26%)
+#5464	REDUCE cov: 265 ft: 306 corp: 22/182b lim: 33 exec/s: 1821 rss: 1079Mb L: 6/33 MS: 4 ChangeBinInt-Custom-EraseBytes-Custom-
+#6072	NEW    cov: 265 ft: 443 corp: 23/220b lim: 38 exec/s: 2024 rss: 1079Mb L: 38/38 MS: 6 CopyPart-Custom-InsertRepeatedBytes-Custom-InsertRepeatedBytes-Custom-
+#6333	REDUCE cov: 265 ft: 443 corp: 23/218b lim: 38 exec/s: 2111 rss: 1079Mb L: 18/38 MS: 2 EraseBytes-Custom-
+#6388	NEW    cov: 265 ft: 446 corp: 24/253b lim: 38 exec/s: 2129 rss: 1079Mb L: 35/38 MS: 10 ShuffleBytes-Custom-EraseBytes-Custom-CMP-Custom-CopyPart-Custom-InsertRepeatedBytes-Custom- DE: "\001\000\000\220"-
+#6905	NEW    cov: 265 ft: 450 corp: 25/296b lim: 43 exec/s: 2301 rss: 1079Mb L: 43/43 MS: 4 InsertByte-Custom-InsertRepeatedBytes-Custom-
+#7035	REDUCE cov: 265 ft: 450 corp: 25/295b lim: 43 exec/s: 2345 rss: 1079Mb L: 42/42 MS: 10 EraseBytes-Custom-CrossOver-Custom-PersAutoDict-Custom-ChangeByte-Custom-InsertByte-Custom- DE: "\000J"-
+#7041	REDUCE cov: 266 ft: 451 corp: 26/337b lim: 43 exec/s: 2347 rss: 1079Mb L: 42/42 MS: 2 CMP-Custom- DE: "P\001"-
+#7438	REDUCE cov: 267 ft: 452 corp: 27/344b lim: 43 exec/s: 2479 rss: 1079Mb L: 7/42 MS: 4 ChangeBit-Custom-ChangeBinInt-Custom-
+#7459	NEW    cov: 268 ft: 453 corp: 28/351b lim: 43 exec/s: 2486 rss: 1079Mb L: 7/42 MS: 2 ShuffleBytes-Custom-
+#7524	NEW    cov: 333 ft: 518 corp: 29/355b lim: 43 exec/s: 2508 rss: 1079Mb L: 4/42 MS: 10 InsertByte-Custom-InsertByte-Custom-CMP-Custom-EraseBytes-Custom-CMP-Custom- DE: "\002\000"-"jar"-
+#7530	REDUCE cov: 333 ft: 522 corp: 30/392b lim: 43 exec/s: 2510 rss: 1079Mb L: 37/42 MS: 2 InsertRepeatedBytes-Custom-
+INFO: Instrumented org.apache.commons.compress.archivers.zip.ZipEncodingHelper (took 14 ms, size +21%)
+INFO: #7599	NEW    cov: 333 ft: 523 corp: 31/433b lim: 43 exec/s: 2533 rss: 1079Mb L: 41/42 MS: 8 ShuffleBytes-Custom-InsertRepeatedBytes-Custom-ChangeBinInt-Custom-ChangeBinInt-Custom-
+Instrumented org.apache.commons.compress.archivers.zip.ZipEncoding (took 0 ms, size +0%)
+INFO: Instrumented org.apache.commons.compress.archivers.zip.ZipEncodingHelper$SimpleEncodingHolder (took 7 ms, size +33%)
+INFO: Instrumented org.apache.commons.compress.archivers.zip.FallbackZipEncoding (took 4 ms, size +28%)
+INFO: Instrumented org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream$UnicodeExtraFieldPolicy (took 3 ms, size +33%)
+INFO: Instrumented org.apache.commons.compress.archivers.zip.Zip64Mode (took 3 ms, size +29%)
+#8041	NEW    cov: 334 ft: 525 corp: 32/437b lim: 43 exec/s: 2680 rss: 1080Mb L: 4/42 MS: 4 CopyPart-Custom-EraseBytes-Custom-
+#8192	pulse  cov: 334 ft: 525 corp: 32/437b lim: 43 exec/s: 2730 rss: 1080Mb
+#8343	REDUCE cov: 334 ft: 525 corp: 32/434b lim: 43 exec/s: 2781 rss: 1080Mb L: 34/42 MS: 4 InsertRepeatedBytes-Custom-EraseBytes-Custom-
+#8504	NEW    cov: 357 ft: 549 corp: 33/438b lim: 43 exec/s: 2834 rss: 1081Mb L: 4/42 MS: 2 ChangeBinInt-Custom-
+#8580	NEW    cov: 357 ft: 550 corp: 34/442b lim: 43 exec/s: 2860 rss: 1081Mb L: 4/42 MS: 2 ChangeBit-Custom-
+#8650	DONE   cov: 357 ft: 550 corp: 34/442b lim: 43 exec/s: 2162 rss: 1081Mb
+###### Recommended dictionary. ######
+"ar" # Uses: 193
+"\377\377\377\007" # Uses: 121
+"ja" # Uses: 150
+"\000J" # Uses: 145
+"\001\000\000\220" # Uses: 27
+"P\001" # Uses: 22
+"\002\000" # Uses: 10
+"jar" # Uses: 9
+###### End of recommended dictionary. ######
+Done 8650 runs in 4 second(s)
+INFO: Instrumented org.apache.commons.compress.archivers.zip.ZipArchiveInputStream$Buffer (took 21 ms, size +18%)
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 12.48 s -- in com.example.algorithm2.Algorithm2Test
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- jacoco:0.8.11:report (default-cli) @ AlgorithmName2 ---
+[INFO] Loading execution data file /tmp/bugrun/compress_10.bi5kqy/target/jacoco.exec
+[INFO] Analyzed bundle 'AlgorithmName2' with 115 classes
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  22.012 s
+[INFO] Finished at: 2026-10-06T02:46:02+07:00
+[INFO] ------------------------------------------------------------------------

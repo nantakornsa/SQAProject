@@ -1,0 +1,154 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.example:AlgorithmName2 >---------------------
+[INFO] Building AlgorithmName2 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- jacoco:0.8.11:prepare-agent (default) @ AlgorithmName2 ---
+[INFO] argLine set to -javaagent:/home/kanyaphak673380391-3/.m2/repository/org/jacoco/org.jacoco.agent/0.8.11/org.jacoco.agent-0.8.11-runtime.jar=destfile=/tmp/bugrun/csv_5.SS3FK2/target/jacoco.exec
+[INFO] 
+[INFO] --- resources:3.4.0:resources (default-resources) @ AlgorithmName2 ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ AlgorithmName2 ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 1 source file with javac [debug target 1.8] to target/classes
+[WARNING] bootstrap class path not set in conjunction with -source 8
+[INFO] 
+[INFO] --- dependency:3.6.0:unpack-dependencies (unpack-defects4j) @ AlgorithmName2 ---
+[INFO] 
+[INFO] --- resources:3.4.0:testResources (default-testResources) @ AlgorithmName2 ---
+[INFO] skip non existing resourceDirectory /tmp/bugrun/csv_5.SS3FK2/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ AlgorithmName2 ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 1 source file with javac [debug target 1.8] to target/test-classes
+[WARNING] bootstrap class path not set in conjunction with -source 8
+[INFO] 
+[INFO] --- surefire:3.1.2:test (default-cli) @ AlgorithmName2 ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.example.algorithm2.Algorithm2Test
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+INFO: Loaded 281 hooks from com.code_intelligence.jazzer.runtime.TraceCmpHooks
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.runtime.TraceDivHooks
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.runtime.TraceIndirHooks
+INFO: Loaded 4 hooks from com.code_intelligence.jazzer.runtime.NativeLibHooks
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.sanitizers.ClojureLangHooks
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.sanitizers.Deserialization
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.sanitizers.ExpressionLanguageInjection
+INFO: Loaded 70 hooks from com.code_intelligence.jazzer.sanitizers.LdapInjection
+INFO: Loaded 46 hooks from com.code_intelligence.jazzer.sanitizers.NamingContextLookup
+INFO: Loaded 1 hooks from com.code_intelligence.jazzer.sanitizers.OsCommandInjection
+INFO: Loaded 52 hooks from com.code_intelligence.jazzer.sanitizers.ReflectiveCall
+INFO: Loaded 8 hooks from com.code_intelligence.jazzer.sanitizers.RegexInjection
+INFO: Loaded 16 hooks from com.code_intelligence.jazzer.sanitizers.RegexRoadblocks
+INFO: Loaded 18 hooks from com.code_intelligence.jazzer.sanitizers.ScriptEngineInjection
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.sanitizers.ServerSideRequestForgery
+INFO: Loaded 19 hooks from com.code_intelligence.jazzer.sanitizers.SqlInjection
+INFO: Loaded 6 hooks from com.code_intelligence.jazzer.sanitizers.XPathInjection
+INFO: Instrumented com.example.algorithm2.Algorithm2Test$Skip (took 410 ms, size +44%)
+INFO: Instrumented com.example.algorithm2.Algorithm2Test (took 339 ms, size +27%)
+INFO: New number of coverage counters: 1024
+INFO: Instrumented org.apache.commons.csv.CSVFormat (took 265 ms, size +19%)
+INFO: Instrumented org.apache.commons.csv.Constants (took 29 ms, size +31%)
+INFO: Instrumented org.apache.commons.csv.Quote (took 4 ms, size +31%)
+INFO: Instrumented org.apache.commons.csv.CSVParser (took 58 ms, size +16%)
+[harness] target=org.apache.commons.csv.CSVFormat factories=7 methods=36
+INFO: found LLVMFuzzerCustomMutator (0x76c58d96fcd0). Disabling -len_control by default.
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 3554054885
+INFO: using inputs from: /tmp/bugrun/csv_5.SS3FK2/.cifuzz-corpus/com.example.algorithm2.Algorithm2Test/testParameterizedFuzzer
+INFO: using inputs from: /tmp/jazzer-java-seeds8377987782542651751
+INFO: Loaded 2 modules   (1024 inline 8-bit counters): 512 [0x76c644ac7aa0, 0x76c644ac7ca0), 512 [0x76c644ac7ca0, 0x76c644ac7ea0), 
+INFO: Loaded 2 PC tables (1024 PCs): 512 [0x76c644640170,0x76c644642170), 512 [0x76c64445f170,0x76c644461170), 
+INFO:        0 files found in /tmp/bugrun/csv_5.SS3FK2/.cifuzz-corpus/com.example.algorithm2.Algorithm2Test/testParameterizedFuzzer
+INFO:        0 files found in /tmp/jazzer-java-seeds8377987782542651751
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+INFO: A corpus is not provided, starting from an empty corpus
+#2	INITED cov: 53 ft: 53 corp: 1/1b exec/s: 0 rss: 840Mb
+#4	NEW    cov: 56 ft: 82 corp: 2/3b lim: 4 exec/s: 0 rss: 840Mb L: 2/2 MS: 4 CopyPart-Custom-CopyPart-Custom-
+#5	NEW    cov: 69 ft: 98 corp: 3/6b lim: 4 exec/s: 0 rss: 840Mb L: 3/3 MS: 2 CMP-Custom- DE: "\001\033"-
+#6	NEW    cov: 74 ft: 103 corp: 4/10b lim: 4 exec/s: 0 rss: 840Mb L: 4/4 MS: 2 CopyPart-Custom-
+#8	NEW    cov: 74 ft: 106 corp: 5/11b lim: 4 exec/s: 0 rss: 840Mb L: 1/4 MS: 4 ShuffleBytes-Custom-ChangeByte-Custom-
+INFO: Instrumented org.apache.commons.csv.Token (took 5 ms, size +31%)
+INFO: Instrumented org.apache.commons.csv.Token$Type (took 5 ms, size +29%)
+INFO: Instrumented org.apache.commons.csv.Assertions (took 4 ms, size +37%)
+#10	NEW    cov: 147 ft: 179 corp: 6/13b lim: 4 exec/s: 0 rss: 841Mb L: 2/4 MS: 4 CrossOver-Custom-InsertByte-Custom-
+#11	NEW    cov: 148 ft: 180 corp: 7/16b lim: 4 exec/s: 0 rss: 841Mb L: 3/4 MS: 2 PersAutoDict-Custom- DE: "\001\033"-
+#12	NEW    cov: 149 ft: 184 corp: 8/17b lim: 4 exec/s: 0 rss: 841Mb L: 1/4 MS: 2 ChangeBinInt-Custom-
+#13	REDUCE cov: 149 ft: 184 corp: 8/15b lim: 4 exec/s: 0 rss: 841Mb L: 2/3 MS: 2 EraseBytes-Custom-
+#20	NEW    cov: 157 ft: 192 corp: 9/17b lim: 4 exec/s: 0 rss: 841Mb L: 2/3 MS: 4 InsertByte-Custom-ChangeByte-Custom-
+#27	NEW    cov: 159 ft: 194 corp: 10/20b lim: 4 exec/s: 0 rss: 841Mb L: 3/3 MS: 4 ChangeByte-Custom-PersAutoDict-Custom- DE: "\001\033"-
+#32	REDUCE cov: 160 ft: 195 corp: 11/23b lim: 4 exec/s: 0 rss: 841Mb L: 3/3 MS: 10 ChangeBinInt-Custom-InsertByte-Custom-CrossOver-Custom-ChangeBit-Custom-ChangeBinInt-Custom-
+#38	NEW    cov: 162 ft: 197 corp: 12/26b lim: 4 exec/s: 0 rss: 841Mb L: 3/3 MS: 2 ChangeByte-Custom-
+#46	NEW    cov: 183 ft: 220 corp: 13/30b lim: 4 exec/s: 0 rss: 841Mb L: 4/4 MS: 6 CopyPart-Custom-CopyPart-Custom-ChangeBinInt-Custom-
+#55	NEW    cov: 197 ft: 234 corp: 14/34b lim: 4 exec/s: 0 rss: 841Mb L: 4/4 MS: 8 ChangeByte-Custom-InsertByte-Custom-ChangeBit-Custom-CMP-Custom- DE: "\377\377"-
+#70	NEW    cov: 201 ft: 248 corp: 15/37b lim: 4 exec/s: 0 rss: 841Mb L: 3/4 MS: 10 InsertByte-Custom-ChangeBit-Custom-CopyPart-Custom-CMP-Custom-CopyPart-Custom- DE: "\377\011"-
+#75	NEW    cov: 205 ft: 252 corp: 16/40b lim: 4 exec/s: 0 rss: 841Mb L: 3/4 MS: 10 CopyPart-Custom-ChangeBinInt-Custom-EraseBytes-Custom-CopyPart-Custom-CopyPart-Custom-
+#78	NEW    cov: 207 ft: 254 corp: 17/42b lim: 4 exec/s: 0 rss: 841Mb L: 2/4 MS: 6 ChangeBinInt-Custom-PersAutoDict-Custom-ChangeBit-Custom- DE: "\377\011"-
+#82	REDUCE cov: 207 ft: 255 corp: 18/45b lim: 4 exec/s: 0 rss: 841Mb L: 3/4 MS: 8 InsertByte-Custom-CopyPart-Custom-ChangeBinInt-Custom-PersAutoDict-Custom- DE: "\377\377"-
+#85	NEW    cov: 209 ft: 260 corp: 19/49b lim: 4 exec/s: 0 rss: 841Mb L: 4/4 MS: 6 CopyPart-Custom-ChangeByte-Custom-CrossOver-Custom-
+#91	REDUCE cov: 209 ft: 260 corp: 19/47b lim: 4 exec/s: 0 rss: 841Mb L: 1/4 MS: 2 CrossOver-Custom-
+#95	NEW    cov: 209 ft: 261 corp: 20/51b lim: 4 exec/s: 0 rss: 841Mb L: 4/4 MS: 8 InsertByte-Custom-ShuffleBytes-Custom-PersAutoDict-Custom-CopyPart-Custom- DE: "\377\377"-
+#106	REDUCE cov: 211 ft: 263 corp: 21/52b lim: 4 exec/s: 0 rss: 841Mb L: 1/4 MS: 2 ChangeBit-Custom-
+#107	NEW    cov: 215 ft: 267 corp: 22/54b lim: 4 exec/s: 0 rss: 841Mb L: 2/4 MS: 2 InsertByte-Custom-
+#117	REDUCE cov: 217 ft: 269 corp: 23/57b lim: 4 exec/s: 0 rss: 841Mb L: 3/4 MS: 10 InsertByte-Custom-ShuffleBytes-Custom-CrossOver-Custom-InsertByte-Custom-EraseBytes-Custom-
+#119	NEW    cov: 218 ft: 270 corp: 24/59b lim: 4 exec/s: 0 rss: 841Mb L: 2/4 MS: 4 ShuffleBytes-Custom-ChangeBit-Custom-
+#122	NEW    cov: 220 ft: 272 corp: 25/60b lim: 4 exec/s: 0 rss: 841Mb L: 1/4 MS: 6 ShuffleBytes-Custom-ChangeBinInt-Custom-ChangeBinInt-Custom-
+#124	NEW    cov: 220 ft: 275 corp: 26/64b lim: 4 exec/s: 0 rss: 841Mb L: 4/4 MS: 4 CrossOver-Custom-PersAutoDict-Custom- DE: "\377\377"-
+INFO: Instrumented org.apache.commons.csv.Lexer (took 50 ms, size +30%)
+INFO: Instrumented org.apache.commons.csv.ExtendedBufferedReader (took 8 ms, size +33%)
+#133	NEW    cov: 222 ft: 277 corp: 27/68b lim: 4 exec/s: 0 rss: 841Mb L: 4/4 MS: 8 ShuffleBytes-Custom-CrossOver-Custom-ChangeByte-Custom-PersAutoDict-Custom- DE: "\377\011"-
+#134	REDUCE cov: 222 ft: 277 corp: 27/67b lim: 4 exec/s: 0 rss: 841Mb L: 2/4 MS: 2 EraseBytes-Custom-
+#136	NEW    cov: 279 ft: 341 corp: 28/71b lim: 4 exec/s: 0 rss: 841Mb L: 4/4 MS: 4 ChangeBit-Custom-ChangeBinInt-Custom-
+#142	NEW    cov: 280 ft: 342 corp: 29/74b lim: 4 exec/s: 0 rss: 841Mb L: 3/4 MS: 2 CMP-Custom- DE: "}k"-
+#144	REDUCE cov: 280 ft: 342 corp: 29/73b lim: 4 exec/s: 0 rss: 841Mb L: 1/4 MS: 4 ChangeBinInt-Custom-EraseBytes-Custom-
+MS: 8 CrossOver-Custom-CrossOver-Custom-ChangeByte-Custom-CrossOver-Custom-; base unit: f6c70f46ef17c793d61eade51f0eb4f96c89cac1
+0x4,
+\004
+artifact_prefix='/tmp/bugrun/csv_5.SS3FK2/'; Test unit written to /tmp/bugrun/csv_5.SS3FK2/crash-a42c6cf1de3abfdea9b95f34687cbbe92b9a7383
+Base64: BA==
+Done 148 runs in 0 second(s)
+INFO: New number of coverage counters: 2048
+INFO: Instrumented org.apache.commons.csv.CSVPrinter (took 29 ms, size +24%)
+INFO: Instrumented org.apache.commons.csv.CSVPrinter$1 (took 5 ms, size +39%)
+DEDUP_TOKEN: d98a88f6bb6f1198
+[ERROR] Tests run: 2, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 12.17 s <<< FAILURE! -- in com.example.algorithm2.Algorithm2Test
+[ERROR] com.example.algorithm2.Algorithm2Test.testParameterizedFuzzer(FuzzedDataProvider)[2] -- Time elapsed: 0.591 s <<< ERROR!
+java.lang.IllegalStateException: The quoteChar character and the delimiter cannot be the same (' ')
+	at org.apache.commons.csv.CSVFormat.validate(CSVFormat.java:617)
+	at org.apache.commons.csv.CSVPrinter.<init>(CSVPrinter.java:64)
+	at org.apache.commons.csv.CSVFormat.format(CSVFormat.java:382)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at com.example.algorithm2.Algorithm2Test.testParameterizedFuzzer(Algorithm2Test.java:226)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Errors: 
+[ERROR]   Algorithm2Test.testParameterizedFuzzer:226 » IllegalState The quoteChar character and the delimiter cannot be the same (' ')
+[INFO] 
+[ERROR] Tests run: 2, Failures: 0, Errors: 1, Skipped: 0
+[INFO] 
+[ERROR] 
+
+Please refer to /tmp/bugrun/csv_5.SS3FK2/target/surefire-reports for the individual test results.
+Please refer to dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[INFO] 
+[INFO] --- jacoco:0.8.11:report (default-cli) @ AlgorithmName2 ---
+[INFO] Loading execution data file /tmp/bugrun/csv_5.SS3FK2/target/jacoco.exec
+[INFO] Analyzed bundle 'AlgorithmName2' with 13 classes
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  24.955 s
+[INFO] Finished at: 2026-10-06T03:35:50+07:00
+[INFO] ------------------------------------------------------------------------

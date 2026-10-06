@@ -1,0 +1,132 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.example:AlgorithmName2 >---------------------
+[INFO] Building AlgorithmName2 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- jacoco:0.8.11:prepare-agent (default) @ AlgorithmName2 ---
+[INFO] argLine set to -javaagent:/home/kanyaphak673380391-3/.m2/repository/org/jacoco/org.jacoco.agent/0.8.11/org.jacoco.agent-0.8.11-runtime.jar=destfile=/tmp/bugrun/lang_23.LXiQRV/target/jacoco.exec
+[INFO] 
+[INFO] --- resources:3.4.0:resources (default-resources) @ AlgorithmName2 ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ AlgorithmName2 ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 1 source file with javac [debug target 1.8] to target/classes
+[WARNING] bootstrap class path not set in conjunction with -source 8
+[INFO] 
+[INFO] --- dependency:3.6.0:unpack-dependencies (unpack-defects4j) @ AlgorithmName2 ---
+[INFO] 
+[INFO] --- resources:3.4.0:testResources (default-testResources) @ AlgorithmName2 ---
+[INFO] skip non existing resourceDirectory /tmp/bugrun/lang_23.LXiQRV/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ AlgorithmName2 ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 1 source file with javac [debug target 1.8] to target/test-classes
+[WARNING] bootstrap class path not set in conjunction with -source 8
+[INFO] 
+[INFO] --- surefire:3.1.2:test (default-cli) @ AlgorithmName2 ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.example.algorithm2.Algorithm2Test
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+INFO: Loaded 289 hooks from com.code_intelligence.jazzer.runtime.TraceCmpHooks
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.runtime.TraceDivHooks
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.runtime.TraceIndirHooks
+INFO: Loaded 4 hooks from com.code_intelligence.jazzer.runtime.NativeLibHooks
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.sanitizers.ClojureLangHooks
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.sanitizers.Deserialization
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.sanitizers.ExpressionLanguageInjection
+INFO: Loaded 70 hooks from com.code_intelligence.jazzer.sanitizers.LdapInjection
+INFO: Loaded 46 hooks from com.code_intelligence.jazzer.sanitizers.NamingContextLookup
+INFO: Loaded 1 hooks from com.code_intelligence.jazzer.sanitizers.OsCommandInjection
+INFO: Loaded 52 hooks from com.code_intelligence.jazzer.sanitizers.ReflectiveCall
+INFO: Loaded 8 hooks from com.code_intelligence.jazzer.sanitizers.RegexInjection
+INFO: Loaded 16 hooks from com.code_intelligence.jazzer.sanitizers.RegexRoadblocks
+INFO: Loaded 18 hooks from com.code_intelligence.jazzer.sanitizers.ScriptEngineInjection
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.sanitizers.ServerSideRequestForgery
+INFO: Loaded 19 hooks from com.code_intelligence.jazzer.sanitizers.SqlInjection
+INFO: Loaded 6 hooks from com.code_intelligence.jazzer.sanitizers.XPathInjection
+INFO: Instrumented com.example.algorithm2.Algorithm2Test$Skip (took 419 ms, size +44%)
+INFO: Instrumented com.example.algorithm2.Algorithm2Test (took 294 ms, size +27%)
+INFO: New number of coverage counters: 1024
+INFO: New number of coverage counters: 2048
+WARN: Some hooks could not be applied to class files built for Java 7 or lower.
+                       Ensure that the fuzz target and its dependencies are compiled with
+                       -target 8 or higher to identify as many bugs as possible.
+INFO: Instrumented org.apache.commons.lang3.StringUtils (took 698 ms, size +31%)
+[harness] target=org.apache.commons.lang3.StringUtils factories=1 methods=154
+INFO: using inputs from: /tmp/bugrun/lang_23.LXiQRV/.cifuzz-corpus/com.example.algorithm2.Algorithm2Test/testParameterizedFuzzer
+INFO: using inputs from: /tmp/jazzer-java-seeds2190576908897891360
+INFO: found LLVMFuzzerCustomMutator (0x752c21b6ccd0). Disabling -len_control by default.
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 2549206409
+INFO: Loaded 3 modules   (2048 inline 8-bit counters): 512 [0x752cecc6a550, 0x752cecc6a750), 512 [0x752cecc6a750, 0x752cecc6a950), 1024 [0x752cecc6a950, 0x752cecc6ad50), 
+INFO: Loaded 3 PC tables (2048 PCs): 512 [0x752cecb618a0,0x752cecb638a0), 512 [0x752cec7a8650,0x752cec7aa650), 1024 [0x752cecba9870,0x752cecbad870), 
+INFO:        0 files found in /tmp/bugrun/lang_23.LXiQRV/.cifuzz-corpus/com.example.algorithm2.Algorithm2Test/testParameterizedFuzzer
+INFO:        0 files found in /tmp/jazzer-java-seeds2190576908897891360
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+INFO: A corpus is not provided, starting from an empty corpus
+#2	INITED cov: 35 ft: 35 corp: 1/1b exec/s: 0 rss: 988Mb
+#3	NEW    cov: 37 ft: 37 corp: 2/3b lim: 4 exec/s: 0 rss: 988Mb L: 2/2 MS: 2 InsertByte-Custom-
+#5	NEW    cov: 53 ft: 53 corp: 3/6b lim: 4 exec/s: 0 rss: 988Mb L: 3/3 MS: 4 InsertByte-Custom-InsertByte-Custom-
+#7	NEW    cov: 54 ft: 54 corp: 4/9b lim: 4 exec/s: 0 rss: 988Mb L: 3/3 MS: 4 InsertByte-Custom-InsertByte-Custom-
+#11	NEW    cov: 59 ft: 62 corp: 5/13b lim: 4 exec/s: 0 rss: 988Mb L: 4/4 MS: 8 ChangeByte-Custom-InsertByte-Custom-CopyPart-Custom-ChangeBit-Custom-
+#13	NEW    cov: 77 ft: 80 corp: 6/17b lim: 4 exec/s: 0 rss: 988Mb L: 4/4 MS: 4 CopyPart-Custom-ShuffleBytes-Custom-
+#14	REDUCE cov: 77 ft: 80 corp: 6/16b lim: 4 exec/s: 0 rss: 988Mb L: 3/4 MS: 2 EraseBytes-Custom-
+#16	NEW    cov: 78 ft: 82 corp: 7/17b lim: 4 exec/s: 0 rss: 988Mb L: 1/4 MS: 4 EraseBytes-Custom-ChangeBit-Custom-
+#17	REDUCE cov: 78 ft: 82 corp: 7/16b lim: 4 exec/s: 0 rss: 988Mb L: 1/4 MS: 2 EraseBytes-Custom-
+#21	REDUCE cov: 81 ft: 86 corp: 8/17b lim: 4 exec/s: 0 rss: 988Mb L: 1/4 MS: 8 CopyPart-Custom-EraseBytes-Custom-ShuffleBytes-Custom-ChangeBit-Custom-
+#23	REDUCE cov: 84 ft: 89 corp: 9/19b lim: 4 exec/s: 0 rss: 988Mb L: 2/4 MS: 4 ChangeByte-Custom-EraseBytes-Custom-
+#27	NEW    cov: 86 ft: 95 corp: 10/21b lim: 4 exec/s: 0 rss: 988Mb L: 2/4 MS: 8 ShuffleBytes-Custom-ChangeBit-Custom-EraseBytes-Custom-ChangeBit-Custom-
+#31	NEW    cov: 90 ft: 99 corp: 11/23b lim: 4 exec/s: 0 rss: 988Mb L: 2/4 MS: 8 ShuffleBytes-Custom-CrossOver-Custom-ChangeByte-Custom-ShuffleBytes-Custom-
+#35	REDUCE cov: 116 ft: 125 corp: 12/27b lim: 4 exec/s: 0 rss: 1000Mb L: 4/4 MS: 8 ChangeASCIIInt-Custom-ChangeASCIIInt-Custom-CrossOver-Custom-ChangeBinInt-Custom-
+INFO: Instrumented org.apache.commons.lang3.ObjectUtils (took 41 ms, size +21%)
+INFO: #37	NEW    cov: 119 ft: 128 corp: 13/28b lim: 4 exec/s: 0 rss: 1000Mb L: 1/4 MS: 4 CrossOver-Custom-ChangeByte-Custom-
+#38	NEW    cov: 122 ft: 131 corp: 14/30b lim: 4 exec/s: 0 rss: 1000Mb L: 2/4 MS: 2 ChangeByte-Custom-
+Instrumented org.apache.commons.lang3.exception.CloneFailedException (took 9 ms, size +37%)
+INFO: Instrumented org.apache.commons.lang3.ObjectUtils$Null (took 12 ms, size +43%)
+MS: 8 InsertByte-Custom-ChangeBinInt-Custom-CopyPart-Custom-ChangeByte-Custom-; base unit: adc83b19e793491b1c6ea0fd8b46cd9f32e592fc
+0x2f,0xf4,
+/\364
+artifact_prefix='/tmp/bugrun/lang_23.LXiQRV/'; Test unit written to /tmp/bugrun/lang_23.LXiQRV/crash-a9846dcc3a29fa1bc9f77f91e52d95ee429435dd
+Base64: L/Q=
+Done 42 runs in 0 second(s)
+DEDUP_TOKEN: c9ce87d8100e4cb8
+[ERROR] Tests run: 2, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 11.26 s <<< FAILURE! -- in com.example.algorithm2.Algorithm2Test
+[ERROR] com.example.algorithm2.Algorithm2Test.testParameterizedFuzzer(FuzzedDataProvider)[2] -- Time elapsed: 0.492 s <<< ERROR!
+java.lang.IllegalArgumentException: Minimum abbreviation width is 4
+	at org.apache.commons.lang3.StringUtils.abbreviate(StringUtils.java:5693)
+	at org.apache.commons.lang3.StringUtils.abbreviate(StringUtils.java:5650)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at com.example.algorithm2.Algorithm2Test.testParameterizedFuzzer(Algorithm2Test.java:226)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Errors: 
+[ERROR]   Algorithm2Test.testParameterizedFuzzer:226 » IllegalArgument Minimum abbreviation width is 4
+[INFO] 
+[ERROR] Tests run: 2, Failures: 0, Errors: 1, Skipped: 0
+[INFO] 
+[ERROR] 
+
+Please refer to /tmp/bugrun/lang_23.LXiQRV/target/surefire-reports for the individual test results.
+Please refer to dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[INFO] 
+[INFO] --- jacoco:0.8.11:report (default-cli) @ AlgorithmName2 ---
+[INFO] Loading execution data file /tmp/bugrun/lang_23.LXiQRV/target/jacoco.exec
+[INFO] Analyzed bundle 'AlgorithmName2' with 134 classes
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  24.130 s
+[INFO] Finished at: 2026-10-06T02:07:32+07:00
+[INFO] ------------------------------------------------------------------------

@@ -9,7 +9,7 @@
 set -u
 
 SRC="$(cd "$(dirname "$0")" && pwd)"
-OUT="${OUT:-$SRC/Result_Round1}"
+OUT="${OUT:-$SRC/Result_Round2}"
 WORK_ROOT="${WORK_ROOT:-/tmp/bugrun}"          # use a Linux filesystem (NOT /mnt/c, NOT OneDrive)
 M2_REPO="${M2_REPO:-$HOME/.m2/repository}"
 NPROC="$(nproc)"

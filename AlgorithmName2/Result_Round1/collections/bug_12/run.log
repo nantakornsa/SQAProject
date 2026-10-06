@@ -1,0 +1,165 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.example:AlgorithmName2 >---------------------
+[INFO] Building AlgorithmName2 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- jacoco:0.8.11:prepare-agent (default) @ AlgorithmName2 ---
+[INFO] argLine set to -javaagent:/home/kanyaphak673380391-3/.m2/repository/org/jacoco/org.jacoco.agent/0.8.11/org.jacoco.agent-0.8.11-runtime.jar=destfile=/tmp/bugrun/collections_12.Fmt9Ns/target/jacoco.exec
+[INFO] 
+[INFO] --- resources:3.4.0:resources (default-resources) @ AlgorithmName2 ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ AlgorithmName2 ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 1 source file with javac [debug target 1.8] to target/classes
+[WARNING] bootstrap class path not set in conjunction with -source 8
+[INFO] 
+[INFO] --- dependency:3.6.0:unpack-dependencies (unpack-defects4j) @ AlgorithmName2 ---
+[INFO] 
+[INFO] --- resources:3.4.0:testResources (default-testResources) @ AlgorithmName2 ---
+[INFO] skip non existing resourceDirectory /tmp/bugrun/collections_12.Fmt9Ns/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ AlgorithmName2 ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 1 source file with javac [debug target 1.8] to target/test-classes
+[WARNING] bootstrap class path not set in conjunction with -source 8
+[INFO] 
+[INFO] --- surefire:3.1.2:test (default-cli) @ AlgorithmName2 ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.example.algorithm2.Algorithm2Test
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+INFO: Loaded 458 hooks from com.code_intelligence.jazzer.runtime.TraceCmpHooks
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.runtime.TraceDivHooks
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.runtime.TraceIndirHooks
+INFO: Loaded 4 hooks from com.code_intelligence.jazzer.runtime.NativeLibHooks
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.sanitizers.ClojureLangHooks
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.sanitizers.Deserialization
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.sanitizers.ExpressionLanguageInjection
+INFO: Loaded 70 hooks from com.code_intelligence.jazzer.sanitizers.LdapInjection
+INFO: Loaded 46 hooks from com.code_intelligence.jazzer.sanitizers.NamingContextLookup
+INFO: Loaded 1 hooks from com.code_intelligence.jazzer.sanitizers.OsCommandInjection
+INFO: Loaded 52 hooks from com.code_intelligence.jazzer.sanitizers.ReflectiveCall
+INFO: Loaded 8 hooks from com.code_intelligence.jazzer.sanitizers.RegexInjection
+INFO: Loaded 16 hooks from com.code_intelligence.jazzer.sanitizers.RegexRoadblocks
+INFO: Loaded 18 hooks from com.code_intelligence.jazzer.sanitizers.ScriptEngineInjection
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.sanitizers.ServerSideRequestForgery
+INFO: Loaded 19 hooks from com.code_intelligence.jazzer.sanitizers.SqlInjection
+INFO: Loaded 6 hooks from com.code_intelligence.jazzer.sanitizers.XPathInjection
+INFO: Instrumented com.example.algorithm2.Algorithm2Test$Skip (took 285 ms, size +44%)
+INFO: Instrumented com.example.algorithm2.Algorithm2Test (took 225 ms, size +27%)
+INFO: Instrumented org.apache.commons.collections.ListUtils (took 235 ms, size +22%)
+[harness] Fallback target loaded: org.apache.commons.collections.ListUtils (original was org.apache.commons.collections4.ListUtils)
+INFO: Instrumented org.apache.commons.collections.Predicate (took 1 ms, size +0%)
+INFO: Instrumented org.apache.commons.collections.Transformer (took 1 ms, size +0%)
+INFO: Instrumented org.apache.commons.collections.Factory (took 14 ms, size +0%)
+[harness] target=org.apache.commons.collections.ListUtils factories=1 methods=16
+INFO: using inputs from: /tmp/bugrun/collections_12.Fmt9Ns/.cifuzz-corpus/com.example.algorithm2.Algorithm2Test/testParameterizedFuzzer
+INFO: using inputs from: /tmp/jazzer-java-seeds1175521625236246165
+INFO: found LLVMFuzzerCustomMutator (0x758e0c56acd0). Disabling -len_control by default.
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 1571529616
+INFO: Loaded 1 modules   (512 inline 8-bit counters): 512 [0x758e84ab25c0, 0x758e84ab27c0), 
+INFO: Loaded 1 PC tables (512 PCs): 512 [0x758e8454d8c0,0x758e8454f8c0), 
+INFO:        0 files found in /tmp/bugrun/collections_12.Fmt9Ns/.cifuzz-corpus/com.example.algorithm2.Algorithm2Test/testParameterizedFuzzer
+INFO:        0 files found in /tmp/jazzer-java-seeds1175521625236246165
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+INFO: A corpus is not provided, starting from an empty corpus
+INFO: Instrumented org.apache.commons.collections.list.PredicatedList (took 19 ms, size +20%)
+#2	INITED cov: 58 ft: 58 corp: 1/1b exec/s: 0 rss: 869Mb
+INFO: New number of coverage counters: 1024
+INFO: Instrumented org.apache.commons.collections.collection.PredicatedCollection (took 35 ms, size +25%)
+INFO: Instrumented org.apache.commons.collections.collection.AbstractSerializableCollectionDecorator (took 13 ms, size +38%)
+INFO: Instrumented org.apache.commons.collections.collection.AbstractCollectionDecorator (took 35 ms, size +21%)
+#3	NEW    cov: 77 ft: 77 corp: 2/3b lim: 4 exec/s: 0 rss: 869Mb L: 2/2 MS: 2 InsertByte-Custom-
+#4	NEW    cov: 97 ft: 99 corp: 3/5b lim: 4 exec/s: 0 rss: 869Mb L: 2/2 MS: 2 ChangeBinInt-Custom-
+#5	NEW    cov: 98 ft: 101 corp: 4/7b lim: 4 exec/s: 0 rss: 869Mb L: 2/2 MS: 2 ChangeBit-Custom-
+#6	NEW    cov: 102 ft: 112 corp: 5/9b lim: 4 exec/s: 0 rss: 869Mb L: 2/2 MS: 2 ChangeBinInt-Custom-
+#7	REDUCE cov: 102 ft: 112 corp: 5/8b lim: 4 exec/s: 0 rss: 869Mb L: 1/2 MS: 2 EraseBytes-Custom-
+#8	NEW    cov: 106 ft: 116 corp: 6/9b lim: 4 exec/s: 0 rss: 869Mb L: 1/2 MS: 2 ChangeBit-Custom-
+#13	NEW    cov: 106 ft: 128 corp: 7/13b lim: 4 exec/s: 0 rss: 869Mb L: 4/4 MS: 10 ShuffleBytes-Custom-ShuffleBytes-Custom-InsertByte-Custom-ChangeBit-Custom-CrossOver-Custom-
+#14	NEW    cov: 107 ft: 130 corp: 8/15b lim: 4 exec/s: 0 rss: 869Mb L: 2/4 MS: 2 ChangeByte-Custom-
+INFO: Instrumented org.apache.commons.collections.list.TransformedList (took 32 ms, size +20%)
+INFO: Instrumented org.apache.commons.collections.collection.TransformedCollection (took 22 ms, size +24%)
+INFO: Instrumented org.apache.commons.collections.list.TypedList (took 6 ms, size +36%)
+INFO: Instrumented org.apache.commons.collections.functors.InstanceofPredicate (took 13 ms, size +30%)
+INFO: Instrumented org.apache.commons.collections.list.LazyList (took 14 ms, size +28%)
+#15	NEW    cov: 124 ft: 147 corp: 9/17b lim: 4 exec/s: 0 rss: 869Mb L: 2/4 MS: 2 ChangeBit-Custom-
+#16	NEW    cov: 129 ft: 152 corp: 10/18b lim: 4 exec/s: 0 rss: 869Mb L: 1/4 MS: 2 EraseBytes-Custom-
+#19	NEW    cov: 129 ft: 165 corp: 11/20b lim: 4 exec/s: 0 rss: 869Mb L: 2/4 MS: 6 ChangeBit-Custom-CopyPart-Custom-ChangeBit-Custom-
+#24	NEW    cov: 129 ft: 183 corp: 12/23b lim: 4 exec/s: 0 rss: 869Mb L: 3/4 MS: 10 CopyPart-Custom-CopyPart-Custom-EraseBytes-Custom-ShuffleBytes-Custom-InsertByte-Custom-
+#25	NEW    cov: 129 ft: 184 corp: 13/25b lim: 4 exec/s: 0 rss: 869Mb L: 2/4 MS: 2 ChangeByte-Custom-
+#26	NEW    cov: 131 ft: 187 corp: 14/27b lim: 4 exec/s: 0 rss: 869Mb L: 2/4 MS: 2 ChangeByte-Custom-
+#27	REDUCE cov: 131 ft: 187 corp: 14/26b lim: 4 exec/s: 0 rss: 869Mb L: 3/3 MS: 2 EraseBytes-Custom-
+#29	NEW    cov: 136 ft: 196 corp: 15/30b lim: 4 exec/s: 0 rss: 869Mb L: 4/4 MS: 4 CopyPart-Custom-ChangeBit-Custom-
+#31	NEW    cov: 143 ft: 207 corp: 16/33b lim: 4 exec/s: 0 rss: 869Mb L: 3/4 MS: 4 CrossOver-Custom-ChangeBit-Custom-
+#36	NEW    cov: 151 ft: 215 corp: 17/37b lim: 4 exec/s: 0 rss: 869Mb L: 4/4 MS: 10 ChangeByte-Custom-ChangeByte-Custom-ChangeByte-Custom-InsertByte-Custom-InsertByte-Custom-
+INFO: Instrumented org.apache.commons.collections.list.AbstractSerializableListDecorator (took 14 ms, size +38%)
+INFO: Instrumented org.apache.commons.collections.list.AbstractListDecorator (took 46 ms, size +22%)
+INFO: Instrumented org.apache.commons.collections.list.UnmodifiableList (took 16 ms, size +22%)
+INFO: Instrumented org.apache.commons.collections.Unmodifiable (took 0 ms, size +0%)
+#45	NEW    cov: 160 ft: 224 corp: 18/41b lim: 4 exec/s: 0 rss: 869Mb L: 4/4 MS: 8 ChangeBit-Custom-InsertByte-Custom-InsertByte-Custom-CopyPart-Custom-
+#50	NEW    cov: 160 ft: 225 corp: 19/42b lim: 4 exec/s: 0 rss: 869Mb L: 1/4 MS: 10 InsertByte-Custom-ShuffleBytes-Custom-ChangeByte-Custom-EraseBytes-Custom-ChangeBit-Custom-
+INFO: Instrumented org.apache.commons.collections.list.FixedSizeList (took 32 ms, size +17%)
+INFO: Instrumented org.apache.commons.collections.BoundedCollection (took 0 ms, size +0%)
+INFO: Instrumented org.apache.commons.collections.list.SynchronizedList (took 42 ms, size +18%)
+#59	NEW    cov: 173 ft: 238 corp: 20/46b lim: 4 exec/s: 0 rss: 869Mb L: 4/4 MS: 8 CrossOver-Custom-ChangeByte-Custom-ChangeBinInt-Custom-InsertByte-Custom-
+#60	NEW    cov: 178 ft: 243 corp: 21/48b lim: 4 exec/s: 0 rss: 869Mb L: 2/4 MS: 2 CrossOver-Custom-
+#61	NEW    cov: 178 ft: 244 corp: 22/50b lim: 4 exec/s: 0 rss: 869Mb L: 2/4 MS: 2 EraseBytes-Custom-
+#63	NEW    cov: 178 ft: 245 corp: 23/54b lim: 4 exec/s: 0 rss: 869Mb L: 4/4 MS: 4 CrossOver-Custom-ChangeByte-Custom-
+#80	NEW    cov: 189 ft: 256 corp: 24/56b lim: 4 exec/s: 0 rss: 869Mb L: 2/4 MS: 4 ShuffleBytes-Custom-ChangeBinInt-Custom-
+#84	NEW    cov: 191 ft: 258 corp: 25/60b lim: 4 exec/s: 0 rss: 869Mb L: 4/4 MS: 8 ChangeBit-Custom-CopyPart-Custom-CopyPart-Custom-ChangeBinInt-Custom-
+#85	NEW    cov: 199 ft: 266 corp: 26/62b lim: 4 exec/s: 0 rss: 869Mb L: 2/4 MS: 2 CopyPart-Custom-
+#92	REDUCE cov: 199 ft: 266 corp: 26/61b lim: 4 exec/s: 0 rss: 869Mb L: 2/4 MS: 4 CrossOver-Custom-EraseBytes-Custom-
+#100	NEW    cov: 199 ft: 267 corp: 27/63b lim: 4 exec/s: 0 rss: 869Mb L: 2/4 MS: 6 EraseBytes-Custom-ChangeByte-Custom-ChangeBit-Custom-
+#115	REDUCE cov: 199 ft: 267 corp: 27/60b lim: 4 exec/s: 0 rss: 869Mb L: 1/4 MS: 10 ShuffleBytes-Custom-EraseBytes-Custom-CopyPart-Custom-ShuffleBytes-Custom-CrossOver-Custom-
+#116	NEW    cov: 200 ft: 269 corp: 28/61b lim: 4 exec/s: 0 rss: 869Mb L: 1/4 MS: 2 EraseBytes-Custom-
+MS: 8 CopyPart-Custom-EraseBytes-Custom-ChangeByte-Custom-CrossOver-Custom-; base unit: d8fc60ccdd8f555c1858b9f0820f263e3d2b58ec
+0x3d,0xa,
+=\012
+artifact_prefix='/tmp/bugrun/collections_12.Fmt9Ns/'; Test unit written to /tmp/bugrun/collections_12.Fmt9Ns/crash-9ae22869553bb63a4f4133b33d9b0e315b842f7e
+Base64: PQo=
+Done 125 runs in 0 second(s)
+INFO: Instrumented org.apache.commons.collections.collection.SynchronizedCollection (took 38 ms, size +17%)
+DEDUP_TOKEN: 8c28911460f0c434
+[ERROR] Tests run: 2, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 9.601 s <<< FAILURE! -- in com.example.algorithm2.Algorithm2Test
+[ERROR] com.example.algorithm2.Algorithm2Test.testParameterizedFuzzer(FuzzedDataProvider)[2] -- Time elapsed: 0.791 s <<< ERROR!
+java.lang.IllegalArgumentException: Cannot add Object '' - Predicate 'proxy:Predicate' rejected it
+	at org.apache.commons.collections.collection.PredicatedCollection.validate(PredicatedCollection.java:101)
+	at org.apache.commons.collections.collection.PredicatedCollection.<init>(PredicatedCollection.java:86)
+	at org.apache.commons.collections.list.PredicatedList.<init>(PredicatedList.java:80)
+	at org.apache.commons.collections.list.PredicatedList.decorate(PredicatedList.java:64)
+	at org.apache.commons.collections.ListUtils.predicatedList(ListUtils.java:332)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at com.example.algorithm2.Algorithm2Test.testParameterizedFuzzer(Algorithm2Test.java:226)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Errors: 
+[ERROR]   Algorithm2Test.testParameterizedFuzzer:226 » IllegalArgument Cannot add Object '' - Predicate 'proxy:Predicate' rejected it
+[INFO] 
+[ERROR] Tests run: 2, Failures: 0, Errors: 1, Skipped: 0
+[INFO] 
+[ERROR] 
+
+Please refer to /tmp/bugrun/collections_12.Fmt9Ns/target/surefire-reports for the individual test results.
+Please refer to dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[INFO] 
+[INFO] --- jacoco:0.8.11:report (default-cli) @ AlgorithmName2 ---
+[INFO] Loading execution data file /tmp/bugrun/collections_12.Fmt9Ns/target/jacoco.exec
+[INFO] Analyzed bundle 'AlgorithmName2' with 421 classes
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  23.369 s
+[INFO] Finished at: 2026-10-06T01:51:14+07:00
+[INFO] ------------------------------------------------------------------------

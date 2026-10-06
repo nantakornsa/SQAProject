@@ -1,0 +1,142 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.example:AlgorithmName2 >---------------------
+[INFO] Building AlgorithmName2 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- jacoco:0.8.11:prepare-agent (default) @ AlgorithmName2 ---
+[INFO] argLine set to -javaagent:/home/kanyaphak673380391-3/.m2/repository/org/jacoco/org.jacoco.agent/0.8.11/org.jacoco.agent-0.8.11-runtime.jar=destfile=/tmp/bugrun/csv_12.6b0PI3/target/jacoco.exec
+[INFO] 
+[INFO] --- resources:3.4.0:resources (default-resources) @ AlgorithmName2 ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ AlgorithmName2 ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 1 source file with javac [debug target 1.8] to target/classes
+[WARNING] bootstrap class path not set in conjunction with -source 8
+[INFO] 
+[INFO] --- dependency:3.6.0:unpack-dependencies (unpack-defects4j) @ AlgorithmName2 ---
+[INFO] 
+[INFO] --- resources:3.4.0:testResources (default-testResources) @ AlgorithmName2 ---
+[INFO] skip non existing resourceDirectory /tmp/bugrun/csv_12.6b0PI3/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ AlgorithmName2 ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 1 source file with javac [debug target 1.8] to target/test-classes
+[WARNING] bootstrap class path not set in conjunction with -source 8
+[INFO] 
+[INFO] --- surefire:3.1.2:test (default-cli) @ AlgorithmName2 ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.example.algorithm2.Algorithm2Test
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+INFO: Loaded 281 hooks from com.code_intelligence.jazzer.runtime.TraceCmpHooks
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.runtime.TraceDivHooks
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.runtime.TraceIndirHooks
+INFO: Loaded 4 hooks from com.code_intelligence.jazzer.runtime.NativeLibHooks
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.sanitizers.ClojureLangHooks
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.sanitizers.Deserialization
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.sanitizers.ExpressionLanguageInjection
+INFO: Loaded 70 hooks from com.code_intelligence.jazzer.sanitizers.LdapInjection
+INFO: Loaded 46 hooks from com.code_intelligence.jazzer.sanitizers.NamingContextLookup
+INFO: Loaded 1 hooks from com.code_intelligence.jazzer.sanitizers.OsCommandInjection
+INFO: Loaded 52 hooks from com.code_intelligence.jazzer.sanitizers.ReflectiveCall
+INFO: Loaded 8 hooks from com.code_intelligence.jazzer.sanitizers.RegexInjection
+INFO: Loaded 16 hooks from com.code_intelligence.jazzer.sanitizers.RegexRoadblocks
+INFO: Loaded 18 hooks from com.code_intelligence.jazzer.sanitizers.ScriptEngineInjection
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.sanitizers.ServerSideRequestForgery
+INFO: Loaded 19 hooks from com.code_intelligence.jazzer.sanitizers.SqlInjection
+INFO: Loaded 6 hooks from com.code_intelligence.jazzer.sanitizers.XPathInjection
+INFO: Instrumented com.example.algorithm2.Algorithm2Test$Skip (took 196 ms, size +44%)
+INFO: Instrumented com.example.algorithm2.Algorithm2Test (took 232 ms, size +27%)
+INFO: New number of coverage counters: 1024
+INFO: Instrumented org.apache.commons.csv.CSVFormat (took 144 ms, size +19%)
+INFO: Instrumented org.apache.commons.csv.Constants (took 16 ms, size +30%)
+INFO: Instrumented org.apache.commons.csv.QuoteMode (took 12 ms, size +31%)
+INFO: Instrumented org.apache.commons.csv.CSVPrinter (took 48 ms, size +23%)
+INFO: Instrumented org.apache.commons.csv.CSVParser (took 20 ms, size +17%)
+[harness] target=org.apache.commons.csv.CSVFormat factories=7 methods=39
+INFO: using inputs from: /tmp/bugrun/csv_12.6b0PI3/.cifuzz-corpus/com.example.algorithm2.Algorithm2Test/testParameterizedFuzzer
+INFO: using inputs from: /tmp/jazzer-java-seeds9317482808755440200
+INFO: found LLVMFuzzerCustomMutator (0x73e4ed96dcd0). Disabling -len_control by default.
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 1752886932
+INFO: Loaded 2 modules   (1024 inline 8-bit counters): 512 [0x73e5b0cb29a0, 0x73e5b0cb2ba0), 512 [0x73e5b0cb2ba0, 0x73e5b0cb2da0), 
+INFO: Loaded 2 PC tables (1024 PCs): 512 [0x73e5b0b6d170,0x73e5b0b6f170), 512 [0x73e5b08156e0,0x73e5b08176e0), 
+INFO:        0 files found in /tmp/bugrun/csv_12.6b0PI3/.cifuzz-corpus/com.example.algorithm2.Algorithm2Test/testParameterizedFuzzer
+INFO:        0 files found in /tmp/jazzer-java-seeds9317482808755440200
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+INFO: A corpus is not provided, starting from an empty corpus
+#2	INITED cov: 54 ft: 54 corp: 1/1b exec/s: 0 rss: 831Mb
+#9	NEW    cov: 61 ft: 95 corp: 2/3b lim: 4 exec/s: 0 rss: 831Mb L: 2/2 MS: 4 CrossOver-Custom-CrossOver-Custom-
+#15	NEW    cov: 82 ft: 116 corp: 3/6b lim: 4 exec/s: 0 rss: 831Mb L: 3/3 MS: 2 InsertByte-Custom-
+#27	NEW    cov: 83 ft: 123 corp: 4/10b lim: 4 exec/s: 0 rss: 831Mb L: 4/4 MS: 4 CrossOver-Custom-CMP-Custom- DE: "\377\021"-
+#28	NEW    cov: 84 ft: 125 corp: 5/14b lim: 4 exec/s: 0 rss: 831Mb L: 4/4 MS: 2 InsertByte-Custom-
+#30	NEW    cov: 88 ft: 129 corp: 6/17b lim: 4 exec/s: 0 rss: 831Mb L: 3/4 MS: 4 CopyPart-Custom-ChangeBit-Custom-
+#31	NEW    cov: 105 ft: 146 corp: 7/19b lim: 4 exec/s: 0 rss: 831Mb L: 2/4 MS: 2 EraseBytes-Custom-
+#32	NEW    cov: 107 ft: 148 corp: 8/23b lim: 4 exec/s: 0 rss: 831Mb L: 4/4 MS: 2 PersAutoDict-Custom- DE: "\377\021"-
+#35	NEW    cov: 112 ft: 153 corp: 9/26b lim: 4 exec/s: 0 rss: 831Mb L: 3/4 MS: 6 EraseBytes-Custom-InsertByte-Custom-ChangeBit-Custom-
+#44	NEW    cov: 113 ft: 154 corp: 10/30b lim: 4 exec/s: 0 rss: 831Mb L: 4/4 MS: 8 ChangeBit-Custom-CrossOver-Custom-ShuffleBytes-Custom-ChangeByte-Custom-
+#48	NEW    cov: 113 ft: 155 corp: 11/34b lim: 4 exec/s: 0 rss: 831Mb L: 4/4 MS: 8 PersAutoDict-Custom-ShuffleBytes-Custom-CrossOver-Custom-CopyPart-Custom- DE: "\377\021"-
+#52	NEW    cov: 124 ft: 168 corp: 12/38b lim: 4 exec/s: 0 rss: 831Mb L: 4/4 MS: 8 PersAutoDict-Custom-InsertByte-Custom-CopyPart-Custom-ChangeBinInt-Custom- DE: "\377\021"-
+#57	NEW    cov: 125 ft: 169 corp: 13/42b lim: 4 exec/s: 0 rss: 831Mb L: 4/4 MS: 10 ShuffleBytes-Custom-ShuffleBytes-Custom-CopyPart-Custom-ChangeBinInt-Custom-ChangeByte-Custom-
+#59	NEW    cov: 140 ft: 184 corp: 14/46b lim: 4 exec/s: 0 rss: 831Mb L: 4/4 MS: 4 PersAutoDict-Custom-ChangeBit-Custom- DE: "\377\021"-
+#61	NEW    cov: 141 ft: 185 corp: 15/48b lim: 4 exec/s: 0 rss: 831Mb L: 2/4 MS: 4 PersAutoDict-Custom-CrossOver-Custom- DE: "\377\021"-
+#67	NEW    cov: 143 ft: 187 corp: 16/52b lim: 4 exec/s: 0 rss: 831Mb L: 4/4 MS: 2 ChangeBit-Custom-
+#73	NEW    cov: 145 ft: 189 corp: 17/56b lim: 4 exec/s: 0 rss: 831Mb L: 4/4 MS: 2 CrossOver-Custom-
+#77	NEW    cov: 145 ft: 192 corp: 18/60b lim: 4 exec/s: 0 rss: 831Mb L: 4/4 MS: 8 PersAutoDict-Custom-ChangeBinInt-Custom-EraseBytes-Custom-CMP-Custom- DE: "\377\021"-"\031\000"-
+#83	NEW    cov: 166 ft: 213 corp: 19/64b lim: 4 exec/s: 0 rss: 831Mb L: 4/4 MS: 2 ChangeByte-Custom-
+#87	NEW    cov: 174 ft: 227 corp: 20/68b lim: 4 exec/s: 0 rss: 831Mb L: 4/4 MS: 8 CopyPart-Custom-CrossOver-Custom-ChangeBit-Custom-CopyPart-Custom-
+#88	NEW    cov: 174 ft: 228 corp: 21/72b lim: 4 exec/s: 0 rss: 831Mb L: 4/4 MS: 2 CopyPart-Custom-
+#93	NEW    cov: 179 ft: 233 corp: 22/76b lim: 4 exec/s: 0 rss: 831Mb L: 4/4 MS: 10 ChangeBit-Custom-InsertByte-Custom-InsertByte-Custom-ChangeBinInt-Custom-InsertByte-Custom-
+#121	NEW    cov: 180 ft: 234 corp: 23/80b lim: 4 exec/s: 0 rss: 831Mb L: 4/4 MS: 6 CrossOver-Custom-ChangeByte-Custom-ChangeBit-Custom-
+INFO: Instrumented org.apache.commons.csv.Assertions (took 3 ms, size +37%)
+#125	NEW    cov: 181 ft: 235 corp: 24/84b lim: 4 exec/s: 0 rss: 831Mb L: 4/4 MS: 8 ShuffleBytes-Custom-ChangeByte-Custom-ShuffleBytes-Custom-ChangeBinInt-Custom-
+#141	NEW    cov: 187 ft: 241 corp: 25/88b lim: 4 exec/s: 0 rss: 831Mb L: 4/4 MS: 2 ChangeByte-Custom-
+#144	NEW    cov: 188 ft: 242 corp: 26/92b lim: 4 exec/s: 0 rss: 831Mb L: 4/4 MS: 6 InsertByte-Custom-PersAutoDict-Custom-ChangeByte-Custom- DE: "\377\021"-
+#149	NEW    cov: 190 ft: 244 corp: 27/96b lim: 4 exec/s: 0 rss: 831Mb L: 4/4 MS: 10 CopyPart-Custom-EraseBytes-Custom-PersAutoDict-Custom-InsertByte-Custom-ChangeByte-Custom- DE: "\377\021"-
+MS: 2 EraseBytes-Custom-; base unit: 418f6bb26ac917640f1efed238a9c2a9bc728d4c
+0xf6,0x1a,
+\366\032
+artifact_prefix='/tmp/bugrun/csv_12.6b0PI3/'; Test unit written to /tmp/bugrun/csv_12.6b0PI3/crash-f5a838d7a0a4bfcc7ab36dd731c45014d4fa50b1
+Base64: 9ho=
+Done 180 runs in 0 second(s)
+DEDUP_TOKEN: 462b8b2b66323fcc
+[ERROR] Tests run: 2, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 7.765 s <<< FAILURE! -- in com.example.algorithm2.Algorithm2Test
+[ERROR] com.example.algorithm2.Algorithm2Test.testParameterizedFuzzer(FuzzedDataProvider)[2] -- Time elapsed: 0.257 s <<< ERROR!
+java.lang.IllegalArgumentException: The escape character and the delimiter cannot be the same (' ')
+	at org.apache.commons.csv.CSVFormat.validate(CSVFormat.java:723)
+	at org.apache.commons.csv.CSVFormat.<init>(CSVFormat.java:372)
+	at org.apache.commons.csv.CSVFormat.withEscape(CSVFormat.java:826)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at com.example.algorithm2.Algorithm2Test.testParameterizedFuzzer(Algorithm2Test.java:226)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Errors: 
+[ERROR]   Algorithm2Test.testParameterizedFuzzer:226 » IllegalArgument The escape character and the delimiter cannot be the same (' ')
+[INFO] 
+[ERROR] Tests run: 2, Failures: 0, Errors: 1, Skipped: 0
+[INFO] 
+[ERROR] 
+
+Please refer to /tmp/bugrun/csv_12.6b0PI3/target/surefire-reports for the individual test results.
+Please refer to dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[INFO] 
+[INFO] --- jacoco:0.8.11:report (default-cli) @ AlgorithmName2 ---
+[INFO] Loading execution data file /tmp/bugrun/csv_12.6b0PI3/target/jacoco.exec
+[INFO] Analyzed bundle 'AlgorithmName2' with 13 classes
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  19.005 s
+[INFO] Finished at: 2026-10-06T01:54:14+07:00
+[INFO] ------------------------------------------------------------------------

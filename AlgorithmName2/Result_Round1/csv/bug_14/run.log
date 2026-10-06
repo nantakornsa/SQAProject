@@ -1,0 +1,118 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.example:AlgorithmName2 >---------------------
+[INFO] Building AlgorithmName2 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- jacoco:0.8.11:prepare-agent (default) @ AlgorithmName2 ---
+[INFO] argLine set to -javaagent:/home/kanyaphak673380391-3/.m2/repository/org/jacoco/org.jacoco.agent/0.8.11/org.jacoco.agent-0.8.11-runtime.jar=destfile=/tmp/bugrun/csv_14.vvhGZr/target/jacoco.exec
+[INFO] 
+[INFO] --- resources:3.4.0:resources (default-resources) @ AlgorithmName2 ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ AlgorithmName2 ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 1 source file with javac [debug target 1.8] to target/classes
+[WARNING] bootstrap class path not set in conjunction with -source 8
+[INFO] 
+[INFO] --- dependency:3.6.0:unpack-dependencies (unpack-defects4j) @ AlgorithmName2 ---
+[INFO] 
+[INFO] --- resources:3.4.0:testResources (default-testResources) @ AlgorithmName2 ---
+[INFO] skip non existing resourceDirectory /tmp/bugrun/csv_14.vvhGZr/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ AlgorithmName2 ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 1 source file with javac [debug target 1.8] to target/test-classes
+[WARNING] bootstrap class path not set in conjunction with -source 8
+[INFO] 
+[INFO] --- surefire:3.1.2:test (default-cli) @ AlgorithmName2 ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.example.algorithm2.Algorithm2Test
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+INFO: Loaded 281 hooks from com.code_intelligence.jazzer.runtime.TraceCmpHooks
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.runtime.TraceDivHooks
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.runtime.TraceIndirHooks
+INFO: Loaded 4 hooks from com.code_intelligence.jazzer.runtime.NativeLibHooks
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.sanitizers.ClojureLangHooks
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.sanitizers.Deserialization
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.sanitizers.ExpressionLanguageInjection
+INFO: Loaded 70 hooks from com.code_intelligence.jazzer.sanitizers.LdapInjection
+INFO: Loaded 46 hooks from com.code_intelligence.jazzer.sanitizers.NamingContextLookup
+INFO: Loaded 1 hooks from com.code_intelligence.jazzer.sanitizers.OsCommandInjection
+INFO: Loaded 52 hooks from com.code_intelligence.jazzer.sanitizers.ReflectiveCall
+INFO: Loaded 8 hooks from com.code_intelligence.jazzer.sanitizers.RegexInjection
+INFO: Loaded 16 hooks from com.code_intelligence.jazzer.sanitizers.RegexRoadblocks
+INFO: Loaded 18 hooks from com.code_intelligence.jazzer.sanitizers.ScriptEngineInjection
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.sanitizers.ServerSideRequestForgery
+INFO: Loaded 19 hooks from com.code_intelligence.jazzer.sanitizers.SqlInjection
+INFO: Loaded 6 hooks from com.code_intelligence.jazzer.sanitizers.XPathInjection
+INFO: Instrumented com.example.algorithm2.Algorithm2Test$Skip (took 172 ms, size +44%)
+INFO: Instrumented com.example.algorithm2.Algorithm2Test (took 166 ms, size +27%)
+INFO: New number of coverage counters: 1024
+INFO: Instrumented org.apache.commons.csv.CSVFormat (took 264 ms, size +18%)
+INFO: Instrumented org.apache.commons.csv.Constants (took 13 ms, size +29%)
+INFO: Instrumented org.apache.commons.csv.QuoteMode (took 18 ms, size +31%)
+INFO: Instrumented org.apache.commons.csv.CSVPrinter (took 40 ms, size +22%)
+INFO: New number of coverage counters: 2048
+INFO: Instrumented org.apache.commons.csv.CSVParser (took 70 ms, size +17%)
+[harness] target=org.apache.commons.csv.CSVFormat factories=10 methods=62
+INFO: found LLVMFuzzerCustomMutator (0x77ca1b871cd0). Disabling -len_control by default.
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 1754251278
+INFO: Loaded 3 modules   (2048 inline 8-bit counters): 512 [0x77cb40ba2600, 0x77cb40ba2800), 512 [0x77cb40ba2800, 0x77cb40ba2a00), 1024 [0x77cb40ba2a00, 0x77cb40ba2e00), 
+INFO: Loaded 3 PC tables (2048 PCs): 512 [0x77cb4065b990,0x77cb4065d990), 512 [0x77cb4057cbc0,0x77cb4057ebc0), 1024 [0x77cb40987ab0,0x77cb4098bab0), 
+INFO:        0 files found in /tmp/bugrun/csv_14.vvhGZr/.cifuzz-corpus/com.example.algorithm2.Algorithm2Test/testParameterizedFuzzer
+INFO:        0 files found in /tmp/jazzer-java-seeds1310095028604652670
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+INFO: A corpus is not provided, starting from an empty corpus
+#2	INITED cov: 72 ft: 72 corp: 1/1b exec/s: 0 rss: 791Mb
+INFO: using inputs from: /tmp/bugrun/csv_14.vvhGZr/.cifuzz-corpus/com.example.algorithm2.Algorithm2Test/testParameterizedFuzzer
+INFO: using inputs from: /tmp/jazzer-java-seeds1310095028604652670
+#4	NEW    cov: 72 ft: 104 corp: 2/2b lim: 4 exec/s: 0 rss: 791Mb L: 1/1 MS: 4 ShuffleBytes-Custom-ChangeByte-Custom-
+MS: 8 ChangeBinInt-Custom-ChangeBit-Custom-CopyPart-Custom-ChangeBit-Custom-; base unit: 21606782c65e44cac7afbb90977d8b6f82140e76
+0x43,
+C
+artifact_prefix='/tmp/bugrun/csv_14.vvhGZr/'; Test unit written to /tmp/bugrun/csv_14.vvhGZr/crash-32096c2e0eff33d844ee6d675407ace18289357d
+Base64: Qw==
+Done 8 runs in 0 second(s)
+INFO: Instrumented org.apache.commons.csv.CSVFormat$Predefined (took 7 ms, size +22%)
+DEDUP_TOKEN: 433b6651d66e0d90
+[ERROR] Tests run: 2, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 7.828 s <<< FAILURE! -- in com.example.algorithm2.Algorithm2Test
+[ERROR] com.example.algorithm2.Algorithm2Test.testParameterizedFuzzer(FuzzedDataProvider)[2] -- Time elapsed: 0.246 s <<< ERROR!
+java.lang.IllegalArgumentException: No enum constant org.apache.commons.csv.CSVFormat.Predefined.
+	at java.base/java.lang.Enum.valueOf(Enum.java:240)
+	at org.apache.commons.csv.CSVFormat$Predefined.valueOf(CSVFormat.java:163)
+	at org.apache.commons.csv.CSVFormat.valueOf(CSVFormat.java:441)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at com.example.algorithm2.Algorithm2Test.testParameterizedFuzzer(Algorithm2Test.java:226)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Errors: 
+[ERROR]   Algorithm2Test.testParameterizedFuzzer:226 » IllegalArgument No enum constant org.apache.commons.csv.CSVFormat.Predefined.
+[INFO] 
+[ERROR] Tests run: 2, Failures: 0, Errors: 1, Skipped: 0
+[INFO] 
+[ERROR] 
+
+Please refer to /tmp/bugrun/csv_14.vvhGZr/target/surefire-reports for the individual test results.
+Please refer to dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[INFO] 
+[INFO] --- jacoco:0.8.11:report (default-cli) @ AlgorithmName2 ---
+[INFO] Loading execution data file /tmp/bugrun/csv_14.vvhGZr/target/jacoco.exec
+[INFO] Analyzed bundle 'AlgorithmName2' with 14 classes
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  18.962 s
+[INFO] Finished at: 2026-10-06T01:54:15+07:00
+[INFO] ------------------------------------------------------------------------

@@ -1,0 +1,125 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.example:AlgorithmName2 >---------------------
+[INFO] Building AlgorithmName2 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- jacoco:0.8.11:prepare-agent (default) @ AlgorithmName2 ---
+[INFO] argLine set to -javaagent:/home/kanyaphak673380391-3/.m2/repository/org/jacoco/org.jacoco.agent/0.8.11/org.jacoco.agent-0.8.11-runtime.jar=destfile=/tmp/bugrun/collections_16.YOnUuj/target/jacoco.exec
+[INFO] 
+[INFO] --- resources:3.4.0:resources (default-resources) @ AlgorithmName2 ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ AlgorithmName2 ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 1 source file with javac [debug target 1.8] to target/classes
+[WARNING] bootstrap class path not set in conjunction with -source 8
+[INFO] 
+[INFO] --- dependency:3.6.0:unpack-dependencies (unpack-defects4j) @ AlgorithmName2 ---
+[INFO] 
+[INFO] --- resources:3.4.0:testResources (default-testResources) @ AlgorithmName2 ---
+[INFO] skip non existing resourceDirectory /tmp/bugrun/collections_16.YOnUuj/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ AlgorithmName2 ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 1 source file with javac [debug target 1.8] to target/test-classes
+[WARNING] bootstrap class path not set in conjunction with -source 8
+[INFO] 
+[INFO] --- surefire:3.1.2:test (default-cli) @ AlgorithmName2 ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.example.algorithm2.Algorithm2Test
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+INFO: Loaded 458 hooks from com.code_intelligence.jazzer.runtime.TraceCmpHooks
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.runtime.TraceDivHooks
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.runtime.TraceIndirHooks
+INFO: Loaded 4 hooks from com.code_intelligence.jazzer.runtime.NativeLibHooks
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.sanitizers.ClojureLangHooks
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.sanitizers.Deserialization
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.sanitizers.ExpressionLanguageInjection
+INFO: Loaded 70 hooks from com.code_intelligence.jazzer.sanitizers.LdapInjection
+INFO: Loaded 46 hooks from com.code_intelligence.jazzer.sanitizers.NamingContextLookup
+INFO: Loaded 1 hooks from com.code_intelligence.jazzer.sanitizers.OsCommandInjection
+INFO: Loaded 52 hooks from com.code_intelligence.jazzer.sanitizers.ReflectiveCall
+INFO: Loaded 8 hooks from com.code_intelligence.jazzer.sanitizers.RegexInjection
+INFO: Loaded 16 hooks from com.code_intelligence.jazzer.sanitizers.RegexRoadblocks
+INFO: Loaded 18 hooks from com.code_intelligence.jazzer.sanitizers.ScriptEngineInjection
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.sanitizers.ServerSideRequestForgery
+INFO: Loaded 19 hooks from com.code_intelligence.jazzer.sanitizers.SqlInjection
+INFO: Loaded 6 hooks from com.code_intelligence.jazzer.sanitizers.XPathInjection
+INFO: Instrumented com.example.algorithm2.Algorithm2Test$Skip (took 269 ms, size +44%)
+INFO: Instrumented com.example.algorithm2.Algorithm2Test (took 192 ms, size +27%)
+INFO: Instrumented org.apache.commons.collections.ListUtils (took 102 ms, size +22%)
+[harness] Fallback target loaded: org.apache.commons.collections.ListUtils (original was org.apache.commons.collections4.ListUtils)
+INFO: Instrumented org.apache.commons.collections.Predicate (took 3 ms, size +0%)
+INFO: Instrumented org.apache.commons.collections.Transformer (took 1 ms, size +0%)
+INFO: Instrumented org.apache.commons.collections.Factory (took 0 ms, size +0%)
+[harness] target=org.apache.commons.collections.ListUtils factories=1 methods=16
+INFO: found LLVMFuzzerCustomMutator (0x75e945572cd0). Disabling -len_control by default.
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 3432769000
+INFO: Loaded 1 modules   (512 inline 8-bit counters): 512 [0x75e9e4a5e7b0, 0x75e9e4a5e9b0), 
+INFO: Loaded 1 PC tables (512 PCs): 512 [0x75e9e4a154f0,0x75e9e4a174f0), 
+INFO:        0 files found in /tmp/bugrun/collections_16.YOnUuj/.cifuzz-corpus/com.example.algorithm2.Algorithm2Test/testParameterizedFuzzer
+INFO:        0 files found in /tmp/jazzer-java-seeds17106674395270176850
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+INFO: A corpus is not provided, starting from an empty corpus
+#2	INITED cov: 35 ft: 35 corp: 1/1b exec/s: 0 rss: 862Mb
+#3	NEW    cov: 43 ft: 44 corp: 2/3b lim: 4 exec/s: 0 rss: 862Mb L: 2/2 MS: 2 CopyPart-Custom-
+#4	NEW    cov: 47 ft: 58 corp: 3/4b lim: 4 exec/s: 0 rss: 862Mb L: 1/2 MS: 2 ChangeByte-Custom-
+#6	NEW    cov: 47 ft: 66 corp: 4/6b lim: 4 exec/s: 0 rss: 862Mb L: 2/2 MS: 4 ChangeByte-Custom-InsertByte-Custom-
+#14	NEW    cov: 55 ft: 74 corp: 5/7b lim: 4 exec/s: 0 rss: 862Mb L: 1/2 MS: 6 CrossOver-Custom-ShuffleBytes-Custom-ChangeBit-Custom-
+INFO: using inputs from: /tmp/bugrun/collections_16.YOnUuj/.cifuzz-corpus/com.example.algorithm2.Algorithm2Test/testParameterizedFuzzer
+INFO: using inputs from: /tmp/jazzer-java-seeds17106674395270176850
+MS: 4 InsertByte-Custom-ChangeBit-Custom-; base unit: 71853c6197a6a7f222db0f1978c7cb232b87c5ee
+0x2f,0xa,0xb,
+/\012\013
+artifact_prefix='/tmp/bugrun/collections_16.YOnUuj/'; Test unit written to /tmp/bugrun/collections_16.YOnUuj/crash-5fc90805e1f0ed4f604257131f626c4e70b10b9e
+Base64: LwoL
+Done 16 runs in 0 second(s)
+INFO: Instrumented org.apache.commons.collections.list.PredicatedList (took 25 ms, size +20%)
+INFO: New number of coverage counters: 1024
+INFO: Instrumented org.apache.commons.collections.collection.PredicatedCollection (took 26 ms, size +25%)
+INFO: Instrumented org.apache.commons.collections.collection.AbstractSerializableCollectionDecorator (took 7 ms, size +38%)
+INFO: Instrumented org.apache.commons.collections.collection.AbstractCollectionDecorator (took 18 ms, size +21%)
+DEDUP_TOKEN: 8c28911460f0c434
+[ERROR] Tests run: 2, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 11.24 s <<< FAILURE! -- in com.example.algorithm2.Algorithm2Test
+[ERROR] com.example.algorithm2.Algorithm2Test.testParameterizedFuzzer(FuzzedDataProvider)[2] -- Time elapsed: 0.325 s <<< ERROR!
+java.lang.IllegalArgumentException: Cannot add Object '' - Predicate 'proxy:Predicate' rejected it
+	at org.apache.commons.collections.collection.PredicatedCollection.validate(PredicatedCollection.java:101)
+	at org.apache.commons.collections.collection.PredicatedCollection.<init>(PredicatedCollection.java:86)
+	at org.apache.commons.collections.list.PredicatedList.<init>(PredicatedList.java:80)
+	at org.apache.commons.collections.list.PredicatedList.decorate(PredicatedList.java:64)
+	at org.apache.commons.collections.ListUtils.predicatedList(ListUtils.java:332)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at com.example.algorithm2.Algorithm2Test.testParameterizedFuzzer(Algorithm2Test.java:226)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Errors: 
+[ERROR]   Algorithm2Test.testParameterizedFuzzer:226 » IllegalArgument Cannot add Object '' - Predicate 'proxy:Predicate' rejected it
+[INFO] 
+[ERROR] Tests run: 2, Failures: 0, Errors: 1, Skipped: 0
+[INFO] 
+[ERROR] 
+
+Please refer to /tmp/bugrun/collections_16.YOnUuj/target/surefire-reports for the individual test results.
+Please refer to dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[INFO] 
+[INFO] --- jacoco:0.8.11:report (default-cli) @ AlgorithmName2 ---
+[INFO] Loading execution data file /tmp/bugrun/collections_16.YOnUuj/target/jacoco.exec
+[INFO] Analyzed bundle 'AlgorithmName2' with 421 classes
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  30.818 s
+[INFO] Finished at: 2026-10-06T03:33:49+07:00
+[INFO] ------------------------------------------------------------------------

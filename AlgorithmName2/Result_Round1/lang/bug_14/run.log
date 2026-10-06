@@ -1,0 +1,156 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.example:AlgorithmName2 >---------------------
+[INFO] Building AlgorithmName2 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- jacoco:0.8.11:prepare-agent (default) @ AlgorithmName2 ---
+[INFO] argLine set to -javaagent:/home/kanyaphak673380391-3/.m2/repository/org/jacoco/org.jacoco.agent/0.8.11/org.jacoco.agent-0.8.11-runtime.jar=destfile=/tmp/bugrun/lang_14.vnM4nI/target/jacoco.exec
+[INFO] 
+[INFO] --- resources:3.4.0:resources (default-resources) @ AlgorithmName2 ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ AlgorithmName2 ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 1 source file with javac [debug target 1.8] to target/classes
+[WARNING] bootstrap class path not set in conjunction with -source 8
+[INFO] 
+[INFO] --- dependency:3.6.0:unpack-dependencies (unpack-defects4j) @ AlgorithmName2 ---
+[INFO] 
+[INFO] --- resources:3.4.0:testResources (default-testResources) @ AlgorithmName2 ---
+[INFO] skip non existing resourceDirectory /tmp/bugrun/lang_14.vnM4nI/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ AlgorithmName2 ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 1 source file with javac [debug target 1.8] to target/test-classes
+[WARNING] bootstrap class path not set in conjunction with -source 8
+[INFO] 
+[INFO] --- surefire:3.1.2:test (default-cli) @ AlgorithmName2 ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.example.algorithm2.Algorithm2Test
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+INFO: Loaded 289 hooks from com.code_intelligence.jazzer.runtime.TraceCmpHooks
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.runtime.TraceDivHooks
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.runtime.TraceIndirHooks
+INFO: Loaded 4 hooks from com.code_intelligence.jazzer.runtime.NativeLibHooks
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.sanitizers.ClojureLangHooks
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.sanitizers.Deserialization
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.sanitizers.ExpressionLanguageInjection
+INFO: Loaded 70 hooks from com.code_intelligence.jazzer.sanitizers.LdapInjection
+INFO: Loaded 46 hooks from com.code_intelligence.jazzer.sanitizers.NamingContextLookup
+INFO: Loaded 1 hooks from com.code_intelligence.jazzer.sanitizers.OsCommandInjection
+INFO: Loaded 52 hooks from com.code_intelligence.jazzer.sanitizers.ReflectiveCall
+INFO: Loaded 8 hooks from com.code_intelligence.jazzer.sanitizers.RegexInjection
+INFO: Loaded 16 hooks from com.code_intelligence.jazzer.sanitizers.RegexRoadblocks
+INFO: Loaded 18 hooks from com.code_intelligence.jazzer.sanitizers.ScriptEngineInjection
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.sanitizers.ServerSideRequestForgery
+INFO: Loaded 19 hooks from com.code_intelligence.jazzer.sanitizers.SqlInjection
+INFO: Loaded 6 hooks from com.code_intelligence.jazzer.sanitizers.XPathInjection
+INFO: Instrumented com.example.algorithm2.Algorithm2Test$Skip (took 189 ms, size +44%)
+INFO: Instrumented com.example.algorithm2.Algorithm2Test (took 175 ms, size +27%)
+INFO: New number of coverage counters: 1024
+INFO: New number of coverage counters: 2048
+WARN: Some hooks could not be applied to class files built for Java 7 or lower.
+                       Ensure that the fuzz target and its dependencies are compiled with
+                       -target 8 or higher to identify as many bugs as possible.
+INFO: Instrumented org.apache.commons.lang3.StringUtils (took 451 ms, size +28%)
+[harness] target=org.apache.commons.lang3.StringUtils factories=1 methods=155
+INFO: found LLVMFuzzerCustomMutator (0x78ba39b72cd0). Disabling -len_control by default.
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 2506489973
+INFO: Loaded 3 modules   (2048 inline 8-bit counters): 512 [0x78bae8a64990, 0x78bae8a64b90), 512 [0x78bae8a64b90, 0x78bae8a64d90), 1024 [0x78bae8a64d90, 0x78bae8a65190), 
+INFO: Loaded 3 PC tables (2048 PCs): 512 [0x78bae8a1c280,0x78bae8a1e280), 512 [0x78bae8a5e220,0x78bae8a60220), 1024 [0x78bae8b7c490,0x78bae8b80490), 
+INFO:        0 files found in /tmp/bugrun/lang_14.vnM4nI/.cifuzz-corpus/com.example.algorithm2.Algorithm2Test/testParameterizedFuzzer
+INFO:        0 files found in /tmp/jazzer-java-seeds8813598297810269405
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+INFO: A corpus is not provided, starting from an empty corpus
+INFO: using inputs from: /tmp/bugrun/lang_14.vnM4nI/.cifuzz-corpus/com.example.algorithm2.Algorithm2Test/testParameterizedFuzzer
+INFO: using inputs from: /tmp/jazzer-java-seeds8813598297810269405
+#2	INITED cov: 30 ft: 30 corp: 1/1b exec/s: 0 rss: 871Mb
+#3	NEW    cov: 31 ft: 31 corp: 2/2b lim: 4 exec/s: 0 rss: 871Mb L: 1/1 MS: 2 ShuffleBytes-Custom-
+#5	NEW    cov: 37 ft: 38 corp: 3/4b lim: 4 exec/s: 0 rss: 871Mb L: 2/2 MS: 4 InsertByte-Custom-ChangeByte-Custom-
+#6	NEW    cov: 40 ft: 41 corp: 4/6b lim: 4 exec/s: 0 rss: 871Mb L: 2/2 MS: 2 ChangeBinInt-Custom-
+#7	NEW    cov: 41 ft: 42 corp: 5/8b lim: 4 exec/s: 0 rss: 871Mb L: 2/2 MS: 2 ChangeBit-Custom-
+#13	NEW    cov: 44 ft: 45 corp: 6/9b lim: 4 exec/s: 0 rss: 871Mb L: 1/2 MS: 2 ChangeByte-Custom-
+#14	NEW    cov: 50 ft: 52 corp: 7/11b lim: 4 exec/s: 0 rss: 871Mb L: 2/2 MS: 2 InsertByte-Custom-
+#17	NEW    cov: 55 ft: 61 corp: 8/14b lim: 4 exec/s: 0 rss: 871Mb L: 3/3 MS: 6 CrossOver-Custom-ChangeBinInt-Custom-InsertByte-Custom-
+#19	NEW    cov: 61 ft: 67 corp: 9/16b lim: 4 exec/s: 0 rss: 871Mb L: 2/3 MS: 4 CopyPart-Custom-ChangeBit-Custom-
+#20	NEW    cov: 67 ft: 73 corp: 10/19b lim: 4 exec/s: 0 rss: 871Mb L: 3/3 MS: 2 CopyPart-Custom-
+#21	REDUCE cov: 67 ft: 73 corp: 10/18b lim: 4 exec/s: 0 rss: 871Mb L: 1/3 MS: 2 EraseBytes-Custom-
+#23	REDUCE cov: 67 ft: 73 corp: 10/17b lim: 4 exec/s: 0 rss: 871Mb L: 1/3 MS: 4 CopyPart-Custom-EraseBytes-Custom-
+#24	REDUCE cov: 78 ft: 84 corp: 11/18b lim: 4 exec/s: 0 rss: 871Mb L: 1/3 MS: 2 ChangeBit-Custom-
+#25	NEW    cov: 98 ft: 105 corp: 12/20b lim: 4 exec/s: 0 rss: 872Mb L: 2/3 MS: 2 ShuffleBytes-Custom-
+#26	NEW    cov: 100 ft: 107 corp: 13/21b lim: 4 exec/s: 0 rss: 872Mb L: 1/3 MS: 2 ChangeBit-Custom-
+#27	NEW    cov: 104 ft: 111 corp: 14/23b lim: 4 exec/s: 0 rss: 872Mb L: 2/3 MS: 2 ChangeByte-Custom-
+#28	NEW    cov: 110 ft: 117 corp: 15/25b lim: 4 exec/s: 0 rss: 872Mb L: 2/3 MS: 2 ChangeBinInt-Custom-
+#29	NEW    cov: 116 ft: 124 corp: 16/26b lim: 4 exec/s: 0 rss: 872Mb L: 1/3 MS: 2 ChangeBit-Custom-
+#35	NEW    cov: 128 ft: 137 corp: 17/28b lim: 4 exec/s: 0 rss: 872Mb L: 2/3 MS: 2 InsertByte-Custom-
+#36	NEW    cov: 149 ft: 160 corp: 18/29b lim: 4 exec/s: 0 rss: 872Mb L: 1/3 MS: 2 CrossOver-Custom-
+#38	NEW    cov: 154 ft: 165 corp: 19/31b lim: 4 exec/s: 0 rss: 872Mb L: 2/3 MS: 4 CopyPart-Custom-ChangeBit-Custom-
+#39	NEW    cov: 157 ft: 168 corp: 20/32b lim: 4 exec/s: 0 rss: 872Mb L: 1/3 MS: 2 ChangeBinInt-Custom-
+#40	NEW    cov: 161 ft: 172 corp: 21/33b lim: 4 exec/s: 0 rss: 872Mb L: 1/3 MS: 2 ChangeByte-Custom-
+#45	NEW    cov: 163 ft: 174 corp: 22/35b lim: 4 exec/s: 0 rss: 872Mb L: 2/3 MS: 10 CrossOver-Custom-ChangeBit-Custom-CopyPart-Custom-ShuffleBytes-Custom-ChangeByte-Custom-
+#47	NEW    cov: 167 ft: 178 corp: 23/39b lim: 4 exec/s: 0 rss: 872Mb L: 4/4 MS: 4 ChangeByte-Custom-CopyPart-Custom-
+#48	NEW    cov: 168 ft: 179 corp: 24/40b lim: 4 exec/s: 0 rss: 872Mb L: 1/4 MS: 2 ChangeBit-Custom-
+#49	NEW    cov: 170 ft: 181 corp: 25/42b lim: 4 exec/s: 0 rss: 872Mb L: 2/4 MS: 2 ChangeBinInt-Custom-
+#50	NEW    cov: 171 ft: 182 corp: 26/43b lim: 4 exec/s: 0 rss: 872Mb L: 1/4 MS: 2 EraseBytes-Custom-
+#51	REDUCE cov: 175 ft: 186 corp: 27/44b lim: 4 exec/s: 0 rss: 872Mb L: 1/4 MS: 2 ChangeByte-Custom-
+#52	NEW    cov: 177 ft: 188 corp: 28/45b lim: 4 exec/s: 0 rss: 872Mb L: 1/4 MS: 2 ChangeByte-Custom-
+#53	NEW    cov: 182 ft: 193 corp: 29/48b lim: 4 exec/s: 0 rss: 872Mb L: 3/4 MS: 2 InsertByte-Custom-
+#54	NEW    cov: 184 ft: 195 corp: 30/49b lim: 4 exec/s: 0 rss: 872Mb L: 1/4 MS: 2 ChangeBit-Custom-
+#59	NEW    cov: 188 ft: 199 corp: 31/53b lim: 4 exec/s: 0 rss: 872Mb L: 4/4 MS: 10 InsertByte-Custom-ChangeBit-Custom-InsertByte-Custom-ChangeByte-Custom-ChangeBinInt-Custom-
+#60	NEW    cov: 191 ft: 202 corp: 32/54b lim: 4 exec/s: 0 rss: 872Mb L: 1/4 MS: 2 ChangeByte-Custom-
+#64	NEW    cov: 193 ft: 204 corp: 33/55b lim: 4 exec/s: 0 rss: 872Mb L: 1/4 MS: 8 CrossOver-Custom-CrossOver-Custom-ChangeByte-Custom-ChangeByte-Custom-
+#65	NEW    cov: 194 ft: 206 corp: 34/59b lim: 4 exec/s: 0 rss: 872Mb L: 4/4 MS: 2 ChangeByte-Custom-
+#68	NEW    cov: 196 ft: 208 corp: 35/61b lim: 4 exec/s: 0 rss: 872Mb L: 2/4 MS: 6 InsertByte-Custom-ShuffleBytes-Custom-ChangeBit-Custom-
+#70	NEW    cov: 199 ft: 211 corp: 36/62b lim: 4 exec/s: 0 rss: 872Mb L: 1/4 MS: 4 ChangeByte-Custom-CrossOver-Custom-
+#75	REDUCE cov: 206 ft: 220 corp: 37/64b lim: 4 exec/s: 0 rss: 872Mb L: 2/4 MS: 10 ShuffleBytes-Custom-ShuffleBytes-Custom-InsertByte-Custom-ShuffleBytes-Custom-CrossOver-Custom-
+#76	NEW    cov: 206 ft: 223 corp: 38/65b lim: 4 exec/s: 0 rss: 872Mb L: 1/4 MS: 2 ChangeByte-Custom-
+INFO: Instrumented org.apache.commons.lang3.CharSequenceUtils (took 24 ms, size +60%)
+INFO: New number of coverage counters: 4096
+#78	NEW    cov: 212 ft: 229 corp: 39/66b lim: 4 exec/s: 0 rss: 880Mb L: 1/4 MS: 4 CrossOver-Custom-ChangeByte-Custom-
+MS: 8 InsertByte-Custom-ChangeBit-Custom-ShuffleBytes-Custom-InsertByte-Custom-; base unit: 768aab37c292010133979e821ad5ac081ade388a
+0x3d,0xe0,0xd9,
+=\340\331
+artifact_prefix='/tmp/bugrun/lang_14.vnM4nI/'; Test unit written to /tmp/bugrun/lang_14.vnM4nI/crash-8e678131dd39248c535f75333390c8e19fb8ac97
+Base64: PeDZ
+Done 92 runs in 0 second(s)
+INFO: Instrumented org.apache.commons.lang3.ArrayUtils (took 273 ms, size +22%)
+DEDUP_TOKEN: 8c66406e059710eb
+[ERROR] Tests run: 2, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 8.514 s <<< FAILURE! -- in com.example.algorithm2.Algorithm2Test
+[ERROR] com.example.algorithm2.Algorithm2Test.testParameterizedFuzzer(FuzzedDataProvider)[2] -- Time elapsed: 0.541 s <<< ERROR!
+java.lang.IllegalArgumentException: Minimum abbreviation width is 4
+	at org.apache.commons.lang3.StringUtils.abbreviate(StringUtils.java:5727)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at com.example.algorithm2.Algorithm2Test.testParameterizedFuzzer(Algorithm2Test.java:226)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Errors: 
+[ERROR]   Algorithm2Test.testParameterizedFuzzer:226 » IllegalArgument Minimum abbreviation width is 4
+[INFO] 
+[ERROR] Tests run: 2, Failures: 0, Errors: 1, Skipped: 0
+[INFO] 
+[ERROR] 
+
+Please refer to /tmp/bugrun/lang_14.vnM4nI/target/surefire-reports for the individual test results.
+Please refer to dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[INFO] 
+[INFO] --- jacoco:0.8.11:report (default-cli) @ AlgorithmName2 ---
+[INFO] Loading execution data file /tmp/bugrun/lang_14.vnM4nI/target/jacoco.exec
+[INFO] Analyzed bundle 'AlgorithmName2' with 147 classes
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  26.564 s
+[INFO] Finished at: 2026-10-06T02:06:48+07:00
+[INFO] ------------------------------------------------------------------------

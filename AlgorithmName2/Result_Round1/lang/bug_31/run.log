@@ -1,0 +1,267 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.example:AlgorithmName2 >---------------------
+[INFO] Building AlgorithmName2 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- jacoco:0.8.11:prepare-agent (default) @ AlgorithmName2 ---
+[INFO] argLine set to -javaagent:/home/kanyaphak673380391-3/.m2/repository/org/jacoco/org.jacoco.agent/0.8.11/org.jacoco.agent-0.8.11-runtime.jar=destfile=/tmp/bugrun/lang_31.pAgavH/target/jacoco.exec
+[INFO] 
+[INFO] --- resources:3.4.0:resources (default-resources) @ AlgorithmName2 ---
+[INFO] Copying 1 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ AlgorithmName2 ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 1 source file with javac [debug target 1.8] to target/classes
+[WARNING] bootstrap class path not set in conjunction with -source 8
+[INFO] 
+[INFO] --- dependency:3.6.0:unpack-dependencies (unpack-defects4j) @ AlgorithmName2 ---
+[INFO] 
+[INFO] --- resources:3.4.0:testResources (default-testResources) @ AlgorithmName2 ---
+[INFO] skip non existing resourceDirectory /tmp/bugrun/lang_31.pAgavH/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ AlgorithmName2 ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 1 source file with javac [debug target 1.8] to target/test-classes
+[WARNING] bootstrap class path not set in conjunction with -source 8
+[INFO] 
+[INFO] --- surefire:3.1.2:test (default-cli) @ AlgorithmName2 ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.example.algorithm2.Algorithm2Test
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+INFO: Loaded 289 hooks from com.code_intelligence.jazzer.runtime.TraceCmpHooks
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.runtime.TraceDivHooks
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.runtime.TraceIndirHooks
+INFO: Loaded 4 hooks from com.code_intelligence.jazzer.runtime.NativeLibHooks
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.sanitizers.ClojureLangHooks
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.sanitizers.Deserialization
+INFO: Loaded 5 hooks from com.code_intelligence.jazzer.sanitizers.ExpressionLanguageInjection
+INFO: Loaded 70 hooks from com.code_intelligence.jazzer.sanitizers.LdapInjection
+INFO: Loaded 46 hooks from com.code_intelligence.jazzer.sanitizers.NamingContextLookup
+INFO: Loaded 1 hooks from com.code_intelligence.jazzer.sanitizers.OsCommandInjection
+INFO: Loaded 52 hooks from com.code_intelligence.jazzer.sanitizers.ReflectiveCall
+INFO: Loaded 8 hooks from com.code_intelligence.jazzer.sanitizers.RegexInjection
+INFO: Loaded 16 hooks from com.code_intelligence.jazzer.sanitizers.RegexRoadblocks
+INFO: Loaded 18 hooks from com.code_intelligence.jazzer.sanitizers.ScriptEngineInjection
+INFO: Loaded 2 hooks from com.code_intelligence.jazzer.sanitizers.ServerSideRequestForgery
+INFO: Loaded 19 hooks from com.code_intelligence.jazzer.sanitizers.SqlInjection
+INFO: Loaded 6 hooks from com.code_intelligence.jazzer.sanitizers.XPathInjection
+INFO: Instrumented com.example.algorithm2.Algorithm2Test$Skip (took 158 ms, size +44%)
+INFO: Instrumented com.example.algorithm2.Algorithm2Test (took 201 ms, size +27%)
+INFO: New number of coverage counters: 1024
+INFO: New number of coverage counters: 2048
+WARN: Some hooks could not be applied to class files built for Java 7 or lower.
+                       Ensure that the fuzz target and its dependencies are compiled with
+                       -target 8 or higher to identify as many bugs as possible.
+INFO: Instrumented org.apache.commons.lang3.StringUtils (took 512 ms, size +31%)
+[harness] target=org.apache.commons.lang3.StringUtils factories=1 methods=148
+INFO: found LLVMFuzzerCustomMutator (0x718c01570cd0). Disabling -len_control by default.
+INFO: Running with entropic power schedule (0xFF, 100).
+INFO: Seed: 2604427598
+INFO: using inputs from: /tmp/bugrun/lang_31.pAgavH/.cifuzz-corpus/com.example.algorithm2.Algorithm2Test/testParameterizedFuzzer
+INFO: using inputs from: /tmp/jazzer-java-seeds7875404832330181892
+INFO: Loaded 3 modules   (2048 inline 8-bit counters): 512 [0x718ca8c7c6c0, 0x718ca8c7c8c0), 512 [0x718ca8c7c8c0, 0x718ca8c7cac0), 1024 [0x718ca8c7cac0, 0x718ca8c7cec0), 
+INFO: Loaded 3 PC tables (2048 PCs): 512 [0x718ca8b2f750,0x718ca8b31750), 512 [0x718ca8675bd0,0x718ca8677bd0), 1024 [0x718ca873caf0,0x718ca8740af0), 
+INFO:        0 files found in /tmp/bugrun/lang_31.pAgavH/.cifuzz-corpus/com.example.algorithm2.Algorithm2Test/testParameterizedFuzzer
+INFO:        0 files found in /tmp/jazzer-java-seeds7875404832330181892
+INFO: -max_len is not provided; libFuzzer will not generate inputs larger than 4096 bytes
+INFO: A corpus is not provided, starting from an empty corpus
+#2	INITED cov: 30 ft: 30 corp: 1/1b exec/s: 0 rss: 822Mb
+#4	NEW    cov: 48 ft: 48 corp: 2/3b lim: 4 exec/s: 0 rss: 822Mb L: 2/2 MS: 4 InsertByte-Custom-ChangeByte-Custom-
+#6	NEW    cov: 54 ft: 54 corp: 3/5b lim: 4 exec/s: 0 rss: 822Mb L: 2/2 MS: 4 CopyPart-Custom-InsertByte-Custom-
+#8	NEW    cov: 57 ft: 58 corp: 4/8b lim: 4 exec/s: 0 rss: 822Mb L: 3/3 MS: 4 ShuffleBytes-Custom-CMP-Custom- DE: "\001\001"-
+#9	NEW    cov: 59 ft: 61 corp: 5/10b lim: 4 exec/s: 0 rss: 822Mb L: 2/3 MS: 2 ChangeBit-Custom-
+#10	NEW    cov: 66 ft: 68 corp: 6/13b lim: 4 exec/s: 0 rss: 822Mb L: 3/3 MS: 2 InsertByte-Custom-
+#11	NEW    cov: 67 ft: 70 corp: 7/14b lim: 4 exec/s: 0 rss: 822Mb L: 1/3 MS: 2 EraseBytes-Custom-
+#12	NEW    cov: 69 ft: 72 corp: 8/15b lim: 4 exec/s: 0 rss: 823Mb L: 1/3 MS: 2 ChangeBit-Custom-
+#18	NEW    cov: 79 ft: 82 corp: 9/18b lim: 4 exec/s: 0 rss: 823Mb L: 3/3 MS: 2 ChangeByte-Custom-
+#29	NEW    cov: 80 ft: 83 corp: 10/21b lim: 4 exec/s: 0 rss: 823Mb L: 3/3 MS: 2 CrossOver-Custom-
+#30	NEW    cov: 80 ft: 84 corp: 11/25b lim: 4 exec/s: 0 rss: 823Mb L: 4/4 MS: 2 CrossOver-Custom-
+#31	NEW    cov: 81 ft: 85 corp: 12/26b lim: 4 exec/s: 0 rss: 823Mb L: 1/4 MS: 2 EraseBytes-Custom-
+INFO: New number of coverage counters: 4096
+#33	NEW    cov: 90 ft: 94 corp: 13/29b lim: 4 exec/s: 0 rss: 941Mb L: 3/4 MS: 4 ChangeBit-Custom-ChangeBit-Custom-
+#39	NEW    cov: 93 ft: 101 corp: 14/30b lim: 4 exec/s: 0 rss: 941Mb L: 1/4 MS: 2 ChangeBinInt-Custom-
+#40	NEW    cov: 106 ft: 114 corp: 15/34b lim: 4 exec/s: 0 rss: 941Mb L: 4/4 MS: 2 InsertByte-Custom-
+#49	NEW    cov: 107 ft: 115 corp: 16/36b lim: 4 exec/s: 0 rss: 941Mb L: 2/4 MS: 8 ShuffleBytes-Custom-ShuffleBytes-Custom-CrossOver-Custom-PersAutoDict-Custom- DE: "\001\001"-
+#50	NEW    cov: 107 ft: 116 corp: 17/40b lim: 4 exec/s: 0 rss: 941Mb L: 4/4 MS: 2 InsertByte-Custom-
+#51	REDUCE cov: 107 ft: 116 corp: 17/39b lim: 4 exec/s: 0 rss: 941Mb L: 1/4 MS: 2 EraseBytes-Custom-
+#55	NEW    cov: 109 ft: 118 corp: 18/41b lim: 4 exec/s: 0 rss: 942Mb L: 2/4 MS: 8 ShuffleBytes-Custom-ShuffleBytes-Custom-CopyPart-Custom-ChangeBinInt-Custom-
+#57	NEW    cov: 110 ft: 119 corp: 19/43b lim: 4 exec/s: 0 rss: 942Mb L: 2/4 MS: 4 CopyPart-Custom-EraseBytes-Custom-
+#62	NEW    cov: 112 ft: 121 corp: 20/46b lim: 4 exec/s: 0 rss: 942Mb L: 3/4 MS: 10 CopyPart-Custom-ChangeBinInt-Custom-EraseBytes-Custom-ShuffleBytes-Custom-ChangeBinInt-Custom-
+#68	NEW    cov: 119 ft: 128 corp: 21/49b lim: 4 exec/s: 0 rss: 942Mb L: 3/4 MS: 2 InsertByte-Custom-
+#69	NEW    cov: 119 ft: 131 corp: 22/53b lim: 4 exec/s: 0 rss: 942Mb L: 4/4 MS: 2 ChangeBinInt-Custom-
+#71	NEW    cov: 119 ft: 135 corp: 23/57b lim: 4 exec/s: 0 rss: 942Mb L: 4/4 MS: 4 ChangeByte-Custom-CopyPart-Custom-
+#72	NEW    cov: 119 ft: 139 corp: 24/61b lim: 4 exec/s: 0 rss: 942Mb L: 4/4 MS: 2 InsertByte-Custom-
+#73	REDUCE cov: 126 ft: 146 corp: 25/63b lim: 4 exec/s: 0 rss: 942Mb L: 2/4 MS: 2 InsertByte-Custom-
+#81	NEW    cov: 129 ft: 149 corp: 26/65b lim: 4 exec/s: 0 rss: 942Mb L: 2/4 MS: 6 CrossOver-Custom-EraseBytes-Custom-ChangeBit-Custom-
+#84	NEW    cov: 130 ft: 150 corp: 27/68b lim: 4 exec/s: 0 rss: 942Mb L: 3/4 MS: 6 CrossOver-Custom-ChangeByte-Custom-CrossOver-Custom-
+#91	NEW    cov: 139 ft: 159 corp: 28/72b lim: 4 exec/s: 0 rss: 944Mb L: 4/4 MS: 4 CopyPart-Custom-CopyPart-Custom-
+#92	NEW    cov: 143 ft: 163 corp: 29/73b lim: 4 exec/s: 0 rss: 944Mb L: 1/4 MS: 2 ChangeByte-Custom-
+#94	NEW    cov: 146 ft: 166 corp: 30/77b lim: 4 exec/s: 0 rss: 944Mb L: 4/4 MS: 4 ShuffleBytes-Custom-ShuffleBytes-Custom-
+#96	NEW    cov: 147 ft: 167 corp: 31/79b lim: 4 exec/s: 0 rss: 944Mb L: 2/4 MS: 4 ShuffleBytes-Custom-ChangeBit-Custom-
+#97	NEW    cov: 148 ft: 168 corp: 32/83b lim: 4 exec/s: 0 rss: 944Mb L: 4/4 MS: 2 ChangeBit-Custom-
+#105	NEW    cov: 149 ft: 169 corp: 33/87b lim: 4 exec/s: 0 rss: 944Mb L: 4/4 MS: 6 ShuffleBytes-Custom-ChangeBinInt-Custom-CrossOver-Custom-
+#106	NEW    cov: 152 ft: 172 corp: 34/91b lim: 4 exec/s: 0 rss: 944Mb L: 4/4 MS: 2 InsertByte-Custom-
+#109	NEW    cov: 155 ft: 175 corp: 35/94b lim: 4 exec/s: 0 rss: 944Mb L: 3/4 MS: 6 ChangeBit-Custom-CrossOver-Custom-ChangeByte-Custom-
+#113	NEW    cov: 156 ft: 176 corp: 36/97b lim: 4 exec/s: 0 rss: 944Mb L: 3/4 MS: 8 ChangeBinInt-Custom-CopyPart-Custom-ChangeBinInt-Custom-InsertByte-Custom-
+#117	NEW    cov: 158 ft: 178 corp: 37/99b lim: 4 exec/s: 0 rss: 944Mb L: 2/4 MS: 8 EraseBytes-Custom-ChangeByte-Custom-EraseBytes-Custom-InsertByte-Custom-
+#119	NEW    cov: 163 ft: 183 corp: 38/100b lim: 4 exec/s: 0 rss: 944Mb L: 1/4 MS: 4 CopyPart-Custom-ChangeBit-Custom-
+#121	NEW    cov: 165 ft: 185 corp: 39/103b lim: 4 exec/s: 0 rss: 944Mb L: 3/4 MS: 4 CrossOver-Custom-ChangeByte-Custom-
+#137	NEW    cov: 173 ft: 193 corp: 40/107b lim: 4 exec/s: 0 rss: 944Mb L: 4/4 MS: 2 ChangeBinInt-Custom-
+#146	NEW    cov: 174 ft: 194 corp: 41/109b lim: 4 exec/s: 0 rss: 944Mb L: 2/4 MS: 8 CopyPart-Custom-CrossOver-Custom-CrossOver-Custom-ChangeByte-Custom-
+#148	NEW    cov: 174 ft: 196 corp: 42/111b lim: 4 exec/s: 0 rss: 944Mb L: 2/4 MS: 4 InsertByte-Custom-CMP-Custom- DE: "\207\000"-
+#156	NEW    cov: 175 ft: 198 corp: 43/114b lim: 4 exec/s: 0 rss: 944Mb L: 3/4 MS: 6 InsertByte-Custom-ChangeByte-Custom-ShuffleBytes-Custom-
+#158	NEW    cov: 179 ft: 202 corp: 44/115b lim: 4 exec/s: 0 rss: 944Mb L: 1/4 MS: 4 EraseBytes-Custom-ChangeBit-Custom-
+#167	NEW    cov: 184 ft: 207 corp: 45/116b lim: 4 exec/s: 0 rss: 944Mb L: 1/4 MS: 8 ShuffleBytes-Custom-ChangeBit-Custom-ChangeByte-Custom-ChangeBit-Custom-
+INFO: #171	NEW    cov: 186 ft: 209 corp: 46/118b lim: 4 exec/s: 0 rss: 944Mb L: 2/4 MS: 8 CrossOver-Custom-PersAutoDict-Custom-CopyPart-Custom-ChangeBit-Custom- DE: "\001\001"-
+Instrumented org.apache.commons.lang3.ArrayUtils (took 566 ms, size +20%)
+INFO: Instrumented org.apache.commons.lang3.CharSequenceUtils (took 23 ms, size +33%)
+#183	NEW    cov: 189 ft: 212 corp: 47/121b lim: 4 exec/s: 0 rss: 944Mb L: 3/4 MS: 4 ChangeBinInt-Custom-EraseBytes-Custom-
+#187	NEW    cov: 192 ft: 215 corp: 48/124b lim: 4 exec/s: 0 rss: 944Mb L: 3/4 MS: 8 CopyPart-Custom-InsertByte-Custom-ShuffleBytes-Custom-ChangeBinInt-Custom-
+#192	NEW    cov: 193 ft: 217 corp: 49/128b lim: 4 exec/s: 0 rss: 944Mb L: 4/4 MS: 10 PersAutoDict-Custom-CopyPart-Custom-EraseBytes-Custom-ChangeBinInt-Custom-InsertByte-Custom- DE: "\001\001"-
+#193	REDUCE cov: 193 ft: 217 corp: 49/127b lim: 4 exec/s: 0 rss: 944Mb L: 1/4 MS: 2 EraseBytes-Custom-
+#194	REDUCE cov: 193 ft: 217 corp: 49/126b lim: 4 exec/s: 0 rss: 944Mb L: 2/4 MS: 2 EraseBytes-Custom-
+#195	NEW    cov: 194 ft: 218 corp: 50/130b lim: 4 exec/s: 0 rss: 944Mb L: 4/4 MS: 2 ChangeBinInt-Custom-
+#197	NEW    cov: 197 ft: 223 corp: 51/134b lim: 4 exec/s: 0 rss: 944Mb L: 4/4 MS: 4 ShuffleBytes-Custom-ChangeByte-Custom-
+#200	NEW    cov: 203 ft: 229 corp: 52/138b lim: 4 exec/s: 0 rss: 944Mb L: 4/4 MS: 6 ChangeByte-Custom-InsertByte-Custom-ChangeBinInt-Custom-
+#201	NEW    cov: 206 ft: 232 corp: 53/140b lim: 4 exec/s: 0 rss: 944Mb L: 2/4 MS: 2 CrossOver-Custom-
+#203	NEW    cov: 207 ft: 233 corp: 54/143b lim: 4 exec/s: 0 rss: 944Mb L: 3/4 MS: 4 ShuffleBytes-Custom-ShuffleBytes-Custom-
+#205	NEW    cov: 210 ft: 236 corp: 55/144b lim: 4 exec/s: 0 rss: 944Mb L: 1/4 MS: 4 ShuffleBytes-Custom-ChangeBit-Custom-
+#207	REDUCE cov: 212 ft: 238 corp: 56/148b lim: 4 exec/s: 0 rss: 944Mb L: 4/4 MS: 4 CopyPart-Custom-CMP-Custom- DE: "\001\002"-
+#208	NEW    cov: 216 ft: 244 corp: 57/152b lim: 4 exec/s: 0 rss: 944Mb L: 4/4 MS: 2 ChangeBit-Custom-
+#209	NEW    cov: 218 ft: 246 corp: 58/153b lim: 4 exec/s: 0 rss: 944Mb L: 1/4 MS: 2 ChangeBinInt-Custom-
+#218	REDUCE cov: 218 ft: 246 corp: 58/152b lim: 4 exec/s: 0 rss: 944Mb L: 3/4 MS: 8 CopyPart-Custom-ChangeBinInt-Custom-CrossOver-Custom-EraseBytes-Custom-
+#219	NEW    cov: 220 ft: 254 corp: 59/154b lim: 4 exec/s: 0 rss: 944Mb L: 2/4 MS: 2 CopyPart-Custom-
+#236	NEW    cov: 225 ft: 259 corp: 60/157b lim: 4 exec/s: 0 rss: 944Mb L: 3/4 MS: 4 ChangeBit-Custom-InsertByte-Custom-
+#240	NEW    cov: 229 ft: 263 corp: 61/160b lim: 4 exec/s: 0 rss: 944Mb L: 3/4 MS: 8 ChangeByte-Custom-CrossOver-Custom-ChangeByte-Custom-CrossOver-Custom-
+#242	NEW    cov: 233 ft: 267 corp: 62/162b lim: 4 exec/s: 0 rss: 944Mb L: 2/4 MS: 4 InsertByte-Custom-CopyPart-Custom-
+#243	REDUCE cov: 233 ft: 267 corp: 62/161b lim: 4 exec/s: 0 rss: 944Mb L: 1/4 MS: 2 EraseBytes-Custom-
+#255	NEW    cov: 233 ft: 269 corp: 63/164b lim: 4 exec/s: 0 rss: 945Mb L: 3/4 MS: 4 ChangeBit-Custom-EraseBytes-Custom-
+#257	NEW    cov: 234 ft: 270 corp: 64/167b lim: 4 exec/s: 0 rss: 945Mb L: 3/4 MS: 4 EraseBytes-Custom-ChangeByte-Custom-
+#259	NEW    cov: 247 ft: 283 corp: 65/169b lim: 4 exec/s: 0 rss: 945Mb L: 2/4 MS: 4 ChangeBinInt-Custom-InsertByte-Custom-
+#267	NEW    cov: 250 ft: 287 corp: 66/171b lim: 4 exec/s: 0 rss: 945Mb L: 2/4 MS: 6 EraseBytes-Custom-CrossOver-Custom-ChangeByte-Custom-
+#280	NEW    cov: 252 ft: 289 corp: 67/175b lim: 4 exec/s: 0 rss: 945Mb L: 4/4 MS: 6 PersAutoDict-Custom-PersAutoDict-Custom-CrossOver-Custom- DE: "\001\001"-"\001\002"-
+#296	NEW    cov: 254 ft: 291 corp: 68/176b lim: 4 exec/s: 0 rss: 945Mb L: 1/4 MS: 2 ChangeBit-Custom-
+#301	NEW    cov: 258 ft: 296 corp: 69/180b lim: 4 exec/s: 0 rss: 945Mb L: 4/4 MS: 10 ChangeBit-Custom-CopyPart-Custom-ChangeByte-Custom-ChangeBit-Custom-ChangeBit-Custom-
+#307	NEW    cov: 259 ft: 297 corp: 70/181b lim: 4 exec/s: 0 rss: 945Mb L: 1/4 MS: 2 ChangeBit-Custom-
+#323	NEW    cov: 260 ft: 298 corp: 71/182b lim: 4 exec/s: 0 rss: 945Mb L: 1/4 MS: 2 ChangeBit-Custom-
+#324	NEW    cov: 261 ft: 299 corp: 72/184b lim: 4 exec/s: 0 rss: 945Mb L: 2/4 MS: 2 EraseBytes-Custom-
+#326	NEW    cov: 262 ft: 300 corp: 73/186b lim: 4 exec/s: 0 rss: 945Mb L: 2/4 MS: 4 CrossOver-Custom-EraseBytes-Custom-
+#327	NEW    cov: 267 ft: 305 corp: 74/190b lim: 4 exec/s: 0 rss: 945Mb L: 4/4 MS: 2 CopyPart-Custom-
+#342	NEW    cov: 268 ft: 306 corp: 75/193b lim: 4 exec/s: 0 rss: 945Mb L: 3/4 MS: 10 ShuffleBytes-Custom-ChangeByte-Custom-ChangeBinInt-Custom-ChangeBit-Custom-ChangeBit-Custom-
+#343	REDUCE cov: 268 ft: 306 corp: 75/192b lim: 4 exec/s: 0 rss: 945Mb L: 2/4 MS: 2 EraseBytes-Custom-
+#344	NEW    cov: 268 ft: 314 corp: 76/195b lim: 4 exec/s: 0 rss: 945Mb L: 3/4 MS: 2 ShuffleBytes-Custom-
+#357	NEW    cov: 269 ft: 315 corp: 77/196b lim: 4 exec/s: 0 rss: 945Mb L: 1/4 MS: 6 EraseBytes-Custom-CopyPart-Custom-ChangeBit-Custom-
+#360	NEW    cov: 272 ft: 318 corp: 78/197b lim: 4 exec/s: 0 rss: 945Mb L: 1/4 MS: 6 ChangeBit-Custom-ChangeBinInt-Custom-ChangeBit-Custom-
+#366	NEW    cov: 273 ft: 319 corp: 79/198b lim: 4 exec/s: 0 rss: 946Mb L: 1/4 MS: 2 EraseBytes-Custom-
+#368	NEW    cov: 273 ft: 320 corp: 80/202b lim: 4 exec/s: 0 rss: 946Mb L: 4/4 MS: 4 ChangeBinInt-Custom-CopyPart-Custom-
+#369	REDUCE cov: 273 ft: 320 corp: 80/201b lim: 4 exec/s: 0 rss: 946Mb L: 2/4 MS: 2 EraseBytes-Custom-
+#371	NEW    cov: 277 ft: 324 corp: 81/205b lim: 4 exec/s: 0 rss: 946Mb L: 4/4 MS: 4 ChangeBinInt-Custom-ChangeBit-Custom-
+#384	NEW    cov: 281 ft: 328 corp: 82/209b lim: 4 exec/s: 0 rss: 946Mb L: 4/4 MS: 6 ChangeBinInt-Custom-ChangeBinInt-Custom-ChangeBinInt-Custom-
+#388	NEW    cov: 290 ft: 337 corp: 83/211b lim: 4 exec/s: 0 rss: 946Mb L: 2/4 MS: 8 PersAutoDict-Custom-ShuffleBytes-Custom-ChangeByte-Custom-EraseBytes-Custom- DE: "\001\002"-
+#398	NEW    cov: 311 ft: 360 corp: 84/213b lim: 4 exec/s: 0 rss: 946Mb L: 2/4 MS: 10 ChangeByte-Custom-CMP-Custom-CopyPart-Custom-EraseBytes-Custom-ChangeByte-Custom- DE: "\377\001"-
+#401	NEW    cov: 314 ft: 363 corp: 85/217b lim: 4 exec/s: 0 rss: 946Mb L: 4/4 MS: 6 CopyPart-Custom-ChangeBit-Custom-ChangeBit-Custom-
+#402	NEW    cov: 315 ft: 364 corp: 86/219b lim: 4 exec/s: 0 rss: 946Mb L: 2/4 MS: 2 ChangeBit-Custom-
+#407	REDUCE cov: 315 ft: 365 corp: 87/223b lim: 4 exec/s: 0 rss: 946Mb L: 4/4 MS: 10 ShuffleBytes-Custom-ChangeBit-Custom-CrossOver-Custom-CopyPart-Custom-CrossOver-Custom-
+#411	NEW    cov: 316 ft: 366 corp: 88/226b lim: 4 exec/s: 0 rss: 946Mb L: 3/4 MS: 8 ChangeBit-Custom-CMP-Custom-CopyPart-Custom-InsertByte-Custom- DE: "\234\000"-
+#422	NEW    cov: 318 ft: 371 corp: 89/228b lim: 4 exec/s: 0 rss: 946Mb L: 2/4 MS: 2 InsertByte-Custom-
+#423	NEW    cov: 321 ft: 374 corp: 90/229b lim: 4 exec/s: 0 rss: 946Mb L: 1/4 MS: 2 ChangeByte-Custom-
+#429	NEW    cov: 323 ft: 376 corp: 91/231b lim: 4 exec/s: 0 rss: 946Mb L: 2/4 MS: 2 EraseBytes-Custom-
+#435	NEW    cov: 325 ft: 378 corp: 92/232b lim: 4 exec/s: 0 rss: 946Mb L: 1/4 MS: 2 ChangeASCIIInt-Custom-
+#437	NEW    cov: 326 ft: 379 corp: 93/235b lim: 4 exec/s: 0 rss: 946Mb L: 3/4 MS: 4 CrossOver-Custom-ShuffleBytes-Custom-
+#441	NEW    cov: 327 ft: 380 corp: 94/238b lim: 4 exec/s: 0 rss: 946Mb L: 3/4 MS: 8 EraseBytes-Custom-CopyPart-Custom-CrossOver-Custom-EraseBytes-Custom-
+#450	NEW    cov: 330 ft: 383 corp: 95/242b lim: 4 exec/s: 0 rss: 946Mb L: 4/4 MS: 8 CrossOver-Custom-PersAutoDict-Custom-InsertByte-Custom-ChangeBinInt-Custom- DE: "\234\000"-
+#451	NEW    cov: 333 ft: 386 corp: 96/244b lim: 4 exec/s: 0 rss: 946Mb L: 2/4 MS: 2 InsertByte-Custom-
+#453	NEW    cov: 334 ft: 387 corp: 97/245b lim: 4 exec/s: 0 rss: 946Mb L: 1/4 MS: 4 ShuffleBytes-Custom-EraseBytes-Custom-
+#455	NEW    cov: 335 ft: 388 corp: 98/248b lim: 4 exec/s: 0 rss: 947Mb L: 3/4 MS: 4 PersAutoDict-Custom-ChangeByte-Custom- DE: "\234\000"-
+#467	NEW    cov: 336 ft: 389 corp: 99/251b lim: 4 exec/s: 0 rss: 947Mb L: 3/4 MS: 4 PersAutoDict-Custom-CopyPart-Custom- DE: "\001\002"-
+#478	NEW    cov: 339 ft: 392 corp: 100/253b lim: 4 exec/s: 0 rss: 947Mb L: 2/4 MS: 2 ChangeBinInt-Custom-
+#511	NEW    cov: 340 ft: 393 corp: 101/255b lim: 4 exec/s: 0 rss: 947Mb L: 2/4 MS: 6 ChangeBit-Custom-ChangeBit-Custom-ChangeByte-Custom-
+#527	REDUCE cov: 340 ft: 393 corp: 101/254b lim: 4 exec/s: 0 rss: 947Mb L: 1/4 MS: 2 EraseBytes-Custom-
+#535	NEW    cov: 342 ft: 395 corp: 102/257b lim: 4 exec/s: 0 rss: 947Mb L: 3/4 MS: 6 PersAutoDict-Custom-ChangeBit-Custom-EraseBytes-Custom- DE: "\377\001"-
+#536	NEW    cov: 345 ft: 398 corp: 103/261b lim: 4 exec/s: 0 rss: 947Mb L: 4/4 MS: 2 ChangeBinInt-Custom-
+#546	NEW    cov: 346 ft: 399 corp: 104/263b lim: 4 exec/s: 0 rss: 947Mb L: 2/4 MS: 10 InsertByte-Custom-CopyPart-Custom-ChangeByte-Custom-ChangeBinInt-Custom-EraseBytes-Custom-
+#555	REDUCE cov: 350 ft: 410 corp: 105/265b lim: 4 exec/s: 0 rss: 947Mb L: 2/4 MS: 8 ChangeByte-Custom-InsertByte-Custom-ShuffleBytes-Custom-ChangeByte-Custom-
+#564	NEW    cov: 352 ft: 412 corp: 106/266b lim: 4 exec/s: 0 rss: 947Mb L: 1/4 MS: 8 ShuffleBytes-Custom-CrossOver-Custom-EraseBytes-Custom-ChangeBit-Custom-
+#572	NEW    cov: 353 ft: 415 corp: 107/270b lim: 4 exec/s: 0 rss: 947Mb L: 4/4 MS: 6 ChangeByte-Custom-ChangeBinInt-Custom-ChangeBit-Custom-
+#574	REDUCE cov: 355 ft: 417 corp: 108/271b lim: 4 exec/s: 0 rss: 947Mb L: 1/4 MS: 4 CopyPart-Custom-ChangeBit-Custom-
+#584	NEW    cov: 357 ft: 419 corp: 109/274b lim: 4 exec/s: 0 rss: 947Mb L: 3/4 MS: 10 ChangeByte-Custom-ShuffleBytes-Custom-PersAutoDict-Custom-PersAutoDict-Custom-ChangeByte-Custom- DE: "\001\001"-"\001\002"-
+#605	NEW    cov: 359 ft: 421 corp: 110/276b lim: 4 exec/s: 0 rss: 947Mb L: 2/4 MS: 2 ChangeBit-Custom-
+#610	NEW    cov: 363 ft: 425 corp: 111/280b lim: 4 exec/s: 0 rss: 947Mb L: 4/4 MS: 10 ChangeBinInt-Custom-InsertByte-Custom-ChangeBit-Custom-ChangeBit-Custom-ChangeBinInt-Custom-
+#616	NEW    cov: 364 ft: 426 corp: 112/284b lim: 4 exec/s: 0 rss: 947Mb L: 4/4 MS: 2 CrossOver-Custom-
+#617	NEW    cov: 369 ft: 435 corp: 113/285b lim: 4 exec/s: 0 rss: 947Mb L: 1/4 MS: 2 ChangeByte-Custom-
+#619	NEW    cov: 371 ft: 437 corp: 114/289b lim: 4 exec/s: 0 rss: 947Mb L: 4/4 MS: 4 CMP-Custom-ChangeBit-Custom- DE: "\234\000"-
+#627	REDUCE cov: 371 ft: 437 corp: 114/288b lim: 4 exec/s: 0 rss: 947Mb L: 1/4 MS: 6 ChangeBit-Custom-ChangeBit-Custom-EraseBytes-Custom-
+#629	NEW    cov: 373 ft: 439 corp: 115/289b lim: 4 exec/s: 0 rss: 947Mb L: 1/4 MS: 4 ChangeBinInt-Custom-ChangeBinInt-Custom-
+#630	NEW    cov: 376 ft: 442 corp: 116/293b lim: 4 exec/s: 0 rss: 947Mb L: 4/4 MS: 2 InsertByte-Custom-
+#633	NEW    cov: 376 ft: 444 corp: 117/296b lim: 4 exec/s: 0 rss: 947Mb L: 3/4 MS: 6 ShuffleBytes-Custom-ChangeBit-Custom-ChangeBinInt-Custom-
+#634	NEW    cov: 377 ft: 445 corp: 118/297b lim: 4 exec/s: 0 rss: 947Mb L: 1/4 MS: 2 ChangeByte-Custom-
+#635	NEW    cov: 378 ft: 446 corp: 119/298b lim: 4 exec/s: 0 rss: 947Mb L: 1/4 MS: 2 ChangeByte-Custom-
+#642	NEW    cov: 381 ft: 449 corp: 120/299b lim: 4 exec/s: 0 rss: 947Mb L: 1/4 MS: 4 ChangeBinInt-Custom-ChangeByte-Custom-
+#645	REDUCE cov: 383 ft: 451 corp: 121/303b lim: 4 exec/s: 0 rss: 947Mb L: 4/4 MS: 6 PersAutoDict-Custom-InsertByte-Custom-ShuffleBytes-Custom- DE: "\234\000"-
+#648	NEW    cov: 385 ft: 453 corp: 122/306b lim: 4 exec/s: 0 rss: 947Mb L: 3/4 MS: 6 PersAutoDict-Custom-ChangeBinInt-Custom-ChangeBinInt-Custom- DE: "\001\002"-
+#649	REDUCE cov: 388 ft: 456 corp: 123/308b lim: 4 exec/s: 0 rss: 947Mb L: 2/4 MS: 2 ChangeBit-Custom-
+#650	NEW    cov: 390 ft: 458 corp: 124/312b lim: 4 exec/s: 0 rss: 947Mb L: 4/4 MS: 2 CrossOver-Custom-
+#659	NEW    cov: 392 ft: 460 corp: 125/315b lim: 4 exec/s: 0 rss: 947Mb L: 3/4 MS: 8 PersAutoDict-Custom-ChangeBit-Custom-CrossOver-Custom-ChangeBit-Custom- DE: "\377\001"-
+#665	NEW    cov: 396 ft: 464 corp: 126/319b lim: 4 exec/s: 0 rss: 947Mb L: 4/4 MS: 2 CrossOver-Custom-
+#666	NEW    cov: 398 ft: 466 corp: 127/322b lim: 4 exec/s: 0 rss: 947Mb L: 3/4 MS: 2 ChangeByte-Custom-
+#669	NEW    cov: 400 ft: 468 corp: 128/326b lim: 4 exec/s: 0 rss: 947Mb L: 4/4 MS: 6 CrossOver-Custom-ShuffleBytes-Custom-CopyPart-Custom-
+#688	REDUCE cov: 403 ft: 471 corp: 129/329b lim: 4 exec/s: 0 rss: 947Mb L: 3/4 MS: 8 PersAutoDict-Custom-CrossOver-Custom-ChangeASCIIInt-Custom-ShuffleBytes-Custom- DE: "\207\000"-
+#691	REDUCE cov: 403 ft: 471 corp: 129/328b lim: 4 exec/s: 0 rss: 947Mb L: 3/4 MS: 6 ChangeBit-Custom-CopyPart-Custom-EraseBytes-Custom-
+#692	NEW    cov: 406 ft: 474 corp: 130/332b lim: 4 exec/s: 0 rss: 947Mb L: 4/4 MS: 2 ChangeBinInt-Custom-
+#699	NEW    cov: 408 ft: 476 corp: 131/333b lim: 4 exec/s: 0 rss: 947Mb L: 1/4 MS: 4 EraseBytes-Custom-ChangeByte-Custom-
+#704	NEW    cov: 410 ft: 478 corp: 132/335b lim: 4 exec/s: 0 rss: 947Mb L: 2/4 MS: 10 CopyPart-Custom-CopyPart-Custom-ChangeBit-Custom-ChangeBinInt-Custom-EraseBytes-Custom-
+#707	REDUCE cov: 412 ft: 480 corp: 133/337b lim: 4 exec/s: 0 rss: 948Mb L: 2/4 MS: 6 ChangeByte-Custom-InsertByte-Custom-CrossOver-Custom-
+#713	NEW    cov: 413 ft: 481 corp: 134/340b lim: 4 exec/s: 0 rss: 948Mb L: 3/4 MS: 2 InsertByte-Custom-
+#718	NEW    cov: 415 ft: 483 corp: 135/342b lim: 4 exec/s: 0 rss: 948Mb L: 2/4 MS: 10 CrossOver-Custom-ChangeByte-Custom-EraseBytes-Custom-ChangeBit-Custom-ChangeByte-Custom-
+#732	NEW    cov: 417 ft: 485 corp: 136/346b lim: 4 exec/s: 0 rss: 948Mb L: 4/4 MS: 8 InsertByte-Custom-ChangeByte-Custom-ShuffleBytes-Custom-ChangeBinInt-Custom-
+#768	NEW    cov: 418 ft: 486 corp: 137/350b lim: 4 exec/s: 0 rss: 948Mb L: 4/4 MS: 2 ChangeByte-Custom-
+#774	NEW    cov: 421 ft: 489 corp: 138/353b lim: 4 exec/s: 0 rss: 948Mb L: 3/4 MS: 2 ChangeBit-Custom-
+#775	REDUCE cov: 421 ft: 489 corp: 138/352b lim: 4 exec/s: 0 rss: 948Mb L: 1/4 MS: 2 EraseBytes-Custom-
+#788	NEW    cov: 426 ft: 494 corp: 139/355b lim: 4 exec/s: 0 rss: 948Mb L: 3/4 MS: 6 InsertByte-Custom-ChangeBit-Custom-InsertByte-Custom-
+#799	REDUCE cov: 426 ft: 494 corp: 139/354b lim: 4 exec/s: 0 rss: 948Mb L: 3/4 MS: 2 EraseBytes-Custom-
+MS: 6 ChangeByte-Custom-ChangeByte-Custom-ChangeBit-Custom-; base unit: be02983ed8f3ceefd311cad151b7665b22ee5d36
+0x29,0x76,0xa,0x5a,
+)v\012Z
+artifact_prefix='/tmp/bugrun/lang_31.pAgavH/'; Test unit written to /tmp/bugrun/lang_31.pAgavH/crash-4dc2990d1667d5ddd957c91113c9f0f20d35273b
+INFO: Instrumented org.apache.commons.lang3.SystemUtils (took 37 ms, size +22%)
+Base64: KXYKWg==
+DEDUP_TOKEN: 491839dc6565428e
+Done 807 runs in 0 second(s)
+[ERROR] Tests run: 2, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 9.759 s <<< FAILURE! -- in com.example.algorithm2.Algorithm2Test
+[ERROR] com.example.algorithm2.Algorithm2Test.testParameterizedFuzzer(FuzzedDataProvider)[2] -- Time elapsed: 1.176 s <<< ERROR!
+java.lang.UnsupportedOperationException: The stripAccents(String) method is not supported until Java 1.6
+	at org.apache.commons.lang3.StringUtils.stripAccents(StringUtils.java:673)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at com.example.algorithm2.Algorithm2Test.testParameterizedFuzzer(Algorithm2Test.java:226)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Errors: 
+[ERROR]   Algorithm2Test.testParameterizedFuzzer:226 » UnsupportedOperation The stripAccents(String) method is not supported until Java 1.6
+[INFO] 
+[ERROR] Tests run: 2, Failures: 0, Errors: 1, Skipped: 0
+[INFO] 
+[ERROR] 
+
+Please refer to /tmp/bugrun/lang_31.pAgavH/target/surefire-reports for the individual test results.
+Please refer to dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[INFO] 
+[INFO] --- jacoco:0.8.11:report (default-cli) @ AlgorithmName2 ---
+[INFO] Loading execution data file /tmp/bugrun/lang_31.pAgavH/target/jacoco.exec
+[INFO] Analyzed bundle 'AlgorithmName2' with 124 classes
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  20.297 s
+[INFO] Finished at: 2026-10-06T02:08:27+07:00
+[INFO] ------------------------------------------------------------------------

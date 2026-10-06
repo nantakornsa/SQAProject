@@ -1,0 +1,16 @@
+-------------------------------------------------------------------------------
+Test set: com.example.algorithm2.Algorithm2Test
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 17.06 s <<< FAILURE! -- in com.example.algorithm2.Algorithm2Test
+com.example.algorithm2.Algorithm2Test.testParameterizedFuzzer(FuzzedDataProvider)[2] -- Time elapsed: 1.873 s <<< ERROR!
+org.joda.time.IllegalFieldValueException: Value 0 for yearOfEra must be in the range [1,292278993]
+	at org.joda.time.field.FieldUtils.verifyValueBounds(FieldUtils.java:217)
+	at org.joda.time.chrono.GJYearOfEraDateTimeField.set(GJYearOfEraDateTimeField.java:85)
+	at org.joda.time.chrono.ZonedChronology$ZonedDateTimeField.set(ZonedChronology.java:466)
+	at org.joda.time.DateTime.withYearOfEra(DateTime.java:1609)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:566)
+	at com.example.algorithm2.Algorithm2Test.testParameterizedFuzzer(Algorithm2Test.java:226)
+

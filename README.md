@@ -15,6 +15,12 @@
 
 # Work Link : https://drive.google.com/drive/folders/1hH-1uyycZQl-OybqA7BYUuFvypR5XCIq?usp=sharing
 
+# branch: 
+Suphawat เก็บ AI-Assisting tools  
+Nantakorn Fuzzing
+Phatcharapong WTS
+
+
 ## โครงสร้างโปรเจค
 
 ```
